@@ -83,7 +83,7 @@ def _compute_total_locaux_collectifs(convention):
 
 
 def get_or_generate_convention_doc(convention: Convention, save_data=False):
-    if convention.fichier_override_cerfa:
+    if convention.fichier_override_cerfa and convention.fichier_override_cerfa != "{}":
         files_dict = json.loads(convention.fichier_override_cerfa)
         files = list(files_dict["files"].values())
         if len(files) > 0:
