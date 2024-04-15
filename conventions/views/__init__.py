@@ -1,4 +1,5 @@
 from conventions.views.avenants import *
+from conventions.views.convention_finalisation import *
 from conventions.views.convention_form_annexes import *
 from conventions.views.convention_form_bailleur import *
 from conventions.views.convention_form_cadastre import *

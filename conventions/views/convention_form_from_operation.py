@@ -20,28 +20,7 @@ from conventions.services.from_operation import (
     AddConventionService,
     SelectOperationService,
 )
-
-
-class Stepper:
-    steps: list[str]
-
-    def __init__(self) -> None:
-        self.steps = [
-            "Sélectionner l'opération",
-            "Créer la convention dans Apilos",
-            "Ajouter les avenants (optionnel)",
-        ]
-
-    def get_form_step(self, step_number: int) -> dict[str, Any] | None:
-        count_steps = len(self.steps)
-        if step_number < 1 or step_number > count_steps:
-            return None
-        return {
-            "number": step_number,
-            "total": count_steps,
-            "current_step": self.steps[step_number - 1],
-            "next_step": self.steps[step_number] if step_number < count_steps else None,
-        }
+from core.stepper import Stepper
 
 
 class FromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, View):
@@ -51,7 +30,13 @@ class FromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, View):
 
     def setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         super().setup(request, *args, **kwargs)
-        self.stepper = Stepper()
+        self.stepper = Stepper(
+            steps=[
+                "Sélectionner l'opération",
+                "Créer la convention dans Apilos",
+                "Ajouter les avenants (optionnel)",
+            ]
+        )
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         return super().get_context_data(**kwargs) | {

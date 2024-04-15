@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from django.conf import settings
-from django.test import SimpleTestCase, TestCase, override_settings
+from django.test import RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 from waffle.testutils import override_flag
@@ -10,7 +10,9 @@ from conventions.forms.convention_from_operation import AddAvenantForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services.utils import ReturnStatus
 from conventions.tests.factories import ConventionFactory
-from conventions.views.convention_form_from_operation import Stepper
+from conventions.views.convention_form_from_operation import (
+    FromOperationBaseView,
+)
 
 
 class StepperTest(ParametrizedTestCase, SimpleTestCase):
@@ -60,7 +62,10 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
         ],
     )
     def test_get_form_step(self, step_number, expected):
-        assert Stepper().get_form_step(step_number) == expected
+        request = RequestFactory().get("/")
+        base_view = FromOperationBaseView()
+        base_view.setup(request)
+        assert base_view.stepper.get_form_step(step_number) == expected
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)

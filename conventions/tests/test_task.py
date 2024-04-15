@@ -57,7 +57,7 @@ class GenerateAndSendTest(TestCase):
             "convention_email_validator": "validator@apilos.fr",
         }
 
-        with patch("conventions.tasks.generate_convention_doc", autospec=True):
+        with patch("conventions.tasks.get_or_generate_convention_doc", autospec=True):
             with patch(
                 "conventions.tasks.generate_pdf", autospec=True
             ) as mocked_generate_pdf:
@@ -121,7 +121,7 @@ class GenerateAndSendTest(TestCase):
             "convention_email_validator": "validator@apilos.fr",
         }
 
-        with patch("conventions.tasks.generate_convention_doc", autospec=True):
+        with patch("conventions.tasks.get_or_generate_convention_doc", autospec=True):
             with patch(
                 "conventions.tasks.generate_pdf", autospec=True
             ) as mocked_generate_pdf:
@@ -156,7 +156,7 @@ class GenerateAndSendTest(TestCase):
             "convention_email_validator": "validator@apilos.fr",
         }
 
-        with patch("conventions.tasks.generate_convention_doc", autospec=True):
+        with patch("conventions.tasks.get_or_generate_convention_doc", autospec=True):
             with patch(
                 "conventions.tasks.generate_pdf", autospec=True
             ) as mocked_generate_pdf:
@@ -192,7 +192,7 @@ class GenerateAndSendTest(TestCase):
             "convention_url": "https://target.to.convention.display",
             "convention_email_validator": "validator@apilos.fr",
         }
-        with patch("conventions.tasks.generate_convention_doc", autospec=True):
+        with patch("conventions.tasks.get_or_generate_convention_doc", autospec=True):
             with patch(
                 "conventions.tasks.generate_pdf", autospec=True
             ) as mocked_generate_pdf:

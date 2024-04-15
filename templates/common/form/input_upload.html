@@ -7,16 +7,18 @@
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
         <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
-            <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
-                {{ form_input.label }}
-                {% if additional_informations %}
-                    <br>
-                    <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
-                {% endif %}
-                {% include "common/form/required_field.html" with form_input=form_input %}
-                {% include "common/help_field.html" with form_input=form_input %}
-            </label>
-            {% include "common/utils/comments_field.html" %}
+            {% if not override_cerfa %}
+                <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
+                    {{ form_input.label }}
+                    {% if additional_informations %}
+                        <br>
+                        <div class="fr-hint-text">informations complémentaires à destination de l’instructeur</div>
+                    {% endif %}
+                    {% include "common/form/required_field.html" with form_input=form_input %}
+                    {% include "common/help_field.html" with form_input=form_input %}
+                </label>
+                {% include "common/utils/comments_field.html" %}
+            {% endif %}
         </div>
 
         {% if textarea %}
@@ -47,8 +49,12 @@
                     <em class="fr-text--sm">et/ou </em>
                 {% endif %}
 
-                <button type="button" class="fr-btn  fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
-                    Déposer une image{% if not image_only %} ou un document{% endif %}
+                <button type="button" class="fr-btn {% if override_cerfa %}fr-btn--secondary{% endif %} fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
+                    {% if override_cerfa %}
+                        Déposer un nouveau CERFA et remplacer la version actuelle
+                    {% else %}
+                        Déposer une image{% if not image_only %} ou un document{% endif %}
+                    {% endif %}
                 </button>
 
                 <script type="text/javascript" nonce="{{request.csp_nonce}}">
@@ -87,8 +93,8 @@
                 value="{{ object_uuid }}">
 
             <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% endif %});
-                init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}")
+                let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% elif override_cerfa %}, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'{% else %}, undefined{% endif %}{% if single_file %}, true{% endif %});
+                init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}");
             </script>
 
         {% endif %}

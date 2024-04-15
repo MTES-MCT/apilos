@@ -1,36 +1,45 @@
 {% load custom_filters %}
 {% load display_filters %}
+{% load waffle_tags %}
 {% if convention|display_validation:request %}
+
     <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-arrow-right-s-line-double h-100">
         {% if convention.is_avenant %}
             {% include "conventions/avenant/complete_form_for_avenants.html" with form=complete_for_avenant_form %}
         {% else %}
-            <p class="fr-alert__title">Valider la convention</p>
-            {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}
-                {% if editable_validation %}
-                    <p class="fr-mb-3w">Vous pouvez associer un numéro de convention et valider celle-ci. Elle sera automatiquement transmise au bailleur par email pour signature.</p>
-                {% else %}
-                    <p class="fr-mb-3w">Avant de pouvoir valider la convention, il vous faut préciser le type de convention I ou II et les options associées dans la section
-                        <strong>Convention de type I & II ci-dessus.</strong></p>
-                {% endif %}
-                <div>
-                    <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
-                        {% csrf_token %}
-                        <input id="numberform" type="hidden" name="numberform" value="true" disabled="disabled" />
-                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
-                            <div class="fr-col-12">
-                                {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+            {% flag "override_cerfa" %}
+                <p class="fr-alert__title fr-mb-3w">Finaliser la convention en trois étapes</p>
+                <p class="fr-mb-3w">Toutes les corrections sont terminées ?</p>
+                <p class="fr-mb-3w">Nous vous invitons à vérifier le document CERFA de la convention avant sa validation finale.</p>
+                <a class="fr-btn fr-btn--primary" href="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}" data-turbo="false">Finaliser la convention</a>
+            {% else %}
+                <p class="fr-alert__title">Valider la convention</p>
+                {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}
+                    {% if editable_validation %}
+                        <p class="fr-mb-3w">Vous pouvez associer un numéro de convention et valider celle-ci. Elle sera automatiquement transmise au bailleur par email pour signature.</p>
+                    {% else %}
+                        <p class="fr-mb-3w">Avant de pouvoir valider la convention, il vous faut préciser le type de convention I ou II et les options associées dans la section
+                            <strong>Convention de type I & II ci-dessus.</strong></p>
+                    {% endif %}
+                    <div>
+                        <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
+                            {% csrf_token %}
+                            <input id="numberform" type="hidden" name="numberform" value="true" disabled="disabled" />
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                                <div class="fr-col-12">
+                                    {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=editable_validation %}
+                                </div>
+                                <div class="fr-col-12">
+                                    <button class="fr-btn" {% if not editable_validation %}disabled{% endif %}>
+                                        Valider la convention
+                                    </button>
+                                </div>
                             </div>
-                            <div class="fr-col-12">
-                                <button class="fr-btn" {% if not editable_validation %}disabled{% endif %}>
-                                    Valider la convention
-                                </button>
-                            </div>
-                        </div>
 
-                    </form>
-                </div>
-            {% endwith %}
+                        </form>
+                    </div>
+                {% endwith %}
+            {% endflag %}
         {% endif %}
     </div>
     <hr>

@@ -1,0 +1,25 @@
+{% extends "layout/base.html" %}
+{% block page_title %}Finalisation - APiLos{% endblock %}
+{% block content %}
+    {% include "conventions/common/form_header.html"%}
+    <div class="fr-container fr-my-5w">
+        <h1>Finaliser la convention</h1>
+
+        {% include "../common/stepper.html"%}
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-12">
+                <form method="post" action="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}">
+                    {% csrf_token %}
+                    <div class="fr-col-6">
+                        {% include "common/form/input_text.html" with form_input=form.numero editable=True object_field="convention_numero__"|add:form.uuid.value%}
+                    </div>
+                    <div class="apilos-align-right fr-mt-3w">
+                        <button class="fr-btn">
+                            Enregistrer et étape suivante
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

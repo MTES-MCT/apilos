@@ -572,6 +572,7 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 SWITCH_NEW_SEARCH = "new_search"
 SWITCH_VISIBILITY_AVENANT_BAILLEUR = "switch_visibility_avenant_bailleur"
 FLAG_ADD_CONVENTION = "ajout_convention"
+FLAG_OVERRIDE_CERFA = "override_cerfa"
 
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]

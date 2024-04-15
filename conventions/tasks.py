@@ -7,9 +7,9 @@ from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
 from conventions.services.convention_generator import (
-    generate_convention_doc,
     generate_pdf,
     get_files_attached,
+    get_or_generate_convention_doc,
 )
 from conventions.services.file import ConventionFileService
 from core.services import EmailService, EmailTemplateID
@@ -23,7 +23,7 @@ def generate_and_send(args):
 
     convention = Convention.objects.get(uuid=convention_uuid)
 
-    file_stream = generate_convention_doc(convention, True)
+    file_stream = get_or_generate_convention_doc(convention, True)
     pdf_path = generate_pdf(file_stream, convention)
 
     zip_path = None

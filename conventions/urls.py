@@ -88,6 +88,22 @@ urlpatterns = [
         ),
         name="from_operation_add_avenants",
     ),
+    # Pages pour la finalisation d'une convention par un instructeur
+    path(
+        "finalisation/<uuid:convention_uuid>/numero",
+        views.FinalisationNumero.as_view(),
+        name="finalisation_numero",
+    ),
+    path(
+        "finalisation/<uuid:convention_uuid>/cerfa",
+        views.FinalisationCerfa.as_view(),
+        name="finalisation_cerfa",
+    ),
+    path(
+        "finalisation/<uuid:convention_uuid>/validation",
+        views.FinalisationValidation.as_view(),
+        name="finalisation_validation",
+    ),
     # Pages de troisième niveau : funnel d'instruction et d'action sur les conventions et avenants
     path(
         "new_convention_choice",
@@ -266,6 +282,11 @@ urlpatterns = [
         "resiliation_validate/<convention_uuid>",
         views.resiliation_validate,
         name="resiliation_validate",
+    ),
+    path(
+        "get_or_generate_cerfa/<convention_uuid>",
+        views.get_or_generate_cerfa,
+        name="get_or_generate_cerfa",
     ),
     path(
         "generate/<convention_uuid>",
