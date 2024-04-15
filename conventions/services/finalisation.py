@@ -27,8 +27,12 @@ class FinalisationNumeroService(FinalisationServiceBase):
                 request.POST, request.FILES, convention=self.convention
             )
         else:
+            numero = (
+                self.convention.numero
+                or self.convention.get_default_convention_number()
+            )
             self.form = FinalisationNumeroForm(
-                initial={"numero": self.convention.numero}, convention=self.convention
+                initial={"numero": numero}, convention=self.convention
             )
 
     def save(self) -> str:
