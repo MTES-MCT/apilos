@@ -53,8 +53,8 @@
                 Enregistrer et étape suivante
             </button>
             <script nonce="{{request.csp_nonce}}">
-                btn = document.getElementById("submit-cerfa")
-                form = document.getElementById("cerfa-form")
+                const btn = document.getElementById("submit-cerfa")
+                const form = document.getElementById("cerfa-form")
                 btn.addEventListener("click", () => {
                     form.submit()
                 })
