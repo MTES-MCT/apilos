@@ -130,7 +130,7 @@
                                 <option value="">Sélectionner une période</option>
                                 {% for value, label in date_signature_choices %}
                                     <option value="{{ value }}"
-                                            {% if value == request.GET.date_signature %}selected{% endif %}>
+                                            {% if label == request.GET.date_signature %}selected{% endif %}>
                                         {{ label }}
                                     </option>
                                 {% endfor %}
