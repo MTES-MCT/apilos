@@ -65,6 +65,15 @@ class ConventionFinancementService(ConventionService):
             self.import_warnings = errors
         return errors
 
+    def _add_uuid_to_prets(self, result):
+        prets_by_numero = {}
+        for pret in self.convention.prets.all():
+            prets_by_numero[pret.numero] = pret.uuid
+        for obj in result["objects"]:
+            if "numero" in obj and obj["numero"] in prets_by_numero:
+                obj["uuid"] = prets_by_numero[obj["numero"]]
+        return result
+
     def _upload_prets(self):
         self.formset = PretFormSet(self.request.POST)
         self.upform = UploadForm(self.request.POST, self.request.FILES)
@@ -81,12 +90,7 @@ class ConventionFinancementService(ConventionService):
 
                 if self._check_numero_unicity(result):
                     return
-                prets_by_numero = {}
-                for pret in self.convention.prets.all():
-                    prets_by_numero[pret.numero] = pret.uuid
-                for obj in result["objects"]:
-                    if "numero" in obj and obj["numero"] in prets_by_numero:
-                        obj["uuid"] = prets_by_numero[obj["numero"]]
+                result = self._add_uuid_to_prets(result=result)
 
                 self.formset = PretFormSet(initial=result["objects"])
                 self.import_warnings = result["import_warnings"]
