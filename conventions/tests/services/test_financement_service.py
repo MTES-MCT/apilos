@@ -149,3 +149,31 @@ class ConventionFinancementServiceTests(TestCase):
         form = self.service.form
         # Convention is of type foyer, so the max limit for PLS is disabled, no error
         assert form.errors == {}
+
+    def test_check_numero_unicity_fail(self):
+        upload_result = {
+            "objects": [
+                {"numero": "1"},
+                {"numero": "2"},
+                {"numero": "1"},
+                {"numero": "3"},
+                {"numero": "3"},
+            ]
+        }
+
+        errors = self.service._check_numero_unicity(upload_result=upload_result)
+
+        assert errors == {
+            "Le numéro de financement 1 n'est pas unique. "
+            "Merci d'utiliser des numéros différents pour chaque financement.",
+            "Le numéro de financement 3 n'est pas unique. "
+            "Merci d'utiliser des numéros différents pour chaque financement.",
+        }
+        assert self.service.import_warnings == errors
+
+    def test_check_numero_unicity_success(self):
+        upload_result = {"objects": [{"numero": "1"}, {"numero": "2"}, {"numero": "3"}]}
+
+        errors = self.service._check_numero_unicity(upload_result=upload_result)
+
+        assert errors == set()

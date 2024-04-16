@@ -52,6 +52,19 @@ class ConventionFinancementService(ConventionService):
         else:
             self._convention_financement_atomic_update()
 
+    def _check_numero_unicity(self, upload_result) -> set[str | None]:
+        numeros = [obj["numero"] for obj in upload_result["objects"]]
+        errors = set()
+        for num in numeros:
+            if numeros.count(num) > 1:
+                errors.add(
+                    f"Le numéro de financement {num} n'est pas unique. "
+                    f"Merci d'utiliser des numéros différents pour chaque financement."
+                )
+        if errors:
+            self.import_warnings = errors
+        return errors
+
     def _upload_prets(self):
         self.formset = PretFormSet(self.request.POST)
         self.upform = UploadForm(self.request.POST, self.request.FILES)
@@ -66,6 +79,8 @@ class ConventionFinancementService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
 
+                if self._check_numero_unicity(result):
+                    return
                 prets_by_numero = {}
                 for pret in self.convention.prets.all():
                     prets_by_numero[pret.numero] = pret.uuid
