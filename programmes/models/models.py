@@ -7,7 +7,6 @@ from django.db import models
 from django.forms import model_to_dict
 
 from conventions.models.choices import ConventionStatut
-from core.models import IngestableModel
 from core.utils import get_key_from_json_field
 
 from .choices import (
@@ -24,7 +23,7 @@ from .choices import (
 )
 
 
-class Programme(IngestableModel):
+class Programme(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["numero_galion"], name="programme_numero_galion_idx"),
@@ -405,7 +404,7 @@ class RepartitionSurface(models.Model):
     quantite = models.IntegerField()
 
 
-class Lot(IngestableModel):
+class Lot(models.Model):
     pivot = ["financement", "programme", "type_habitat"]
     mapping = {
         "financement": "Produit",
@@ -838,7 +837,7 @@ class LocauxCollectifs(models.Model):
     sheet_name = "Locaux Collectifs"
 
 
-class TypeStationnement(IngestableModel):
+class TypeStationnement(models.Model):
     pivot = ["typologie", "lot"]
     mapping = {
         "typologie": "Typologie Garage",

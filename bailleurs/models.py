@@ -5,7 +5,6 @@ from django.db.models.signals import pre_save
 from django.dispatch import receiver
 from simple_history.models import HistoricalRecords
 
-from core.models import IngestableModel
 from core.utils import custom_history_user_setter
 
 
@@ -78,7 +77,7 @@ class BailleurManager(models.Manager):
         return self.get(pk=value)
 
 
-class Bailleur(IngestableModel):
+class Bailleur(models.Model):
     objects = BailleurManager()
 
     pivot = "siret"
