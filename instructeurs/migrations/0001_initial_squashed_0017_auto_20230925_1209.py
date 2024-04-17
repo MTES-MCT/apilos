@@ -2,8 +2,6 @@
 
 import uuid
 
-import django.db.migrations.operations.special
-import django.utils.timezone
 import simple_history.models
 from django.conf import settings
 from django.db import migrations, models
@@ -54,12 +52,7 @@ class Migration(migrations.Migration):
                 ("nom", models.CharField(max_length=255)),
                 ("code", models.CharField(max_length=255, unique=True)),
                 ("ville_signature", models.CharField(max_length=255, null=True)),
-                (
-                    "cree_le",
-                    models.DateTimeField(
-                        auto_now_add=True, default=django.utils.timezone.now
-                    ),
-                ),
+                ("cree_le", models.DateTimeField(auto_now_add=True)),
                 ("mis_a_jour_le", models.DateTimeField(auto_now=True)),
                 (
                     "prefix_convention",
