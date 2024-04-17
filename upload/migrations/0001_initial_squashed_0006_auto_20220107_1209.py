@@ -2,7 +2,6 @@
 
 import uuid
 
-import django.utils.timezone
 from django.db import migrations, models
 
 
@@ -29,12 +28,7 @@ class Migration(migrations.Migration):
                 ("size", models.CharField(max_length=255, null=True)),
                 ("content_type", models.CharField(max_length=255, null=True)),
                 ("dirpath", models.CharField(max_length=255, null=True)),
-                (
-                    "cree_le",
-                    models.DateTimeField(
-                        auto_now_add=True, default=django.utils.timezone.now
-                    ),
-                ),
+                ("cree_le", models.DateTimeField(auto_now_add=True)),
                 ("mis_a_jour_le", models.DateTimeField(auto_now=True)),
             ],
         ),
