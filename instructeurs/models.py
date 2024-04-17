@@ -3,7 +3,6 @@ import uuid
 from django.db import models
 from simple_history.models import HistoricalRecords
 
-from core.models import IngestableModel
 from core.utils import custom_history_user_setter
 
 
@@ -15,7 +14,7 @@ class AdministrateurManager(models.Manager):
         return self.get(pk=value)
 
 
-class Administration(IngestableModel):
+class Administration(models.Model):
     objects = AdministrateurManager()
 
     pivot = "code"
