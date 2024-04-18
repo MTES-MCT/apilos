@@ -279,7 +279,7 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
 
 
 def _float_to_decimal_rounded_two_digits_half_up(number: float) -> Decimal:
-    return Decimal(f"{number:.10f}").quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
+    return Decimal(str(number)).quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
 
 
 def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warnings):

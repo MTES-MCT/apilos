@@ -13,12 +13,9 @@ from conventions.services.upload_objects import (
         (7.505, "7.51"),
         (7.504, "7.50"),
         (7.506, "7.51"),
-        (7.5049999999, "7.50"),
-        # We only round well for 11 digits
-        # here 12 digits -> we expect our round to fail
-        (7.50499999999, "7.51"),
-        # No regression
-        (145.59, "145.59"),
+        (7.50499999999, "7.50"),
+        # No regression for two digits
+        (14444.59, "14444.59"),
         (145.18, "145.18"),
     ],
 )
