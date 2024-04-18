@@ -106,9 +106,14 @@
     </div>
     {% if convention.ecolo_reference %}
         <div class="fr-container fr-pt-2w">
-            <div role="alert" class="fr-col-12 fr-mb-3w apilos-alert apilos-alert-ecoloweb">
-                <p class="fr-text--lg">Cette convention a été récupérée automatiquement depuis <span class="fr-text--bold">Ecoloweb</span></p>
-                <p>Vous pouvez compléter les informations incomplètes</p>
+            <div role="alert" class="fr-col-12 fr-mb-3w apilos-alert apilos-alert-ecoloweb fr-pr-2w">
+                <p class="fr-text--lg">Cette convention a été importée automatiquement depuis <span class="fr-text--bold">Ecoloweb</span>, vous pouvez compléter ou corriger des informations en mode expert</p>
+                {% if not request.session.is_expert %}
+                    <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}"
+                       class="fr-btn fr-btn--secondary fr-mt-1w">
+                        Modifier la convention
+                    </a>
+                {% endif %}
             </div>
             <hr class="fr-col-12 fr-my-3w">
         </div>
