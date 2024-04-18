@@ -52,19 +52,6 @@ class ConventionFinancementService(ConventionService):
         else:
             self._convention_financement_atomic_update()
 
-    def _check_numero_unicity(self, upload_result) -> set[str | None]:
-        numeros = [obj["numero"] for obj in upload_result["objects"]]
-        errors = set()
-        for num in numeros:
-            if numeros.count(num) > 1:
-                errors.add(
-                    f"Le numéro de financement {num} n'est pas unique. "
-                    f"Merci d'utiliser des numéros différents pour chaque financement."
-                )
-        if errors:
-            self.import_warnings = errors
-        return errors
-
     def _add_uuid_to_prets(self, result):
         prets_by_numero = {}
         for pret in self.convention.prets.all():
@@ -87,14 +74,15 @@ class ConventionFinancementService(ConventionService):
                 "financement.xlsx",
             )
             if result["success"] != utils.ReturnStatus.ERROR:
-
-                if self._check_numero_unicity(result):
-                    return
                 result = self._add_uuid_to_prets(result=result)
 
                 self.formset = PretFormSet(initial=result["objects"])
                 self.import_warnings = result["import_warnings"]
                 self.editable_after_upload = True
+                if not self.formset.validate_initial_numero_unicity():
+                    self.import_warnings.append(
+                        "Merci d'utiliser des numéros de financements différents."
+                    )
 
     def _convention_financement_atomic_update(self):
         self.form = ConventionFinancementForm(

@@ -259,6 +259,18 @@ class BasePretFormSet(BaseFormSet):
     def clean(self):
         self.manage_cdc_validation()
 
+    def validate_initial_numero_unicity(self) -> bool:
+        is_valid = True
+        numeros = [form.initial.get("numero") for form in self.forms]
+        for form in self.forms:
+            num = form.initial.get("numero")
+            if numeros.count(num) > 1:
+                form.errors["numero"] = [
+                    f"Le numéro de financement {num} n'est pas unique."
+                ]
+                is_valid = False
+        return is_valid
+
     def manage_cdc_validation(self):
         """
         Validation : Hors convention PLS et Sans Travaux,
