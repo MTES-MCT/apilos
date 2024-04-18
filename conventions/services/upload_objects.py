@@ -242,9 +242,6 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
 
             # Decimal case
             elif model_field.get_internal_type() == "DecimalField":
-                import ipdb
-
-                ipdb.set_trace()
                 value, new_warnings = _get_value_from_decimal_field(
                     cell, model_field, column_from_index, new_warnings
                 )
