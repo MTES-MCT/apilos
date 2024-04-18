@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from io import BytesIO
 
 from openpyxl import load_workbook
@@ -296,8 +296,9 @@ def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warn
                     )
                 )
         elif isinstance(cell.value, (float, int)):
-            local_format = "{:." + str(model_field.decimal_places) + "f}"
-            value = Decimal(local_format.format(cell.value))
+            value = Decimal(f"{cell.value:.3f}").quantize(
+                Decimal("0.00"), rounding=ROUND_HALF_UP
+            )
         else:
             new_warnings.append(
                 Exception(
