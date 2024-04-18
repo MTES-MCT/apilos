@@ -242,6 +242,9 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
 
             # Decimal case
             elif model_field.get_internal_type() == "DecimalField":
+                import ipdb
+
+                ipdb.set_trace()
                 value, new_warnings = _get_value_from_decimal_field(
                     cell, model_field, column_from_index, new_warnings
                 )
@@ -278,6 +281,10 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
     return my_row, empty_line, new_warnings
 
 
+def _float_to_decimal_rounded_two_digits_half_up(number: float) -> Decimal:
+    return Decimal(f"{number:.10f}").quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
+
+
 def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warnings):
     value = None
     if cell.value is not None:
@@ -296,9 +303,7 @@ def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warn
                     )
                 )
         elif isinstance(cell.value, (float, int)):
-            value = Decimal(f"{cell.value:.3f}").quantize(
-                Decimal("0.00"), rounding=ROUND_HALF_UP
-            )
+            value = _float_to_decimal_rounded_two_digits_half_up(cell.value)
         else:
             new_warnings.append(
                 Exception(
