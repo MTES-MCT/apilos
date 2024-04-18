@@ -279,6 +279,8 @@ class Convention(models.Model):
 
     @property
     def description_avenant(self):
+        if self.commentaires is None:
+            return
         try:
             json_data = json.loads(self.commentaires)
             if (
