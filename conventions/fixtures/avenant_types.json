@@ -30,5 +30,37 @@
       "nom": "commentaires",
       "desc": "Ajouter des commentaires à l'attention de l'instructeur"
     }
+  },
+  {
+    "model": "conventions.avenanttype",
+    "pk": 5,
+    "fields": {
+      "nom": "programme",
+      "desc": "Suite à la modification du nom ou de l'adresse de l'opération"
+    }
+  },
+  {
+    "model": "conventions.avenanttype",
+    "pk": 6,
+    "fields": {
+      "nom": "champ_libre",
+      "desc": "Pour ajouter, dans l'avenant, des renseignements supplémentaires de type désignation des immeubles, origines des propriétés ou autre."
+    }
+  },
+  {
+    "model": "conventions.avenanttype",
+    "pk": 7,
+    "fields": {
+      "nom": "denonciation",
+      "desc": "Dénoncer une convention et ses avenants."
+    }
+  },
+  {
+    "model": "conventions.avenanttype",
+    "pk": 8,
+    "fields": {
+      "nom": "resiliation",
+      "desc": "Résilier une convention et ses avenants."
+    }
   }
 ]
