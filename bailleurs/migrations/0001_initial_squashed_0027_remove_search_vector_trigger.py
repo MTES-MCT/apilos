@@ -42,9 +42,7 @@ class Migration(migrations.Migration):
         ("bailleurs", "0027_remove_search_vector_trigger"),
     ]
 
-    dependencies = [
-        ("users", "__first__"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(

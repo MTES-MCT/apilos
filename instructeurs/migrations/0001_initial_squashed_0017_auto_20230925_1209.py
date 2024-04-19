@@ -3,7 +3,6 @@
 import uuid
 
 import simple_history.models
-from django.conf import settings
 from django.db import migrations, models
 
 
@@ -32,9 +31,7 @@ class Migration(migrations.Migration):
         ("instructeurs", "0017_auto_20230925_1209"),
     ]
 
-    dependencies = [
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
