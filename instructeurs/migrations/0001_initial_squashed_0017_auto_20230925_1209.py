@@ -6,13 +6,6 @@ import simple_history.models
 from django.conf import settings
 from django.db import migrations, models
 
-# Functions from the following migrations need manual copying.
-# Move them and any dependencies into this file, then update the
-# RunPython operations to refer to the local versions:
-# instructeurs.migrations.0015_administration_code_dans_galion_and_more
-# instructeurs.migrations.0016_auto_20230522_1248
-# instructeurs.migrations.0017_auto_20230925_1209
-
 
 class Migration(migrations.Migration):
 

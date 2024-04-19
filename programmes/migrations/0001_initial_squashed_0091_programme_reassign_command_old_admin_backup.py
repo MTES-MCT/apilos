@@ -121,10 +121,9 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ("bailleurs", "0003_alter_bailleur_options"),
+        ("bailleurs", "0001_initial_squashed_0027_remove_search_vector_trigger"),
         ("apilos_settings", "0005_alter_departement_code_insee_region"),
-        ("bailleurs", "0001_initial"),
-        ("instructeurs", "0001_initial"),
+        ("instructeurs", "0001_initial_squashed_0017_auto_20230925_1209"),
     ]
 
     operations = [

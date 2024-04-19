@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("conventions", "0012_alter_pret_montant"),
+        ("conventions", "0001_initial_squashed_0083_convention_fichier_override_cerfa"),
     ]
 
     operations = [
