@@ -149,3 +149,38 @@ class ConventionFinancementServiceTests(TestCase):
         form = self.service.form
         # Convention is of type foyer, so the max limit for PLS is disabled, no error
         assert form.errors == {}
+
+
+def test_formset_validate_numero_unicity_fail():
+    upload_result = {
+        "objects": [
+            {"numero": "1"},
+            {"numero": "2"},
+            {"numero": "1"},
+            {"numero": "3"},
+            {"numero": "3"},
+        ]
+    }
+
+    formset = PretFormSet(initial=upload_result["objects"])
+    is_valid = formset.validate_initial_numero_unicity()
+
+    assert not is_valid
+    assert formset.forms[0].errors == {
+        "numero": ["Le numéro de financement 1 n'est pas unique."]
+    }
+    assert formset.forms[1].errors == {}
+    assert formset.forms[3].errors == {
+        "numero": ["Le numéro de financement 3 n'est pas unique."]
+    }
+
+
+def test_formset_validate_numero_unicity_success():
+    upload_result = {"objects": [{"numero": "1"}, {"numero": "2"}, {"numero": "3"}]}
+
+    formset = PretFormSet(initial=upload_result["objects"])
+    is_valid = formset.validate_initial_numero_unicity()
+
+    assert is_valid
+    for form in formset:
+        assert form.errors == {}
