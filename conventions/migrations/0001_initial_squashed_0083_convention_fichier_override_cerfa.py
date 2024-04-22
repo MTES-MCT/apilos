@@ -7,7 +7,6 @@ import django.db.migrations.operations.special
 import django.db.models.deletion
 import django.utils.timezone
 from django.conf import settings
-from django.core.management import call_command
 from django.db import migrations, models
 
 # Functions from the following migrations need manual copying.
@@ -23,10 +22,6 @@ from django.db import migrations, models
 # conventions.migrations.0069_add_data_avenanttype
 # conventions.migrations.0070_auto_20230725_1842
 # conventions.migrations.0078_auto_20240115_1612
-
-
-def load_fixture(apps, schema_editor):
-    call_command("loaddata", "avenant_types", app_label="conventions")
 
 
 class Migration(migrations.Migration):
@@ -735,5 +730,4 @@ class Migration(migrations.Migration):
             ),
         ),
         django.contrib.postgres.operations.TrigramExtension(),
-        migrations.RunPython(load_fixture),
     ]
