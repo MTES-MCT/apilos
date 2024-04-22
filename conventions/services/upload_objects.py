@@ -1,5 +1,5 @@
 import datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from io import BytesIO
 
 from openpyxl import load_workbook
@@ -278,6 +278,10 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
     return my_row, empty_line, new_warnings
 
 
+def _float_to_decimal_rounded_two_digits_half_up(number: float) -> Decimal:
+    return Decimal(str(number)).quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
+
+
 def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warnings):
     value = None
     if cell.value is not None:
@@ -296,8 +300,7 @@ def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warn
                     )
                 )
         elif isinstance(cell.value, (float, int)):
-            local_format = "{:." + str(model_field.decimal_places) + "f}"
-            value = Decimal(local_format.format(cell.value))
+            value = _float_to_decimal_rounded_two_digits_half_up(cell.value)
         else:
             new_warnings.append(
                 Exception(
