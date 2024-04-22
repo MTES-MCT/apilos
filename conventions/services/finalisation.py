@@ -83,4 +83,5 @@ class FinalisationCerfaService(FinalisationServiceBase):
 
 
 class FinalisationValidationService(FinalisationServiceBase):
-    pass
+    def __init__(self, convention_uuid: str, request: HttpRequest) -> None:
+        self.convention = Convention.objects.get(uuid=convention_uuid)
