@@ -31,7 +31,7 @@ FILES = [
 ]
 
 
-def create_upload_files(create: bool = True) -> str:
+def create_upload_files() -> str:
     files_and_text = {"text": "this is a test", "files": {}}
     for file in FILES:
         uploaded_file = UploadedFileFactory(
@@ -54,6 +54,6 @@ class UploadFactoryMixin(factory.django.DjangoModelFactory):
     def make_upload_on_fields(instance, create, extracted, **kwargs):  # noqa: N805
         if extracted:
             for field_name in extracted:
-                setattr(instance, field_name, create_upload_files(create=create))
+                setattr(instance, field_name, create_upload_files())
             if create:
                 instance.save()
