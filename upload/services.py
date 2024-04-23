@@ -1,5 +1,4 @@
 import errno
-import io
 
 from django.conf import settings
 from django.core.files import File
@@ -69,13 +68,6 @@ class UploadService:
             filepath,
             "rb",
         )
-
-    def get_io_file(self, filepath=None) -> io.BytesIO:
-        filepath = filepath or self.path
-        content = b""
-        with default_storage.open(filepath, "rb") as file:
-            content = file.read()
-        return io.BytesIO(content)
 
     @property
     def path(self):
