@@ -85,21 +85,16 @@ def _compute_total_locaux_collectifs(convention):
 
 def get_or_generate_convention_doc(
     convention: Convention, save_data=False
-) -> io.BytesIO:
+) -> DocxTemplate:
     if convention.fichier_override_cerfa and convention.fichier_override_cerfa != "{}":
         files_dict = json.loads(convention.fichier_override_cerfa)
         files = list(files_dict["files"].values())
         if len(files) > 0:
             file_dict = files[0]
             uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
-            return UploadService().get_io_file(
-                uploaded_file.filepath(str(convention.uuid))
-            )
-    doc = generate_convention_doc(convention=convention, save_data=save_data)
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
-    return file_stream
+            filepath = uploaded_file.filepath(str(convention.uuid))
+            return DocxTemplate(default_storage.open(filepath, "rb"))
+    return generate_convention_doc(convention=convention, save_data=save_data)
 
 
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
