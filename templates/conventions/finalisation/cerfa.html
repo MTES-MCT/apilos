@@ -25,6 +25,7 @@
 
         <form method="post" action="{% url 'conventions:generate' convention_uuid=convention.uuid %}" data-turbo="false" class="fr-mb-7w">
             {% csrf_token %}
+            <input hidden name="without_filigram" value="1">
             <button class="fr-btn fr-btn--primary fr-icon-download-line fr-btn--icon-left">
                 Télécharger le CERFA de la convention
             </button>
