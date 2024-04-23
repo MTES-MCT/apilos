@@ -547,6 +547,9 @@ def generate_convention(request, convention_uuid):
     )
     request.user.check_perm("convention.view_convention", convention)
 
+    if request.POST.get("without_filigram"):
+        convention.statut = ConventionStatut.A_SIGNER.label
+
     data = convention_generator.generate_convention_doc(convention)
 
     response = HttpResponse(
