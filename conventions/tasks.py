@@ -1,16 +1,15 @@
 import logging
 import os
 from pathlib import Path
-from zipfile import ZipFile
 
 from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
+from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
 from conventions.services.convention_generator import (
     PDFConversionError,
-    generate_convention_doc,
     generate_pdf,
     get_files_attached,
     get_or_generate_convention_doc,
