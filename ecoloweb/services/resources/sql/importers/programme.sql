@@ -52,7 +52,7 @@ select
         when nop.libelle = 'Parc existant' then 'USUFRUIT'
         else 'SANSOBJET'
     end as type_operation,
-    pl.financementreferencedossier as numero_galion,
+    pl.financementreferencedossier as numero_operation,
     pl.financementdate as date_achat,
     pl.datemiseservice as date_achevement,
     pl.datemiseservice as date_achevement_previsible,

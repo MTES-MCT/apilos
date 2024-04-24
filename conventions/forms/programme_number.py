@@ -2,7 +2,7 @@ from django import forms
 
 
 class ProgrammeNumberForm(forms.Form):
-    numero_galion = forms.CharField(
+    numero_operation = forms.CharField(
         label="N° de décision de financement",
         required=False,
         max_length=255,

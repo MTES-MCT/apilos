@@ -22,11 +22,11 @@ urlpatterns = [
     # Main configuration route
     path("convention_kpi/", ConventionKPI.as_view()),
     # Operation details route
-    path("operation/<str:numero_galion>/", OperationDetails.as_view()),
+    path("operation/<str:numero_operation>/", OperationDetails.as_view()),
     # Operation close route
-    path("close_operation/<str:numero_galion>/", OperationClosed.as_view()),
+    path("close_operation/<str:numero_operation>/", OperationClosed.as_view()),
     # Opération cancel route
-    path("cancel_operation/<str:numero_galion>/", OperationCanceled.as_view()),
+    path("cancel_operation/<str:numero_operation>/", OperationCanceled.as_view()),
     path("dummy/", DummyView.as_view()),
     # DRF spectacular
     path("schema/", SpectacularAPIView.as_view(), name="schema"),

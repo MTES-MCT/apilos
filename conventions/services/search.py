@@ -225,7 +225,7 @@ class UserConventionEnInstructionSearchService(UserConventionSearchService):
             queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
-                | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(programme__numero_operation__icontains=self.search_input)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
 
@@ -265,7 +265,7 @@ class UserConventionActivesSearchService(UserConventionSearchService):
             queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
-                | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(programme__numero_operation__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
                 | Q(numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
@@ -301,7 +301,7 @@ class UserConventionTermineesSearchService(UserConventionSearchService):
             queryset = queryset.filter(
                 Q(programme__nom__icontains=self.search_input)
                 | Q(programme__code_postal__icontains=self.search_input)
-                | Q(programme__numero_galion__icontains=self.search_input)
+                | Q(programme__numero_operation__icontains=self.search_input)
                 | Q(numero__icontains=self.search_input)
                 | Q(programme_nom_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD)
             )
@@ -437,7 +437,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _search_numero = self.search_numero.replace("-", "").replace("/", "")
             queryset = queryset.annotate(
                 programme_numero_similarity=self._numero_trgm_similarity(
-                    field_name="programme__numero_galion",
+                    field_name="programme__numero_operation",
                     search_term=_search_numero,
                 )
             ).annotate(

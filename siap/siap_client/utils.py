@@ -244,7 +244,7 @@ def get_or_create_programme(
 
     try:
         (programme, _) = Programme.objects.get_or_create(
-            numero_galion=programme_from_siap["donneesOperation"]["numeroOperation"],
+            numero_operation=programme_from_siap["donneesOperation"]["numeroOperation"],
             parent=None,
             defaults={
                 "bailleur": bailleur,

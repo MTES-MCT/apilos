@@ -7,8 +7,8 @@ from programmes.utils import diff_programme_duplication
 class TestDiffProgrammeDuplication(TestCase):
     def test_diff_programme_duplication(self):
         programme = ProgrammeFactory()
-        duplicate = ProgrammeFactory(numero_galion=programme.numero_galion)
+        duplicate = ProgrammeFactory(numero_operation=programme.numero_operation)
         self.assertEqual(
-            diff_programme_duplication(programme.numero_galion),
+            diff_programme_duplication(programme.numero_operation),
             {"bailleur_id": sorted([programme.bailleur_id, duplicate.bailleur_id])},
         )

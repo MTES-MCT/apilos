@@ -55,8 +55,8 @@ class ConventionRecapitulatifService(ConventionService):
     def update_programme_number(self):
         programme_number_form = ProgrammeNumberForm(self.request.POST)
         if programme_number_form.is_valid():
-            self.convention.programme.numero_galion = (
-                programme_number_form.cleaned_data["numero_galion"]
+            self.convention.programme.numero_operation = (
+                programme_number_form.cleaned_data["numero_operation"]
             )
             programme_id = (
                 self.convention.parent.programme_id
@@ -65,7 +65,9 @@ class ConventionRecapitulatifService(ConventionService):
             )
             Programme.objects.filter(
                 Q(id=programme_id) | Q(parent_id=programme_id)
-            ).update(numero_galion=programme_number_form.cleaned_data["numero_galion"])
+            ).update(
+                numero_operation=programme_number_form.cleaned_data["numero_operation"]
+            )
         return self.get_convention_recapitulatif(
             programme_number_form=programme_number_form
         )
@@ -97,7 +99,7 @@ class ConventionRecapitulatifService(ConventionService):
 
         if programme_number_form is None:
             programme_number_form = ProgrammeNumberForm(
-                initial={"numero_galion": self.convention.programme.numero_galion}
+                initial={"numero_operation": self.convention.programme.numero_operation}
             )
 
         complete_for_avenant_form = None
@@ -286,7 +288,7 @@ def collect_instructeur_emails(
             operation = client.get_operation(
                 user_login=request.user.cerbere_login,
                 habilitation_id=request.session["habilitation_id"],
-                operation_identifier=convention.programme.numero_galion,
+                operation_identifier=convention.programme.numero_operation,
             )
             if (
                 "gestionnaireSecondaire" in operation

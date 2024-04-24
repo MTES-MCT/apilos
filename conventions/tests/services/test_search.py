@@ -126,7 +126,7 @@ class TestUserConventionSmartSearchService(
             televersement_convention_signee_le="2024-01-01",
             lot__programme=ProgrammeFactory(
                 anru=True,
-                numero_galion="2017DD01100057",
+                numero_operation="2017DD01100057",
                 nom="Le Clos de l'Ille - Rue de l'Occitanie - Séniors",
                 ville="Bourg-en-Bresse",
                 adresse="Pl. de l'Hôtel de ville",
@@ -147,7 +147,7 @@ class TestUserConventionSmartSearchService(
             financement=Financement.PLAI,
             lot__programme=ProgrammeFactory(
                 anru=False,
-                numero_galion="20230600400040",
+                numero_operation="20230600400040",
                 nom="ANTIBES 31 avenue de Nice",
                 ville="Antibes",
                 adresse="31 avenue de Nice",
@@ -167,7 +167,7 @@ class TestUserConventionSmartSearchService(
             financement=Financement.PLS,
             lot__programme=ProgrammeFactory(
                 anru=True,
-                numero_galion="2017490070049",
+                numero_operation="2017490070049",
                 nom="ANGERS - Les Eclateries - ilot D ",
                 ville="Angers",
                 adresse="Rue de la Chalouère",
@@ -190,7 +190,7 @@ class TestUserConventionSmartSearchService(
 
         programme = ProgrammeFactory(
             anru=False,
-            numero_galion="2014E891109087",
+            numero_operation="2014E891109087",
             nom="blah blah blah",
             ville="Marseille",
             adresse="Rue de la canebière",

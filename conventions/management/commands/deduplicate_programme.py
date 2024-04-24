@@ -9,11 +9,11 @@ from programmes.models import Programme
 class Command(BaseCommand):
     def handle(self, *args, **options):
         num_galion = {
-            v["numero_galion"]
+            v["numero_operation"]
             for v in Programme.objects.filter(parent_id=None)
-            .exclude(numero_galion=None)
-            .exclude(numero_galion="")
-            .values("numero_galion")
+            .exclude(numero_operation=None)
+            .exclude(numero_operation="")
+            .values("numero_operation")
             .annotate(Count("id"))
             .order_by()
             .filter(id__count__gt=1)
@@ -25,7 +25,7 @@ class Command(BaseCommand):
             programmes = (
                 Programme.objects.select_related("bailleur")
                 .select_related("administration")
-                .filter(numero_galion=num)
+                .filter(numero_operation=num)
             )
             conventions = [p.conventions for p in programmes]
             if (

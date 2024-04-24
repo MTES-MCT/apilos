@@ -27,11 +27,11 @@ class ConventionRecapitulatifTests(AbstractCreateViewTestCase, TestCase):
         self.post_success_http_code = 200
         self.target_template = "conventions/recapitulatif.html"
         self.error_payload = {
-            "numero_galion": "0" * 256,
+            "numero_operation": "0" * 256,
             "update_programme_number": "1",
         }
         self.success_payload = {
-            "numero_galion": "0" * 255,
+            "numero_operation": "0" * 255,
             "update_programme_number": "1",
         }
         self.msg_prefix = "[ConventionRecapitulatifTests] "
