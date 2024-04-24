@@ -26,7 +26,9 @@ from .choices import (
 class Programme(models.Model):
     class Meta:
         indexes = [
-            models.Index(fields=["numero_galion"], name="programme_numero_galion_idx"),
+            models.Index(
+                fields=["numero_operation"], name="programme_numero_operation_idx"
+            ),
             models.Index(fields=["ville"], name="programme_ville_idx"),
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
@@ -44,7 +46,7 @@ class Programme(models.Model):
         "zone_abc": "Zone ABC",
         "surface_utile_totale": "SU totale",
         "annee_gestion_programmation": "Année Programmation retenue",
-        "numero_galion": "N° Opération GALION",
+        "numero_operation": "N° Opération GALION",
         "bailleur": "MOA (code SIRET)",
         "administration": "Gestionnaire (code)",
     }
@@ -57,7 +59,7 @@ class Programme(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
-    numero_galion = models.CharField(max_length=255, null=True)
+    numero_operation = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur",
         on_delete=models.CASCADE,
@@ -190,7 +192,7 @@ class Programme(models.Model):
         return [
             convention
             for programme in Programme.objects.filter(
-                numero_galion=self.numero_galion
+                numero_operation=self.numero_operation
             ).all()
             for convention in programme.conventions.all()
         ]

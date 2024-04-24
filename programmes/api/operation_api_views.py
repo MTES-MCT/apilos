@@ -20,11 +20,11 @@ class OperationApiViewBase(generics.GenericAPIView):
     authentication_classes = [SIAPJWTAuthentication, JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_last_relevant_programme(self, numero_galion):
+    def get_last_relevant_programme(self, numero_operation):
         try:
             # dernière version
             programme = (
-                Programme.objects.filter(numero_galion=numero_galion)
+                Programme.objects.filter(numero_operation=numero_operation)
                 .order_by("-cree_le")
                 .first()
             )
@@ -49,8 +49,8 @@ class OperationDetails(OperationApiViewBase):
         },
         description="Return Operations and all its conventions",
     )
-    def get(self, request, numero_galion):
-        programme = self.get_last_relevant_programme(numero_galion)
+    def get(self, request, numero_operation):
+        programme = self.get_last_relevant_programme(numero_operation)
         serializer = MySerializer(programme)
         return Response(serializer.data)
 
@@ -66,9 +66,9 @@ class OperationDetails(OperationApiViewBase):
         description="Create all convention objects linked to an operation and retour"
         + " all those created element",
     )
-    def post(self, request, numero_galion):
+    def post(self, request, numero_operation):
         (programme, _, _) = get_or_create_conventions_from_operation_number(
-            request, numero_galion
+            request, numero_operation
         )
         serializer = MySerializer(programme)
         return Response(serializer.data)
@@ -92,8 +92,8 @@ class OperationClosed(OperationApiViewBase):
             + " last data validated by conventions and its avenant (to do)"
         ),
     )
-    def get(self, request, numero_galion):
-        programme = self.get_last_relevant_programme(numero_galion)
+    def get(self, request, numero_operation):
+        programme = self.get_last_relevant_programme(numero_operation)
         serializer = ClosingOperationSerializer(programme)
         return Response(serializer.data)
 
@@ -110,8 +110,8 @@ class OperationClosed(OperationApiViewBase):
             "Get last data from Operations and create Avenants if it is needed (to do)"
         ),
     )
-    def post(self, request, numero_galion):
-        return self.get(request, numero_galion)
+    def post(self, request, numero_operation):
+        return self.get(request, numero_operation)
 
 
 # empty class to prepare routes for SIAP:
@@ -166,9 +166,9 @@ class OperationCanceled(OperationApiViewBase):
             ),
         ],
     )
-    def post(self, request, numero_galion):
+    def post(self, request, numero_operation):
         programmes = Programme.objects.filter(
-            numero_galion=numero_galion, parent_id=None
+            numero_operation=numero_operation, parent_id=None
         )
 
         if any(

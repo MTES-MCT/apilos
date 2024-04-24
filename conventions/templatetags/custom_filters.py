@@ -145,10 +145,10 @@ def get_change_habilitation_url(request: HttpRequest, habilitation_id: int) -> s
 
 
 @register.filter
-def get_siap_operation_url(request: HttpRequest, numero_galion: str) -> str:
+def get_siap_operation_url(request: HttpRequest, numero_operation: str) -> str:
     client = SIAPClient.get_instance()
     relative_path = client.url_acces_web_operation.replace(
-        "<NUM_OPE_SIAP>", numero_galion
+        "<NUM_OPE_SIAP>", numero_operation
     )
     if settings.CERBERE_AUTH:
         return (

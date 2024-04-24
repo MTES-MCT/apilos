@@ -83,7 +83,7 @@ class ConventionSelectionService:
                     == Financement.SANS_FINANCEMENT
                     else TypeOperation.NEUF
                 ),
-                numero_galion=self.form.cleaned_data["numero_galion"],
+                numero_operation=self.form.cleaned_data["numero_operation"],
                 # default ANRU when it is SIAP version
                 anru=bool(settings.CERBERE_AUTH),
             )

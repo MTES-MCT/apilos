@@ -75,7 +75,7 @@ class ConventionModelForm(forms.ModelForm):
 
 @admin.display(description="Numero d'opération")
 def view_programme_operation(convention):
-    return convention.programme.numero_galion
+    return convention.programme.numero_operation
 
 
 @admin.register(Convention)
@@ -95,7 +95,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "uuid",
         "programme__bailleur__nom",
         "programme__administration__nom",
-        "programme__numero_galion",
+        "programme__numero_operation",
     ]
     fields = (
         "uuid",

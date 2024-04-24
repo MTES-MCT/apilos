@@ -93,7 +93,7 @@ def create_all_for_siap():
         bailleur=bailleur,
         administration=administration,
         nom="Programme 1",
-        numero_galion="20220600005",
+        numero_operation="20220600005",
         make_upload_on_fields=[
             "acquereur",
             "acte_de_propriete",
@@ -198,7 +198,7 @@ class OperationDetailsAPITest(APITestCase):
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
-            "numero_galion": "20220600005",
+            "numero_operation": "20220600005",
             "zone_123": "3",
             "zone_abc": "B1",
             "type_operation": "NEUF",
@@ -230,15 +230,15 @@ class OperationDetailsAPITest(APITestCase):
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         self.assertEqual(
-            Programme.objects.filter(numero_galion="20220600006").count(), 0
+            Programme.objects.filter(numero_operation="20220600006").count(), 0
         )
 
         response = client.post("/api-siap/v0/operation/20220600006/")
 
         self.assertEqual(
-            Programme.objects.filter(numero_galion="20220600006").count(), 1
+            Programme.objects.filter(numero_operation="20220600006").count(), 1
         )
-        programme = Programme.objects.get(numero_galion="20220600006")
+        programme = Programme.objects.get(numero_operation="20220600006")
         self.assertEqual(programme.nom, "Programme 2")
         self.assertEqual(programme.bailleur.siret, "782855696")
         self.assertEqual(programme.conventions.count(), 1)
@@ -246,7 +246,7 @@ class OperationDetailsAPITest(APITestCase):
 
         response = client.post("/api-siap/v0/operation/20220600006/")
         self.assertEqual(
-            Programme.objects.filter(numero_galion="20220600006").count(), 1
+            Programme.objects.filter(numero_operation="20220600006").count(), 1
         )
         self.assertEqual(response.data, operation_response)
 
@@ -308,7 +308,7 @@ class OperationClosedAPITest(APITestCase):
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
-            "numero_galion": "20220600005",
+            "numero_operation": "20220600005",
             "zone_123": "3",
             "zone_abc": "B1",
             "type_operation": "NEUF",
@@ -349,7 +349,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -427,7 +427,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -467,7 +467,7 @@ class OperationClosedAPITest(APITestCase):
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
-            "numero_galion": "20220600005",
+            "numero_operation": "20220600005",
             "zone_123": "3",
             "zone_abc": "B1",
             "type_operation": "NEUF",
@@ -507,7 +507,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -585,7 +585,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -665,7 +665,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -743,7 +743,7 @@ class OperationClosedAPITest(APITestCase):
                     "code_postal": "75007",
                     "ville": "Paris",
                     "adresse": "22 rue segur",
-                    "numero_galion": "20220600005",
+                    "numero_operation": "20220600005",
                     "zone_123": "3",
                     "zone_abc": "B1",
                     "type_operation": "NEUF",
@@ -809,7 +809,7 @@ class OperationClosedAPITest(APITestCase):
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
-            "numero_galion": "20220600005",
+            "numero_operation": "20220600005",
             "zone_123": "3",
             "zone_abc": "B1",
             "type_operation": "NEUF",

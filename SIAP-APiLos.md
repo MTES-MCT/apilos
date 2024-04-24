@@ -177,7 +177,7 @@ On notera : `champ_siap` (`champ_apilos` details)
     * `codeFamilleMO` (nature du bailleur)
 
 * Les Opérations (opérations financées via le SIAP)
-  * champ pivot : `numeroOperation` (numero_galion)
+  * champ pivot : `numeroOperation` (numero_operation)
   * champs repris lors de la création :
     * `nomOperation` (`nom`)
     * `adresse` interprété des champs d'adresses du SIAP (`adresse`)

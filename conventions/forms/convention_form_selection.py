@@ -95,7 +95,7 @@ class NewConventionForm(CreateConventionMinForm):
     Formulaire de création d'un programme/lot/convention à partir de zéro
     """
 
-    numero_galion = forms.CharField(
+    numero_operation = forms.CharField(
         label="N° de décision de financement",
         required=True,
         max_length=255,

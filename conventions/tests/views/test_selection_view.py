@@ -42,7 +42,7 @@ class NewConventionAnruViewTests(AbstractCreateViewTestCase, TestCase):
         self.success_payload = {
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
-            "numero_galion": "123456789",
+            "numero_operation": "123456789",
             "nom": "Programme de test",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,

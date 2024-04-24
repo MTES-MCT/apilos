@@ -48,7 +48,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
     list_display = (
         "nom",
         "uuid",
-        "numero_galion",
+        "numero_operation",
         "ville",
         "nature_logement",
     )
@@ -58,7 +58,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "adresse",
         "code_postal",
         "ville",
-        "numero_galion",
+        "numero_operation",
         "administration",
         "bailleur",
         "zone_123",
@@ -81,7 +81,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "adresse",
         "code_postal",
         "ville",
-        "numero_galion",
+        "numero_operation",
         "uuid",
     )
 
