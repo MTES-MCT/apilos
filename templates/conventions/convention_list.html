@@ -194,6 +194,24 @@
                     </div>
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
 
+                {% elif programme is None %}
+                    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--icon-left">
+                        {% if request.GET.from_convention %}
+                            <li>
+                                <a class="fr-btn fr-btn--secondary fr-icon-arrow-left-s-line" href="{% url 'conventions:post_action' convention_uuid=request.GET.from_convention %}">
+                                    Revenir à la convention
+                                </a>
+                            </li>
+                        {% endif %}
+                        {% if siap_assistance_url %}
+                            <li>
+                                <a class="fr-btn fr-btn--tertiary fr-icon-mail-line apilos-no-dsfr-target" href="{{ siap_assistance_url }}" target="_blank"  rel="noopener">
+                                    Contactez l'assistance
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                 {% else %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
                         <div class="fr-mr-2w notes fr-col-2">Aucun résultat</div>
