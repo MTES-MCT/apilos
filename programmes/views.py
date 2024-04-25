@@ -44,5 +44,6 @@ def operation_conventions(request, numero_operation):
             "filtered_conventions_count": paginator.count,
             "all_conventions_count": paginator.count,
             "search_input": "",
+            "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
         },
     )

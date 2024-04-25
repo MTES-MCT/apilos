@@ -9,6 +9,10 @@ from pathlib import Path
 import jinja2
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.db import transaction
+from django.db.models import F, Func, IntegerField, Value
+from django.db.models.functions import Cast
+from django.db.utils import DataError
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
 from docx.shared import Inches
@@ -127,6 +131,32 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
 
     adresse = _get_adresse(convention)
 
+    # Logements are ordered by typologie first, then by designation
+    # Designation is a string, we try to find a number in it and cast it as a number to sort
+    # If the cast fail, we order by designation as a string
+    try:
+        with transaction.atomic():
+            logements = (
+                convention.lot.logements.all()
+                .annotate(
+                    int_designation=Cast(
+                        Func(
+                            F("designation"),
+                            Value(r"\D"),
+                            Value(""),
+                            Value("g"),
+                            function="regexp_replace",
+                        ),
+                        IntegerField(),
+                    )
+                )
+                .order_by("typologie", "int_designation")
+            )
+            # Force queryset execution
+            list(logements)
+    except DataError:
+        logements = convention.lot.logements.all().order_by("typologie", "designation")
+
     context = {
         **avenant_data,
         "convention": convention,
@@ -135,9 +165,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logements.order_by(
-            "typologie", "designation"
-        ).all(),
+        "logements": logements,
         "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),

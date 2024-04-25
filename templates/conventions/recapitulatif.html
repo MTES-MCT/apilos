@@ -49,7 +49,6 @@
                 {% endif %}
                 {% if convention.is_denonciation %}
                     {% include "conventions/recapitulatif/denonciation.html"  with target_url='conventions:denonciation' %}
-                    {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
                 {% elif convention.is_resiliation %}
                     {% if request.user.is_instructeur_departemental %}
                         {% include "conventions/recapitulatif/resiliation.html"  with target_url='conventions:resiliation' %}
