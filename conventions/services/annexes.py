@@ -1,3 +1,5 @@
+import logging
+
 from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
@@ -107,89 +109,72 @@ class ConventionAnnexesService(ConventionService):
         lot.save()
 
     def _annexes_atomic_update(self):
-        self.form = LotAnnexeForm(
-            {
-                "uuid": self.convention.lot.uuid,
-                **utils.build_partial_form(
-                    self.request,
-                    self.convention.lot,
-                    [
-                        "annexe_caves",
-                        "annexe_soussols",
-                        "annexe_remises",
-                        "annexe_ateliers",
-                        "annexe_sechoirs",
-                        "annexe_celliers",
-                        "annexe_resserres",
-                        "annexe_combles",
-                        "annexe_balcons",
-                        "annexe_loggias",
-                        "annexe_terrasses",
-                    ],
-                ),
-            }
-        )
+        post_data = self.request.POST.copy()
+        post_data.update({"uuid": str(self.convention.lot.uuid)})
+        self.form = LotAnnexeForm(post_data)
         form_is_valid = self.form.is_valid()
 
         self.formset = AnnexeFormSet(self.request.POST)
-        initformset = {
-            "form-TOTAL_FORMS": self.request.POST.get(
-                "form-TOTAL_FORMS", len(self.formset)
-            ),
-            "form-INITIAL_FORMS": self.request.POST.get(
-                "form-INITIAL_FORMS", len(self.formset)
-            ),
-        }
-        for idx, form_annexe in enumerate(self.formset):
-            if form_annexe["uuid"].value():
-                annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
-                initformset = {
-                    **initformset,
-                    f"form-{idx}-uuid": annexe.uuid,
-                    f"form-{idx}-typologie": utils.get_form_value(
-                        form_annexe, annexe, "typologie"
-                    ),
-                    f"form-{idx}-logement_designation": (
-                        form_annexe["logement_designation"].value()
-                        if form_annexe["logement_designation"].value() is not None
-                        else annexe.logement.designation
-                    ),
-                    f"form-{idx}-logement_typologie": (
-                        form_annexe["logement_typologie"].value()
-                        if form_annexe["logement_typologie"].value() is not None
-                        else annexe.logement.typologie
-                    ),
-                    f"form-{idx}-surface_hors_surface_retenue": utils.get_form_value(
-                        form_annexe, annexe, "surface_hors_surface_retenue"
-                    ),
-                    f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
-                        form_annexe, annexe, "loyer_par_metre_carre"
-                    ),
-                    f"form-{idx}-loyer": utils.get_form_value(
-                        form_annexe, annexe, "loyer"
-                    ),
-                }
-            else:
-                initformset = {
-                    **initformset,
-                    f"form-{idx}-typologie": form_annexe["typologie"].value(),
-                    f"form-{idx}-logement_designation": form_annexe[
-                        "logement_designation"
-                    ].value(),
-                    f"form-{idx}-logement_typologie": form_annexe[
-                        "logement_typologie"
-                    ].value(),
-                    f"form-{idx}-surface_hors_surface_retenue": form_annexe[
-                        "surface_hors_surface_retenue"
-                    ].value(),
-                    f"form-{idx}-loyer_par_metre_carre": form_annexe[
-                        "loyer_par_metre_carre"
-                    ].value(),
-                    f"form-{idx}-loyer": form_annexe["loyer"].value(),
-                }
-        self.formset = AnnexeFormSet(initformset)
+        # initformset = {
+        #     "form-TOTAL_FORMS": self.request.POST.get(
+        #         "form-TOTAL_FORMS", len(self.formset)
+        #     ),
+        #     "form-INITIAL_FORMS": self.request.POST.get(
+        #         "form-INITIAL_FORMS", len(self.formset)
+        #     ),
+        # }
+        # for idx, form_annexe in enumerate(self.formset):
+        #     if form_annexe["uuid"].value():
+        #         annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
+        #         initformset = {
+        #             **initformset,
+        #             f"form-{idx}-uuid": annexe.uuid,
+        #             f"form-{idx}-typologie": utils.get_form_value(
+        #                 form_annexe, annexe, "typologie"
+        #             ),
+        #             f"form-{idx}-logement_designation": (
+        #                 form_annexe["logement_designation"].value()
+        #                 if form_annexe["logement_designation"].value() is not None
+        #                 else annexe.logement.designation
+        #             ),
+        #             f"form-{idx}-logement_typologie": (
+        #                 form_annexe["logement_typologie"].value()
+        #                 if form_annexe["logement_typologie"].value() is not None
+        #                 else annexe.logement.typologie
+        #             ),
+        #             f"form-{idx}-surface_hors_surface_retenue": utils.get_form_value(
+        #                 form_annexe, annexe, "surface_hors_surface_retenue"
+        #             ),
+        #             f"form-{idx}-loyer_par_metre_carre": utils.get_form_value(
+        #                 form_annexe, annexe, "loyer_par_metre_carre"
+        #             ),
+        #             f"form-{idx}-loyer": utils.get_form_value(
+        #                 form_annexe, annexe, "loyer"
+        #             ),
+        #         }
+        #     else:
+        #         initformset = {
+        #             **initformset,
+        #             f"form-{idx}-typologie": form_annexe["typologie"].value(),
+        #             f"form-{idx}-logement_designation": form_annexe[
+        #                 "logement_designation"
+        #             ].value(),
+        #             f"form-{idx}-logement_typologie": form_annexe[
+        #                 "logement_typologie"
+        #             ].value(),
+        #             f"form-{idx}-surface_hors_surface_retenue": form_annexe[
+        #                 "surface_hors_surface_retenue"
+        #             ].value(),
+        #             f"form-{idx}-loyer_par_metre_carre": form_annexe[
+        #                 "loyer_par_metre_carre"
+        #             ].value(),
+        #             f"form-{idx}-loyer": form_annexe["loyer"].value(),
+        #         }
+        # self.formset = AnnexeFormSet(initformset)
         self.formset.convention = self.convention
         formset_is_valid = self.formset.is_valid()
+        logging.warning(f"formset_is_valid: {formset_is_valid}")
+        logging.warning(f"form_is_valid: {form_is_valid}")
 
         if form_is_valid and formset_is_valid:
             self._save_lot_annexes()

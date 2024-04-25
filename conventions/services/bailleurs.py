@@ -178,54 +178,11 @@ class ConventionBailleurService(ConventionService):
             )
 
     def _bailleur_atomic_update(self):
-        bailleur = self.convention.programme.bailleur
-        self.form = ConventionBailleurForm(
-            {
-                # FIXME : uuid needed ?
-                "uuid": bailleur.uuid,
-                "signataire_nom": self.request.POST.get(
-                    "signataire_nom",
-                    self.convention.signataire_nom or bailleur.signataire_nom,
-                ),
-                "signataire_fonction": self.request.POST.get(
-                    "signataire_fonction",
-                    self.convention.signataire_fonction or bailleur.signataire_fonction,
-                ),
-                "signataire_date_deliberation": self.request.POST.get(
-                    "signataire_date_deliberation",
-                    self.convention.signataire_date_deliberation
-                    or bailleur.signataire_date_deliberation,
-                ),
-                "signataire_bloc_signature": self.request.POST.get(
-                    "signataire_bloc_signature",
-                    self.convention.signataire_bloc_signature
-                    or bailleur.signataire_bloc_signature,
-                ),
-                "gestionnaire": self.request.POST.get(
-                    "gestionnaire", self.convention.gestionnaire
-                ),
-                "gestionnaire_signataire_nom": self.request.POST.get(
-                    "gestionnaire_signataire_nom",
-                    self.convention.gestionnaire_signataire_nom,
-                ),
-                "gestionnaire_signataire_fonction": self.request.POST.get(
-                    "gestionnaire_signataire_fonction",
-                    self.convention.gestionnaire_signataire_fonction,
-                ),
-                "gestionnaire_signataire_date_deliberation": self.request.POST.get(
-                    "gestionnaire_signataire_date_deliberation",
-                    self.convention.gestionnaire_signataire_date_deliberation,
-                ),
-                "gestionnaire_signataire_bloc_signature": self.request.POST.get(
-                    "gestionnaire_signataire_bloc_signature",
-                    self.convention.gestionnaire_signataire_bloc_signature,
-                ),
-                "gestionnaire_bloc_info_complementaire": self.request.POST.get(
-                    "gestionnaire_bloc_info_complementaire",
-                    self.convention.gestionnaire_bloc_info_complementaire,
-                ),
-            },
-        )
+        # bailleur = self.convention.programme.bailleur
+        # FIXME : uuid needed ?
+        # post_data = self.request.POST.copy()
+        # post_data.update({"uuid": str(bailleur.uuid)})
+        self.form = ConventionBailleurForm(self.request.POST)
 
         if self.form.is_valid():
             self._save_convention_signataire()

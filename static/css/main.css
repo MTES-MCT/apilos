@@ -1116,3 +1116,8 @@ table .apilos-badge {
   width: fit-content;
   margin: auto;
 }
+
+.fr-input:read-only, .fr-select:read-only, .fr-checkbox-group input:read-only {
+  box-shadow: inset 0 -2px 0 0 var(--border-disabled-grey);
+  color: var(--text-disabled-grey);
+}

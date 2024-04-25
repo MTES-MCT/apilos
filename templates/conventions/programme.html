@@ -28,7 +28,7 @@
                         {% else %}
                             <div class="fr-mt-1w block--row-strech">
                                 <div class="fr-checkbox-group block--row-strech-1">
-                                    <input type="checkbox" disabled>
+                                    <input type="checkbox" readonly>
                                     <label class="fr-label">L'opération bénéficie d'un financement <strong class="fr-ml-1w"> ANRU</strong></label>
                                 </div>
                             </div>
@@ -47,7 +47,7 @@
                                 {% else %}
                                     <label class="fr-label">Code Postal</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_code_postal_div" >
-                                        <input class="fr-input" disabled value="{{convention.programme.code_postal}}"></input>
+                                        <input class="fr-input" readonly value="{{convention.programme.code_postal}}"></input>
                                     </div>
                                 {% endif %}
                             </div>
@@ -57,7 +57,7 @@
                                 {% else %}
                                     <label class="fr-label">Ville</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_ville_div" >
-                                        <input class="fr-input" disabled value="{{convention.programme.ville}}"></input>
+                                        <input class="fr-input" readonly value="{{convention.programme.ville}}"></input>
                                     </div>
                                 {% endif %}
                             </div>
