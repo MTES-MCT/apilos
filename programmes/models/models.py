@@ -36,21 +36,6 @@ class Programme(models.Model):
             GinIndex(fields=["search_vector"], name="search_vector_programme_idx"),
         ]
 
-    pivot = ["bailleur", "nom", "ville"]
-    mapping = {
-        "nom": "Nom Opération",
-        "code_postal": "Opération code postal",
-        "ville": "Commune",
-        "adresse": "Adresse Opération 1",
-        "zone_123": "Zone 123",
-        "zone_abc": "Zone ABC",
-        "surface_utile_totale": "SU totale",
-        "annee_gestion_programmation": "Année Programmation retenue",
-        "numero_operation": "N° Opération GALION",
-        "bailleur": "MOA (code SIRET)",
-        "administration": "Gestionnaire (code)",
-    }
-
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
         "self",
@@ -407,14 +392,6 @@ class RepartitionSurface(models.Model):
 
 
 class Lot(models.Model):
-    pivot = ["financement", "programme", "type_habitat"]
-    mapping = {
-        "financement": "Produit",
-        "programme": "Nom Opération",
-        "nb_logements": "Nb logts",
-        "type_habitat": "Type d'habitat",
-    }
-
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
         "self",
@@ -840,14 +817,6 @@ class LocauxCollectifs(models.Model):
 
 
 class TypeStationnement(models.Model):
-    pivot = ["typologie", "lot"]
-    mapping = {
-        "typologie": "Typologie Garage",
-        "nb_stationnements": "Nb Stationnement",
-        "loyer": "Loyer",
-        "lot": "Produit",
-    }
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     lot = models.ForeignKey(

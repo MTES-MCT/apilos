@@ -80,16 +80,6 @@ class BailleurManager(models.Manager):
 class Bailleur(models.Model):
     objects = BailleurManager()
 
-    pivot = "siret"
-    mapping = {
-        "nom": "MOA (nom officiel)",
-        "siret": "MOA (code SIRET)",
-        "adresse": "MOA Adresse 1",
-        "code_postal": "MOA Code postal",
-        "ville": "MOA Ville",
-        # "sous_nature_bailleur": "Famille MOA", -> doesn't exists in the last version of file
-    }
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(
         primary_key=False, unique=True, default=uuid.uuid4, editable=False

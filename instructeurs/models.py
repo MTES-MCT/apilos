@@ -17,12 +17,6 @@ class AdministrateurManager(models.Manager):
 class Administration(models.Model):
     objects = AdministrateurManager()
 
-    pivot = "code"
-    mapping = {
-        "nom": "Gestionnaire",
-        "code": "Gestionnaire (code)",
-    }
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(primary_key=False, default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
