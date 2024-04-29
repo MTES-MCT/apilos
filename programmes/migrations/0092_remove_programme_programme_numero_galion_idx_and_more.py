@@ -6,7 +6,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("programmes", "0091_programme_reassign_command_old_admin_backup"),
+        (
+            "programmes",
+            "0001_initial_squashed_0091_programme_reassign_command_old_admin_backup",
+        ),
     ]
 
     operations = [
