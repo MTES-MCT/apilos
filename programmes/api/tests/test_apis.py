@@ -169,7 +169,7 @@ class OperationDetailsAPITest(APITestCase):
         user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
-        user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        user.cerbere_login = "my.name@beta.gouv.fr"
         user.save()
 
     def test_get_operation_unauthorized(self):
@@ -184,9 +184,7 @@ class OperationDetailsAPITest(APITestCase):
 
     def test_get_operation(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -224,9 +222,7 @@ class OperationDetailsAPITest(APITestCase):
 
     def test_post_operation_convention(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         self.assertEqual(
@@ -266,7 +262,7 @@ class OperationClosedAPITest(APITestCase):
         user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
-        user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        user.cerbere_login = "my.name@beta.gouv.fr"
         user.save()
 
     def test_get_operation_unauthorized(self):
@@ -281,9 +277,7 @@ class OperationClosedAPITest(APITestCase):
 
     def test_get_operation(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -453,9 +447,7 @@ class OperationClosedAPITest(APITestCase):
             statut=ConventionStatut.SIGNEE.label
         )
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -620,14 +612,12 @@ class OperationClosedAPITest(APITestCase):
         Convention.objects.filter(numero__in=["0001", "0002"]).update(
             statut=ConventionStatut.SIGNEE.label
         )
-        user = User.objects.get(cerbere_login="nicolas.oudard@beta.gouv.fr")
+        user = User.objects.get(cerbere_login="my.name@beta.gouv.fr")
         convention1 = Convention.objects.get(numero="0001")
         avenant1 = convention1.clone(user, convention_origin=convention1)
 
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.get("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -795,9 +785,7 @@ class OperationClosedAPITest(APITestCase):
 
     def test_post_operation(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
         response = client.post("/api-siap/v0/close_operation/20220600005/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -839,7 +827,7 @@ class OperationCanceledAPITest(APITestCase):
         self.user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
-        self.user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        self.user.cerbere_login = "my.name@beta.gouv.fr"
         self.user.save()
 
     def test_cancel_operation_unauthorized(self):
@@ -854,9 +842,7 @@ class OperationCanceledAPITest(APITestCase):
 
     def test_cancel_operation_in_instruction(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         convention1 = Convention.objects.get(numero="0001")
@@ -895,9 +881,7 @@ class OperationCanceledAPITest(APITestCase):
 
     def test_cancel_operation_in_signed(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         convention1 = Convention.objects.get(numero="0001")
@@ -920,9 +904,7 @@ class OperationCanceledAPITest(APITestCase):
 
     def test_cancel_operation_with_avenant(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         convention1 = Convention.objects.get(numero="0001")
@@ -951,9 +933,7 @@ class OperationCanceledAPITest(APITestCase):
 
     def test_cancel_operation_with_denonciated(self):
         client = APIClient()
-        accesstoken = build_jwt(
-            user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=5
-        )
+        accesstoken = build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=5)
         client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
 
         convention1 = Convention.objects.get(numero="0001")
