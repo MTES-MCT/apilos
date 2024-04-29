@@ -175,3 +175,11 @@ class TypologieStationnement(models.TextChoices):
     DEUX_ROUES_SOUSSOL = "DEUX_ROUES_SOUSSOL", "2 roues en sous-sol"
     DOUBLE_SOUSSOL = "DOUBLE_SOUSSOL", "Parking double en sous-sol"
     DOUBLE_SUPERSTRUCTURE = "DOUBLE_SUPERSTRUCTURE", "Parking double en superstructure"
+    INDIVIDUEL_JUMELES_PAR_2 = (
+        "INDIVIDUEL_JUMELES_PAR_2",
+        "Garages individuels jumelés par blocs de 2",
+    )
+    PLACE_PARKING_ACCOLEE = (
+        "PLACE_PARKING_ACCOLEE",
+        "Place de parking accolée à chaque garage",
+    )
