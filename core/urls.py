@@ -23,7 +23,7 @@ from django.urls import include, path
 from django.views.generic import TemplateView
 
 from core.sitemaps import SITEMAPS
-from core.views import SecurePasswordResetConfirmView
+from core.views import ContactView, SecurePasswordResetConfirmView
 
 urlpatterns = [
     path("admin/doc/", include("django.contrib.admindocs.urls")),
@@ -63,6 +63,7 @@ urlpatterns = [
         "api-siap/v0/", include(("api.siap.v0.urls", "api-siap"), namespace="api-siap")
     ),
     path("explorer/", include("explorer.urls")),
+    path("contact/", ContactView.as_view(), name="contact"),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 if settings.CERBERE_AUTH:

@@ -1,0 +1,58 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% block page_title %}APiLos, la plateforme de conventionnement des logements sociaux{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        <div class="fr-container">
+            <div class="fr-grid-row fr-grid-row--gutters fr-pt-6w">
+                <div class="fr-col-lg-6 fr-col-offset-lg-1 fr-mb-2w">
+                    {% include "layout/teasers/main_presentation.html" %}
+                </div>
+                <div class="fr-col-12 fr-col-lg-5 fr-pl-0 fr-pl-md-4w">
+                    <figure class="fr-content-media fr-my-0">
+                        <img src="{% static "img/accueil.jpg" %}" class="content__homepage-image">
+                    </figure>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="fr-grid-row fr-col-xs-10 fr-col-7 fr-my-7w">
+    <div class="fr-container">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <h2 class="fr-mb-3w">Comment ça marche ?</h2>
+            <div class="fr-container">
+                <div class="fr-mb-3w">
+                    <h3><span class="fr-icon-community-line fr-icon--xxl" aria-hidden="true"></span>&nbsp;Côté bailleur</h3>
+                    <ul>
+                        <li>Récupérez les informations de l’agrément de financement</li>
+                        <li>Validez ou modifiez les informations déjà connues par l’Etat</li>
+                        <li>Déposez en ligne vos documents</li>
+                        <li>Transmettez le projet de convention aux services instructeurs</li>
+                        <li>Intégrez les modifications demandées par l'instructeur</li>
+                    </ul>
+                </div>
+                <div class="fr-mb-3w">
+                    <h3><span class="fr-icon-draft-line" aria-hidden="true"></span>&nbsp;Côté instructeur</h3>
+                    <ul>
+                        <li>Suivez en temps réel l'état d'avancement des projets de convention</li>
+                        <li>Instruisez uniquement les champs remplis par le bailleur</li>
+                        <li>Echangez avec les bailleurs via la plateforme</li>
+                        <li>Générez la convention APL au format Cerfa en 1 clic</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <h3>Prenez contact avec l'équipe APiLos</h3>
+        <form method="POST" class="fr-mb-3w">
+            {% csrf_token %}
+            {% include "common/form/input_text.html" with form_input=form.name editable=True %}
+            {% include "common/form/input_text.html" with form_input=form.email editable=True %}
+            {% include "common/form/input_text.html" with form_input=form.subject editable=True %}
+            {% include "common/form/input_textarea.html" with form_input=form.message editable=True %}
+            <button type="submit" class="fr-btn">Envoyer</button>
+        </form>
+    </div>
+{% endblock %}
