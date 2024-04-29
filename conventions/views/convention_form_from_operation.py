@@ -1,6 +1,7 @@
 from typing import Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -85,6 +86,11 @@ class AddConventionView(
         if request.method == "POST":
             save_status = service.save()
             if save_status == utils.ReturnStatus.SUCCESS and service.convention:
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    f"La convention {str(service.convention)} a bien été ajoutée dans Apilos !",
+                )
                 return HttpResponseRedirect(
                     reverse(
                         "conventions:from_operation_add_avenants",
