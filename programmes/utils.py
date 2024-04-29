@@ -11,7 +11,9 @@ def diff_programme_duplication(
 
     diff = defaultdict(list)
 
-    qs = Programme.objects.filter(parent__isnull=True, numero_galion=numero_operation)
+    qs = Programme.objects.filter(
+        parent__isnull=True, numero_operation=numero_operation
+    )
     for prog in qs.all():
         for f in field_names:
             value = getattr(prog, f, None)

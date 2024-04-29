@@ -128,7 +128,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
     # If the cast fail, we order by designation as a string
     try:
         with transaction.atomic():
-            logements = list(
+            logements = (
                 convention.lot.logements.all()
                 .annotate(
                     int_designation=Cast(
@@ -144,10 +144,10 @@ def generate_convention_doc(convention: Convention, save_data=False):
                 )
                 .order_by("typologie", "int_designation")
             )
+            # Force queryset execution
+            list(logements)
     except DataError:
-        logements = list(
-            convention.lot.logements.all().order_by("typologie", "designation")
-        )
+        logements = convention.lot.logements.all().order_by("typologie", "designation")
 
     context = {
         **avenant_data,

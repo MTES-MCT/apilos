@@ -100,7 +100,7 @@ class OperationVersionSerializer(serializers.HyperlinkedModelSerializer):
             "code_postal",
             "ville",
             "adresse",
-            "numero_galion",
+            "numero_operation",
             "zone_123",
             "zone_abc",
             "type_operation",
@@ -149,7 +149,7 @@ class OperationSerializer(serializers.HyperlinkedModelSerializer):
             "code_postal",
             "ville",
             "adresse",
-            "numero_galion",
+            "numero_operation",
             "zone_123",
             "zone_abc",
             "type_operation",
@@ -186,7 +186,7 @@ class OperationInfoSIAPSerializer(serializers.ModelSerializer):
             "code_postal",
             "ville",
             "adresse",
-            "numero_galion",
+            "numero_operation",
             "zone_123",
             "zone_abc",
             "type_operation",
@@ -217,6 +217,8 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
     prets = PretSerializer(many=True)
 
+    # ajout de la date de signature de la convention mère
+    # vérifier si le numéro de la convention est le numéro de la convention mère
     class Meta:
         model = Convention
         fields = (

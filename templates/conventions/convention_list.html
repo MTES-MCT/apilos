@@ -127,13 +127,13 @@
                                                     <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{convention|display_kind_with_numero|capfirst}}</span>
                                                 {% endif %}
                                             </div>
-                                            {% if convention.programme.numero_galion %}
+                                            {% if convention.programme.numero_operation %}
                                                 <div>
                                                     <em data-test-role="programme-galion-cell">
                                                         {% if new_search %}
-                                                            Op. : {{convention.programme.numero_galion|highlight_if_match:search_numero}}
+                                                            Op. : {{convention.programme.numero_operation|highlight_if_match:search_numero}}
                                                         {% else %}
-                                                            Op. : {{convention.programme.numero_galion|highlight:search_input}}
+                                                            Op. : {{convention.programme.numero_operation|highlight:search_input}}
                                                         {% endif %}
                                                     </em>
                                                 </div>

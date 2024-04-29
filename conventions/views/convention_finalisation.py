@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.urls import reverse
@@ -20,11 +22,18 @@ class FinalisationBase(WaffleFlagMixin, TemplateView):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.stepper = Stepper(
+        self.convention_stepper = Stepper(
             steps=[
                 "Valider le numéro de la convention",
                 "Vérifier le document CERFA",
                 "Valider et envoyer la convention pour signature",
+            ]
+        )
+        self.avenant_stepper = Stepper(
+            steps=[
+                "Valider le numéro de l'avenant",
+                "Vérifier le document CERFA",
+                "Valider et envoyer l'avenant pour signature",
             ]
         )
 
@@ -36,7 +45,15 @@ class FinalisationBase(WaffleFlagMixin, TemplateView):
 
         context = super().get_context_data(**kwargs)
         context["convention"] = service.convention
-        context["form_step"] = self.stepper.get_form_step(step_number=self.step_number)
+        if service.convention.is_avenant():
+            context["form_step"] = self.avenant_stepper.get_form_step(
+                step_number=self.step_number
+            )
+        else:
+            context["form_step"] = self.convention_stepper.get_form_step(
+                step_number=self.step_number
+            )
+
         if hasattr(service, "form"):
             context["form"] = service.form
         return context
@@ -62,6 +79,14 @@ class FinalisationNumero(FinalisationBase):
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context=context)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        if context["convention"].is_avenant():
+            context["numero_default"] = context[
+                "convention"
+            ].get_default_convention_number()
+        return context
+
 
 class FinalisationCerfa(FinalisationBase):
     template_name = "conventions/finalisation/cerfa.html"
@@ -82,6 +107,17 @@ class FinalisationCerfa(FinalisationBase):
 
         context = self.get_context_data(**kwargs)
         return self.render_to_response(context=context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        fichier_cerfa = context["convention"].fichier_override_cerfa
+        if fichier_cerfa and fichier_cerfa != "{}":
+            files_dict = json.loads(fichier_cerfa)
+            files = list(files_dict["files"].values())
+            context["cerfa_expanded"] = "true" if len(files) > 0 else "false"
+        else:
+            context["cerfa_expanded"] = "false"
+        return context
 
 
 class FinalisationValidation(FinalisationBase):

@@ -1,4 +1,6 @@
+import pytest
 from django.conf import settings
+from django.core.management import call_command
 from django.db.models.functions import Substr
 from django.test import TestCase
 from django.test.client import RequestFactory
@@ -566,8 +568,13 @@ def _create_bailleur_and_user(group):
     return bailleur, user
 
 
+@pytest.fixture
+def load_avenant_types(db):
+    call_command("loaddata", "avenant_types.json")
+
+
 @override_switch(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR, active=True)
-def test_conventions_visibility_bailleur_avenant(db):
+def test_conventions_visibility_bailleur_avenant(db, load_avenant_types):
     # Create three bailleurs
     super_user = UserFactory(is_staff=True, is_superuser=True)
     group = GroupFactory(name="Bailleur", rw=[])

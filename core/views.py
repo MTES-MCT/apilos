@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.contrib import messages
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import (
@@ -7,7 +8,11 @@ from django.contrib.auth.views import (
     PasswordContextMixin,
     PasswordResetConfirmView,
 )
+from django.core.mail import EmailMultiAlternatives
 from django.http import HttpRequest
+from django.views.generic.edit import FormView
+
+from core.forms import ContactForm
 
 
 class SecurePasswordResetConfirmView(PasswordResetConfirmView):
@@ -37,3 +42,28 @@ class SetupLoginRequiredMixin(LoginRequiredMixin):
 
     def logged_in_setup(self, request: HttpRequest, *args: Any, **kwargs: Any) -> None:
         pass
+
+
+class ContactView(FormView):
+    form_class = ContactForm
+    template_name = "contact.html"
+    success_url = "/contact/"
+
+    def form_valid(self, form):
+
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Votre message a été envoyé avec succès",
+        )
+        EmailMultiAlternatives(
+            from_email=form.cleaned_data["email"],
+            to=["contact@apilos.beta.gouv.fr"],
+            subject=form.cleaned_data["subject"],
+            body=(
+                "MESSAGE LAISSÉ SUR L'INTERFACE <i>contact</i> D'APILOS<br><br>"
+                f'DE: {form.cleaned_data["name"]}<br>'
+                f'<br>MESSAGE: <br>{form.cleaned_data["message"]}'
+            ),
+        ).send()
+        return super().form_valid(form)

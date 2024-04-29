@@ -51,8 +51,8 @@ class ConventionRecapitulatifServiceTests(TestCase):
 
         self.assertIsInstance(result["programmeNumberForm"], ProgrammeNumberForm)
         self.assertEqual(
-            result["programmeNumberForm"].initial["numero_galion"],
-            self.service.convention.programme.numero_galion,
+            result["programmeNumberForm"].initial["numero_operation"],
+            self.service.convention.programme.numero_operation,
         )
 
     def test_get_convention_recapitulatif_incompleted_avenant_parent(self):
@@ -102,22 +102,22 @@ class ConventionRecapitulatifServiceTests(TestCase):
 
     def test_update_programme_number_success(self):
         self.service.request.POST = {
-            "numero_galion": "0" * 255,
+            "numero_operation": "0" * 255,
             "update_programme_number": "1",
         }
         self.service.update_programme_number()
 
         self.convention.programme.refresh_from_db()
-        self.assertEqual(self.convention.programme.numero_galion, "0" * 255)
+        self.assertEqual(self.convention.programme.numero_operation, "0" * 255)
 
     def test_update_programme_number_failed(self):
         self.service.request.POST = {
-            "numero_galion": "0" * 256,
+            "numero_operation": "0" * 256,
             "update_programme_number": "1",
         }
         result = self.service.update_programme_number()
 
-        self.assertFalse(result["conventionNumberForm"].has_error("numero_galion"))
+        self.assertFalse(result["conventionNumberForm"].has_error("numero_operation"))
 
     def test_updateconvention_number_success(self):
         self.service.request.POST = {
@@ -174,26 +174,26 @@ class AvenantRecapitulatifServiceTests(TestCase):
 
     def test_update_avenant_number_success(self):
         self.service.request.POST = {
-            "numero_galion": "a" * 255,
+            "numero_operation": "a" * 255,
             "update_programme_number": "1",
         }
         self.service.update_programme_number()
         self.convention1.refresh_from_db()
 
-        self.assertEqual(self.avenant1.programme.numero_galion, "a" * 255)
-        self.assertEqual(self.convention1.programme.numero_galion, "a" * 255)
+        self.assertEqual(self.avenant1.programme.numero_operation, "a" * 255)
+        self.assertEqual(self.convention1.programme.numero_operation, "a" * 255)
 
     def test_update_convention_number_success(self):
         self.service.convention = self.convention1
         self.service.request.POST = {
-            "numero_galion": "b" * 255,
+            "numero_operation": "b" * 255,
             "update_programme_number": "1",
         }
         self.service.update_programme_number()
         self.avenant1.refresh_from_db()
 
-        self.assertEqual(self.convention1.programme.numero_galion, "b" * 255)
-        self.assertEqual(self.avenant1.programme.numero_galion, "b" * 255)
+        self.assertEqual(self.convention1.programme.numero_operation, "b" * 255)
+        self.assertEqual(self.avenant1.programme.numero_operation, "b" * 255)
 
     def test_convention_denonciation_validate(self):
         self.avenant1.date_denonciation = date(2022, 12, 31)

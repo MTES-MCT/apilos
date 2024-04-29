@@ -57,7 +57,7 @@ class Command(BaseCommand):
         self.stdout.write(f"{programmes_count} programmes will be updated:")
         if programmes_count < 10:
             for p in programmes:
-                self.stdout.write(f"    - {p.nom} - {p.numero_galion}")
+                self.stdout.write(f"    - {p.nom} - {p.numero_operation}")
         self.stdout.write("--------------------------")
         conventions_count = conventions.count()
         self.stdout.write(f"{conventions_count} conventions will be impacted:")

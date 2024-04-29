@@ -2695,7 +2695,7 @@
             stroke-linecap="square" stroke-miterlimit="10" pointer-events="none" />
         <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none"
             clip-path="url(#mx-clip-876-750-284-30-0)" font-size="12px">
-            <text x="877.5" y="769.5">numero_galion character varying(255)</text>
+            <text x="877.5" y="769.5">numero_operation character varying(255)</text>
         </g>
         <path d="M 840 780 M 870 780 M 870 810 M 840 810" fill="none" stroke="rgb(0, 0, 0)"
             stroke-linecap="square" stroke-miterlimit="10" pointer-events="none" />

@@ -31,7 +31,7 @@ class Command(BaseCommand):
         for programme in programmes:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f" - {str(programme.uuid)} - {programme.nom} - {programme.numero_galion} - {programme.cree_le}"
+                    f" - {str(programme.uuid)} - {programme.nom} - {programme.numero_operation} - {programme.cree_le}"
                 )
             )
 

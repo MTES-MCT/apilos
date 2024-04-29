@@ -26,28 +26,15 @@ from .choices import (
 class Programme(models.Model):
     class Meta:
         indexes = [
-            models.Index(fields=["numero_galion"], name="programme_numero_galion_idx"),
+            models.Index(
+                fields=["numero_operation"], name="programme_numero_operation_idx"
+            ),
             models.Index(fields=["ville"], name="programme_ville_idx"),
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
             GinIndex(fields=["search_vector"], name="search_vector_programme_idx"),
         ]
-
-    pivot = ["bailleur", "nom", "ville"]
-    mapping = {
-        "nom": "Nom Opération",
-        "code_postal": "Opération code postal",
-        "ville": "Commune",
-        "adresse": "Adresse Opération 1",
-        "zone_123": "Zone 123",
-        "zone_abc": "Zone ABC",
-        "surface_utile_totale": "SU totale",
-        "annee_gestion_programmation": "Année Programmation retenue",
-        "numero_galion": "N° Opération GALION",
-        "bailleur": "MOA (code SIRET)",
-        "administration": "Gestionnaire (code)",
-    }
 
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
@@ -57,7 +44,7 @@ class Programme(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
-    numero_galion = models.CharField(max_length=255, null=True)
+    numero_operation = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur",
         on_delete=models.CASCADE,
@@ -190,7 +177,7 @@ class Programme(models.Model):
         return [
             convention
             for programme in Programme.objects.filter(
-                numero_galion=self.numero_galion
+                numero_operation=self.numero_operation
             ).all()
             for convention in programme.conventions.all()
         ]
@@ -405,14 +392,6 @@ class RepartitionSurface(models.Model):
 
 
 class Lot(models.Model):
-    pivot = ["financement", "programme", "type_habitat"]
-    mapping = {
-        "financement": "Produit",
-        "programme": "Nom Opération",
-        "nb_logements": "Nb logts",
-        "type_habitat": "Type d'habitat",
-    }
-
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
         "self",
@@ -838,14 +817,6 @@ class LocauxCollectifs(models.Model):
 
 
 class TypeStationnement(models.Model):
-    pivot = ["typologie", "lot"]
-    mapping = {
-        "typologie": "Typologie Garage",
-        "nb_stationnements": "Nb Stationnement",
-        "loyer": "Loyer",
-        "lot": "Produit",
-    }
-
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     lot = models.ForeignKey(
