@@ -182,7 +182,6 @@ Quelques informations complémentaires:
 * L'installation de Metabase nécessite une base de données accessible en écriture. Nous avons doc fait le choix de créer une DB dédié à Métabase comme addon du projet `apilos-metabase-prod` sur scalingo, celle-ci sert à l'administration de Metabase, les infomations de connection à la base de données sont accessible sur scalingo e interprétant la variable d'environnement SCALINGO_POSTGRESQL_URL
 * La base de données APiLos est configurée dans l'administration de Metabase et a un accès en Lecture seule
 * Les données stockées par Metabase sont cryptées grâce à la variable d'environnement MB_ENCRYPTION_SECRET_KEY
-* les données SMTP sont celles du compte email de nicolas.oudard@beta.gouv.fr
 
 Metabase est accessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/](https://apilos-metabase-prod.osc-fr1.scalingo.io/)
 

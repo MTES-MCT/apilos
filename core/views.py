@@ -58,8 +58,7 @@ class ContactView(FormView):
         )
         EmailMultiAlternatives(
             from_email=form.cleaned_data["email"],
-            #            to=["contact@apilos.beta.gouv.fr"],
-            to=["nicolas@oudard.org"],
+            to=["contact@apilos.beta.gouv.fr"],
             subject=form.cleaned_data["subject"],
             body=(
                 "MESSAGE LAISSÉ SUR L'INTERFACE <i>contact</i> D'APILOS<br><br>"
