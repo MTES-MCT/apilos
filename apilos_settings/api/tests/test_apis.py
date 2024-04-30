@@ -24,7 +24,7 @@ class ConfigurationAPITest(APITestCase):
         user = User.objects.create_superuser(
             "super.user", "super.user@apilos.com", "12345"
         )
-        user.cerbere_login = "nicolas.oudard@beta.gouv.fr"
+        user.cerbere_login = "my.name@beta.gouv.fr"
         user.save()
 
     def test_get_config_route(self):

@@ -31,7 +31,8 @@ class CreateConventionMinForm(forms.Form):
     administration = forms.ChoiceField(
         label="Administration",
         choices=[],
-        help_text="Délégataire des aides à la pierre du territoire de l'opération",
+        help_text="L’administration est l’administration État soit les DDI.<br>"
+        "Ne pas prendre l’administration <i>ANAH</i> ou <i>ANRU</i>.",
         error_messages={
             "required": "L'administration est obligatoire",
         },
@@ -95,7 +96,7 @@ class NewConventionForm(CreateConventionMinForm):
     Formulaire de création d'un programme/lot/convention à partir de zéro
     """
 
-    numero_galion = forms.CharField(
+    numero_operation = forms.CharField(
         label="N° de décision de financement",
         required=True,
         max_length=255,

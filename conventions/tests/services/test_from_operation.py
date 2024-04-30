@@ -31,7 +31,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
 
         ProgrammeFactory(
             uuid="67062edc-3ee8-4262-965f-98f885d418f4",
-            numero_galion="2017DD01100057",
+            numero_operation="2017DD01100057",
             nom="Programme 1",
             nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
             ville="Bayonne",
@@ -39,7 +39,7 @@ class TestSelectOperationService(PGTrgmTestMixin, ParametrizedTestCase, TestCase
         )
         ProgrammeFactory(
             uuid="7fb89bd6-62f8-4c06-b15a-4fc81bc02995",
-            numero_galion="2017DD01201254",
+            numero_operation="2017DD01201254",
             nom="Programme 3",
             nature_logement=NatureLogement.RESISDENCESOCIALE,
             ville="L'Isle-sur-la-Sorgue",

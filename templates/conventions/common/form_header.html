@@ -51,10 +51,10 @@
                                 <div class="apilos-input-group--inline">
                                     <div class="fr-grid-row fr-mt-2w apilos-text--black">
                                         <div class="fr-pr-2w apilos-separator">{% include "conventions/home/statut_tag.html"  %}</div>
-                                        {% if convention.programme.numero_galion %}
+                                        {% if convention.programme.numero_operation %}
                                             <div class="fr-px-2w fr-text--sm apilos-separator">
-                                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_galion %}?from_convention={{ convention.uuid }}">
-                                                    Opération n°{{convention.programme.numero_galion}}
+                                                <a href="{% url 'programmes:operation_conventions' numero_operation=convention.programme.numero_operation %}?from_convention={{ convention.uuid }}">
+                                                    Opération n°{{convention.programme.numero_operation}}
                                                 </a>
                                             </div>
                                         {% endif %}

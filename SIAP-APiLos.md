@@ -177,7 +177,7 @@ On notera : `champ_siap` (`champ_apilos` details)
     * `codeFamilleMO` (nature du bailleur)
 
 * Les Opérations (opérations financées via le SIAP)
-  * champ pivot : `numeroOperation` (numero_galion)
+  * champ pivot : `numeroOperation` (numero_operation)
   * champs repris lors de la création :
     * `nomOperation` (`nom`)
     * `adresse` interprété des champs d'adresses du SIAP (`adresse`)
@@ -250,7 +250,7 @@ Ouvrir un shell django, pour générer un Token JWT :
 
 ```python
 from siap.siap_client.client import build_jwt
-build_jwt(user_login="nicolas.oudard@beta.gouv.fr", habilitation_id=31)
+build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=31)
 ```
 
 Accéder à l'interface de test : <HOST>/api-siap/v0/schema-ui/#/statistics/convention_kpi_list

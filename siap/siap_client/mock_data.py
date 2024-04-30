@@ -65,7 +65,7 @@ habilitations_mock = {
             "utilisateur": {
                 "nom": "OUDARD",
                 "prenom": "Nicolas",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
             },
             "sousTitre1": "SIREN 782855696",
             "sousTitre2": "Provence-Alpes-Côte d'Azur",
@@ -113,7 +113,7 @@ habilitations_mock = {
             "utilisateur": {
                 "nom": "OUDARD",
                 "prenom": "Nicolas",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
             },
             "sousTitre1": None,
             "sousTitre2": "France entière",
@@ -165,7 +165,7 @@ habilitations_mock = {
             "utilisateur": {
                 "nom": "OUDARD",
                 "prenom": "Nicolas",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
             },
             "sousTitre1": "13055 - Métropole d'Aix-Marseille-Provence",
             "sousTitre2": None,
@@ -214,7 +214,7 @@ habilitations_mock = {
             "utilisateur": {
                 "nom": "OUDARD",
                 "prenom": "Nicolas",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
             },
             "sousTitre1": "Provence-Alpes-Côte d'Azur",
             "sousTitre2": None,
@@ -402,8 +402,8 @@ operation_mock = {
         "email": None,
         "utilisateurs": [
             {
-                "login": "nicolas.oudard@beta.gouv.fr",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "login": "my.name@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
                 "groupes": [
                     {
                         "id": 20,
@@ -654,8 +654,8 @@ operation_mock2 = {
         "email": None,
         "utilisateurs": [
             {
-                "login": "nicolas.oudard@beta.gouv.fr",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "login": "my.name@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
                 "groupes": [
                     {
                         "id": 19,
@@ -717,8 +717,8 @@ operation_mock2 = {
         "email": None,
         "utilisateurs": [
             {
-                "login": "nicolas.oudard@beta.gouv.fr",
-                "email": "nicolas.oudard@beta.gouv.fr",
+                "login": "my.name@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
                 "groupes": [
                     {
                         "id": 19,

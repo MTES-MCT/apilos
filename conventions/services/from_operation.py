@@ -21,9 +21,7 @@ from programmes.models.choices import FinancementEDD
 from programmes.models.models import Lot
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
-from siap.siap_client.utils import (
-    get_or_create_programme_from_siap_operation,
-)
+from siap.siap_client.utils import get_or_create_programme_from_siap_operation
 
 
 @dataclass
@@ -50,7 +48,7 @@ class Operation:
     @classmethod
     def from_apilos_programme(cls, programme: Programme) -> "Operation":
         return cls(
-            numero=programme.numero_galion,
+            numero=programme.numero_operation,
             nom=programme.nom,
             bailleur=programme.bailleur.nom,
             nature=NatureLogement[programme.nature_logement].label,
@@ -98,7 +96,7 @@ class SelectOperationService:
 
     def _get_apilos_operation(self) -> Operation | None:
         qs = self._user_programmes().filter(
-            numero_galion=self.numero_operation, parent_id=None
+            numero_operation=self.numero_operation, parent_id=None
         )
         if qs.count() == 1:
             return Operation.from_apilos_programme(programme=qs.first())
@@ -109,7 +107,7 @@ class SelectOperationService:
             self._user_programmes()
             .annotate(
                 numero_operation_trgrm=TrigramSimilarity(
-                    Replace(Replace("numero_galion", Value("/")), Value("-")),
+                    Replace(Replace("numero_operation", Value("/")), Value("-")),
                     self.numero_operation.replace("-", "").replace("/", ""),
                 )
             )
@@ -148,7 +146,7 @@ class AddConventionService:
 
         programme = (
             Programme.objects.filter(
-                numero_galion=self.operation.numero, parent_id=None
+                numero_operation=self.operation.numero, parent_id=None
             )
             .order_by("-cree_le")
             .first()
@@ -200,7 +198,7 @@ class AddConventionService:
                     )
                 else:
                     programme = Programme.objects.get(
-                        numero_galion=self.operation.numero, parent_id=None
+                        numero_operation=self.operation.numero, parent_id=None
                     )
 
                 lot = self._create_lot(programme=programme)

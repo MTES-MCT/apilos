@@ -48,7 +48,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         self.service.request.POST = {}
         self.service.post_create_convention()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.form.has_error("numero_galion"))
+        self.assertTrue(self.service.form.has_error("numero_operation"))
         self.assertTrue(self.service.form.has_error("bailleur"))
         self.assertTrue(self.service.form.has_error("administration"))
         self.assertTrue(self.service.form.has_error("nom"))
@@ -85,7 +85,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
-            "numero_galion": "123456789",
+            "numero_operation": "123456789",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
@@ -102,7 +102,9 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
                 programme__nom="Programme de test", financement=Financement.PLUS
             ),
         )
-        self.assertEqual(self.service.convention.programme.numero_galion, "123456789")
+        self.assertEqual(
+            self.service.convention.programme.numero_operation, "123456789"
+        )
 
     def test_post_for_avenant_success(self):
         bailleur = Bailleur.objects.get(siret="987654321")
@@ -219,7 +221,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             "bailleur": str(bailleur.uuid),
             "administration": str(administration.uuid),
             "nom": "Programme de test",
-            "numero_galion": "123456789",
+            "numero_operation": "123456789",
             "nb_logements": "10",
             "nature_logement": NatureLogement.LOGEMENTSORDINAIRES,
             "type_habitat": TypeHabitat.MIXTE,
