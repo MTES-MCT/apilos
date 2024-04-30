@@ -1,94 +1,154 @@
+import logging
+import os
 from pathlib import Path
 
-from celery import shared_task
+from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
 from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
 from conventions.services.convention_generator import (
+    PDFConversionError,
     generate_pdf,
     get_files_attached,
     get_or_generate_convention_doc,
+    get_tmp_local_path,
 )
 from conventions.services.file import ConventionFileService
 from core.services import EmailService, EmailTemplateID
 
+logger = logging.getLogger(__name__)
 
-@shared_task()
-def generate_and_send(args):
-    convention_uuid = args["convention_uuid"]
-    convention_url = args["convention_url"]
-    convention_email_validator = args["convention_email_validator"]
 
+@shared_task
+def task_generate_and_send(
+    convention_uuid: str,
+    convention_url: str,
+    convention_email_validator: str,
+):
+    chain(
+        task_generate_pdf.s(convention_uuid),
+        task_send_email_to_bailleur.si(
+            convention_uuid,
+            convention_url,
+            convention_email_validator,
+        ),
+    )()
+
+
+@shared_task(
+    autoretry_for=(PDFConversionError,),
+    retry_kwargs={"max_retries": 3},
+    retry_backoff=True,
+    retry_backoff_max=600,
+    retry_jitter=False,
+)
+def task_generate_pdf(convention_uuid: str) -> None:
+    convention = Convention.objects.get(uuid=convention_uuid)
+    doc = get_or_generate_convention_doc(convention=convention, save_data=True)
+    generate_pdf(convention_uuid=convention_uuid, doc=doc)
+
+
+@shared_task(
+    retry_kwargs={"max_retries": 10},
+    retry_backoff=True,
+    retry_backoff_max=3600,
+    retry_jitter=True,
+)
+def task_send_email_to_bailleur(
+    convention_uuid: str,
+    convention_url: str,
+    convention_email_validator: str,
+) -> None:
+    # Get the convention
     convention = Convention.objects.get(uuid=convention_uuid)
 
-    file_stream = get_or_generate_convention_doc(convention, True)
-    pdf_path = generate_pdf(file_stream, convention)
+    # Get the bailleur emails
+    destinataires_bailleur = convention.get_email_bailleur_users()
+    if len(destinataires_bailleur) == 0:
+        logger.error(f"No bailleur emails found for the convention {convention_uuid}")
+        return
 
-    zip_path = None
+    # Get the administration
+    administration = convention.administration
+    if administration is None:
+        logger.error(f"Missing administration for convention {convention_uuid}")
+        return
+
+    storage_path = Path("conventions", convention_uuid, "convention_docs")
+    local_path = get_tmp_local_path()
+
+    storage_pdf_path = storage_path / f"{convention_uuid}.pdf"
+    if not default_storage.exists(storage_pdf_path):
+        logger.error(f"Missing pdf file {storage_pdf_path}")
+        return
+
+    # Case 1 : need a zip with many files
     if not convention.is_avenant() and (
         convention.programme.is_foyer() or convention.programme.is_residence()
     ):
-        zip_path = (
-            Path("conventions")
-            / str(convention.uuid)
-            / "convention_docs"
-            / f"convention_{convention.uuid}.zip"
+        local_pdf_path = local_path / f"convention_{convention.uuid}.pdf"
+        local_zip_path = local_path / f"convention_{convention.uuid}.zip"
+
+        storage_zip_path = storage_path / f"{convention.uuid}.zip"
+
+        # Get the pdf file from storage and save it locally
+        with default_storage.open(storage_pdf_path, "rb") as storage_pdf_file:
+            with open(local_pdf_path, "wb") as local_pdf_file:
+                local_pdf_file.write(storage_pdf_file.read())
+
+        # Build the zip archive locally, with all the attached files
+        with ZipFile(local_zip_path, "w") as local_zip_file:
+            local_zip_file.write(str(local_pdf_path), arcname=(local_pdf_path).name)
+            for p in get_files_attached(convention):
+                local_zip_file.write(str(p), arcname=p.name)
+                p.unlink()
+
+        # Save the zip archive to the storage
+        with open(local_zip_path, "rb") as local_zip_file:
+            with default_storage.open(storage_zip_path, "wb") as storage_zip_file:
+                storage_zip_file.write(local_zip_file.read())
+
+        # Get rid of the local files
+        if local_zip_path.exists():
+            os.remove(local_zip_path)
+        if local_pdf_path.exists():
+            os.remove(local_pdf_path)
+
+        email_file_path = storage_zip_path
+
+    # Case 2 : we only need yo attach the pdf file
+    else:
+        email_file_path = storage_pdf_path
+
+    # Check the size of the attached file
+    if default_storage.size(email_file_path) > settings.MAX_EMAIL_ATTACHED_FILES_SIZE:
+        logger.error(
+            f"Email not sent for the convention {convention_uuid}: attached file is too big: {email_file_path}"
         )
-        local_zip_path = settings.MEDIA_ROOT / zip_path
-        local_zip_path.parent.mkdir(parents=True, exist_ok=True)
+        return
 
-        if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
-            with default_storage.open(pdf_path, "rb") as src_file:
-                with open(settings.MEDIA_ROOT / pdf_path, "wb") as desc_file:
-                    desc_file.write(src_file.read())
-
-        with ZipFile(local_zip_path, "w") as myzip:
-            myzip.write(
-                str(settings.MEDIA_ROOT / pdf_path),
-                arcname=(settings.MEDIA_ROOT / pdf_path).name,
-            )
-            local_pathes = get_files_attached(convention)
-            for local_path in local_pathes:
-                myzip.write(
-                    str(local_path),
-                    arcname=local_path.name,
-                )
-                local_path.unlink()
-
-        if settings.DEFAULT_FILE_STORAGE == "storages.backends.s3boto3.S3Boto3Storage":
-            with open(local_zip_path, "rb") as src_file:
-                with default_storage.open(zip_path, "wb") as desc_file:
-                    desc_file.write(src_file.read())
-
-    # Send a confirmation email to bailleur
-    if len(destinataires_bailleur := convention.get_email_bailleur_users()) > 0:
-        email_service_to_bailleur = EmailService(
-            to_emails=destinataires_bailleur,
-            cc_emails=[convention_email_validator],
-            email_template_id=(
-                EmailTemplateID.ItoB_AVENANT_VALIDE
-                if convention.is_avenant()
-                else EmailTemplateID.ItoB_CONVENTION_VALIDEE
-            ),
-        )
-        administration = convention.administration
-
-        file_path = zip_path if zip_path is not None else Path(pdf_path)
-        if default_storage.size(file_path) > settings.MAX_EMAIL_ATTACHED_FILES_SIZE:
-            file_path = None
-        email_service_to_bailleur.send_transactional_email(
-            email_data={
-                "convention_url": convention_url,
-                "convention": str(convention),
-                "adresse": administration.adresse,
-                "code_postal": administration.code_postal,
-                "ville": administration.ville,
-                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
-            },
-            filepath=file_path,
-        )
+    # Send a confirmation email to bailleurs
+    EmailService(
+        to_emails=destinataires_bailleur,
+        cc_emails=[convention_email_validator],
+        email_template_id=(
+            EmailTemplateID.ItoB_AVENANT_VALIDE
+            if convention.is_avenant()
+            else EmailTemplateID.ItoB_CONVENTION_VALIDEE
+        ),
+    ).send_transactional_email(
+        email_data={
+            "convention_url": convention_url,
+            "convention": str(convention),
+            "adresse": administration.adresse,
+            "code_postal": administration.code_postal,
+            "ville": administration.ville,
+            "nb_convention_exemplaires": administration.nb_convention_exemplaires,
+        },
+        filepath=email_file_path,
+    )
 
 
 @shared_task()

@@ -1,3 +1,4 @@
+import io
 import json
 import mimetypes
 from datetime import date
@@ -550,7 +551,10 @@ def generate_convention(request, convention_uuid):
     if request.POST.get("without_filigram"):
         convention.statut = ConventionStatut.A_SIGNER.label
 
-    data = convention_generator.generate_convention_doc(convention)
+    doc = convention_generator.generate_convention_doc(convention)
+    data = io.BytesIO()
+    doc.save(data)
+    data.seek(0)
 
     response = HttpResponse(
         data,

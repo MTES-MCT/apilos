@@ -17,6 +17,10 @@ class UploadService:
         self.convention_dirpath = convention_dirpath
         self.filename = filename
 
+    def copy_local_file(self, src_path: str) -> None:
+        with open(src_path, "rb") as src_file:
+            self.upload_file(File(src_file))
+
     def upload_file(self, file: File) -> None:
         if (
             settings.DEFAULT_FILE_STORAGE
@@ -58,14 +62,10 @@ class UploadService:
         destination.write(file_io.getbuffer())
         destination.close()
 
-    def get_file(self, filepath=None):
-        if filepath:
-            return default_storage.open(
-                filepath,
-                "rb",
-            )
+    def get_file(self, filepath=None) -> File:
+        filepath = filepath or self.path
         return default_storage.open(
-            self.path,
+            filepath,
             "rb",
         )
 

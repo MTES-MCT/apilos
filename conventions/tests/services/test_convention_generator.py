@@ -1,16 +1,22 @@
+import json
+import os
 import unittest
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 from unittest.mock import Mock, patch
 
 import jinja2
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from docxtpl import DocxTemplate
+from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
 from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionType1and2
 from conventions.services.convention_generator import (
     ConventionTypeConfigurationError,
+    PDFConversionError,
     _compute_liste_des_annexes,
     _compute_total_logement,
     _get_adresse,
@@ -20,7 +26,9 @@ from conventions.services.convention_generator import (
     compute_mixte,
     default_str_if_none,
     generate_convention_doc,
+    generate_pdf,
     get_convention_template_path,
+    get_or_generate_convention_doc,
     pluralize,
     to_fr_date,
     to_fr_date_or_default,
@@ -28,8 +36,10 @@ from conventions.services.convention_generator import (
     to_fr_short_date_or_default,
     typologie_label,
 )
+from conventions.tests.factories import ConventionFactory
 from programmes.models import ActiveNatureLogement, Logement, TypologieLogement
 from programmes.models.choices import NatureLogement
+from upload.tests.factories import UploadedFileFactory
 from users.models import User
 
 
@@ -503,3 +513,111 @@ class TestComputeListeDesAnnexes(unittest.TestCase):
             " 3 stationnements de type type2"
         )
         self.assertEqual(annexes_list, expected_annexes_list)
+
+
+@override_settings(LIBREOFFICE_EXEC="/app/vendor/libreoffice/soffice")
+class TestGeneratePdf(TestCase):
+    @patch("conventions.services.convention_generator.subprocess.run")
+    def test_subprocess_command(self, mock_subprocess_run):
+        mock_subprocess_run.return_value = Mock(returncode=0, stderr=b"")
+
+        mock_doc = Mock(DocxTemplate, autospec=True)
+        convention_uuid = "8f59189c-3086-4355-b7eb-9a84bcab9582"
+        expected_local_path = Path(settings.MEDIA_ROOT, "tmp")
+        expected_local_docx_path = (
+            expected_local_path / f"convention_{convention_uuid}.docx"
+        )
+
+        # TODO: create real files instead of doing patch here
+        with patch("upload.services.UploadService.copy_local_file"):
+            generate_pdf(doc=mock_doc, convention_uuid=convention_uuid)
+
+        mock_subprocess_run.assert_called_once_with(
+            [
+                "/app/vendor/libreoffice/soffice",
+                "--headless",
+                "--convert-to",
+                "pdf:writer_pdf_Export",
+                "--outdir",
+                expected_local_path,
+                expected_local_docx_path,
+            ],
+            check=True,
+            capture_output=True,
+        )
+        mock_doc.save.assert_called_once_with(filename=expected_local_docx_path)
+
+    @patch("conventions.services.convention_generator.subprocess.run")
+    def test_command_return_code_err(self, mock_subprocess_run):
+        mock_subprocess_run.return_value = Mock(returncode=1, stderr=b"Error")
+
+        with self.assertRaises(PDFConversionError):
+            generate_pdf(
+                doc=Mock(DocxTemplate, autospec=True), convention_uuid="any value"
+            )
+
+
+class TestGetOrGenerateConventionDoc(ParametrizedTestCase, TestCase):
+    @parametrize(
+        "cerfa_data, save_data",
+        [
+            param(None, False, id="none_cerfa_field"),
+            param("{}", True, id="empty_cerfa_file"),
+            param('{"files": {}, "text": "test"}', False, id="no_cerfa_file"),
+            param('{"files": [], "text": "test"}', True, id="dummy_cerfa_file"),
+        ],
+    )
+    def test_cerfa_field(self, cerfa_data, save_data):
+        convention = ConventionFactory.build(fichier_override_cerfa=cerfa_data)
+        with patch(
+            "conventions.services.convention_generator.generate_convention_doc"
+        ) as mock_generate_convention_doc:
+            get_or_generate_convention_doc(convention=convention, save_data=save_data)
+            mock_generate_convention_doc.assert_called_once_with(
+                convention=convention, save_data=save_data
+            )
+
+    @patch("conventions.services.convention_generator.generate_convention_doc")
+    def test_valid_cerfa_file(self, mock_generate_convention_doc):
+        upload_uuid = "faea29cc-3595-4ab9-b2f7-3860bcb2ff54"
+        upload_filename = "Cerfa.docx"
+
+        UploadedFileFactory(
+            uuid=upload_uuid,
+            filename=upload_filename,
+            content_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        )
+
+        convention = ConventionFactory.build(
+            fichier_override_cerfa=json.dumps(
+                {
+                    "files": {
+                        upload_uuid: {
+                            "uuid": upload_uuid,
+                            "size": 345913,
+                            "filename": upload_filename,
+                        }
+                    },
+                    "text": "",
+                }
+            )
+        )
+
+        expected_filepath = Path(
+            settings.MEDIA_ROOT,
+            "conventions",
+            str(convention.uuid),
+            "media",
+            f"{upload_uuid}_{upload_filename}",
+        )
+        os.makedirs(expected_filepath.parent, exist_ok=True)
+        with open(expected_filepath, "wb") as f:
+            f.write(b"test")
+
+        docx = get_or_generate_convention_doc(convention=convention)
+
+        mock_generate_convention_doc.assert_not_called()
+        assert isinstance(docx, DocxTemplate)
+        assert docx.is_saved is False
+
+        os.remove(expected_filepath)

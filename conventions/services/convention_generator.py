@@ -3,8 +3,9 @@ import io
 import json
 import math
 import os
+import subprocess
+from pathlib import Path
 
-import convertapi
 import jinja2
 from django.conf import settings
 from django.core.files.storage import default_storage
@@ -86,20 +87,27 @@ def _compute_total_locaux_collectifs(convention):
     )
 
 
-def get_or_generate_convention_doc(convention: Convention, save_data=False):
+def get_or_generate_convention_doc(
+    convention: Convention, save_data=False
+) -> DocxTemplate:
     if convention.fichier_override_cerfa and convention.fichier_override_cerfa != "{}":
         files_dict = json.loads(convention.fichier_override_cerfa)
-        files = list(files_dict["files"].values())
+
+        if isinstance(files_dict["files"], dict):
+            files = list(files_dict["files"].values())
+        else:
+            files = []
+
         if len(files) > 0:
             file_dict = files[0]
             uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
-            return UploadService().get_file(
-                uploaded_file.filepath(str(convention.uuid))
-            )
+            filepath = uploaded_file.filepath(str(convention.uuid))
+            return DocxTemplate(default_storage.open(filepath, "rb"))
+
     return generate_convention_doc(convention=convention, save_data=save_data)
 
 
-def generate_convention_doc(convention: Convention, save_data=False):
+def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot_id)
@@ -185,9 +193,6 @@ def generate_convention_doc(convention: Convention, save_data=False):
     context.update(adresse)
 
     doc.render(context, _get_jinja_env())
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
 
     for local_path in list(set(local_pathes)):
         os.remove(local_path)
@@ -201,7 +206,7 @@ def generate_convention_doc(convention: Convention, save_data=False):
             logements_totale,
         )
 
-    return file_stream
+    return doc
 
 
 def typologie_label(typologie: str):
@@ -324,46 +329,66 @@ def _save_convention_donnees_validees(
     convention.save()
 
 
-def generate_pdf(file_stream: io.BytesIO, convention: Convention):
-    # save the convention docx locally
-    local_docx_path = str(settings.MEDIA_ROOT) + f"/convention_{convention.uuid}.docx"
-
-    # get a pdf version
-    if settings.CONVERTAPI_SECRET:
-        with open(local_docx_path, "wb") as local_file:
-            local_file.write(file_stream.read())
-            local_file.close()
-
-        convertapi.api_secret = settings.CONVERTAPI_SECRET
-        result = convertapi.convert("pdf", {"File": local_docx_path})
-
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-        convention_filename = f"{convention.uuid}.pdf"
-        pdf_path = _save_io_as_file(
-            result.file.io, convention_dirpath, convention_filename
-        )
-
-        # remove docx version
-        os.remove(local_docx_path)
-    else:
-        convention_dirpath = f"conventions/{convention.uuid}/convention_docs"
-        convention_filename = f"{convention.uuid}.docx"
-        pdf_path = _save_io_as_file(
-            file_stream, convention_dirpath, convention_filename
-        )
-
-    file_stream.seek(0)
-
-    # END PDF GENERATION
-    return pdf_path
+def get_tmp_local_path() -> Path:
+    local_path = Path(settings.MEDIA_ROOT, "tmp")
+    local_path.mkdir(parents=True, exist_ok=True)
+    return local_path
 
 
-def _save_io_as_file(file_io, convention_dirpath, convention_filename):
-    upload_service = UploadService(
-        convention_dirpath=convention_dirpath, filename=convention_filename
+class PDFConversionError(Exception):
+    pass
+
+
+def run_pdf_convert_cmd(
+    src_docx_path: Path, dst_pdf_path: Path
+) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        [
+            settings.LIBREOFFICE_EXEC,
+            "--headless",
+            "--convert-to",
+            "pdf:writer_pdf_Export",
+            "--outdir",
+            dst_pdf_path.parent,
+            src_docx_path,
+        ],
+        check=True,
+        capture_output=True,
     )
-    upload_service.upload_file_io(file_io)
-    return f"{convention_dirpath}/{convention_filename}"
+
+
+def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
+    local_path = get_tmp_local_path()
+    local_docx_path = local_path / f"convention_{convention_uuid}.docx"
+    local_pdf_path = local_path / f"convention_{convention_uuid}.pdf"
+
+    # Save the convention docx locally
+    doc.save(filename=local_docx_path)
+
+    # Generate the pdf file from the docx file, and upload it to the storage
+    try:
+        result = run_pdf_convert_cmd(
+            src_docx_path=local_docx_path, dst_pdf_path=local_pdf_path
+        )
+        if result.returncode != 0:
+            raise PDFConversionError(
+                f"Error while converting the docx file to pdf: {result.stderr}"
+            )
+
+        UploadService(
+            convention_dirpath=f"conventions/{convention_uuid}/convention_docs",
+            filename=f"{convention_uuid}.pdf",
+        ).copy_local_file(src_path=local_pdf_path)
+
+    except (subprocess.CalledProcessError, OSError) as err:
+        raise PDFConversionError from err
+
+    finally:
+        # Remove the local files
+        if local_docx_path.exists():
+            os.remove(local_docx_path)
+        if local_pdf_path.exists():
+            os.remove(local_pdf_path)
 
 
 def _to_fr_float(value, d=2):

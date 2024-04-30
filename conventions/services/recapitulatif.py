@@ -18,7 +18,7 @@ from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
-from conventions.tasks import generate_and_send
+from conventions.tasks import task_generate_and_send
 from core.services import EmailService, EmailTemplateID
 from programmes.models import Annexe, Programme
 from siap.exceptions import SIAPException
@@ -509,14 +509,12 @@ def convention_validate(request: HttpRequest, convention: Convention):
                 convention.valide_le = datetime.date.today()
             convention.save()
 
-            generate_and_send.delay(
-                {
-                    "convention_uuid": str(convention.uuid),
-                    "convention_url": request.build_absolute_uri(
-                        reverse("conventions:preview", args=[convention.uuid])
-                    ),
-                    "convention_email_validator": request.user.email,
-                }
+            task_generate_and_send.delay(
+                convention_uuid=str(convention.uuid),
+                convention_url=request.build_absolute_uri(
+                    reverse("conventions:preview", args=[convention.uuid])
+                ),
+                convention_email_validator=request.user.email,
             )
 
             return {

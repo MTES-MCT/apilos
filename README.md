@@ -31,7 +31,6 @@ Les solutions tierces utilisées par APiLos:
 - Scalingo : hébergement de la solution (cloud souverain)
 - Scaleway : stockage de fichiers compatible avec le protocole S3
 - Brevo : envoi de courriels transactionnels
-- ConvertAPI : conversion de document de convention au format PDF
 - Sentry : monitoring logiciel
 - Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)
 

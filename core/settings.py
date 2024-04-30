@@ -114,8 +114,6 @@ try:
 except KeyError:
     pass
 
-# Convert API
-CONVERTAPI_SECRET = get_env_variable("CONVERTAPI_SECRET")
 # INSEE API
 INSEE_API_KEY = get_env_variable("INSEE_API_KEY")
 INSEE_API_SECRET = get_env_variable("INSEE_API_SECRET")
@@ -584,4 +582,10 @@ MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
 SIAP_ASSISTANCE_URL = get_env_variable(
     "SIAP_ASSISTANCE_URL",
     default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
+)
+
+# LibreOffice
+LIBREOFFICE_EXEC = get_env_variable(
+    "LIBREOFFICE_EXEC",
+    default="/app/vendor/libreoffice/opt/libreoffice7.3/program/soffice",
 )
