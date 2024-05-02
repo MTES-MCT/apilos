@@ -232,7 +232,7 @@ def _find_or_create_entity(
 
         except Exception as exc:  # noqa: BLE001
             raise FusionAPISIAPException(
-                "Error while get bailleur fusion : %s" % exc
+                f"Error while get bailleur fusion : {str(exc)}"
             ) from exc
 
     if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
