@@ -123,7 +123,7 @@
                         {% endif %}
                     {% endif %}
 
-                    {% if not user.is_instructeur and not user.is_bailleur and is_staff_or_admin %}
+                    {% if not user.is_instructeur and not user.is_bailleur and user_is_staff_or_admin %}
                         <div class="fr-mt-3w">
                             {% include 'settings/add_administration_to_user.html' %}
                             {% include 'settings/add_bailleur_to_user.html' %}

@@ -128,7 +128,7 @@ def edit_user(request: HttpRequest, username: str) -> HttpResponse:
     if (
         not context["user"].is_instructeur()
         and not context["user"].is_bailleur()
-        and not context["is_staff_or_admin"]
+        and not context["user_is_staff_or_admin"]
     ):
         return HttpResponseRedirect(reverse("settings:users"))
 

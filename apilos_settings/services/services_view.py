@@ -50,6 +50,7 @@ def user_profile(request: HttpRequest) -> dict[str, Any]:
     return {
         "form": form,
         "editable": True,
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -86,6 +87,7 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
         "total_administration": total_administration,
         "order_by": order_by,
         "search_input": search_input,
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -143,6 +145,7 @@ def edit_administration(request, administration_uuid):
         "form": form,
         "editable": True,
         "success": success,
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -264,6 +267,7 @@ def edit_bailleur(request, bailleur_uuid):
         "form": form,
         "editable": True,
         "success": success,
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -378,7 +382,7 @@ def edit_user(request: HttpRequest, username: str) -> tuple[bool, dict[str, Any]
             "form": form,
             "form_add_bailleur": form_add_bailleur,
             "form_add_administration": form_add_administration,
-            "is_staff_or_admin": user_is_staff_or_admin(request),
+            "user_is_staff_or_admin": user_is_staff_or_admin(request),
         },
     )
 
