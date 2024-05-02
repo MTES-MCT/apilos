@@ -1,5 +1,4 @@
 import json
-from re import IGNORECASE
 from re import compile as rcompile
 from re import escape as rescape
 from typing import Any
@@ -18,22 +17,6 @@ from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
 from upload.models import UploadedFile
 from users.models import GroupProfile
-
-
-@register.filter(name="highlight")
-def highlight(text: Any, search: str) -> str:
-    if not isinstance(text, str):
-        text = str(text)
-
-    if len(search) == 0:
-        return text
-
-    rgx = rcompile(rescape(search), IGNORECASE)
-    return mark_safe(
-        rgx.sub(
-            lambda m: f'<span class="apilos-search-highlight">{m.group()}</span>', text
-        )
-    )
 
 
 @register.filter(name="highlight_if_match")

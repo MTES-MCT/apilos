@@ -14,12 +14,10 @@
                                     <div class="fr-grid-row fr-col-12">
 
                                         <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
-                                        {% if new_search %}
-                                            <a href="/" class="fr-link">
-                                                <span class="fr-icon-close-circle-line fr-mr-1w"></span>
-                                                Réinitialiser la recherche
-                                            </a>
-                                        {% endif %}
+                                        <a href="/" class="fr-link">
+                                            <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                            Réinitialiser la recherche
+                                        </a>
                                     </div>
                                 </div>
                             {% endif %}
@@ -116,11 +114,7 @@
                                             <div class="apilos--flex-row-left-center">
                                                 <div class="apilos--container_ellipsis">
                                                     <strong class="apilos--overflow_ellipsis">
-                                                        {% if new_search %}
-                                                            {{convention.programme|highlight_if_match:search_operation_nom}}
-                                                        {% else %}
-                                                            {{convention.programme|highlight:search_input}}
-                                                        {% endif %}
+                                                        {{convention.programme|highlight_if_match:search_operation_nom}}
                                                     </strong>
                                                 </div>
                                                 {% if convention.is_avenant %}
@@ -130,33 +124,19 @@
                                             {% if convention.programme.numero_operation %}
                                                 <div>
                                                     <em data-test-role="programme-galion-cell">
-                                                        {% if new_search %}
-                                                            Op. : {{convention.programme.numero_operation|highlight_if_match:search_numero}}
-                                                        {% else %}
-                                                            Op. : {{convention.programme.numero_operation|highlight:search_input}}
-                                                        {% endif %}
+                                                        Op. : {{convention.programme.numero_operation|highlight_if_match:search_numero}}
                                                     </em>
                                                 </div>
                                             {% endif %}
-                                            {% if url_name == "search_active" or url_name == "search_resiliees" or new_search %}
-                                                <div>
-                                                    <em data-test-role="programme-galion-cell">
-                                                        {% if convention.numero and not convention.parent %}
-                                                            {% if new_search %}
-                                                                Conv. : {{convention.numero|highlight_if_match:search_numero}}
-                                                            {% else %}
-                                                                Conv. : {{convention.numero|highlight:search_input}}
-                                                            {% endif %}
-                                                        {% elif convention.parent %}
-                                                            {% if new_search %}
-                                                                Conv. : {{convention.parent.numero|highlight_if_match:search_numero}}
-                                                            {% else %}
-                                                                Conv. : {{convention.parent.numero|highlight:search_input}}
-                                                            {% endif %}
-                                                        {% endif %}
-                                                    </em>
-                                                </div>
-                                            {% endif %}
+                                            <div>
+                                                <em data-test-role="programme-galion-cell">
+                                                    {% if convention.numero and not convention.parent %}
+                                                        Conv. : {{convention.numero|highlight_if_match:search_numero}}
+                                                    {% elif convention.parent %}
+                                                        Conv. : {{convention.parent.numero|highlight_if_match:search_numero}}
+                                                    {% endif %}
+                                                </em>
+                                            </div>
                                         </td>
                                         {% if request|is_instructeur %}
                                             <td>
@@ -169,19 +149,11 @@
                                         <td data-test-role="programme-financement-cell">{{convention.financement}}</td>
                                         <td>
                                             <strong>
-                                                {% if new_search %}
-                                                    {{convention.programme.ville|highlight_if_match:search_lieu}}
-                                                {% else %}
-                                                    {{convention.programme.ville|highlight:search_input}}
-                                                {% endif %}
+                                                {{convention.programme.ville|highlight_if_match:search_lieu}}
                                             </strong>
                                             <br/>
                                             <em>
-                                                {% if new_search %}
-                                                    {{convention.programme.code_postal|highlight_if_match:search_lieu}}
-                                                {% else %}
-                                                    {{convention.programme.code_postal|highlight:search_input}}
-                                                {% endif %}
+                                                {{convention.programme.code_postal|highlight_if_match:search_lieu}}
                                             </em>
                                         </td>
                                         <td>{{convention.lot.nb_logements}}</td>

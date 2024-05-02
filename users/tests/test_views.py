@@ -40,6 +40,7 @@ class UserViewTests(TestCase):
             "Saisissez un nom d’utilisateur et un mot de passe valides. Remarquez que chacun de"
             + " ces champs est sensible à la casse (différenciation des majuscules/minuscules).",
         )
+
         response = self.client.post(
             reverse("login"), {"username": "sabine", "password": "12345"}
         )
@@ -49,14 +50,15 @@ class UserViewTests(TestCase):
         self.assertRedirects(
             response, reverse("conventions:index"), fetch_redirect_response=False
         )
+
         response = self.client.get(reverse("conventions:index"))
         self.assertRedirects(
             response,
-            reverse("conventions:search_instruction"),
+            reverse("conventions:search"),
             fetch_redirect_response=False,
         )
-        response = self.client.get(reverse("conventions:search_active"))
 
+        response = self.client.get(reverse("conventions:search"))
         self.assertContains(response, "Déconnexion")
         self.assertNotContains(response, "Espace instructeur")
         self.assertNotContains(response, "Espace bailleur")

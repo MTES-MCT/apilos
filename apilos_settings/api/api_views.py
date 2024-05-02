@@ -1,7 +1,7 @@
 import logging
 
 from django.conf import settings
-from django.db.models import Count, QuerySet
+from django.db.models import QuerySet
 from django.http.request import HttpRequest
 from django.urls import reverse
 from drf_spectacular.utils import (
@@ -16,7 +16,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from waffle import switch_is_active
 
 from conventions.models import Convention, ConventionStatut
 from siap.siap_authentication import SIAPJWTAuthentication, SIAPSimpleJWTAuthentication
@@ -191,17 +190,12 @@ class ConventionKPI(APIView):
         """
         Return main settings of the application.
         """
-        queryset = (
-            request.user.conventions().filter(parent_id__isnull=True).values("statut")
+        list_conv_kpi = self._build_conv_kpi_list(
+            request=request,
+            queryset=request.user.conventions()
+            .filter(parent_id__isnull=True)
+            .values("statut"),
         )
-
-        if switch_is_active(settings.SWITCH_NEW_SEARCH):
-            list_conv_kpi = self._build_conv_kpi_list(request, queryset)
-        else:
-            list_conv_kpi = self._build_conv_kpi_list_old(
-                request, queryset.annotate(total=Count("statut"))
-            )
-
         return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
 
     def _build_conv_kpi(
@@ -272,81 +266,6 @@ class ConventionKPI(APIView):
                     conv_queryset=queryset,
                     conv_statuts=[ConventionStatut.A_SIGNER],
                     label="à signer",
-                ),
-            ]
-
-        return []
-
-    def _build_conv_kpi_list_old(
-        self, request: HttpRequest, queryset: QuerySet[Convention]
-    ) -> list[ConvKPI]:
-        nb_conventions_by_status = {
-            convention_statut.label: 0 for convention_statut in ConventionStatut
-        } | {query["statut"]: query["total"] for query in queryset}
-
-        if request.user.is_administration():
-            # As an administrator, we want to see the number of conventions that are in status:
-            #   * en-cours
-            #   * SIGNEE
-            return [
-                ConvKPI(
-                    "/conventions/en-cours",
-                    nb_conventions_by_status[ConventionStatut.PROJET.label]
-                    + nb_conventions_by_status[ConventionStatut.INSTRUCTION.label]
-                    + nb_conventions_by_status[ConventionStatut.CORRECTION.label]
-                    + nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
-                    "en cours",
-                ),
-                ConvKPI(
-                    "/conventions/actives",
-                    nb_conventions_by_status[ConventionStatut.SIGNEE.label],
-                    "finalisées",
-                ),
-            ]
-
-        if request.user.is_instructeur():
-            # As an instructeur, we want to see the number of conventions that are in status:
-            #   * INSTRUCTION
-            #   * A_SIGNER
-            #   * SIGNEE
-            return [
-                ConvKPI(
-                    "/conventions/en-cours?cstatut=2.+Instruction+requise",
-                    nb_conventions_by_status[ConventionStatut.INSTRUCTION.label],
-                    "en instruction",
-                ),
-                ConvKPI(
-                    "/conventions/en-cours?cstatut=4.+A+signer",
-                    nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
-                    "à signer",
-                ),
-                ConvKPI(
-                    "/conventions/actives",
-                    nb_conventions_by_status[ConventionStatut.SIGNEE.label],
-                    "finalisées",
-                ),
-            ]
-
-        if request.user.is_bailleur():
-            # As a bailleur, we want to see the number of conventions that are in status:
-            #   * PROJET
-            #   * CORRRECTION
-            #   * A_SIGNER
-            return [
-                ConvKPI(
-                    "/conventions/en-cours?cstatut=1.+Projet",
-                    nb_conventions_by_status[ConventionStatut.PROJET.label],
-                    "en projet",
-                ),
-                ConvKPI(
-                    "/conventions/en-cours?cstatut=3.+Corrections+requises",
-                    nb_conventions_by_status[ConventionStatut.CORRECTION.label],
-                    "en correction requise",
-                ),
-                ConvKPI(
-                    "/conventions/actives",
-                    nb_conventions_by_status[ConventionStatut.A_SIGNER.label],
-                    "à signer",
                 ),
             ]
 

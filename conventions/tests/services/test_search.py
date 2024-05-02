@@ -4,13 +4,8 @@ from django.test import TestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
 from bailleurs.tests.factories import BailleurFactory
-from conventions.models import Convention, ConventionStatut
-from conventions.services.search import (
-    ConventionSearchService,
-    UserConventionActivesSearchService,
-    UserConventionEnInstructionSearchService,
-    UserConventionTermineesSearchService,
-)
+from conventions.models import ConventionStatut
+from conventions.services.search import ConventionSearchService
 from conventions.tests.factories import AvenantFactory, ConventionFactory
 from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models.choices import Financement, NatureLogement
@@ -18,103 +13,7 @@ from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import UserFactory
 
 
-class SearchServiceTestBase(PGTrgmTestMixin, ParametrizedTestCase, TestCase):
-    __test__ = False
-
-    service_class: type
-
-    def setUp(self) -> None:
-        self.user = UserFactory(is_staff=True, is_superuser=True)
-        ConventionFactory(
-            lot__programme__ville="Bourg-en-Bresse",
-            lot__programme__nom="Le Clos de l'Ille - Rue de l'Occitanie - Séniors",
-        )
-
-    def test_no_results(self):
-        service = self.service_class(user=self.user, search_filters={"commune": "foo"})
-        self.assertEqual(service.get_queryset().count(), 0)
-
-    @parametrize(
-        "input, expected_count",
-        [
-            ("Paris", 0),
-            ("Bourg-en-Bresse", 1),
-            ("Bourg en Bresse", 1),
-            ("bourg en bresse", 1),
-            ("bourg en bress", 1),
-            ("bourg bresse", 1),
-            ("bourg", 1),
-            ("bourg en brèsse", 1),
-        ],
-    )
-    def test_search_programme_ville(self, input: str, expected_count: int):
-        service = self.service_class(user=self.user, search_filters={"commune": input})
-        self.assertEqual(service.get_queryset().count(), expected_count)
-
-    @parametrize(
-        "input, expected_count",
-        [
-            ("Le Clos de l'Ill", 1),
-            ("le clos de l'ile", 1),
-            ("Occitanie Senior", 1),
-        ],
-    )
-    def test_search_programme_nom(self, input: str, expected_count: int):
-        service = self.service_class(
-            user=self.user, search_filters={"search_input": input}
-        )
-        self.assertEqual(service.get_queryset().count(), expected_count)
-
-
-class TestUserConventionEnInstructionSearchService(SearchServiceTestBase):
-    __test__ = True
-
-    service_class = UserConventionEnInstructionSearchService
-
-
-class TestUserConventionActivesSearchService(SearchServiceTestBase):
-    __test__ = True
-
-    service_class = UserConventionActivesSearchService
-
-    def setUp(self) -> None:
-        super().setUp()
-        Convention.objects.all().update(statut=ConventionStatut.SIGNEE.label)
-
-    def test_search_date_validation(self):
-        ConventionFactory(
-            statut=ConventionStatut.SIGNEE.label,
-            televersement_convention_signee_le="2023-01-01",
-        )
-        ConventionFactory(
-            statut=ConventionStatut.SIGNEE.label,
-            televersement_convention_signee_le="2020-01-01",
-        )
-
-        service = self.service_class(
-            user=self.user, search_filters={"date_signature": "2000"}
-        )
-        self.assertEqual(service.get_queryset().count(), 0)
-
-        service = self.service_class(
-            user=self.user, search_filters={"date_signature": "2023"}
-        )
-        self.assertEqual(service.get_queryset().count(), 1)
-
-
-class TestUserConventionTermineesSearchService(SearchServiceTestBase):
-    __test__ = True
-
-    service_class = UserConventionTermineesSearchService
-
-    def setUp(self) -> None:
-        super().setUp()
-        Convention.objects.all().update(statut=ConventionStatut.RESILIEE.label)
-
-
-class TestUserConventionSmartSearchService(
-    PGTrgmTestMixin, ParametrizedTestCase, TestCase
-):
+class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, TestCase):
     def setUp(self) -> None:
         self.user = UserFactory(is_staff=True, is_superuser=True)
 

@@ -1,11 +1,9 @@
 from unittest.mock import Mock, patch
 
-from django.conf import settings
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
-from waffle.testutils import override_switch
 
 from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
@@ -56,95 +54,8 @@ class ConfigurationAPITest(APITestCase):
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
-class ConventionKPIAPITest(APITestCase):
-    fixtures = ["auth.json"]
-
-    def test_get_convention_kpi_route_unauthorized(self):
-        response = self.client.get("/api-siap/v0/convention_kpi/")
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-
-    def test_get_convention_kpi_route_bailleur(self):
-        accesstoken = build_jwt(
-            user_login="test@apilos.com", habilitation_id=5
-        )  # bailleur
-        client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        expected = [
-            {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=1.+Projet",
-                "indicateur_valeur": 0,
-                "indicateur_label": "en projet",
-            },
-            {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=3.+Corrections+requises",
-                "indicateur_valeur": 0,
-                "indicateur_label": "en correction requise",
-            },
-            {
-                "indicateur_redirection_url": "/conventions/actives",
-                "indicateur_valeur": 0,
-                "indicateur_label": "à signer",
-            },
-        ]
-        self.assertEqual(response.data, expected)
-
-    def test_get_convention_kpi_route_instructeur(self):
-        accesstoken = build_jwt(
-            user_login="test@apilos.com", habilitation_id=12
-        )  # instructeur
-        client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected = [
-            {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=2.+Instruction+requise",
-                "indicateur_valeur": 0,
-                "indicateur_label": "en instruction",
-            },
-            {
-                "indicateur_redirection_url": "/conventions/en-cours?cstatut=4.+A+signer",
-                "indicateur_valeur": 0,
-                "indicateur_label": "à signer",
-            },
-            {
-                "indicateur_redirection_url": "/conventions/actives",
-                "indicateur_valeur": 0,
-                "indicateur_label": "finalisées",
-            },
-        ]
-        self.assertEqual(response.data, expected)
-
-    def test_get_convention_kpi_route_administrateur(self):
-        accesstoken = build_jwt(
-            user_login="test@apilos.com", habilitation_id=3
-        )  # administrateur
-        client = APIClient()
-        client.credentials(HTTP_AUTHORIZATION="Bearer " + accesstoken)
-        response = client.get("/api-siap/v0/convention_kpi/")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        expected = [
-            {
-                "indicateur_redirection_url": "/conventions/en-cours",
-                "indicateur_valeur": 0,
-                "indicateur_label": "en cours",
-            },
-            {
-                "indicateur_redirection_url": "/conventions/actives",
-                "indicateur_valeur": 0,
-                "indicateur_label": "finalisées",
-            },
-        ]
-        self.assertEqual(response.data, expected)
-
-
-@override_switch(settings.SWITCH_NEW_SEARCH, active=True)
-@override_settings(USE_MOCKED_SIAP_CLIENT=True)
 @patch("users.models.User.conventions", Mock(return_value=Convention.objects))
-class ConventionKPIAPINewSearchTest(ParametrizedTestCase, APITestCase):
+class ConventionKPIAPITest(ParametrizedTestCase, APITestCase):
     fixtures = ["auth.json"]
 
     def setUp(self) -> None:
