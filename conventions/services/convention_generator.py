@@ -161,6 +161,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         **avenant_data,
         "convention": convention,
         "bailleur": convention.programme.bailleur,
+        "outre_mer": convention.is_outre_mer,
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,

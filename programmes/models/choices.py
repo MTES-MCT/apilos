@@ -14,6 +14,7 @@ class ZoneABC(models.TextChoices):
     ZoneB1 = "B1", "B1"
     ZoneB2 = "B2", "B2"
     ZoneC = "C", "C"
+    DROM = "DROM", "DROM"
 
 
 class Financement(models.TextChoices):
