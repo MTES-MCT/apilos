@@ -37,6 +37,19 @@ def handle_uploaded_xlsx(
             "Le fichier importé ne semble pas être du bon format, 'xlsx' est le format attendu",
         )
         return {"success": utils.ReturnStatus.ERROR}
+    except KeyError:
+        upform.add_error(
+            "file",
+            "Il y a probablement des fichiers manquants dans l'archive",
+        )
+        return {"success": utils.ReturnStatus.ERROR}
+    except ValueError:
+        upform.add_error(
+            "file",
+            "Certains fichiers de l'archive ont probablement un contenu invalide",
+        )
+        return {"success": utils.ReturnStatus.ERROR}
+
     try:
         my_ws = my_wb[my_class.sheet_name]
     except KeyError:
@@ -45,6 +58,7 @@ def handle_uploaded_xlsx(
             f"Le fichier importé doit avoir une feuille nommée '{my_class.sheet_name}'",
         )
         return {"success": utils.ReturnStatus.ERROR}
+
     min_row = 3
     if "Data" in my_wb:
         if my_wb["Data"]["E2"].value:
