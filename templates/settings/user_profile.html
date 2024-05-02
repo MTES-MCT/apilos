@@ -22,7 +22,7 @@
 
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
                     <div class='fr-col-12'>
-                        {% if not user.is_superuser or not user.is_staff %}
+                        {% if not user.is_superuser and not user.is_staff %}
                             <form method="post" action="">
                                 {% csrf_token %}
 

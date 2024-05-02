@@ -36,7 +36,7 @@
                         </form>
                     </div>
 
-                    {% if not user.is_superuser or not user.is_staff %}
+                    {% if not user.is_superuser and not user.is_staff %}
 
                         {% if user.is_bailleur %}
                             <div class='fr-col-12 fr-mt-3w'>
