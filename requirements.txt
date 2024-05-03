@@ -124,9 +124,9 @@ django-simple-history==3.5.0 \
     --hash=sha256:0030b3bb5ed219d6453320213e75cfa00dab7a381946124df9411729101c8874 \
     --hash=sha256:eef2943d7c846270f11c8136f38a3ba00de2bebd7b1b89037de5d9b148ed677a
     # via -r requirements.in
-django-sql-explorer[xls]==4.0.2 \
-    --hash=sha256:1c0fd62879f7f600523eda0b1ab3c15c199988dd2532b4b7ef15e0d8d04ac751 \
-    --hash=sha256:4b6c392adb97205ecf8e9f3505437c07da8aab1b84491387acb38ee63a5b36bb
+django-sql-explorer[xls]==4.2 \
+    --hash=sha256:3b6dba5447d53dae5f33aef9d0e02239523b6d5756d9bb07658cc9172c09474c \
+    --hash=sha256:9bfff9b471c9553f337b8a8e0b8c099110f6611d342c24d50d56229702c5c62b
     # via -r requirements.in
 django-storages==1.14.2 \
     --hash=sha256:1db759346b52ada6c2efd9f23d8241ecf518813eb31db9e2589207174f58f6ad \
@@ -556,6 +556,7 @@ requests==2.31.0 \
     --hash=sha256:942c5a758f98d790eaed1a29cb6eefc7ffb0d1cf7af05c3d2791656dbd6ad1e1
     # via
     #   django-anymail
+    #   django-sql-explorer
     #   python-cas
 s3transfer==0.10.0 \
     --hash=sha256:3cdb40f5cfa6966e812209d0994f2a4709b561c88e90cf00c2696d2df4e56b2e \
