@@ -31,6 +31,7 @@ class ApilosSettingsViewTests(TestCase):
         )
         response = self.client.get(reverse("settings:index"))
         self.assertRedirects(response, reverse("settings:users"))
+
         response = self.client.get(reverse("settings:users"))
         self.assertContains(response, "Votre profil")
         self.assertContains(response, "Administrations")

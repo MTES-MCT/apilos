@@ -162,7 +162,10 @@ def bailleur_list(request: HttpRequest) -> dict[str, Any]:
         ),
     )
     bailleur_list_service.paginate()
-    return bailleur_list_service.as_dict()
+    return {
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
+        **bailleur_list_service.as_dict(),
+    }
 
 
 def edit_bailleur(request, bailleur_uuid):
@@ -284,7 +287,10 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
         ),
     )
     user_list_service.paginate()
-    return user_list_service.as_dict()
+    return {
+        "user_is_staff_or_admin": user_is_staff_or_admin(request),
+        **user_list_service.as_dict(),
+    }
 
 
 # TODO: Refactor this function
