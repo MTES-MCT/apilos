@@ -31,6 +31,7 @@ class Financement(models.TextChoices):
     LLS = "LLS", "LLS"
     LLTS = "LLTS", "LLTS"
     LLTSA = "LLTSA", "LLTSA"
+    PLUS_DOM = "PLUS_DOM", "PLUS_DOM"
 
 
 class FinancementEDD(models.TextChoices):
