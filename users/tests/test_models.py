@@ -18,6 +18,20 @@ from users.tests.factories import GroupFactory, UserFactory
 from users.type_models import TypeRole
 
 
+class TestUserIsAdmin:
+    def test_user_is_not_admin(self):
+        user = UserFactory.build()
+        assert not user.is_admin
+
+    def test_staff_user_is_admin(self):
+        user = UserFactory.build(is_staff=True)
+        assert user.is_admin
+
+    def test_superuser_is_admin(self):
+        user = UserFactory.build(is_superuser=True)
+        assert user.is_admin
+
+
 class UserModelStrTest(TestCase):
     # Test model User
     def test_object_user_str(self):

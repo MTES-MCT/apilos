@@ -15,6 +15,4 @@ class AdministrationFactory(BaseFactory):
     code_postal = factory.Faker("postcode", locale="fr_FR")
     ville = factory.Faker("city", locale="fr_FR")
     ville_signature = factory.Faker("city", locale="fr_FR")
-    # nom_signataire = factory.Faker("name", locale="fr_FR")
-    # fonction_signataire = factory.Faker("job", locale="fr_FR")
     nb_convention_exemplaires = 3

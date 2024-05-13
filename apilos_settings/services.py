@@ -9,16 +9,10 @@ from django.http import HttpRequest
 from django.views.decorators.http import require_GET
 
 from bailleurs.models import Bailleur
-from conventions.forms import BailleurForm
-from conventions.services import utils
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import UserNotificationForm
 from users.models import User
-
-
-def user_is_staff_or_admin(request: HttpRequest) -> bool:
-    return request.user.is_superuser or request.user.is_staff
 
 
 def user_profile(request: HttpRequest) -> dict[str, Any]:
@@ -39,7 +33,6 @@ def user_profile(request: HttpRequest) -> dict[str, Any]:
 
     return {
         "form": form,
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -51,7 +44,7 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
 
     my_administration_list = (
         Administration.objects.all().order_by(order_by)
-        if user_is_staff_or_admin(request)
+        if request.user.is_admin
         else request.user.administrations().order_by(order_by)
     )
     total_administration = my_administration_list.count()
@@ -76,7 +69,6 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
         "total_administration": total_administration,
         "order_by": order_by,
         "search_input": search_input,
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -90,7 +82,7 @@ def edit_administration(request, administration_uuid):
                 "nom": request.POST.get("nom", administration.nom),
                 "code": (
                     request.POST.get("code", False)
-                    if user_is_staff_or_admin(request)
+                    if request.user.is_admin
                     else administration.code
                 ),
             }
@@ -130,7 +122,6 @@ def edit_administration(request, administration_uuid):
     return {
         **user_list_service.as_dict(),
         "form": form,
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
 
@@ -142,110 +133,12 @@ def bailleur_list(request: HttpRequest) -> dict[str, Any]:
         page=request.GET.get("page", 1),
         item_list=(
             Bailleur.objects.all().order_by("nom")
-            if user_is_staff_or_admin(request)
+            if request.user.is_admin
             else request.user.bailleurs()
         ),
     )
     bailleur_list_service.paginate()
-    return {
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
-        **bailleur_list_service.as_dict(),
-    }
-
-
-def edit_bailleur(request, bailleur_uuid):
-    bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
-    if request.method == "POST":
-        form = BailleurForm(
-            {
-                **request.POST.dict(),
-                "uuid": bailleur_uuid,
-                "siren": bailleur.siren,
-                "sous_nature_bailleur": (
-                    request.POST.get("sous_nature_bailleur")
-                    if user_is_staff_or_admin(request)
-                    else bailleur.sous_nature_bailleur
-                ),
-                "nature_bailleur": (
-                    request.POST.get("nature_bailleur")
-                    if user_is_staff_or_admin(request)
-                    else bailleur.nature_bailleur
-                ),
-            },
-            bailleur_query=request.user.bailleur_query_set(
-                only_bailleur_uuid=request.POST.get("bailleur")
-            ),
-        )
-        if form.is_valid():
-            if user_is_staff_or_admin(request):
-                parent = (
-                    form.cleaned_data["bailleur"]
-                    if form.cleaned_data["bailleur"]
-                    else None
-                )
-            else:
-                parent = bailleur.parent
-            bailleur.nature_bailleur = form.cleaned_data["nature_bailleur"]
-            bailleur.sous_nature_bailleur = form.cleaned_data["sous_nature_bailleur"]
-            bailleur.nom = form.cleaned_data["nom"]
-            bailleur.parent = parent
-            bailleur.siret = form.cleaned_data["siret"]
-            bailleur.capital_social = form.cleaned_data["capital_social"]
-            bailleur.adresse = form.cleaned_data["adresse"]
-            bailleur.code_postal = form.cleaned_data["code_postal"]
-            bailleur.ville = form.cleaned_data["ville"]
-            bailleur.signataire_nom = form.cleaned_data["signataire_nom"]
-            bailleur.signataire_fonction = form.cleaned_data["signataire_fonction"]
-            bailleur.signataire_date_deliberation = form.cleaned_data[
-                "signataire_date_deliberation"
-            ]
-            bailleur.signataire_bloc_signature = form.cleaned_data[
-                "signataire_bloc_signature"
-            ]
-            bailleur.save()
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                "L'entité bailleur a été enregistrée avec succès",
-            )
-    else:
-        form = BailleurForm(
-            initial={
-                **model_to_dict(
-                    bailleur,
-                    fields=[
-                        "uuid",
-                        "nature_bailleur",
-                        "sous_nature_bailleur",
-                        "nom",
-                        "siret",
-                        "siren",
-                        "capital_social",
-                        "adresse",
-                        "code_postal",
-                        "ville",
-                        "signataire_nom",
-                        "signataire_fonction",
-                        "signataire_bloc_signature",
-                    ],
-                ),
-                "bailleur": bailleur.parent if bailleur.parent else "",
-                "signataire_date_deliberation": utils.format_date_for_form(
-                    bailleur.signataire_date_deliberation
-                ),
-            },
-            bailleur_query=request.user.bailleur_query_set(
-                only_bailleur_uuid=bailleur.parent.uuid if bailleur.parent else None,
-                exclude_bailleur_uuid=bailleur.uuid,
-                has_no_parent=True,
-            ),
-        )
-
-    return {
-        "bailleur": bailleur,
-        "form": form,
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
-    }
+    return bailleur_list_service.as_dict()
 
 
 @require_GET
@@ -256,15 +149,12 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
         page=request.GET.get("page", 1),
         my_user_list=(
             User.objects.exclude(Q(is_staff=True) | Q(is_superuser=True))
-            if user_is_staff_or_admin(request)
+            if request.user.is_admin
             else request.user.user_list()
         ),
     )
     user_list_service.paginate()
-    return {
-        "user_is_staff_or_admin": user_is_staff_or_admin(request),
-        **user_list_service.as_dict(),
-    }
+    return user_list_service.as_dict()
 
 
 class UserListService:
@@ -340,6 +230,10 @@ class ListService:
         self.order_by = order_by
         self.page = page
         self.item_list = item_list
+
+    """
+    This method should be implemented in the child classes if needed
+    """
 
     def _get_filter(self):
         pass

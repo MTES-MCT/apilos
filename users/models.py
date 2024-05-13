@@ -85,6 +85,10 @@ class User(AbstractUser):
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
 
+    @property
+    def is_admin(self):
+        return self.is_staff or self.is_superuser
+
     def has_object_permission(self, obj):
         if isinstance(obj, Convention | Lot):
             if (

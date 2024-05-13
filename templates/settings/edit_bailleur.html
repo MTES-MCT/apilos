@@ -40,8 +40,8 @@
                                     </div>
                                 {% endif %}
 
-                                {% include "common/form/input_select.html" with form_input=form.nature_bailleur editable=user_is_staff_or_admin %}
-                                {% include "common/form/input_select.html" with form_input=form.sous_nature_bailleur editable=user_is_staff_or_admin %}
+                                {% include "common/form/input_select.html" with form_input=form.nature_bailleur editable=request.user.is_admin %}
+                                {% include "common/form/input_select.html" with form_input=form.sous_nature_bailleur editable=request.user.is_admin %}
 
                                 <div class="fr-mb-2w">
                                     <div class="fr-grid-row fr-grid-row--gutters">

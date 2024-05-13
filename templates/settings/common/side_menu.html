@@ -19,7 +19,7 @@
                     </li>
                 {% endif %}
 
-                {% if user_is_staff_or_admin %}
+                {% if request.user.is_admin %}
                     <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
                         <a class="fr-sidemenu__link" href="{% url 'settings:bailleurs' %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Bailleurs</a>
                     </li>

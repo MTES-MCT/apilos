@@ -20,7 +20,7 @@ urlpatterns = [
     ),
     path(
         "bailleurs/<bailleur_uuid>",
-        views.edit_bailleur,
+        views.EditBailleurView.as_view(),
         name="edit_bailleur",
     ),
     path(
