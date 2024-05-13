@@ -178,12 +178,12 @@ def edit_bailleur(request, bailleur_uuid):
                 "uuid": bailleur_uuid,
                 "siren": bailleur.siren,
                 "sous_nature_bailleur": (
-                    request.POST.get("sous_nature_bailleur", False)
+                    request.POST.get("sous_nature_bailleur")
                     if user_is_staff_or_admin(request)
                     else bailleur.sous_nature_bailleur
                 ),
                 "nature_bailleur": (
-                    request.POST.get("nature_bailleur", False)
+                    request.POST.get("nature_bailleur")
                     if user_is_staff_or_admin(request)
                     else bailleur.nature_bailleur
                 ),

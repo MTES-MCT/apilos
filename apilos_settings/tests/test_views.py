@@ -1,6 +1,6 @@
 import os
 
-from django.test import TestCase
+from django.test import Client, TestCase
 from django.urls import reverse
 from rest_framework import status
 
@@ -10,7 +10,6 @@ from bailleurs.models import Bailleur
 class ApilosSettingsViewTests(TestCase):
     fixtures = [
         "auth.json",
-        # "departements.json",
         "avenant_types.json",
         "bailleurs_for_tests.json",
         "instructeurs_for_tests.json",
@@ -19,47 +18,42 @@ class ApilosSettingsViewTests(TestCase):
         "users_for_tests.json",
     ]
 
-    def test_display_bailleurs_or_administrations(self):
-        """
-        Superuser will display Profil, Administrations, Bailleurs and Utilisateurs in sidemenu
-        Instructeur will display Profil, Administrations and Utilisateurs in sidemenu
-        Bailleur will display Profil, Bailleurs and Utilisateurs in sidemenu
-        """
-
+    def test_sidemenu_is_superuser(self):
         response = self.client.post(
             reverse("login"), {"username": "nicolas", "password": "12345"}
         )
-        response = self.client.get(reverse("settings:index"))
-        self.assertRedirects(response, reverse("settings:users"))
 
-        response = self.client.get(reverse("settings:users"))
-        self.assertContains(response, "Votre profil")
+        response = self.client.get(reverse("settings:profile"))
         self.assertContains(response, "Administrations")
         self.assertContains(response, "Bailleurs")
         self.assertContains(response, "Utilisateurs")
 
-        response = self.client.post(
+    def test_sidemenu_is_bailleur(self):
+        client = Client()
+        session = client.session
+        session["bailleur"] = {"id": 1}
+        session.save()
+
+        response = client.post(
+            reverse("login"), {"username": "raph", "password": "12345"}
+        )
+        response = client.get(reverse("settings:profile"))
+        self.assertContains(response, "Vos notifications")
+        self.assertContains(response, "Votre entité bailleur")
+
+    def test_sidemenu_is_instructeur(self):
+        client = Client()
+        session = client.session
+        session["administration"] = {"id": 1}
+        session.save()
+
+        response = client.post(
             reverse("login"), {"username": "sabine", "password": "12345"}
         )
 
-        response = self.client.get(reverse("settings:index"))
-        self.assertRedirects(response, reverse("settings:administrations"))
-        response = self.client.get(reverse("settings:administrations"))
-        self.assertContains(response, "Votre profil")
-        self.assertContains(response, "Administrations")
-        self.assertContains(response, "Utilisateurs")
-        self.assertNotContains(response, "Bailleurs")
-
-        response = self.client.post(
-            reverse("login"), {"username": "raph", "password": "12345"}
-        )
-        response = self.client.get(reverse("settings:index"))
-        self.assertRedirects(response, reverse("settings:bailleurs"))
-        response = self.client.get(reverse("settings:bailleurs"))
-        self.assertContains(response, "Votre profil")
-        self.assertContains(response, "Bailleurs")
-        self.assertContains(response, "Utilisateurs")
-        self.assertNotContains(response, "Administrations")
+        response = client.get(reverse("settings:profile"))
+        self.assertContains(response, "Vos notifications")
+        self.assertContains(response, "Votre administration")
 
     def test_display_profile(self):
         response = self.client.post(

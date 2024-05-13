@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -14,18 +13,6 @@ from conventions.services.utils import ReturnStatus
 
 @require_GET
 @login_required
-def index(request: HttpRequest) -> HttpResponseRedirect:
-    if request.user.is_superuser:
-        return HttpResponseRedirect(reverse("settings:users"))
-    if request.user.is_bailleur():
-        return HttpResponseRedirect(reverse("settings:bailleurs"))
-    if request.user.is_instructeur():
-        return HttpResponseRedirect(reverse("settings:administrations"))
-    return HttpResponseRedirect(reverse("settings:users"))
-
-
-@require_GET
-@login_required
 def administrations(request: HttpRequest) -> HttpResponse:
     return render(
         request,
@@ -34,12 +21,9 @@ def administrations(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_GET
 @login_required
 def edit_administration(request: HttpRequest, administration_uuid: str) -> HttpResponse:
     result = services_view.edit_administration(request, administration_uuid)
-    if result["success"] and not settings.CERBERE_AUTH:
-        return HttpResponseRedirect(reverse("settings:administrations"))
     return render(request, "settings/edit_administration.html", result)
 
 
@@ -53,12 +37,9 @@ def bailleurs(request: HttpRequest) -> HttpResponse:
     )
 
 
-@require_GET
 @login_required
 def edit_bailleur(request: HttpRequest, bailleur_uuid: str) -> HttpResponse:
     result = services.edit_bailleur(request, bailleur_uuid)
-    if result["success"] and not settings.CERBERE_AUTH:
-        return HttpResponseRedirect(reverse("settings:bailleurs"))
     return render(request, "settings/edit_bailleur.html", result)
 
 
@@ -98,7 +79,6 @@ class ImportBailleurUsersView(LoginRequiredMixin, View):
         )
 
 
-@require_GET
 @login_required
 def profile(request: HttpRequest) -> HttpResponse:
     return render(
