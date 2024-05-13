@@ -189,13 +189,6 @@ class User(AbstractUser):
             return self.roles.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
-    def get_active_bailleurs(self):
-        return (
-            self.roles.filter(typologie=TypeRole.BAILLEUR)
-            .values_list("bailleur", flat=True)
-            .distinct()
-        )
-
     def is_instructeur(self):
         if self.is_cerbere_user():
             return "currently" in self.siap_habilitation and self.siap_habilitation[
@@ -216,13 +209,6 @@ class User(AbstractUser):
                 GroupProfile.SIAP_SER_DEP,
             ]
         return self.is_superuser
-
-    def get_active_administrations(self):
-        return (
-            self.roles.filter(typologie=TypeRole.INSTRUCTEUR)
-            .values_list("administration", flat=True)
-            .distinct()
-        )
 
     def is_administration(self):
         if self.is_cerbere_user():
@@ -275,16 +261,6 @@ class User(AbstractUser):
         raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
-
-    def lots(self):
-        """
-        Lots of the user following is role :
-        * super admin = all lots
-        * instructeur = all lots of programme which belong to its administrations
-        * bailleur = all lots which belongs to its bailleur entities
-        else raise
-        """
-        return Lot.objects.filter(programme__in=self.programmes())
 
     #
     # list of administration following role
