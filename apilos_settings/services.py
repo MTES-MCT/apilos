@@ -82,7 +82,6 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
 
 def edit_administration(request, administration_uuid):
     administration = Administration.objects.get(uuid=administration_uuid)
-    success = False
     if request.method == "POST":
         form = AdministrationForm(
             {
@@ -115,7 +114,6 @@ def edit_administration(request, administration_uuid):
                 messages.SUCCESS,
                 "L'administration a été enregistrée avec succès",
             )
-            success = True
     else:
         form = AdministrationForm(initial=model_to_dict(administration))
 
@@ -132,8 +130,6 @@ def edit_administration(request, administration_uuid):
     return {
         **user_list_service.as_dict(),
         "form": form,
-        "editable": True,
-        "success": success,
         "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
@@ -159,7 +155,6 @@ def bailleur_list(request: HttpRequest) -> dict[str, Any]:
 
 def edit_bailleur(request, bailleur_uuid):
     bailleur = Bailleur.objects.get(uuid=bailleur_uuid)
-    success = False
     if request.method == "POST":
         form = BailleurForm(
             {
@@ -245,20 +240,10 @@ def edit_bailleur(request, bailleur_uuid):
                 has_no_parent=True,
             ),
         )
-    user_list_service = UserListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "username"),
-        page=request.GET.get("page", 1),
-        my_user_list=User.objects.filter(roles__in=bailleur.roles.all()).distinct(),
-    )
-    user_list_service.paginate()
 
     return {
-        "user_list": user_list_service,
         "bailleur": bailleur,
         "form": form,
-        "editable": True,
-        "success": success,
         "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 

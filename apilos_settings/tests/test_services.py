@@ -1,15 +1,20 @@
 import pytest
 from django.contrib.messages.storage.fallback import FallbackStorage
+from django.forms import model_to_dict
 from django.test import RequestFactory
 
 from apilos_settings.services import (
     administration_list,
     bailleur_list,
+    edit_administration,
+    edit_bailleur,
     user_is_staff_or_admin,
     user_list,
     user_profile,
 )
 from bailleurs.tests.factories import BailleurFactory
+from conventions.forms.bailleur import BailleurForm
+from instructeurs.forms import AdministrationForm
 from instructeurs.tests.factories import AdministrationFactory
 from users.forms import UserNotificationForm
 from users.tests.factories import UserFactory
@@ -149,3 +154,92 @@ class TestUserList:
         response = user_list(request)
         assert response["user_is_staff_or_admin"]
         assert response["total_users"] >= 1
+
+
+@pytest.mark.django_db
+class TestEditBailleur:
+
+    def test_edit_bailleur_get(self):
+        factory = RequestFactory()
+        bailleur = BailleurFactory()
+        request = factory.get(f"/settings/bailleurs/{bailleur.uuid}/")
+        user = UserFactory(is_superuser=True)
+        request.user = user
+
+        response = edit_bailleur(request, bailleur.uuid)
+        assert response["user_is_staff_or_admin"]
+        assert response["bailleur"] == bailleur
+        assert isinstance(response["form"], BailleurForm)
+
+    def test_edit_bailleur_post(self):
+        factory = RequestFactory()
+        bailleur = BailleurFactory()
+        request = factory.post(
+            f"/settings/bailleurs/{bailleur.uuid}/",
+            {
+                **model_to_dict(
+                    bailleur, exclude=["parent", "operation_exceptionnelle"]
+                ),
+                "nom": "nouveau nom",
+            },
+        )
+        user = UserFactory(is_superuser=True)
+        request.user = user
+
+        # Mock Django messages
+        request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        response = edit_bailleur(request, bailleur.uuid)
+        assert response["user_is_staff_or_admin"]
+        assert response["bailleur"] == bailleur
+        assert isinstance(response["form"], BailleurForm)
+
+        bailleur.refresh_from_db()
+
+        assert bailleur.nom == "nouveau nom"
+
+
+@pytest.mark.django_db
+class TestEditAdministration:
+
+    def test_edit_administration_get(self):
+        factory = RequestFactory()
+        administration = AdministrationFactory()
+        request = factory.get(f"/settings/administrations/{administration.uuid}/")
+        user = UserFactory(is_superuser=True)
+        request.user = user
+
+        response = edit_administration(request, administration.uuid)
+        assert response["user_is_staff_or_admin"]
+        assert isinstance(response["form"], AdministrationForm)
+
+    def test_edit_administration_post(self):
+        factory = RequestFactory()
+        administration = AdministrationFactory()
+        request = factory.post(
+            f"/settings/administrations/{administration.uuid}/",
+            {
+                **model_to_dict(
+                    administration,
+                    exclude=["code_dans_galion", "signataire_bloc_signature"],
+                ),
+                "nom": "nouveau nom",
+            },
+        )
+        user = UserFactory(is_superuser=True)
+        request.user = user
+
+        # Mock Django messages
+        request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        response = edit_administration(request, administration.uuid)
+        assert response["user_is_staff_or_admin"]
+        assert isinstance(response["form"], AdministrationForm)
+
+        administration.refresh_from_db()
+
+        assert administration.nom == "nouveau nom"
