@@ -33,14 +33,4 @@ urlpatterns = [
         views.users,
         name="users",
     ),
-    path(
-        "users/<username>",
-        views.edit_user,
-        name="edit_user",
-    ),
-    path(
-        "users/bailleur/import",
-        views.ImportBailleurUsersView.as_view(),
-        name="import_bailleur_users",
-    ),
 ]

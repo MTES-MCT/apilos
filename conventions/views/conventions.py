@@ -573,7 +573,6 @@ def load_xlsx_model(request, file_type):
         "financement",
         "locaux_collectifs",
         "foyer_residence_logements",
-        "listing_bailleur",
         "logements_edd",
         "logements",
         "stationnements",

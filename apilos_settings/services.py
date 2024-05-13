@@ -2,29 +2,19 @@ from typing import Any
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.models import Group
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
 from django.forms.models import model_to_dict
 from django.http import HttpRequest
 from django.views.decorators.http import require_GET
 
-from apilos_settings.forms import BailleurListingUploadForm
-from bailleurs.models import Bailleur, NatureBailleur
+from bailleurs.models import Bailleur
 from conventions.forms import BailleurForm
 from conventions.services import utils
-from conventions.services.utils import ReturnStatus
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
-from users.forms import (
-    AddAdministrationForm,
-    AddBailleurForm,
-    UserBailleurFormSet,
-    UserForm,
-    UserNotificationForm,
-)
-from users.models import Role, TypeRole, User
-from users.services import UserService
+from users.forms import UserNotificationForm
+from users.models import User
 
 
 def user_is_staff_or_admin(request: HttpRequest) -> bool:
@@ -193,7 +183,7 @@ def edit_bailleur(request, bailleur_uuid):
             ),
         )
         if form.is_valid():
-            if user_is_staff_or_admin(request) or request.user.administrateur_de_compte:
+            if user_is_staff_or_admin(request):
                 parent = (
                     form.cleaned_data["bailleur"]
                     if form.cleaned_data["bailleur"]
@@ -291,106 +281,6 @@ def user_list(request: HttpRequest) -> dict[str, Any]:
         "user_is_staff_or_admin": user_is_staff_or_admin(request),
         **user_list_service.as_dict(),
     }
-
-
-# TODO: Refactor this function
-def edit_user(request: HttpRequest, username: str) -> tuple[bool, dict[str, Any]]:
-    user_updated: bool = False
-
-    user = User.objects.get(username=username)
-
-    bailleur_query = (
-        request.user.bailleurs(full_scope=True)
-        .exclude(nature_bailleur=NatureBailleur.PRIVES)
-        .exclude(id__in=user.get_active_bailleurs())
-    )
-
-    administrations = [
-        (b.uuid, b.nom)
-        for b in request.user.administrations(full_scope=True).exclude(
-            id__in=user.get_active_administrations()
-        )
-    ]
-
-    if request.method == "POST" and request.user.is_administrator(user):
-        form = UserForm(request.POST)
-
-        form_add_bailleur = AddBailleurForm(
-            request.POST,
-            bailleur_query=bailleur_query,
-        )
-
-        form_add_administration = AddAdministrationForm(
-            request.POST,
-            administrations=administrations,
-        )
-
-        match request.POST.get("action_type", ""):
-            case "remove_bailleur":
-                Role.objects.get(
-                    typologie=TypeRole.BAILLEUR,
-                    bailleur=request.user.bailleurs().get(
-                        uuid=request.POST.get("bailleur")
-                    ),
-                    user=user,
-                ).delete()
-
-            case "add_bailleur":
-                if form_add_bailleur.is_valid():
-                    Role.objects.create(
-                        typologie=TypeRole.BAILLEUR,
-                        bailleur=form_add_bailleur.cleaned_data["bailleur"],
-                        user=user,
-                        group=Group.objects.get(name="bailleur"),
-                    )
-
-            case "remove_administration":
-                Role.objects.get(
-                    typologie=TypeRole.INSTRUCTEUR,
-                    administration=request.user.administrations().get(
-                        uuid=request.POST.get("administration")
-                    ),
-                    user=user,
-                ).delete()
-
-            case "add_administration":
-                if form_add_administration.is_valid():
-                    Role.objects.create(
-                        typologie=TypeRole.INSTRUCTEUR,
-                        administration=request.user.administrations().get(
-                            uuid=form_add_administration.cleaned_data["administration"]
-                        ),
-                        user=user,
-                        group=Group.objects.get(name="instructeur"),
-                    )
-
-            case _:
-                if form.is_valid():
-                    if form.cleaned_data["preferences_email"] is not None:
-                        user.preferences_email = form.cleaned_data["preferences_email"]
-
-                    user.administrateur_de_compte = form.cleaned_data[
-                        "administrateur_de_compte"
-                    ]
-                    user.save()
-
-                    user_updated = True
-    else:
-        form = UserForm(initial=model_to_dict(user))
-        form_add_bailleur = AddBailleurForm(bailleur_query=bailleur_query)
-        form_add_administration = AddAdministrationForm(administrations=administrations)
-
-    return (
-        user_updated,
-        {
-            "user": user,
-            "editable": True,
-            "form": form,
-            "form_add_bailleur": form_add_bailleur,
-            "form_add_administration": form_add_administration,
-            "user_is_staff_or_admin": user_is_staff_or_admin(request),
-        },
-    )
 
 
 class UserListService:
@@ -506,86 +396,3 @@ class BailleurListService(ListService):
             | Q(siret__icontains=self.search_input)
             | Q(ville__icontains=self.search_input)
         )
-
-
-class ImportBailleurUsersService:
-    request: HttpRequest
-    upload_form = BailleurListingUploadForm()
-    formset = UserBailleurFormSet()
-    is_upload: bool = False
-
-    def __init__(self, request: HttpRequest):
-        self.request = request
-
-    def get(self) -> ReturnStatus:
-        return ReturnStatus.SUCCESS
-
-    def save(self) -> ReturnStatus:
-        self.is_upload = self.request.POST.get("Upload", False)
-        if self.is_upload:
-            return self._process_upload()
-        return self._process_formset()
-
-    def _process_upload(self) -> ReturnStatus:
-        self.upload_form = BailleurListingUploadForm(
-            self.request.POST, self.request.FILES
-        )
-        if self.upload_form.is_valid():
-            data = self.upload_form.cleaned_data["users"]
-            self.formset = UserBailleurFormSet(
-                self._build_formset_data(data),
-                form_kwargs={
-                    "bailleur_queryset": Bailleur.objects.filter(
-                        id__in=[
-                            d["bailleur"].id for d in data if d["bailleur"] is not None
-                        ]
-                    )
-                },
-            )
-            return ReturnStatus.SUCCESS
-
-        return ReturnStatus.ERROR
-
-    def _process_formset(self) -> ReturnStatus:
-        self.formset = UserBailleurFormSet(
-            self.request.POST,
-            form_kwargs={
-                "bailleur_queryset": Bailleur.objects.filter(
-                    id__in=[
-                        value
-                        for key, value in self.request.POST.items()
-                        if key.endswith("bailleur")
-                    ]
-                )
-            },
-        )
-        if self.formset.is_valid():
-            for form_user_bailleur in self.formset:
-                UserService.create_user_bailleur(
-                    form_user_bailleur.cleaned_data["first_name"],
-                    form_user_bailleur.cleaned_data["last_name"],
-                    form_user_bailleur.cleaned_data["email"],
-                    form_user_bailleur.cleaned_data["bailleur"],
-                    form_user_bailleur.cleaned_data["username"],
-                    self.request.build_absolute_uri("/accounts/login/"),
-                )
-
-            messages.success(
-                self.request,
-                f"{len(self.formset)} utilisateurs bailleurs ont été correctement créés"
-                + " à partir du listing",
-                extra_tags="Listing importé",
-            )
-            return ReturnStatus.SUCCESS
-
-        return ReturnStatus.ERROR
-
-    def _build_formset_data(self, results) -> dict:
-        data = {
-            "form-TOTAL_FORMS": len(results),
-            "form-INITIAL_FORMS": len(results),
-        }
-        for index, user in enumerate(results):
-            for key, value in user.items():
-                data[f"form-{index}-{key}"] = value
-        return data

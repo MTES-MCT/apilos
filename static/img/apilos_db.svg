@@ -3215,10 +3215,6 @@
             stroke-linecap="square" stroke-miterlimit="10" pointer-events="none" />
         <path d="M 510 1960 M 800 1960 M 800 1990 M 510 1990" fill="none" stroke="rgb(0, 0, 0)"
             stroke-linecap="square" stroke-miterlimit="10" pointer-events="none" />
-        <g fill="rgb(0, 0, 0)" font-family="Helvetica" pointer-events="none"
-            clip-path="url(#mx-clip-516-1960-284-30-0)" font-size="12px">
-            <text x="517.5" y="1979.5">administrateur_de_compte boolean NOT NULL</text>
-        </g>
         <path d="M 480 1990 M 510 1990 M 510 2020 M 480 2020" fill="none" stroke="rgb(0, 0, 0)"
             stroke-linecap="square" stroke-miterlimit="10" pointer-events="none" />
         <path d="M 510 1990 M 800 1990 M 800 2020 M 510 2020" fill="none" stroke="rgb(0, 0, 0)"

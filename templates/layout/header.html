@@ -23,21 +23,3 @@
         {% include "layout/header_cerbere.html" %}
     {% endif %}
 </header>
-{% if not CERBERE_AUTH %}
-    <div class="apilos-warning-band">
-        <div class="fr-container fr-p-4w">
-            <div class="block--row-strech">
-                <div class="block--row-strech-1 fr-mr-4w fr-grid-row fr-grid-row--gutters fr-grid-row--middle ">
-                    <img class="fr-mr-3w"  src="{% static 'icons/information.svg' %}" alt="information">
-                    <div>
-                        <p class="fr-mb-0 fr-text--lead">À partir du 25 décembre 2023, le SIAP sera votre unique porte d'entrée vers APiLos.</p>
-                        <p class="fr-mb-0">Celui-ci centralise toutes vos demandes de financement et de conventionnement.
-                            <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/passage-vers-le-siap/passage-au-siap" target="_blank"  rel="noopener">En savoir plus</a>
-                        </p>
-                    </div>
-                </div>
-                <a href="https://siap.logement.gouv.fr/" class="fr-btn" alt="siap-link">Aller vers le SIAP</a>
-            </div>
-        </div>
-    </div>
-{% endif %}

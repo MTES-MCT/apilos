@@ -57,7 +57,6 @@ class GroupProfile(models.TextChoices):
 
 class User(AbstractUser):
     siap_habilitation = {}
-    administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
         max_length=25,
@@ -536,40 +535,6 @@ class User(AbstractUser):
             )
 
         return User.objects.none()
-
-    def is_administrator(self, user=None):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if user is None:
-            return True
-        if user.is_superuser:
-            return False
-        # check if the scope of current_user and user is not empty
-        if list(set(user.bailleurs()) & set(self.bailleurs())) or list(
-            set(user.administrations()) & set(self.administrations())
-        ):
-            return True
-        return False
-
-    def is_administration_administrator(self, administration):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if administration in self.administrations():
-            return True
-        return False
-
-    def is_bailleur_administrator(self, bailleur):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if bailleur in self.bailleurs():
-            return True
-        return False
 
     def is_cerbere_user(self):
         return self.cerbere_login is not None
