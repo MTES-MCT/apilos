@@ -39,7 +39,6 @@ def user_profile(request: HttpRequest) -> dict[str, Any]:
 
     return {
         "form": form,
-        "editable": True,
         "user_is_staff_or_admin": user_is_staff_or_admin(request),
     }
 
