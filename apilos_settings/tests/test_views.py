@@ -6,11 +6,18 @@ from django.forms import model_to_dict
 from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
-from apilos_settings.views import EditBailleurView
+from apilos_settings.views import (
+    EditAdministrationView,
+    EditBailleurView,
+    UserProfileView,
+)
 from bailleurs.tests.factories import BailleurFactory
 from conventions.forms.bailleur import BailleurForm
+from instructeurs.forms import AdministrationForm
+from instructeurs.tests.factories import AdministrationFactory
+from users.forms import UserNotificationForm
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
-from users.type_models import TypeRole
+from users.type_models import EmailPreferences, TypeRole
 
 
 class SideMenuTests(TestCase):
@@ -191,3 +198,178 @@ class TestEditBailleurView:
 
         with pytest.raises(PermissionDenied):
             EditBailleurView.as_view()(request, bailleur_uuid=bailleur1.uuid)
+
+
+@pytest.mark.django_db
+class TestEditAdministrationView:
+    def test_edit_administration_view_get(self):
+        administration = AdministrationFactory()
+        url = reverse(
+            "settings:edit_administration",
+            kwargs={"administration_uuid": administration.uuid},
+        )
+        request = RequestFactory().get(url)
+        user = UserFactory()
+        RoleFactory(
+            user=user,
+            administration=administration,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+        request.user = user
+
+        response = EditAdministrationView.as_view()(
+            request, administration_uuid=administration.uuid
+        )
+
+        assert response.status_code == 200
+        assert isinstance(response.context_data["form"], AdministrationForm)
+
+    def test_edit_administration_view_post(self):
+        # Setup
+        administration = AdministrationFactory()
+        form_data = {
+            **model_to_dict(
+                administration,
+                exclude=["code_dans_galion", "signataire_bloc_signature"],
+            ),
+            "nom": "nouveau nom",
+            # add all other fields here
+        }
+        url = reverse(
+            "settings:edit_administration",
+            kwargs={"administration_uuid": administration.uuid},
+        )
+        user = UserFactory(is_superuser=True)
+        RoleFactory(
+            user=user,
+            administration=administration,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+        request = RequestFactory().post(url, form_data)
+        request.user = user
+
+        # Mock Django messages
+        request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        # Call the view
+        response = EditAdministrationView.as_view()(
+            request, administration_uuid=administration.uuid
+        )
+
+        # Check the success message
+        messages = list(get_messages(request))
+        assert len(messages) == 1
+        assert str(messages[0]) == "L'administration a été enregistrée avec succès"
+
+        # Check the response
+        assert response.status_code == 302
+        assert response.url == url
+
+        administration.refresh_from_db()
+        assert administration.nom == "nouveau nom"
+
+    def test_edit_administration_view_get_permission_denied(self):
+        administration1 = AdministrationFactory()
+        administration2 = AdministrationFactory()
+        url = reverse(
+            "settings:edit_administration",
+            kwargs={"administration_uuid": administration1.uuid},
+        )
+        request = RequestFactory().get(url)
+        user = UserFactory()
+        RoleFactory(
+            user=user,
+            administration=administration2,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+        request.user = user
+
+        with pytest.raises(PermissionDenied):
+            EditAdministrationView.as_view()(
+                request, administration_uuid=administration1.uuid
+            )
+
+    def test_edit_administration_view_post_permission_denied(self):
+        administration1 = AdministrationFactory()
+        administration2 = AdministrationFactory()
+        url = reverse(
+            "settings:edit_administration",
+            kwargs={"administration_uuid": administration1.uuid},
+        )
+        request = RequestFactory().post(url)
+        user = UserFactory()
+        RoleFactory(
+            user=user,
+            administration=administration2,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+        request.user = user
+
+        with pytest.raises(PermissionDenied):
+            EditAdministrationView.as_view()(
+                request, administration_uuid=administration1.uuid
+            )
+
+
+@pytest.mark.django_db
+class TestUserProfileView:
+    def test_user_profile_view_get(self):
+        url = reverse("settings:profile")
+        user = UserFactory()
+        administration = AdministrationFactory()
+        RoleFactory(
+            user=user,
+            administration=administration,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+
+        request = RequestFactory().get(url)
+        request.user = user
+
+        response = UserProfileView.as_view()(request)
+
+        assert response.status_code == 200
+        assert isinstance(response.context_data["form"], UserNotificationForm)
+
+    def test_user_profile_view_post(self):
+
+        url = reverse("settings:profile")
+        user = UserFactory()
+        administration = AdministrationFactory()
+        RoleFactory(
+            user=user,
+            administration=administration,
+            typologie=TypeRole.INSTRUCTEUR,
+            group=GroupFactory(),
+        )
+
+        request = RequestFactory().post(
+            "/settings/profile/", {"preferences_email": EmailPreferences.PARTIEL}
+        )
+        request.user = user
+
+        # Mock Django messages
+        request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
+
+        response = UserProfileView.as_view()(request)
+
+        # Check the success message
+        messages = list(get_messages(request))
+        assert len(messages) == 1
+        assert str(messages[0]) == "Votre profil a été enregistré avec succès"
+
+        # Check the response
+        assert response.status_code == 302
+        assert response.url == url
+
+        user.refresh_from_db()
+        assert user.preferences_email == EmailPreferences.PARTIEL

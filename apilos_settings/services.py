@@ -1,39 +1,14 @@
 from typing import Any
 
 from django.conf import settings
-from django.contrib import messages
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Q
-from django.forms.models import model_to_dict
 from django.http import HttpRequest
 from django.views.decorators.http import require_GET
 
 from bailleurs.models import Bailleur
-from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
-from users.forms import UserNotificationForm
 from users.models import User
-
-
-def user_profile(request: HttpRequest) -> dict[str, Any]:
-    if request.method == "POST":
-        form = UserNotificationForm(request.POST)
-        if form.is_valid() and form.cleaned_data["preferences_email"] is not None:
-            request.user.preferences_email = form.cleaned_data["preferences_email"]
-            request.user.save()
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                "Votre profil a été enregistré avec succès",
-            )
-    else:
-        form = UserNotificationForm(
-            initial={"preferences_email": request.user.preferences_email}
-        )
-
-    return {
-        "form": form,
-    }
 
 
 @require_GET
@@ -69,59 +44,6 @@ def administration_list(request: HttpRequest) -> dict[str, Any]:
         "total_administration": total_administration,
         "order_by": order_by,
         "search_input": search_input,
-    }
-
-
-def edit_administration(request, administration_uuid):
-    administration = Administration.objects.get(uuid=administration_uuid)
-    if request.method == "POST":
-        form = AdministrationForm(
-            {
-                **request.POST.dict(),
-                "uuid": administration_uuid,
-                "nom": request.POST.get("nom", administration.nom),
-                "code": (
-                    request.POST.get("code", False)
-                    if request.user.is_admin
-                    else administration.code
-                ),
-            }
-        )
-        if form.is_valid():
-            administration.nom = form.cleaned_data["nom"]
-            administration.code = form.cleaned_data["code"]
-            administration.ville_signature = form.cleaned_data["ville_signature"]
-            administration.adresse = form.cleaned_data["adresse"]
-            administration.code_postal = form.cleaned_data["code_postal"]
-            administration.ville = form.cleaned_data["ville"]
-            administration.signataire_bloc_signature = form.cleaned_data[
-                "signataire_bloc_signature"
-            ]
-            administration.nb_convention_exemplaires = form.cleaned_data[
-                "nb_convention_exemplaires"
-            ]
-            administration.save()
-            messages.add_message(
-                request,
-                messages.SUCCESS,
-                "L'administration a été enregistrée avec succès",
-            )
-    else:
-        form = AdministrationForm(initial=model_to_dict(administration))
-
-    user_list_service = UserListService(
-        search_input=request.GET.get("search_input", ""),
-        order_by=request.GET.get("order_by", "username"),
-        page=request.GET.get("page", 1),
-        my_user_list=User.objects.filter(
-            roles__in=administration.roles.all()
-        ).distinct(),
-    )
-    user_list_service.paginate()
-
-    return {
-        **user_list_service.as_dict(),
-        "form": form,
     }
 
 

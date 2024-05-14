@@ -10,7 +10,7 @@ urlpatterns = [
     ),
     path(
         "administrations/<administration_uuid>",
-        views.edit_administration,
+        views.EditAdministrationView.as_view(),
         name="edit_administration",
     ),
     path(
@@ -25,7 +25,7 @@ urlpatterns = [
     ),
     path(
         "profile/",
-        views.profile,
+        views.UserProfileView.as_view(),
         name="profile",
     ),
     path(
