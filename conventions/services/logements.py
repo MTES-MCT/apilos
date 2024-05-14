@@ -345,6 +345,10 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
         self.formset = FoyerResidenceLogementFormSet(initformset)
         self.formset.lot_id = self.convention.lot_id
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
+        self.formset.ignore_optional_errors = self.request.POST.get(
+            "ignore_optional_errors", False
+        )
+        self.formset.is_avenant = self.convention.is_avenant()
         formset_is_valid = self.formset.is_valid()
 
         self.form = LotFoyerResidenceLgtsDetailsForm(

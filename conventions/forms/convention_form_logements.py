@@ -465,8 +465,17 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
     # les champs suivants sont utilisés pour la validation des données
     # ils sont initialisés avant la validation
     nb_logements: int = None
+    is_avenant: bool = False
+    optional_errors: list = []
+    ignore_optional_errors = False
+
+    def is_valid(self):
+        return super().is_valid() and len(self.optional_errors) == 0
 
     def clean(self):
+        if self.ignore_optional_errors:
+            return
+        self.optional_errors = []
         self.loan_should_be_consistent()
         self.manage_nb_logement_consistency()
 
@@ -480,7 +489,10 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
                 f"Le nombre de logement à conventionner ({self.nb_logements}) "
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
-            self._non_form_errors.append(error)
+            if self.is_avenant:
+                self.optional_errors.append(error)
+            else:
+                self._non_form_errors.append(error)
 
     def loan_should_be_consistent(self):
         """
