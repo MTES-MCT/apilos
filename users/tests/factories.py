@@ -1,7 +1,7 @@
 import factory
 from django.contrib.auth.models import Group, Permission
 
-from users.models import User
+from users.models import Role, User
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -18,6 +18,11 @@ class UserFactory(factory.django.DjangoModelFactory):
 
     class Params:
         cerbere = factory.Trait(cerbere_login=factory.SelfAttribute("email"))
+
+
+class RoleFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Role
 
 
 class GroupFactory(factory.django.DjangoModelFactory):

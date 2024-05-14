@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
@@ -73,7 +74,14 @@ class EditBailleurView(LoginRequiredMixin, FormView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        bailleur = Bailleur.objects.get(uuid=self.kwargs["bailleur_uuid"])
+        try:
+            bailleur = self.request.user.bailleurs(full_scope=True).get(
+                uuid=self.kwargs["bailleur_uuid"]
+            )
+        except Bailleur.DoesNotExist as e:
+            raise PermissionDenied(
+                "Vous n'avez pas les droits pour accéder à ce bailleur"
+            ) from e
         kwargs.update(
             {
                 "initial": {
@@ -112,7 +120,14 @@ class EditBailleurView(LoginRequiredMixin, FormView):
         return kwargs
 
     def post(self, request, *args, **kwargs):
-        bailleur = Bailleur.objects.get(uuid=self.kwargs["bailleur_uuid"])
+        try:
+            bailleur = self.request.user.bailleurs(full_scope=True).get(
+                uuid=self.kwargs["bailleur_uuid"]
+            )
+        except Bailleur.DoesNotExist as e:
+            raise PermissionDenied(
+                "Vous n'avez pas les droits pour accéder à ce bailleur"
+            ) from e
         form = self.form_class(
             {
                 **request.POST.dict(),
