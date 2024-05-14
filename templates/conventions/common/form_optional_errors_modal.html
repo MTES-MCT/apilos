@@ -1,0 +1,42 @@
+{% if formset.optional_errors and formset.total_error_count == 0 %}
+    <input data-fr-opened="true" aria-controls="fr-modal-2" type="hidden">
+    <dialog aria-labelledby="fr-modal-2-title" id="fr-modal-2" data-fr-opened="true" class="fr-modal" role="dialog" >
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button class="fr-link--close fr-link" type="button" aria-controls="fr-modal-2">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h1 id="fr-modal-2-title" class="fr-modal__title">
+                                <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
+                                Attention
+                            </h1>
+                            {% for error in formset.optional_errors %}
+                                <p id="text-input-error-desc-error" class="fr-error-text modal__error-text">
+                                    {{ error.message }}
+                                </p>
+                            {% endfor %}
+
+                        </div>
+                        <div class="fr-modal__footer">
+                            <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline fr-btns-group--inline-lg fr-btns-group--icon-left">
+                                <li>
+                                    <button class="fr-btn fr-btn--secondary" type="button" aria-controls="fr-modal-2">
+                                        Corriger
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="fr-btn fr-icon-checkbox-line" name='ignore_optional_errors' value=1>
+                                        Valider quand même
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
+{% endif %}
