@@ -199,10 +199,6 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         doc.sections[0].different_first_page_header_footer = False
         doc.sections[0].header.is_linked_to_previous = True
 
-    file_stream = io.BytesIO()
-    doc.save(file_stream)
-    file_stream.seek(0)
-
     for local_path in list(set(local_pathes)):
         os.remove(local_path)
 
