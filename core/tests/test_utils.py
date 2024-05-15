@@ -3,7 +3,12 @@ import uuid
 
 from django.db import connection
 
-from core.utils import get_key_from_json_field, is_valid_uuid, round_half_up
+from core.utils import (
+    get_key_from_json_field,
+    is_valid_uuid,
+    make_random_string,
+    round_half_up,
+)
 
 
 class UtilsTest(unittest.TestCase):
@@ -93,6 +98,9 @@ class UtilsTest(unittest.TestCase):
             ),
             {"myokey": "myovalue"},
         )
+
+    def test_make_random_password(self):
+        assert len(make_random_string(12)) == 12
 
 
 class PGTrgmTestMixin:

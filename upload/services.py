@@ -22,10 +22,7 @@ class UploadService:
             self.upload_file(File(src_file))
 
     def upload_file(self, file: File) -> None:
-        if (
-            settings.DEFAULT_FILE_STORAGE
-            == "django.core.files.storage.FileSystemStorage"
-        ):
+        if not settings.IS_S3_STORAGE:
             convention_dir = settings.MEDIA_ROOT / self.convention_dirpath
             if not convention_dir.exists():
                 try:
@@ -44,10 +41,7 @@ class UploadService:
         destination.close()
 
     def upload_file_io(self, file_io) -> None:
-        if (
-            settings.DEFAULT_FILE_STORAGE
-            == "django.core.files.storage.FileSystemStorage"
-        ):
+        if not settings.IS_S3_STORAGE:
             convention_dir = settings.MEDIA_ROOT / self.convention_dirpath
             if not convention_dir.exists():
                 try:
