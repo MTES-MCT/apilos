@@ -23,9 +23,6 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
-from django.views.generic import RedirectView
-from waffle import switch_is_active
-from waffle.mixins import WaffleSwitchMixin
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -50,10 +47,6 @@ from conventions.services.recapitulatif import (
 )
 from conventions.services.search import (
     ConventionSearchService,
-    UserConventionActivesSearchService,
-    UserConventionEnInstructionSearchService,
-    UserConventionSearchService,
-    UserConventionTermineesSearchService,
 )
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
@@ -63,15 +56,6 @@ from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.models import UploadedFile
 from upload.services import UploadService
-
-
-class ConventionIndexView(RedirectView):
-    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
-        if switch_is_active(settings.SWITCH_NEW_SEARCH):
-            self.url = reverse(f"conventions:{ConventionSearchView.name}")
-        else:
-            self.url = reverse(f"conventions:{ConventionEnInstructionSearchView.name}")
-        return super().get(request, *args, **kwargs)
 
 
 class RecapitulatifView(BaseConventionView):
@@ -144,34 +128,12 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-class ConventionTabsMixin:
-    def get_tab(self, subclass):
-        service = subclass.service_class(
-            user=self.request.user,
-        )
+class ConventionSearchView(LoginRequiredMixin, View):
+    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
+        if value := self.request.GET.get(query_param):
+            return value
 
-        url = reverse(f"conventions:{subclass.name}")
-
-        return {
-            "title": subclass.service_class.verbose_name,
-            "url": url,
-            "weight": subclass.service_class.weight,
-            "count": service.get_queryset().count(),
-        }
-
-    def get_tabs(self):
-        return sorted(
-            [
-                self.get_tab(subclass)
-                for subclass in ConventionTabSearchBaseView.__subclasses__()
-            ],
-            key=lambda tab: tab["weight"],
-        )
-
-
-class ConventionSearchBaseView(LoginRequiredMixin, View):
-    service: UserConventionSearchService
-    service_class: type[UserConventionSearchService]
+        return default
 
     def setup(self, *args, **kwargs) -> None:
         super().setup(*args, **kwargs)
@@ -181,7 +143,7 @@ class ConventionSearchBaseView(LoginRequiredMixin, View):
             for arg, query_param in self.get_search_filters_mapping()
         }
 
-        self.service = self.service_class(
+        self.service = ConventionSearchService(
             user=self.request.user, search_filters=search_filters
         )
 
@@ -191,121 +153,8 @@ class ConventionSearchBaseView(LoginRequiredMixin, View):
             : settings.APILOS_MAX_DROPDOWN_COUNT
         ]
 
-    @property
-    def administrations_queryset(self) -> QuerySet:
-        return self.request.user.administrations()[: settings.APILOS_MAX_DROPDOWN_COUNT]
-
-    def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
-        if value := self.request.GET.get(query_param):
-            return value
-
-        return default
-
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         return render(request, "conventions/index.html", self.get_context(request))
-
-    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
-        paginator = self.service.paginate()
-        return {
-            "administration_query": (
-                self.administrations_queryset if request.user.is_bailleur() else None
-            ),
-            "bailleur_query": (
-                self.bailleurs_queryset if request.user.is_instructeur() else None
-            ),
-            "conventions": paginator.get_page(request.GET.get("page", 1)),
-            "filtered_conventions_count": paginator.count,
-            "financements": Financement.choices,
-            "url_name": resolve(request.path_info).url_name,
-            "search_input": self._get_non_empty_query_param("search_input", ""),
-            "statuts": self.service.choices,
-            "total_conventions": request.user.conventions().count(),
-            "order_by": self._get_non_empty_query_param("order_by", ""),
-        }
-
-    def get_search_filters_mapping(self) -> list[tuple[str, str]]:
-        return [
-            ("anru", "anru"),
-            ("commune", "ville"),
-            ("financement", "financement"),
-            ("order_by", "order_by"),
-            ("search_input", "search_input"),
-            ("statut", "cstatut"),
-            ("bailleur", "bailleur"),
-            ("administration", "administration"),
-        ]
-
-
-class ConventionTabSearchBaseView(ConventionSearchBaseView, ConventionTabsMixin):
-    def all_conventions_count(self, tabs):
-        return sum(tab["count"] for tab in tabs)
-
-    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
-        tabs = self.get_tabs()
-        return super().get_context(request) | {
-            "tabs": tabs,
-            "all_conventions_count": self.all_conventions_count(tabs),
-        }
-
-    def get_search_filters_mapping(self):
-        return [
-            ("commune", "ville"),
-            ("financement", "financement"),
-            ("order_by", "order_by"),
-            ("search_input", "search_input"),
-            ("statut", "cstatut"),
-            ("bailleur", "bailleur"),
-            ("administration", "administration"),
-        ]
-
-
-# DEPRECATED: new_search is now the default search view
-class ConventionEnInstructionSearchView(ConventionTabSearchBaseView):
-    service_class = UserConventionEnInstructionSearchService
-    name = "search_instruction"
-
-
-# DEPRECATED: new_search is now the default search view
-class ConventionActivesSearchView(ConventionTabSearchBaseView):
-    service_class = UserConventionActivesSearchService
-    name = "search_active"
-
-    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
-        return super().get_context(request) | {
-            "date_signature_choices": Convention.date_signature_choices(
-                statuts=self.service_class.statuses
-            )
-        }
-
-    def get_search_filters_mapping(self):
-        return super().get_search_filters_mapping() + [
-            ("date_signature", "date_signature")
-        ]
-
-
-# DEPRECATED: new_search is now the default search view
-class ConventionTermineesSearchView(ConventionTabSearchBaseView):
-    service_class = UserConventionTermineesSearchService
-    name = "search_resiliees"
-
-    def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
-        return super().get_context(request) | {
-            "date_signature_choices": Convention.date_signature_choices(
-                statuts=self.service.statuses
-            )
-        }
-
-    def get_search_filters_mapping(self):
-        return super().get_search_filters_mapping() + [
-            ("date_signature", "date_signature")
-        ]
-
-
-class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
-    waffle_switch = settings.SWITCH_NEW_SEARCH
-
-    service_class = ConventionSearchService
-    name = "search"
 
     def get_context(self, request: AuthenticatedHttpRequest) -> dict[str, Any]:
         paginator = self.service.paginate()
@@ -313,7 +162,6 @@ class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
             "statut_choices": [
                 (member.neutre, member.label) for member in ConventionStatut
             ],
-            "new_search": True,
             "date_signature_choices": Convention.date_signature_choices(),
             "financement_choices": Financement.choices,
             "nature_logement_choices": NatureLogement.choices,
@@ -350,7 +198,7 @@ class ConventionSearchView(WaffleSwitchMixin, ConventionSearchBaseView):
         ]
 
 
-class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
+class LoyerSimulateurView(LoginRequiredMixin, View):
     def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
         montant_actualise = None
@@ -379,7 +227,6 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
                 "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
-                "new_search": switch_is_active(settings.SWITCH_NEW_SEARCH),
             },
         )
 
@@ -397,7 +244,6 @@ class LoyerSimulateurView(LoginRequiredMixin, ConventionTabsMixin, View):
             {
                 "form": loyer_simulateur_form,
                 "tabs": self.get_tabs(),
-                "new_search": switch_is_active(settings.SWITCH_NEW_SEARCH),
             },
         )
 

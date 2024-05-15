@@ -1,46 +1,21 @@
 from django.contrib.auth.decorators import permission_required
 from django.urls import path
-from django.views.generic import TemplateView
+from django.views.generic import RedirectView, TemplateView
 
 from . import views
-from .views import (
-    ConventionActivesSearchView,
-    ConventionEnInstructionSearchView,
-    ConventionIndexView,
-    ConventionSearchView,
-    ConventionTermineesSearchView,
-    LoyerSimulateurView,
-)
+from .views import ConventionSearchView, LoyerSimulateurView
 
 urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
     path(
         "",
-        ConventionIndexView.as_view(),
+        RedirectView.as_view(url="recherche"),
         name="index",
     ),
     path(
         "recherche",
         ConventionSearchView.as_view(),
-        name=ConventionSearchView.name,
-    ),
-    # DEPRECATED: new_search is now the default search view
-    path(
-        "en-cours",
-        ConventionEnInstructionSearchView.as_view(),
-        name=ConventionEnInstructionSearchView.name,
-    ),
-    # DEPRECATED: new_search is now the default search view
-    path(
-        "actives",
-        ConventionActivesSearchView.as_view(),
-        name=ConventionActivesSearchView.name,
-    ),
-    # DEPRECATED: new_search is now the default search view
-    path(
-        "resiliees",
-        ConventionTermineesSearchView.as_view(),
-        name=ConventionTermineesSearchView.name,
+        name="search",
     ),
     path(
         "simulateur-de-loyer",
