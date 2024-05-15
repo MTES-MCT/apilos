@@ -23,24 +23,7 @@
                             {% endif %}
                         {% endfor %}
                     {% endif %}
-
-                    {% if request.user.is_staff %}
-                        {# Button link to import bailleur users page #}
-                        <div class="fr-grid-row fr-grid-row--right fr-my-3w">
-                            <a class="fr-btn" href="{% url 'settings:import_bailleur_users' %}">
-                                <span class="fr-icon-todo-line fr-mr-1w" aria-hidden="true"></span>Importer un listing utilisateur bailleur
-                            </a>
-                        </div>
-                    {% endif %}
-
                     {% include 'settings/user_list.html' with users=paginated_users %}
-
-                    {% if request.user.is_administrator %}
-                        <a class="fr-btn fr-icon-add-circle-line fr-btn--icon-left fr-mt-3w" type="button" href="{% url 'settings:add_user'%}">
-                            Ajouter un utilisateur
-                        </a>
-                    {% endif %}
-
                 </div>
             </div>
         </div>

@@ -39,9 +39,6 @@
                     email
                     {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='email' url_target='settings:user' %}
                 </th>
-                {% if not read_only%}
-                    <th scope="col"></th>
-                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -50,22 +47,10 @@
                     <tr>
                         <td>
                             {{ user.username}}
-                            {% if user.is_administrator %}
-                                <em class="fr-text--light fr-text--sm">(Admin)</em>
-                            {% endif %}
                         </td>
                         <td>{{ user.first_name}}</td>
                         <td>{{ user.last_name}}</td>
                         <td>{{ user.email}}</td>
-                        {% if not read_only%}
-                            <td>
-                                {% if request.user|is_administrator:user %}
-                                    <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_user' username=user.username %}" >
-                                        <span class="fr-icon-edit-line" aria-hidden="true"></span>
-                                    </a>
-                                {% endif %}
-                            </td>
-                        {% endif %}
                     </tr>
                 {% endif %}
             {% endfor %}

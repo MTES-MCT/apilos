@@ -79,6 +79,7 @@ def create_all_for_siap():
     administration = AdministrationFactory(
         nom="CA d'Arles-Crau-Camargue-Montagnette",
         code="12345",
+        ville_signature="Leclercq",
     )
 
     bailleur = BailleurFactory(
@@ -86,6 +87,8 @@ def create_all_for_siap():
         siret="12345678901234",
         siren="123456789",
         capital_social="123000.50",
+        adresse="43, boulevard Marianne Gonzalez",
+        code_postal="13007",
         ville="Marseille",
     )
 
@@ -191,8 +194,21 @@ class OperationDetailsAPITest(APITestCase):
 
         expected_data = {
             "nom": "Programme 1",
-            "bailleur": fixtures.bailleur,
-            "administration": fixtures.administration,
+            "bailleur": {
+                "nom": "3F",
+                "siren": "123456789",
+                "siret": "12345678901234",
+                "adresse": "43, boulevard Marianne Gonzalez",
+                "code_postal": "13007",
+                "ville": "Marseille",
+                "capital_social": 123000.5,
+                "sous_nature_bailleur": "NONRENSEIGNE",
+            },
+            "administration": {
+                "nom": "CA d'Arles-Crau-Camargue-Montagnette",
+                "code": "12345",
+                "ville_signature": "Leclercq",
+            },
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -288,8 +304,8 @@ class OperationClosedAPITest(APITestCase):
                 "nom": "3F",
                 "siren": "123456789",
                 "siret": "12345678901234",
-                "adresse": None,
-                "code_postal": None,
+                "adresse": "43, boulevard Marianne Gonzalez",
+                "code_postal": "13007",
                 "ville": "Marseille",
                 "capital_social": 123000.5,
                 "sous_nature_bailleur": "NONRENSEIGNE",
@@ -297,7 +313,7 @@ class OperationClosedAPITest(APITestCase):
             "administration": {
                 "nom": "CA d'Arles-Crau-Camargue-Montagnette",
                 "code": "12345",
-                "ville_signature": None,
+                "ville_signature": "Leclercq",
             },
             "code_postal": "75007",
             "ville": "Paris",
@@ -454,8 +470,21 @@ class OperationClosedAPITest(APITestCase):
 
         expected_data = {
             "nom": "Programme 1",
-            "bailleur": fixtures.bailleur,
-            "administration": fixtures.administration,
+            "bailleur": {
+                "nom": "3F",
+                "siren": "123456789",
+                "siret": "12345678901234",
+                "adresse": "43, boulevard Marianne Gonzalez",
+                "code_postal": "13007",
+                "ville": "Marseille",
+                "capital_social": 123000.5,
+                "sous_nature_bailleur": "NONRENSEIGNE",
+            },
+            "administration": {
+                "nom": "CA d'Arles-Crau-Camargue-Montagnette",
+                "code": "12345",
+                "ville_signature": "Leclercq",
+            },
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",
@@ -792,8 +821,21 @@ class OperationClosedAPITest(APITestCase):
 
         expected_data = {
             "nom": "Programme 1",
-            "bailleur": fixtures.bailleur,
-            "administration": fixtures.administration,
+            "bailleur": {
+                "nom": "3F",
+                "siren": "123456789",
+                "siret": "12345678901234",
+                "adresse": "43, boulevard Marianne Gonzalez",
+                "code_postal": "13007",
+                "ville": "Marseille",
+                "capital_social": 123000.5,
+                "sous_nature_bailleur": "NONRENSEIGNE",
+            },
+            "administration": {
+                "nom": "CA d'Arles-Crau-Camargue-Montagnette",
+                "code": "12345",
+                "ville_signature": "Leclercq",
+            },
             "code_postal": "75007",
             "ville": "Paris",
             "adresse": "22 rue segur",

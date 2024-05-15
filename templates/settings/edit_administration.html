@@ -12,14 +12,11 @@
                     {% include 'settings/common/side_menu.html' with active_menu='administrations' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    <h3>Modification de l'administration « {{ form.nom.value }} »</h3>
+                    <h3>Modification de l'administration « {{ form.nom.value }} » ({{form.code.value}})</h3>
                     {% include "common/messages.html" %}
                     <form method="post" action="">
                         {% csrf_token %}
-                        {% if not CERBERE_AUTH %}
-                            {% include "common/form/input_text.html" with form_input=form.nom  %}
-                            {% include "common/form/input_text.html" with form_input=form.code editable=request.user.is_superuser %}
-                        {% endif %}
+                        {% include "common/form/input_text.html" with form_input=form.nom  %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
                         {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature helptext_visible=True %}
 
@@ -43,17 +40,10 @@
                                 {% include "common/form/input_text.html" with form_input=form.ville %}
                             </div>
                         </div>
-
-
-
                         <button class="fr-btn fr-icon-save-line fr-btn--icon-left" type="submit">
                             Enregistrer
                         </button>
                     </form>
-                    {% if not CERBERE_AUTH %}
-                        <h3 class="fr-mt-3w">Utilisateurs de l'administration « {{ form.nom.value }} »</h3>
-                        {% include 'settings/user_list.html' with users=paginated_users read_only=True %}
-                    {% endif %}
                 </div>
             </div>
         </div>

@@ -12,11 +12,24 @@ from bailleurs.tests.factories import BailleurFactory
 from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import create_avenant
 from conventions.tests.factories import ConventionFactory
-from instructeurs.models import Administration
 from programmes.models import Programme
 from users.models import ExceptionPermissionConfig, Role, User
 from users.tests.factories import GroupFactory, UserFactory
 from users.type_models import TypeRole
+
+
+class TestUserIsAdmin:
+    def test_user_is_not_admin(self):
+        user = UserFactory.build()
+        assert not user.is_admin
+
+    def test_staff_user_is_admin(self):
+        user = UserFactory.build(is_staff=True)
+        assert user.is_admin
+
+    def test_superuser_is_admin(self):
+        user = UserFactory.build(is_superuser=True)
+        assert user.is_admin
 
 
 class UserModelStrTest(TestCase):
@@ -327,163 +340,6 @@ class UserQuerySetTest(TestCase):
         self.assertEqual(user_instructeur.user_list().count(), 2)
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(user_bailleur.user_list().count(), 2)
-
-    def test_is_administrator(self):
-        user_superuser = User.objects.get(username="nicolas")
-        user_instructeur = User.objects.get(username="sabine")
-        user_bailleur = User.objects.get(username="raph")
-        self.assertTrue(
-            user_superuser.is_administrator(),
-        )
-        self.assertTrue(
-            user_superuser.is_administrator(user_instructeur),
-        )
-        self.assertTrue(
-            user_superuser.is_administrator(user_bailleur),
-        )
-        self.assertFalse(
-            user_instructeur.is_administrator(),
-        )
-        self.assertFalse(
-            user_bailleur.is_administrator(),
-        )
-        user_instructeur.administrateur_de_compte = True
-        self.assertTrue(
-            user_instructeur.is_administrator(),
-        )
-        self.assertFalse(
-            user_instructeur.is_administrator(user_superuser),
-            "un administrateur de compte ne peut pas être administrateur d'un super utilisateur",
-        )
-        user_instructeur_metropole = User.objects.get(username="roger")
-        self.assertTrue(
-            user_instructeur.is_administrator(user_instructeur_metropole),
-            "un administrateur de compte est administrateur des instructeurs"
-            + " qui ont au moins une administration en commun",
-        )
-        user_instructeur_paris = User.objects.get(username="fix")
-        self.assertFalse(
-            user_instructeur.is_administrator(user_instructeur_paris),
-            "un administrateur de compte n'est pas administrateur"
-            + " des instructeurs qui n'ont pas au moins une administration en commun",
-        )
-
-        user_bailleur.administrateur_de_compte = True
-        self.assertTrue(
-            user_bailleur.is_administrator(),
-        )
-        self.assertFalse(
-            user_bailleur.is_administrator(user_superuser),
-            "un administrateur de compte ne peut pas être administrateur d'un super utilisateur",
-        )
-        user_bailleur_hlm = User.objects.get(username="sophie")
-        self.assertTrue(
-            user_bailleur.is_administrator(user_bailleur_hlm),
-            "un administrateur de compte est administrateur des bailleurs"
-            + " qui ont au moins un bailleur en commun",
-        )
-        user_bailleur_sem = User.objects.get(username="sylvie")
-        self.assertFalse(
-            user_bailleur.is_administrator(user_bailleur_sem),
-            "un administrateur de compte n'est pas administrateur des bailleurs"
-            + " qui n'ont pas au moins un bailleur en commun",
-        )
-
-    def test_is_administration_administrator(self):
-        user_superuser = User.objects.get(username="nicolas")
-        administration_arles = Administration.objects.get(code="12345")
-        administration_paris = Administration.objects.get(code="75000")
-        user_instructeur = User.objects.get(username="sabine")
-        user_bailleur = User.objects.get(username="raph")
-        self.assertTrue(
-            user_superuser.is_administration_administrator(administration_arles),
-        )
-        self.assertTrue(
-            user_superuser.is_administration_administrator(administration_paris),
-        )
-        user_instructeur.administrateur_de_compte = True
-        self.assertTrue(
-            user_instructeur.is_administration_administrator(administration_arles),
-            "un administrateur de compte est seulement administrateur des"
-            + " administrations qui lui sont liées par un role",
-        )
-        self.assertFalse(
-            user_instructeur.is_administration_administrator(administration_paris),
-            "un administrateur de compte est seulement administrateur des"
-            + " administrations qui lui sont liées par un role",
-        )
-        user_instructeur.administrateur_de_compte = False
-        self.assertFalse(
-            user_instructeur.is_administration_administrator(administration_arles),
-            "un non administrateur de compte n'est pas administrateur d'une administration",
-        )
-        self.assertFalse(
-            user_instructeur.is_administration_administrator(administration_paris),
-            "un non administrateur de compte n'est pas administrateur d'une administration",
-        )
-        user_bailleur.administrateur_de_compte = True
-        self.assertFalse(
-            user_bailleur.is_administration_administrator(administration_arles),
-            "un bailleur ne peut pas être administrateur d'une administration",
-        )
-        self.assertFalse(
-            user_bailleur.is_administration_administrator(administration_paris),
-            "un bailleur ne peut pas être administrateur d'une administration",
-        )
-        user_bailleur.administrateur_de_compte = False
-        self.assertFalse(
-            user_bailleur.is_administration_administrator(administration_arles),
-            "un bailleur ne peut pas être administrateur d'une administration",
-        )
-
-    def test_is_bailleur_administrator(self):
-        user_superuser = User.objects.get(username="nicolas")
-        user_instructeur = User.objects.get(username="sabine")
-        user_bailleur = User.objects.get(username="raph")
-        bailleur_hlm = Bailleur.objects.get(nom="HLM")
-        bailleur_sem = Bailleur.objects.get(nom="SEM")
-        self.assertTrue(
-            user_superuser.is_bailleur_administrator(bailleur_hlm),
-            "un superuser est administrateur de tous les bailleurs",
-        )
-        self.assertTrue(
-            user_superuser.is_bailleur_administrator(bailleur_sem),
-            "un superuser est administrateur de tous les bailleurs",
-        )
-        user_bailleur.administrateur_de_compte = True
-        self.assertTrue(
-            user_bailleur.is_bailleur_administrator(bailleur_hlm),
-            "un administrateur de compte est seulement administrateur"
-            + " des bailleurs qui lui sont liés par un role",
-        )
-        self.assertFalse(
-            user_bailleur.is_bailleur_administrator(bailleur_sem),
-            "un administrateur de compte est seulement administrateur"
-            + " des bailleurs qui lui sont liés par un role",
-        )
-        user_bailleur.administrateur_de_compte = False
-        self.assertFalse(
-            user_bailleur.is_bailleur_administrator(bailleur_hlm),
-            "un non administrateur de compte n'est pas administrateur d'un bailleur",
-        )
-        self.assertFalse(
-            user_bailleur.is_bailleur_administrator(bailleur_sem),
-            "un non administrateur de compte n'est pas administrateur d'un bailleur",
-        )
-        user_instructeur.administrateur_de_compte = True
-        self.assertFalse(
-            user_instructeur.is_bailleur_administrator(bailleur_hlm),
-            "un instructeur ne peut pas être administrateur d'un bailleur",
-        )
-        self.assertFalse(
-            user_instructeur.is_bailleur_administrator(bailleur_sem),
-            "un instructeur ne peut pas être administrateur d'un bailleur",
-        )
-        user_instructeur.administrateur_de_compte = False
-        self.assertFalse(
-            user_instructeur.is_bailleur_administrator(bailleur_hlm),
-            "un instructeur ne peut pas être administrateur d'un bailleur",
-        )
 
     # Test model Role
     def test_object_role_str(self):

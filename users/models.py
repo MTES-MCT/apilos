@@ -57,7 +57,6 @@ class GroupProfile(models.TextChoices):
 
 class User(AbstractUser):
     siap_habilitation = {}
-    administrateur_de_compte = models.BooleanField(default=False)
     telephone = models.CharField(
         null=True,
         max_length=25,
@@ -85,6 +84,10 @@ class User(AbstractUser):
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
+
+    @property
+    def is_admin(self):
+        return self.is_staff or self.is_superuser
 
     def has_object_permission(self, obj):
         if isinstance(obj, Convention | Lot):
@@ -190,13 +193,6 @@ class User(AbstractUser):
             return self.roles.filter(bailleur_id=bailleur_id)
         return self._is_role(TypeRole.BAILLEUR) or self.is_superuser
 
-    def get_active_bailleurs(self):
-        return (
-            self.roles.filter(typologie=TypeRole.BAILLEUR)
-            .values_list("bailleur", flat=True)
-            .distinct()
-        )
-
     def is_instructeur(self):
         if self.is_cerbere_user():
             return "currently" in self.siap_habilitation and self.siap_habilitation[
@@ -217,13 +213,6 @@ class User(AbstractUser):
                 GroupProfile.SIAP_SER_DEP,
             ]
         return self.is_superuser
-
-    def get_active_administrations(self):
-        return (
-            self.roles.filter(typologie=TypeRole.INSTRUCTEUR)
-            .values_list("administration", flat=True)
-            .distinct()
-        )
 
     def is_administration(self):
         if self.is_cerbere_user():
@@ -276,16 +265,6 @@ class User(AbstractUser):
         raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les programmes"
         )
-
-    def lots(self):
-        """
-        Lots of the user following is role :
-        * super admin = all lots
-        * instructeur = all lots of programme which belong to its administrations
-        * bailleur = all lots which belongs to its bailleur entities
-        else raise
-        """
-        return Lot.objects.filter(programme__in=self.programmes())
 
     #
     # list of administration following role
@@ -536,40 +515,6 @@ class User(AbstractUser):
             )
 
         return User.objects.none()
-
-    def is_administrator(self, user=None):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if user is None:
-            return True
-        if user.is_superuser:
-            return False
-        # check if the scope of current_user and user is not empty
-        if list(set(user.bailleurs()) & set(self.bailleurs())) or list(
-            set(user.administrations()) & set(self.administrations())
-        ):
-            return True
-        return False
-
-    def is_administration_administrator(self, administration):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if administration in self.administrations():
-            return True
-        return False
-
-    def is_bailleur_administrator(self, bailleur):
-        if self.is_superuser:
-            return True
-        if not self.administrateur_de_compte:
-            return False
-        if bailleur in self.bailleurs():
-            return True
-        return False
 
     def is_cerbere_user(self):
         return self.cerbere_login is not None

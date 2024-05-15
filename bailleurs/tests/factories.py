@@ -16,9 +16,11 @@ class BailleurFactory(BaseFactory):
     siret = factory.LazyFunction(lambda: Faker(locale="fr_FR").siret().replace(" ", ""))
     siren = factory.LazyAttribute(lambda o: o.siret[:9])
 
-    capital_social = "123000.50"
-    ville = "Marseille"
-    signataire_nom = "Patrick Patoulachi"
+    adresse = factory.Faker("address", locale="fr_FR")
+    code_postal = factory.Faker("postcode", locale="fr_FR")
+    ville = factory.Faker("city", locale="fr_FR")
+    capital_social = factory.Faker("random_number", digits=6)
+    signataire_nom = factory.Faker("name", locale="fr_FR")
     signataire_date_deliberation = date(2014, 10, 9)
     signataire_fonction = "PDG"
     signataire_bloc_signature = "Mon PDG"

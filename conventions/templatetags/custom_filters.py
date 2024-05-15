@@ -216,21 +216,6 @@ def inline_text_multiline(text):
 
 
 @register.filter
-def is_administrator(current_user, user):
-    return current_user.is_administrator(user)
-
-
-@register.filter
-def is_administration_administrator(current_user, administration):
-    return current_user.is_administration_administrator(administration)
-
-
-@register.filter
-def is_bailleur_administrator(current_user, bailleur):
-    return current_user.is_bailleur_administrator(bailleur)
-
-
-@register.filter
 def get_text_from_textfiles(field):
     return get_key_from_json_field(field, "text")
 

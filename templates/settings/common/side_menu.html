@@ -4,45 +4,28 @@
         <div class="fr-collapse" id="fr-sidemenu-wrapper">
             <div class="fr-sidemenu__title">Gérer vos paramètres</div>
             <ul class="fr-sidemenu__list">
-                {% if CERBERE_AUTH %}
-                    <li class="fr-sidemenu__item{% if active_menu == 'profile' %} fr-sidemenu__item--active{% endif %}">
-                        <a class="fr-sidemenu__link" href="{% url 'settings:profile' %}" target="_self" {% if active_menu == 'profile' %}aria-current="page"{% endif %}>Vos notifications</a>
+                <li class="fr-sidemenu__item{% if active_menu == 'profile' %} fr-sidemenu__item--active{% endif %}">
+                    <a class="fr-sidemenu__link" href="{% url 'settings:profile' %}" target="_self" {% if active_menu == 'profile' %}aria-current="page"{% endif %}>Vos notifications</a>
+                </li>
+                {% if request|current_administration %}
+                    <li class="fr-sidemenu__item{% if active_menu == 'administrations' %} fr-sidemenu__item--active{% endif %}">
+                        <a class="fr-sidemenu__link" href="{% url 'settings:edit_administration' administration_uuid=request|current_administration %}" target="_self" {% if active_menu == 'administrations' %}aria-current="page"{% endif %}>Votre administration</a>
                     </li>
-                    {% if request|current_administration %}
-                        <li class="fr-sidemenu__item{% if active_menu == 'administrations' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:edit_administration' administration_uuid=request|current_administration %}" target="_self" {% if active_menu == 'administrations' %}aria-current="page"{% endif %}>Votre administration</a>
-                        </li>
-                    {% endif %}
+                {% endif %}
 
-                    {% if request|current_bailleur %}
-                        <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:edit_bailleur' bailleur_uuid=request|current_bailleur %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Votre entité bailleur</a>
-                        </li>
-                    {% endif %}
-
-                    {% if request.user.is_superuser or request.user.is_staff %}
-                        <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:bailleurs' %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Bailleurs</a>
-                        </li>
-                        <li class="fr-sidemenu__item{% if active_menu == 'administrations' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:administrations' %}" target="_self" {% if active_menu == 'administrations' %}aria-current="page"{% endif %}>Administrations</a>
-                        </li>
-                    {% endif %}
-
-                {% else %}
-                    <li class="fr-sidemenu__item{% if active_menu == 'profile' %} fr-sidemenu__item--active{% endif %}">
-                        <a class="fr-sidemenu__link" href="{% url 'settings:profile' %}" target="_self" {% if active_menu == 'profile' %}aria-current="page"{% endif %}>Votre profil</a>
+                {% if request|current_bailleur %}
+                    <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
+                        <a class="fr-sidemenu__link" href="{% url 'settings:edit_bailleur' bailleur_uuid=request|current_bailleur %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Votre entité bailleur</a>
                     </li>
-                    {% if request|is_bailleur %}
-                        <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:bailleurs' %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Bailleurs</a>
-                        </li>
-                    {% endif %}
-                    {% if request|is_instructeur %}
-                        <li class="fr-sidemenu__item{% if active_menu == 'administrations' %} fr-sidemenu__item--active{% endif %}">
-                            <a class="fr-sidemenu__link" href="{% url 'settings:administrations' %}" target="_self" {% if active_menu == 'administrations' %}aria-current="page"{% endif %}>Administrations</a>
-                        </li>
-                    {% endif %}
+                {% endif %}
+
+                {% if request.user.is_admin %}
+                    <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
+                        <a class="fr-sidemenu__link" href="{% url 'settings:bailleurs' %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Bailleurs</a>
+                    </li>
+                    <li class="fr-sidemenu__item{% if active_menu == 'administrations' %} fr-sidemenu__item--active{% endif %}">
+                        <a class="fr-sidemenu__link" href="{% url 'settings:administrations' %}" target="_self" {% if active_menu == 'administrations' %}aria-current="page"{% endif %}>Administrations</a>
+                    </li>
                     <li class="fr-sidemenu__item{% if active_menu == 'users' %} fr-sidemenu__item--active{% endif %}">
                         <a class="fr-sidemenu__link" href="{% url 'settings:users' %}" target="_self" {% if active_menu == 'users' %}aria-current="page"{% endif %}>Utilisateurs</a>
                     </li>

@@ -34,22 +34,14 @@
 
                                 {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 
-                                {% if not CERBERE_AUTH %}
-                                    {% if request.user.is_superuser or request.user.administrateur_de_compte %}
-                                        {% if form.bailleur.field.queryset.count > 0 and bailleur.bailleurs.count == 0 %}
-                                            {% url 'users:search_parent_bailleur' bailleur_uuid=bailleur.uuid as search_bailleur_url %}
-                                            {% include "common/form/input_search_select.html" with form_input=form.bailleur   url=search_bailleur_url %}
-                                        {% endif %}
-                                    {% endif %}
-                                {% endif %}
                                 {% if form.bailleur.value %}
                                     <div class="fr-mb-3w">
                                         <a href="{% url 'settings:edit_bailleur' bailleur_uuid=form.bailleur.value %}"> Éditer le bailleur parent</a>
                                     </div>
                                 {% endif %}
 
-                                {% include "common/form/input_select.html" with form_input=form.nature_bailleur editable=request.user.is_superuser %}
-                                {% include "common/form/input_select.html" with form_input=form.sous_nature_bailleur editable=request.user.is_superuser %}
+                                {% include "common/form/input_select.html" with form_input=form.nature_bailleur editable=request.user.is_admin %}
+                                {% include "common/form/input_select.html" with form_input=form.sous_nature_bailleur editable=request.user.is_admin %}
 
                                 <div class="fr-mb-2w">
                                     <div class="fr-grid-row fr-grid-row--gutters">
@@ -103,13 +95,6 @@
                             Enregistrer
                         </button>
                     </form>
-                    {% if not CERBERE_AUTH %}
-                        {% if bailleur.bailleurs.count > 0 %}
-                            {% include 'settings/bailleur_list_table.html' with count=bailleur.bailleurs.count total_items=bailleur.bailleurs.count items=bailleur.bailleurs.all%}
-                        {% endif %}
-                        <h3 class="fr-mt-3w">Utilisateurs du bailleur « {{ form.nom.value }} »</h3>
-                        {% include 'settings/user_list.html' with users=user_list.paginated_users total_users=user_list.total_users read_only=True %}
-                    {% endif %}
                 </div>
             </div>
         </div>

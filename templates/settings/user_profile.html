@@ -19,62 +19,23 @@
                 <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
                     {% include 'settings/common/side_menu.html' with active_menu='profile' %}
                 </div>
+
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
                     <div class='fr-col-12'>
-                        <form method="post" action="">
-                            {% csrf_token %}
-
-                            {% if not CERBERE_AUTH %}
-                                <h4>Gestion de votre profil</h4>
-                                {% include "common/messages.html" %}
-                                {% include "common/form/input_text.html" with form_input=form.email %}
-                                {% include "common/form/input_text.html" with form_input=form.username editable=False %}
-                                {% include "common/form/input_text.html" with form_input=form.first_name %}
-                                {% include "common/form/input_text.html" with form_input=form.last_name %}
-                                {% include "common/form/input_telephone.html" with form_input=form.telephone %}
-                                {% if not request.user.is_superuser and request.user.is_bailleur %}
-                                    {% include "common/form/input_multiselect.html" with form_input=form.filtre_departements label_class="fr-h4" %}
-                                {% endif %}
-                            {% endif %}
-
-                            {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email %}
-                            {% if not CERBERE_AUTH %}
-                                {% if request.user.is_superuser %}
-                                    <h4>Rôles spéciaux</h4>
-                                {% else %}
-                                    <h4>Rôle spécial</h4>
-                                {% endif %}
-                                {% include "common/form/input_checkbox.html" with form_input=form.administrateur_de_compte editable=request.user.is_administrator %}
-                                {% if request.user.is_superuser %}
-                                    {% include "common/form/input_checkbox.html" with form_input=form.is_superuser %}
-                                {% endif %}
-                            {% endif %}
-
-                            <button class="fr-btn fr-icon-save-line fr-btn--icon-left fr-mt-3w" type="submit">
-                                Enregistrer
-                            </button>
-                        </form>
-                    </div>
-                    {% if not CERBERE_AUTH %}
-                        <div class='fr-col-12 fr-mt-3w'>
-
-                            <p>Si vous souhaitez ré-initialiser votre mot de passe, cliquez sur le bouton ci-dessous et suivez les instructions que vous allez recevoir par email</p>
-                            <form action="{% url 'password_reset' %}" method="post">
+                        {% if not request.user.is_admin %}
+                            <form method="post" action="">
                                 {% csrf_token %}
-                                <input
-                                    type="hidden"
-                                    id="{{form.email.id_for_label}}"
-                                    name="{{form.email.html_name}}"
-                                    value="{{form.email.value}}" />
-                                <div class="fr-mt-3w">
-                                    <button class="fr-btn" type="submit">
-                                        Réinitialiser mon mot de passe
-                                    </button>
-                                </div>
-                            </form>
 
-                        </div>
-                    {% endif %}
+                                {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email %}
+
+                                <button class="fr-btn fr-icon-save-line fr-btn--icon-left fr-mt-3w" type="submit">
+                                    Enregistrer
+                                </button>
+                            </form>
+                        {% else %}
+                            Pas de préférences email pour un profil Super-utilisateur ou Staff.
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
