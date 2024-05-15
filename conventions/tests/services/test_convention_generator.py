@@ -60,6 +60,7 @@ def convention_context_keys():
         "logements",
         "mixPLUSinf10_30pc",
         "nombre_annees_conventionnement",
+        "outre_mer",
         "mixPLUSsup10_30pc",
         "sar_totale",
         "logement_edds",
