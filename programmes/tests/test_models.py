@@ -26,6 +26,7 @@ from programmes.models import (
     TypologieLogement,
     TypologieStationnement,
 )
+from programmes.models.models import OutreMerNatureLogementError
 from programmes.tests.factories import ProgrammeFactory
 
 
@@ -500,19 +501,12 @@ def test_create_programme_outre_mer():
 
 @pytest.mark.django_db
 def test_create_programme_outre_mer_logements_ordinaires():
-    pass
+    bailleur = BailleurFactory()
+    programme = Programme.objects.create(
+        bailleur=bailleur,
+        code_insee_departement=971,
+        nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+    )
 
-    # TODO tester si on limite à certains type de logements dans l'opération
-
-    # with pytest.raises(Exception) as e:
-    #     programme = Programme.objects.create(
-    #         bailleur=bailleur,
-    #         code_insee_departement=971,
-    #         nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
-    #     )
-
-
-@pytest.mark.django_db
-def test_create_programme_outre_mer_financements():
-    # TODO tester si on limite à certains type de financements dans l'opération
-    pass
+    with pytest.raises(OutreMerNatureLogementError):
+        programme.full_clean()

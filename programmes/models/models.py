@@ -23,6 +23,10 @@ from .choices import (
 )
 
 
+class OutreMerNatureLogementError(Exception):
+    pass
+
+
 class Programme(models.Model):
     class Meta:
         indexes = [
@@ -184,6 +188,22 @@ class Programme(models.Model):
 
     def __str__(self):
         return self.nom
+
+    def is_outre_mer(self) -> bool:
+        # Saint-Pierre-et-Miquelon (975) n'est pas dans cette liste
+        return int(self.code_insee_departement) in [971, 972, 973, 974, 976]
+
+    def clean(self):
+        if not self.is_outre_mer():
+            return
+
+        if (
+            self.nature_logement != NatureLogement.RESISDENCESOCIALE
+            or self.nature_logement != NatureLogement.AUTRE
+        ):
+            raise OutreMerNatureLogementError(
+                "Un programme situé en outre-mer ne peut être que de nature foyer ou résidence."
+            )
 
     def clone(self):
         parent_id = self.parent_id or self.id
