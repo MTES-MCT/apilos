@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Administration{{ administrations.paginator.count|pluralize }} - APiLos{% endblock%}
+{% block page_title %}Administration{{ paginated_items.paginator.count|pluralize }} - APiLos{% endblock%}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -14,10 +14,10 @@
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
                     <form class="fr-my-3w" method="get" action="" id="search_table">
-                        <input type="hidden" id="page" name="page" value="{{administrations.number}}">
+                        <input type="hidden" id="page" name="page" value="{{paginated_items.number}}">
                         <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
 
-                        {% if total_administration > 3 %}
+                        {% if total_items > 3 %}
                             <div class="fr-search-bar" id="header-search" role="search">
                                 <label class="fr-label" for="search_input">
                                     Recherche
@@ -32,7 +32,7 @@
 
                     <div class="fr-table fr-table--bordered table--layout-fixed">
                         <table>
-                            <caption>{{administrations.paginator.count}}{% if administrations.paginator.count != total_administration %} / {{total_administration}}{% endif %} administration{{ administrations.paginator.count|pluralize }}</caption>
+                            <caption>{{paginated_items.paginator.count}}{% if paginated_items.paginator.count != total_items %} / {{ total_items }}{% endif %} administration{{ paginated_items.paginator.count|pluralize }}</caption>
 
                             <thead>
                                 <tr>
@@ -53,7 +53,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for administration in administrations %}
+                                {% for administration in paginated_items %}
                                     <tr>
                                         <td>{{ administration.nom }}</td>
                                         <td>{{ administration.code }}</td>
@@ -69,7 +69,7 @@
                         </table>
                     </div>
 
-                    {% include 'common/table/pagination.html' with paginate_list=administrations %}
+                    {% include 'common/table/pagination.html' with paginate_list=paginated_items %}
 
                 </div>
             </div>

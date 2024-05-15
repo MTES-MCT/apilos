@@ -18,7 +18,7 @@ class TestAdministrationList:
         request.user = user
 
         response = administration_list(request)
-        assert response["administrations"].paginator.count >= 1
+        assert response["total_items"] >= 1
 
     def test_admnistration_list_staff(self):
         AdministrationFactory()
@@ -28,7 +28,7 @@ class TestAdministrationList:
         request.user = user
 
         response = administration_list(request)
-        assert response["administrations"].paginator.count >= 1
+        assert response["total_items"] >= 1
 
 
 @pytest.mark.django_db

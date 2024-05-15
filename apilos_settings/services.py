@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from typing import Any
 
 from django.conf import settings
@@ -13,38 +14,18 @@ from users.models import User
 
 @require_GET
 def administration_list(request: HttpRequest) -> dict[str, Any]:
-    search_input = request.GET.get("search_input", "")
-    order_by = request.GET.get("order_by", "nom")
-    page = request.GET.get("page", 1)
-
-    my_administration_list = (
-        Administration.objects.all().order_by(order_by)
-        if request.user.is_admin
-        else request.user.administrations().order_by(order_by)
+    administration_list_service = AdministrationListService(
+        search_input=request.GET.get("search_input", ""),
+        order_by=request.GET.get("order_by", "nom"),
+        page=request.GET.get("page", 1),
+        item_list=(
+            Administration.objects.all().order_by("nom")
+            if request.user.is_admin
+            else request.user.administration()
+        ),
     )
-    total_administration = my_administration_list.count()
-    if search_input:
-        my_administration_list = my_administration_list.filter(
-            Q(nom__icontains=search_input)
-            | Q(code__icontains=search_input)
-            | Q(ville_signature__icontains=search_input)
-        )
-
-    paginator = Paginator(my_administration_list, settings.APILOS_PAGINATION_PER_PAGE)
-    try:
-        administrations = paginator.page(page)
-    except PageNotAnInteger:
-        administrations = paginator.page(1)
-    except EmptyPage:
-        page = paginator.num_pages
-        administrations = paginator.page(page)
-
-    return {
-        "administrations": administrations,
-        "total_administration": total_administration,
-        "order_by": order_by,
-        "search_input": search_input,
-    }
+    administration_list_service.paginate()
+    return administration_list_service.as_dict()
 
 
 @require_GET
@@ -133,7 +114,7 @@ class UserListService:
         }
 
 
-class ListService:
+class ListService(ABC):
     search_input: str
     order_by: str
     page: str
@@ -153,10 +134,7 @@ class ListService:
         self.page = page
         self.item_list = item_list
 
-    """
-    This method should be implemented in the child classes if needed
-    """
-
+    @abstractmethod
     def _get_filter(self):
         pass
 
@@ -195,4 +173,13 @@ class BailleurListService(ListService):
             Q(nom__icontains=self.search_input)
             | Q(siret__icontains=self.search_input)
             | Q(ville__icontains=self.search_input)
+        )
+
+
+class AdministrationListService(ListService):
+    def _get_filter(self):
+        return (
+            Q(nom__icontains=self.search_input)
+            | Q(code__icontains=self.search_input)
+            | Q(ville_signature__icontains=self.search_input)
         )

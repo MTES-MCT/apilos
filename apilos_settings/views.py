@@ -268,11 +268,7 @@ class EditAdministrationView(FormView):
                 **request.POST.dict(),
                 "uuid": administration.uuid,
                 "nom": request.POST.get("nom", administration.nom),
-                "code": (
-                    request.POST.get("code", False)
-                    if request.user.is_admin
-                    else administration.code
-                ),
+                "code": administration.code,
             }
         )
         if form.is_valid():
