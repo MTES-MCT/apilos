@@ -128,9 +128,9 @@ django-sql-explorer[xls]==4.2 \
     --hash=sha256:3b6dba5447d53dae5f33aef9d0e02239523b6d5756d9bb07658cc9172c09474c \
     --hash=sha256:9bfff9b471c9553f337b8a8e0b8c099110f6611d342c24d50d56229702c5c62b
     # via -r requirements.in
-django-storages==1.14.2 \
-    --hash=sha256:1db759346b52ada6c2efd9f23d8241ecf518813eb31db9e2589207174f58f6ad \
-    --hash=sha256:51b36af28cc5813b98d5f3dfe7459af638d84428c8df4a03990c7d74d1bea4e5
+django-storages==1.14.3 \
+    --hash=sha256:31f263389e95ce3a1b902fb5f739a7ed32895f7d8b80179fe7453ecc0dfe102e \
+    --hash=sha256:95a12836cd998d4c7a4512347322331c662d9114c4344f932f5e9c0fce000608
     # via -r requirements.in
 django-waffle==4.1.0 \
     --hash=sha256:5979a2f3dd674ef7086480525b39651fc2045427f6d8e6a614192656d3402c5b \
