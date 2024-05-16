@@ -128,10 +128,11 @@ class ConventionFinancementForm(forms.Form):
                     + f"{min_years}"
                 ),
             )
-        # No control on max date for foyer and residence
+        # No control on max date for foyer, residence and avenants
         if (
             self.convention.programme.is_foyer()
             or self.convention.programme.is_residence()
+            or self.convention.is_avenant()
         ):
             return
         if annee_fin_conventionnement > max_years:
