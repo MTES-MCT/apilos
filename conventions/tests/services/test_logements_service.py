@@ -134,13 +134,12 @@ class ConventionLogementsServiceTests(TestCase):
             "nb_logements": "3",
         }
         self.service.save()
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Le nombre de logement à conventionner (3) ne correspond pas au nombre"
-                + " de logements déclaré (2)"
-            ],
-        )
+        assert self.service.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (3) ne correspond pas au nombre de logements déclaré (2)"
+            )
+        ]
+        assert self.service.formset.non_form_errors() == []
 
     def test_save_fails_on_nb_logements_avenants(self):
         self.service_avenant.request.POST = {
@@ -267,14 +266,12 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.formset.non_form_errors())
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Le nombre de logement à conventionner (2) "
-                + "ne correspond pas au nombre de logements déclaré (3)"
-            ],
-        )
+        assert self.service.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (2) ne correspond pas au nombre de logements déclaré (3)"
+            )
+        ]
+        assert self.service.formset.non_form_errors() == []
 
     def test_save_fails_on_surface_habitable_totale(self):
         self.service.request.POST = {

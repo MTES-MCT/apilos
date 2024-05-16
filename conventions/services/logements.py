@@ -171,7 +171,6 @@ class ConventionLogementsService(ConventionService):
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
-        self.formset.is_avenant = self.convention.is_avenant()
         formset_is_valid = self.formset.is_valid()
 
         if form_is_valid and formset_is_valid:
@@ -348,7 +347,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
-        self.formset.is_avenant = self.convention.is_avenant()
         formset_is_valid = self.formset.is_valid()
 
         self.form = LotFoyerResidenceLgtsDetailsForm(
