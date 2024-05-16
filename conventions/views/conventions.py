@@ -406,7 +406,7 @@ def generate_convention(request, convention_uuid):
         data,
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
     )
-    response["Content-Disposition"] = f"attachment; filename={convention}.docx"
+    response["Content-Disposition"] = f"attachment; filename={convention.uuid}.docx"
     return response
 
 
