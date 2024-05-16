@@ -197,10 +197,7 @@ class Programme(models.Model):
         if not self.is_outre_mer():
             return
 
-        if (
-            self.nature_logement != NatureLogement.RESISDENCESOCIALE
-            or self.nature_logement != NatureLogement.AUTRE
-        ):
+        if not (self.is_residence() or self.is_foyer()):
             raise OutreMerNatureLogementError(
                 "Un programme situé en outre-mer ne peut être que de nature foyer ou résidence."
             )
