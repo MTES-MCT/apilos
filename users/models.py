@@ -173,7 +173,7 @@ class User(AbstractUser):
                 lambda permission: permission.content_type.name
                 + "."
                 + permission.codename,
-                role.group.permissions.all(),
+                role.group.permissions.select_related("content_type").all(),
             )
         return perm in permissions
 
