@@ -34,6 +34,14 @@ class Programme(models.Model):
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
             GinIndex(fields=["search_vector"], name="search_vector_programme_idx"),
+            models.Index(
+                fields=["code_insee_region"],
+                name="programmes__code_insee_reg_idx",
+            ),
+            models.Index(
+                fields=["code_insee_departement"],
+                name="programmes__code_insee_dep_idx",
+            ),
         ]
 
     id = models.AutoField(primary_key=True)

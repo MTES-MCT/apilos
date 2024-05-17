@@ -403,27 +403,14 @@ class User(AbstractUser):
             )
         return convs
 
-    def conventions(self, active: bool | None = None):
+    def conventions(self):
         """
         Return the conventions the user has right to view.
         For an `instructeur`, it returns the conventions of its administrations
         For a `bailleur`, it returns the conventions of its bailleur entities in the limit of its
         geographic filter.
-
-        The active argument allows to filter this list based on the status of the convention,
-        whether it's active (A_SIGNER and below) or completed (SIGNEE and up).
-        If omitted or None, no filter is applied
         """
         convs = Convention.objects
-
-        if active is not None:
-            convs = convs.filter(
-                statut__in=(
-                    ConventionStatut.active_statuts()
-                    if active
-                    else ConventionStatut.completed_statuts()
-                )
-            )
 
         if self.is_superuser:
             return convs.all()
@@ -447,8 +434,9 @@ class User(AbstractUser):
                 # If there are no avenants, the effective bailleur_id is from the convention programme
                 # If there are avenants, the effective bailleur_id is the programme bailleur_id
                 # from the most recent avenant
+
                 avenants_bailleur_id_subquery = (
-                    convs.filter(
+                    Convention.objects.filter(
                         parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
                         statut__in=[
                             ConventionStatut.CORRECTION.label,
@@ -459,9 +447,11 @@ class User(AbstractUser):
                     .order_by("-cree_le")
                     .values("programme__bailleur_id")
                 )
-                bailleur_id_subquery = convs.filter(id=OuterRef("id")).values(
-                    "programme__bailleur_id"
-                )
+
+                bailleur_id_subquery = Convention.objects.filter(
+                    id=OuterRef("id")
+                ).values("programme__bailleur_id")
+
                 convs = convs.annotate(
                     effective_bailleur_id=Coalesce(
                         Subquery(avenants_bailleur_id_subquery[:1]),
