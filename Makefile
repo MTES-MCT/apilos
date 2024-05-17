@@ -17,3 +17,6 @@ test:
 freeze-requirements:
 	@pip-compile --resolver=backtracking requirements.in --generate-hashes
 	@pip-compile --resolver=backtracking dev-requirements.in --generate-hashes
+
+clear-profiling-data:
+	@python manage.py silk_clear_request_log

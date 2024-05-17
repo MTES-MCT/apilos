@@ -23,6 +23,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from silk.profiling.profiler import silk_profile
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -153,6 +154,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
             : settings.APILOS_MAX_DROPDOWN_COUNT
         ]
 
+    @silk_profile(name="Convention search")
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         return render(request, "conventions/index.html", self.get_context(request))
 

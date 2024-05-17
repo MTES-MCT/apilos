@@ -35,3 +35,4 @@ tenacity
 tqdm
 typing-extensions
 whitenoise
+django-silk

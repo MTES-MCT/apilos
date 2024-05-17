@@ -110,4 +110,11 @@ if "debug_toolbar" in settings.INSTALLED_APPS:
         ]
     )
 
+if "silk" in settings.INSTALLED_APPS:
+    urlpatterns.extend(
+        [
+            path("silk/", include("silk.urls", namespace="silk")),
+        ]
+    )
+
 handler500 = "core.exceptions.handler.handle_error_500"

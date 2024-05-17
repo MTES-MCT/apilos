@@ -594,3 +594,18 @@ LIBREOFFICE_EXEC = get_env_variable(
     "LIBREOFFICE_EXEC",
     default="/app/vendor/libreoffice/opt/libreoffice7.3/program/soffice",
 )
+
+#
+# django-silk (profiling)
+# https://github.com/jazzband/django-silk
+#
+INSTALLED_APPS += ["silk"]
+
+if get_env_variable("ENABLE_SILK", cast=bool, default=False):
+    MIDDLEWARE += ["silk.middleware.SilkyMiddleware"]
+
+SILKY_PYTHON_PROFILER = True
+SILKY_PYTHON_PROFILER_RESULT_PATH = MEDIA_ROOT / "silk"
+SILKY_AUTHENTICATION = True
+SILKY_AUTHORISATION = True
+SILKY_PERMISSIONS = lambda user: user.is_superuser or user.is_staff  # noqa: E731
