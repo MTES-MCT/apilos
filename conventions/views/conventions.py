@@ -75,6 +75,7 @@ class RecapitulatifView(BaseConventionView):
             uuid=convention_uuid,
         )
 
+    @silk_profile(name="Convention recapitulatif")
     @has_campaign_permission("convention.view_convention")
     def get(self, request: HttpRequest, **kwargs):
         service = ConventionRecapitulatifService(
