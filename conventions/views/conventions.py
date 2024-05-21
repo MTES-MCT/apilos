@@ -23,6 +23,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
+from unidecode import unidecode
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -45,9 +46,7 @@ from conventions.services.recapitulatif import (
     convention_submit,
     convention_validate,
 )
-from conventions.services.search import (
-    ConventionSearchService,
-)
+from conventions.services.search import ConventionSearchService
 from conventions.services.utils import ReturnStatus, base_convention_response_error
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.request import AuthenticatedHttpRequest
@@ -406,7 +405,8 @@ def generate_convention(request, convention_uuid):
         data,
         content_type="application/vnd.openxmlformats-officedocument.wordprocessingm",
     )
-    response["Content-Disposition"] = f"attachment; filename={convention}.docx"
+    filename = unidecode(str(convention))
+    response["Content-Disposition"] = f"attachment; filename={filename}.docx"
     return response
 
 
