@@ -1296,12 +1296,14 @@ class Command(BaseCommand):
         date_python = datetime.datetime.strptime(date, "%d/%m/%Y").date()
         qs = Convention.objects.filter(numero=numero)
         if qs.count() == 0:
-            self.sdtout.warn(f"Convention {numero} not found.")
+            self.stdout.write(self.style.WARNING(f"Convention {numero} not found."))
             self.numeros_not_found.append(numero)
             return
         elif qs.count() > 1:
-            self.sdtout.warn(
-                f"Several conventions found for {numero}. Updating status anyway."
+            self.stdout.write(
+                self.style.WARNING(
+                    f"Several conventions found for {numero}. Updating status anyway."
+                )
             )
 
         qs.update(statut=ConventionStatut.DENONCEE.label, date_denonciation=date_python)
