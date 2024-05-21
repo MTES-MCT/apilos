@@ -251,6 +251,8 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
             "numero_avenant",
             "gestionnaire",
             "convention_date_signature",
+            "date_denonciation",
+            "date_resiliation",
             "statut",
         )
         ref_name = "ConventionInfoSIAP"
