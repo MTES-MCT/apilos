@@ -292,8 +292,14 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
     return my_row, empty_line, new_warnings
 
 
-def _float_to_decimal_rounded_two_digits_half_up(number: float) -> Decimal:
-    return Decimal(str(number)).quantize(Decimal("1.00"), rounding=ROUND_HALF_UP)
+def _float_to_decimal_rounded_half_up(number: float, decimal_places: int) -> Decimal:
+    if decimal_places > 0:
+        decimal_target = "1." + ("0" * decimal_places)
+    else:
+        decimal_target = "1"
+    return Decimal(str(number)).quantize(
+        Decimal(decimal_target), rounding=ROUND_HALF_UP
+    )
 
 
 def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warnings):
@@ -314,7 +320,9 @@ def _get_value_from_decimal_field(cell, model_field, column_from_index, new_warn
                     )
                 )
         elif isinstance(cell.value, (float, int)):
-            value = _float_to_decimal_rounded_two_digits_half_up(cell.value)
+            value = _float_to_decimal_rounded_half_up(
+                cell.value, model_field.decimal_places
+            )
         else:
             new_warnings.append(
                 Exception(
