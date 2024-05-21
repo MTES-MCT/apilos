@@ -187,6 +187,7 @@ class OperationInfoSIAPSerializer(serializers.ModelSerializer):
             "ville",
             "adresse",
             "numero_operation",
+            "nature_logement",
             "zone_123",
             "zone_abc",
             "type_operation",
@@ -216,6 +217,24 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     lot = LotSerializer(read_only=True)
     operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
     prets = PretSerializer(many=True)
+    numero_avenant = serializers.SerializerMethodField()
+    numero_convention = serializers.SerializerMethodField()
+    convention_date_signature = serializers.SerializerMethodField()
+
+    def get_numero_convention(self, obj):
+        if obj.parent:
+            return obj.parent.numero
+        return obj.numero
+
+    def get_numero_avenant(self, obj):
+        if obj.parent:
+            return obj.numero
+        return None
+
+    def get_convention_date_signature(self, obj):
+        if obj.parent:
+            return obj.parent.televersement_convention_signee_le
+        return obj.televersement_convention_signee_le
 
     # ajout de la date de signature de la convention mère
     # vérifier si le numéro de la convention est le numéro de la convention mère
@@ -228,7 +247,12 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
             "lot",
             "prets",
             "operation",
-            "numero",
+            "numero_convention",
+            "numero_avenant",
+            "gestionnaire",
+            "convention_date_signature",
+            "date_denonciation",
+            "date_resiliation",
             "statut",
         )
         ref_name = "ConventionInfoSIAP"

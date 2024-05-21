@@ -1,3 +1,5 @@
+import argparse
+
 from django.core.management.base import BaseCommand
 from rest_framework.renderers import JSONRenderer
 
@@ -10,15 +12,36 @@ from programmes.api.operation_serializers import ConventionInfoSIAPSerializer
 
 
 class Command(BaseCommand):
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--limit",
+            help="limit the number of convention to export",
+            type=int,
+            default=None,
+        )
+        parser.add_argument(
+            "--with-ended",
+            help="Run command and write changes to the database",
+            action=argparse.BooleanOptionalAction,
+            default=False,
+        )
+
     def handle(self, *args, **options):
+        nb_conventions = options.get("limit")
+        with_ended = options.get("with_ended")
+        status_to_export = [
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.SIGNEE.label,
+        ]
+        if with_ended:
+            status_to_export.append(ConventionStatut.RESILIEE.label)
+            status_to_export.append(ConventionStatut.DENONCEE.label)
+
         conventions = (
-            Convention.objects.filter(
-                statut__in=[
-                    ConventionStatut.A_SIGNER.label,
-                    ConventionStatut.SIGNEE.label,
-                ]
-            )
+            Convention.objects.filter(statut__in=status_to_export)
             .prefetch_related(
+                "parent",
                 "programme",
                 "programme__bailleur",
                 "programme__administration",
@@ -29,6 +52,8 @@ class Command(BaseCommand):
             .order_by("numero", "-cree_le")
             .distinct("numero")
         )
+        if nb_conventions:
+            conventions = conventions[:nb_conventions]
         count = conventions.count()
 
         with open("conventions.json", "w", newline="") as jsonfile:
