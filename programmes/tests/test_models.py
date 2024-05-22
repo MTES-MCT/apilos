@@ -1,10 +1,12 @@
 import random
 from datetime import date
 
+import pytest
 from django.forms import model_to_dict
 from django.test import TestCase
 
 from bailleurs.models import Bailleur
+from bailleurs.tests.factories import BailleurFactory
 from core.tests import utils_assertions
 from instructeurs.models import Administration
 from programmes.models import (
@@ -24,6 +26,7 @@ from programmes.models import (
     TypologieLogement,
     TypologieStationnement,
 )
+from programmes.models.models import OutreMerNatureLogementError
 from programmes.tests.factories import ProgrammeFactory
 
 
@@ -472,3 +475,38 @@ class LogementModelsTest(TestCase):
             model_to_dict(annexe, fields=annexe_fields),
             model_to_dict(cloned_annexe, fields=annexe_fields),
         )
+
+
+@pytest.mark.django_db
+def test_create_programme_outre_mer():
+    bailleur = BailleurFactory()
+
+    programme = Programme.objects.create(
+        bailleur=bailleur,
+        code_insee_departement=971,
+        code_insee_region=1,
+        zone_abc="DROM",
+        code_postal="97114",
+        ville="Trois-Rivières",
+        nature_logement=NatureLogement.RESISDENCESOCIALE,
+    )
+
+    assert programme.code_insee_departement == 971
+    assert programme.code_insee_region == 1
+    assert programme.zone_abc == "DROM"
+    assert programme.code_postal == "97114"
+    assert programme.ville == "Trois-Rivières"
+    assert programme.nature_logement == NatureLogement.RESISDENCESOCIALE
+
+
+@pytest.mark.django_db
+def test_create_programme_outre_mer_logements_ordinaires():
+    bailleur = BailleurFactory()
+    programme = Programme.objects.create(
+        bailleur=bailleur,
+        code_insee_departement=971,
+        nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+    )
+
+    with pytest.raises(OutreMerNatureLogementError):
+        programme.full_clean()

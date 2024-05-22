@@ -61,12 +61,49 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if self.convention.financement == Financement.PLS:
+            if self.convention.is_outre_mer:
+                self._outre_mer_end_date_validation(annee_fin_conventionnement)
+            elif self.convention.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)
             elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
                 self._sans_travaux_end_date_validation(annee_fin_conventionnement)
             else:
                 self._other_end_date_validation(annee_fin_conventionnement)
+
+    def _outre_mer_end_date_validation(self, annee_fin_conventionnement):
+        today = datetime.date.today()
+        if self.convention.parent:
+            if self.convention.parent.televersement_convention_signee_le:
+                today = self.convention.parent.televersement_convention_signee_le
+
+        # La durée du conventionnement ne peut pas être inférieure à 9 ans
+        min_years = today.year + 9
+        if annee_fin_conventionnement < min_years:
+            self.add_error(
+                "annee_fin_conventionnement",
+                (
+                    "L'année de fin de conventionnement ne peut être inférieure à "
+                    + f"{min_years}"
+                ),
+            )
+
+        # Si financement, le conventionnement doit couvrir la durée des prêts
+        if self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
+            return
+
+        for pret in self.prets:
+            if pret.cleaned_data["date_octroi"] and pret.cleaned_data["duree"]:
+                end_datetime = pret.cleaned_data["date_octroi"] + relativedelta(
+                    years=int(pret.cleaned_data["duree"])
+                )
+                if annee_fin_conventionnement < end_datetime.year:
+                    self.add_error(
+                        "annee_fin_conventionnement",
+                        (
+                            "L'année de fin de conventionnement ne peut être inférieure à "
+                            + f"{end_datetime}"
+                        ),
+                    )
 
     def _pls_end_date_validation(self, annee_fin_conventionnement):
         """

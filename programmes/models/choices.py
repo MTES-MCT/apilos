@@ -14,6 +14,7 @@ class ZoneABC(models.TextChoices):
     ZoneB1 = "B1", "B1"
     ZoneB2 = "B2", "B2"
     ZoneC = "C", "C"
+    DROM = "DROM", "DROM"
 
 
 class Financement(models.TextChoices):
@@ -26,6 +27,11 @@ class Financement(models.TextChoices):
     PSH = "PSH", "PSH"
     PALULOS = "PALULOS", "PALULOS"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
+    # Financements spécifiques outre-mer
+    LLS = "LLS", "LLS"
+    LLTS = "LLTS", "LLTS"
+    LLTSA = "LLTSA", "LLTSA"
+    PLUS_DOM = "PLUS_DOM", "PLUS_DOM"
 
 
 class FinancementEDD(models.TextChoices):

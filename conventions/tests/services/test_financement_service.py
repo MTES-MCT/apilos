@@ -150,6 +150,56 @@ class ConventionFinancementServiceTests(TestCase):
         # Convention is of type foyer, so the max limit for PLS is disabled, no error
         assert form.errors == {}
 
+    def test_outre_mer_sans_travaux_date_fin_conventionnement(self):
+        programme = self.service.convention.programme
+        programme.type_operation = TypeOperation.SANSTRAVAUX
+        programme.code_insee_departement = "971"
+        programme.save()
+
+        self.service.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": datetime.date.today().year + 8,
+        }
+        self.service.save()
+
+        form = self.service.form
+        self.assertTrue(form.has_error("annee_fin_conventionnement"))
+
+        self.service.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": datetime.date.today().year + 9,
+        }
+        self.service.save()
+
+        form = self.service.form
+        assert form.errors == {}
+
+    def test_outre_mer_lls_date_fin_conventionnement(self):
+        self.service.convention.financement = Financement.LLS
+        self.service.convention.save()
+        programme = self.service.convention.programme
+        programme.type_operation = TypeOperation.REHABILITATION
+        programme.code_insee_departement = "971"
+        programme.save()
+
+        self.service.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": 2069,
+        }
+        self.service.save()
+
+        form = self.service.form
+        self.assertTrue(form.has_error("annee_fin_conventionnement"))
+
+        self.service.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": 2070,
+        }
+        self.service.save()
+
+        form = self.service.form
+        assert form.errors == {}
+
 
 def test_formset_validate_numero_unicity_fail():
     upload_result = {
