@@ -538,7 +538,7 @@ def convention_validate(request: HttpRequest, convention: Convention):
     }
 
 
-def convention_denonciation_validate(request, convention_uuid):
+def convention_denonciation_validate(convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     parent = convention.parent
     date_denonciation = convention.date_denonciation

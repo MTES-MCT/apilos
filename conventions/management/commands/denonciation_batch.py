@@ -4,6 +4,9 @@ from django.core.management.base import BaseCommand
 
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
+from conventions.services.avenants import _get_last_avenant
+from conventions.services.recapitulatif import convention_denonciation_validate
+from users.models import User
 
 numeros = [
     "25/3/12-1988/77-1019/247",
@@ -1290,10 +1293,12 @@ dates = [
 
 class Command(BaseCommand):
     counter_success = 0
+    counter_avenants = 0
     numeros_not_found = []
 
     def convention_denonciation(self, numero, date):
         date_python = datetime.datetime.strptime(date, "%d/%m/%Y").date()
+        user = User.objects.filter(email="sylvain.delabye@beta.gouv.fr").first()
         qs = Convention.objects.filter(numero=numero)
         if qs.count() == 0:
             self.stdout.write(self.style.WARNING(f"Convention {numero} not found."))
@@ -1306,7 +1311,15 @@ class Command(BaseCommand):
                 )
             )
 
-        qs.update(statut=ConventionStatut.DENONCEE.label, date_denonciation=date_python)
+        for convention in qs:
+            last_avenant = _get_last_avenant(convention)
+            avenant_denonciation = convention.clone(
+                user, convention_origin=last_avenant
+            )
+            avenant_denonciation.date_denonciation = date_python
+            avenant_denonciation.save()
+            convention_denonciation_validate(convention_uuid=avenant_denonciation.uuid)
+
         self.counter_success += 1
         self.stdout.write(
             f"Updated convention {numero} with statut "
