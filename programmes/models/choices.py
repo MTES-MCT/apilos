@@ -92,6 +92,7 @@ class TypologieLogement(models.TextChoices):
             "T6": "T6",
             "6": "T6",
             "6 et plus": "T6",
+            "T6 et plus": "T6",
             "7": "T7",
         }
         value = str(value)
