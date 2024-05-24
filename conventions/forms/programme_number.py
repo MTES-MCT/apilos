@@ -7,6 +7,6 @@ class ProgrammeNumberForm(forms.Form):
         required=False,
         max_length=255,
         error_messages={
-            "max_length": "Le Numéro de décision ne doit pas excéder 255 caractères",
+            "max_length": "Le numero d'opération ne doit pas excéder 255 caractères",
         },
     )

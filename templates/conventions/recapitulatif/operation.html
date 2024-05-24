@@ -18,16 +18,16 @@
                         {% if request.user.is_instructeur %}
                             <p class="fr-mt-1w fr-mb-0">
                                 {% if programme.numero_operation %}
-                                    <strong>Numéro de décision : {{programme.numero_operation}}</strong>
+                                    <strong>Numero d'opération : {{programme.numero_operation}}</strong>
                                 {% else %}
-                                    <em>Numéro de décision : non renseigné</em>
+                                    <em>Numero d'opération : non renseigné</em>
                                 {% endif %}
                             </p>
                             {% if request.session.is_expert %}
                                 {% include "conventions/actions/edit_numero_operation.html" %}
                             {% endif %}
                         {% else %}
-                            {% include "common/display_field_if_exists.html" with label="Numéro de décision" value=programme.numero_operation %}
+                            {% include "common/display_field_if_exists.html" with label="Numero d'opération" value=programme.numero_operation %}
                         {% endif %}
 
                         {% include "common/display_field_if_exists.html" with label="Nom" value=programme.nom object_field="programme__nom__"|add:programme_uuid %}
