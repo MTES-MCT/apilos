@@ -68,7 +68,9 @@
                             <a class="fr-mb-1w fr-link" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >Ajouter une référence cadastrale</a>
                         </div>
                     {% endif %}
-                    {% include "common/display_text_and_files_if_exists.html" with file_list=programme.effet_relatif|get_files_from_textfiles %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Effet relatif" file_list=programme.effet_relatif|get_files_from_textfiles %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Acte de propriété / Acte notarial" file_list=programme.acte_de_propriete|get_files_from_textfiles %}
+                    {% include "common/display_text_and_files_if_exists.html" with label="Certificat d'adressage / Autres" file_list=programme.certificat_adressage|get_files_from_textfiles %}
                 </div>
             </div>
         </div>
