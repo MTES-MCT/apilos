@@ -38,7 +38,10 @@ def operation_conventions(request, numero_operation):
             "conventions": paginator.get_page(request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
             "all_conventions_count": paginator.count,
-            "search_input": "",
             "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
+            # FIXME: we can probably remove this and get the values from the request in the template
+            "search_operation_nom": "",
+            "search_numero": "",
+            "search_lieu": "",
         },
     )
