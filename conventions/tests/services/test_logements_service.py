@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from django.forms import model_to_dict
+from django.forms import ValidationError, model_to_dict
 from django.http import HttpRequest
 from django.test import TestCase
 
@@ -45,6 +45,11 @@ class ConventionLogementsServiceTests(TestCase):
         request.user = User.objects.get(username="fix")
         self.service = ConventionLogementsService(
             convention=convention, request=request
+        )
+
+        avenant = convention.clone(request.user, convention_origin=convention)
+        self.service_avenant = ConventionLogementsService(
+            convention=avenant, request=request
         )
 
     def test_get(self):
@@ -129,13 +134,26 @@ class ConventionLogementsServiceTests(TestCase):
             "nb_logements": "3",
         }
         self.service.save()
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Le nombre de logement à conventionner (3) ne correspond pas au nombre"
-                + " de logements déclaré (2)"
-            ],
-        )
+        assert self.service.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (3) ne correspond pas au nombre de logements déclaré (2)"
+            )
+        ]
+        assert self.service.formset.non_form_errors() == []
+
+    def test_save_fails_on_nb_logements_avenants(self):
+        self.service_avenant.request.POST = {
+            "uuid": str(self.service_avenant.convention.lot.uuid),
+            **logement_success_payload,
+            "nb_logements": "3",
+        }
+        self.service_avenant.save()
+        assert self.service_avenant.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (3) ne correspond pas au nombre de logements déclaré (2)"
+            )
+        ]
+        assert self.service_avenant.formset.non_form_errors() == []
 
 
 class ConventionFoyerResidenceLogementsServiceTests(TestCase):
@@ -163,6 +181,11 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         request.user = User.objects.get(username="fix")
         self.service = ConventionFoyerResidenceLogementsService(
             convention=convention, request=request
+        )
+
+        avenant = convention.clone(request.user, convention_origin=convention)
+        self.service_avenant = ConventionFoyerResidenceLogementsService(
+            convention=avenant, request=request
         )
 
     def test_get(self):
@@ -243,14 +266,12 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertTrue(self.service.formset.non_form_errors())
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Le nombre de logement à conventionner (2) "
-                + "ne correspond pas au nombre de logements déclaré (3)"
-            ],
-        )
+        assert self.service.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (2) ne correspond pas au nombre de logements déclaré (3)"
+            )
+        ]
+        assert self.service.formset.non_form_errors() == []
 
     def test_save_fails_on_surface_habitable_totale(self):
         self.service.request.POST = {
@@ -261,3 +282,24 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         }
         self.service.save()
         self.assertTrue(self.service.form.has_error("surface_habitable_totale"))
+
+    def test_save_fails_on_nb_logements_avenant(self):
+
+        self.service_avenant.request.POST = {
+            **foyer_residence_logements_success_payload,
+            "form-TOTAL_FORMS": "3",
+            "form-INITIAL_FORMS": "3",
+            "form-2-uuid": "",
+            "form-2-designation": "b2",
+            "form-2-typologie": "T2",
+            "form-2-surface_habitable": "16.00",
+            "form-2-loyer": "160.00",
+        }
+        self.service_avenant.save()
+        self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.ERROR)
+        assert self.service_avenant.formset.optional_errors == [
+            ValidationError(
+                "Le nombre de logement à conventionner (2) ne correspond pas au nombre de logements déclaré (3)"
+            )
+        ]
+        assert self.service_avenant.formset.non_form_errors() == []

@@ -168,6 +168,9 @@ class ConventionLogementsService(ConventionService):
         self.formset.programme_id = self.convention.programme_id
         self.formset.lot_id = self.convention.lot_id
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
+        self.formset.ignore_optional_errors = self.request.POST.get(
+            "ignore_optional_errors", False
+        )
         formset_is_valid = self.formset.is_valid()
 
         if form_is_valid and formset_is_valid:
@@ -341,6 +344,9 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
         self.formset = FoyerResidenceLogementFormSet(initformset)
         self.formset.lot_id = self.convention.lot_id
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
+        self.formset.ignore_optional_errors = self.request.POST.get(
+            "ignore_optional_errors", False
+        )
         formset_is_valid = self.formset.is_valid()
 
         self.form = LotFoyerResidenceLgtsDetailsForm(
