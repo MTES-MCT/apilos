@@ -1,9 +1,9 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_new_convention_instructeur_to_bailleur:request %}
-
-    <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
-        <p class="fr-alert__title">Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture<p>
+    <div class="fr-col-6 fr-py-5w fr-px-3w">
+        <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
+            <p class="fr-alert__title">Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture</p>
             <p>Faites en part au bailleur, cette convention passera en statut « En attente de corrections » et
                 le bailleur pourra vous la renvoyer avec le statut « A instruire »</p>
             <div>
@@ -35,54 +35,55 @@
                 </form>
             </div>
         </div>
-
-            <hr>
+    </div>
+    <hr>
 {% endif %}
 
 {% if convention|display_notification_instructeur_to_bailleur:request %}
-
-    <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
-        {% if convention.get_last_instructeur_notification %}
-            <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
-        {% endif %}
-        {% if convention|display_demande_correction %}
-            <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                Demandez des corrections ou précisions</p>
-        {% else %}
-            <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                Faites en part au bailleur</p>
-        {% endif %}
-        <div>
-            <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
-                {% csrf_token %}
-                {% include "common/form/input_textarea.html" with label="Ajouter un commentaire à l'attention du bailleur (optionnel)" form_input=notificationForm.comment %}
-                <div class="fr-checkbox-group">
-                    <input
-                        type="hidden"
-                        id="{{notificationForm.from_instructeur.id_for_label}}"
-                        name="{{notificationForm.from_instructeur.html_name}}"
-                        value=1>
-                    <input
-                        type="checkbox"
-                        id="{{notificationForm.send_copy.id_for_label}}"
-                        name="{{notificationForm.send_copy.html_name}}"
-                        checked>
-                    <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
-                    </label>
-                </div>
-                {% if convention|display_demande_correction %}
-                    <button class="fr-btn fr-mt-2w">
-                        Demander des corrections au bailleur
-                    </button>
-                    <span>
-                        <em>Le bailleur sera notifié par email</em>
-                    </span>
-                {% else %}
-                    <button class="fr-btn fr-mt-2w">
-                        Notifier le bailleur
-                    </button>
-                {% endif %}
-            </form>
+    <div class="fr-col-6 fr-py-5w fr-px-3w">
+        <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
+            {% if convention.get_last_instructeur_notification %}
+                <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
+            {% endif %}
+            {% if convention|display_demande_correction %}
+                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Demandez des corrections ou précisions</p>
+            {% else %}
+                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Faites en part au bailleur</p>
+            {% endif %}
+            <div>
+                <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
+                    {% csrf_token %}
+                    {% include "common/form/input_textarea.html" with label="Ajouter un commentaire à l'attention du bailleur (optionnel)" form_input=notificationForm.comment %}
+                    <div class="fr-checkbox-group">
+                        <input
+                            type="hidden"
+                            id="{{notificationForm.from_instructeur.id_for_label}}"
+                            name="{{notificationForm.from_instructeur.html_name}}"
+                            value=1>
+                        <input
+                            type="checkbox"
+                            id="{{notificationForm.send_copy.id_for_label}}"
+                            name="{{notificationForm.send_copy.html_name}}"
+                            checked>
+                        <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
+                        </label>
+                    </div>
+                    {% if convention|display_demande_correction %}
+                        <button class="fr-btn fr-mt-2w">
+                            Demander des corrections au bailleur
+                        </button>
+                        <span>
+                            <em>Le bailleur sera notifié par email</em>
+                        </span>
+                    {% else %}
+                        <button class="fr-btn fr-mt-2w">
+                            Notifier le bailleur
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
         </div>
     </div>
     <hr>

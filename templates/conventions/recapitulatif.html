@@ -134,7 +134,7 @@
                     {% include "conventions/actions/instructeur_notification.html" %}
                     {% if not convention|display_is_validated %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-                            <div class="fr-col-6 fr-py-5w fr-px-3w">{% include "conventions/actions/bailleur_notification.html" %}</div>
+                            {% include "conventions/actions/bailleur_notification.html" %}
                             {% if not convention.is_resiliation %}
                                 <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
                             {% endif %}
@@ -150,7 +150,12 @@
                             {% else %}
                                 {% include "conventions/actions/instructeur_validation.html" %}
                             {% endif %}
-                        </div>
+                            {% if not convention.is_resiliation %}
+                                </div>
+                            {% endif %}
+                            {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endif %}
                     {% include "conventions/actions/type1and2_options.html" %}
