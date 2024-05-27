@@ -52,6 +52,9 @@ class ConventionFinancementServiceTests(TestCase):
         request.user = User.objects.get(username="fix")
         self.service = self.service_class(convention=convention, request=request)
 
+        avenant = convention.clone(request.user, convention_origin=convention)
+        self.service_avenant = self.service_class(convention=avenant, request=request)
+
     def test_get(self):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
@@ -198,6 +201,19 @@ class ConventionFinancementServiceTests(TestCase):
         self.service.save()
 
         form = self.service.form
+        assert form.errors == {}
+
+    def test_pls_avenant_date_fin_conventionnement(self):
+        self.service_avenant.convention.financement = Financement.PLS
+        self.service_avenant.convention.save()
+
+        self.service_avenant.request.POST = {
+            **financement_form,
+            "annee_fin_conventionnement": 2065,
+        }
+        self.service_avenant.save()
+
+        form = self.service_avenant.form
         assert form.errors == {}
 
 
