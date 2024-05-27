@@ -1,5 +1,5 @@
 <button class="fr-btn fr-btn--secondary" data-fr-opened="false" type="button" aria-controls="fr-modal-update-programme-number">
-    Éditer le numéro de décision
+    Éditer le numero d'opération
 </button>
 
 {% if programmeNumberForm.errors %}
@@ -18,8 +18,8 @@
                         {% csrf_token %}
                         <div class="fr-modal__content">
                             <div role="alert" class="fr-alert fr-alert--warning">
-                                <p class="fr-alert__title">Modifier le numéro de décision</p>
-                                <p>la modification de ce numéro de décision peut avoir des conséquences sur le lien avec les dossiers de financement</p>
+                                <p class="fr-alert__title">Modifier le numero d'opération</p>
+                                <p>la modification de ce numero d'opération peut avoir des conséquences sur le lien avec les dossiers de financement</p>
                             </div>
                             {% include "common/form/input_text.html" with form_input=programmeNumberForm.numero_operation editable=True%}
 
@@ -33,7 +33,7 @@
                                 </li>
                                 <li>
                                     <button class="fr-btn fr-icon-checkbox-line" name='update_programme_number' value=1>
-                                        Changer le numéro de décision
+                                        Changer le numero d'opération
                                     </button>
                                 </li>
                             </ul>
