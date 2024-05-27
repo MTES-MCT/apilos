@@ -223,7 +223,6 @@ class LoyerSimulateurView(LoginRequiredMixin, View):
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": self.get_tabs(),
                 "montant_actualise": montant_actualise,
                 "annee_validite": annee_validite,
             },
@@ -242,7 +241,6 @@ class LoyerSimulateurView(LoginRequiredMixin, View):
             "conventions/calculette_loyer.html",
             {
                 "form": loyer_simulateur_form,
-                "tabs": self.get_tabs(),
             },
         )
 
