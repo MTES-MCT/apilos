@@ -97,7 +97,7 @@ class NewConventionForm(CreateConventionMinForm):
     """
 
     numero_operation = forms.CharField(
-        label="N° de décision de financement",
+        label="Numéro d'opération",
         required=True,
         max_length=255,
         error_messages={
