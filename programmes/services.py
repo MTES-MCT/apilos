@@ -3,26 +3,57 @@ from datetime import date
 from typing import Any
 
 from django.db.models import Q
+from django.http import HttpRequest
 
 from apilos_settings.models import Departement
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
+from programmes.models.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
-from siap.siap_client.utils import get_or_create_conventions
+from siap.siap_client.utils import (
+    get_or_create_conventions,
+    get_or_create_programme_from_siap_operation,
+)
 
 
-def get_or_create_conventions_from_operation_number(request, numero_operation):
-    client = SIAPClient.get_instance()
-    try:
-        operation = client.get_operation(
-            user_login=request.user.cerbere_login,
-            habilitation_id=request.session["habilitation_id"],
-            operation_identifier=numero_operation,
-        )
-    except SIAPException:
-        # impossible to get operation from SIAP
-        return (None, None, None)
-    return get_or_create_conventions(operation, request.user)
+class OperationService:
+    client: SIAPClient
+    numero_operation: str
+    requets: HttpRequest
+    operation: dict[str, Any]
+    programme: Programme
+    siap_error: bool = False
+
+    def __init__(self, request: HttpRequest, numero_operation: str) -> None:
+        self.request = request
+        self.client = SIAPClient.get_instance()
+        self.numero_operation = numero_operation
+
+        try:
+            self.operation = self.client.get_operation(
+                user_login=request.user.cerbere_login,
+                habilitation_id=request.session["habilitation_id"],
+                operation_identifier=numero_operation,
+            )
+        except SIAPException:
+            self.siap_error = True
+
+    def is_seconde_vie(self):
+        # TODO find it in the operation payload
+        return False
+
+    def has_seconde_vie_conventions(self):
+        # TODO get seconde vie operation (to be defined) and get conventions
+        return False
+
+    def get_or_create_programme(self):
+        self.programme = get_or_create_programme_from_siap_operation(self.operation)
+
+    def get_or_create_conventions(self):
+        if self.siap_error:
+            # impossible to get operation from SIAP
+            return (None, None, None)
+        return get_or_create_conventions(self.operation, self.request.user)
 
 
 def _find_index_by_annee(annee: str, evolutions: list[dict[str, Any]]) -> int:

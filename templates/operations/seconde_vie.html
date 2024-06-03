@@ -1,0 +1,51 @@
+{% extends "layout/base.html" %}
+
+{% load static %}
+
+{% load custom_filters %}
+
+{% block page_title %}Conventions - APiLos{% endblock%}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "operations/common/form_header.html" %}
+    </div>
+
+    <div class="fr-container fr-my-5w">
+        <h3>Votre opération seconde vie</h3>
+        <h4>Initiez le conventionnement</h4>
+        <p>Dans quel cas êtes-vous ?</p>
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-md-6 fr-col-md">
+
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="#">L'opération est conventionnée et doit faire l'objet d'un avenant</a>
+                            </h3>
+                            <p class="fr-card__desc">Nous allons vous aider à identifier les conventions concernées et à réaliser l'avenant.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="fr-col-md-6 fr-col-md">
+
+                <div class="fr-card fr-enlarge-link">
+                    <div class="fr-card__body">
+                        <div class="fr-card__content">
+                            <h3 class="fr-card__title">
+                                <a href="#">Les logements concernés n'ont jamais été conventionnés</a>
+                            </h3>
+                            <p class="fr-card__desc">Nous allons réaliser les conventions APL.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+{% endblock%}

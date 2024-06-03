@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import resolve, reverse
 
 from conventions.services.search import ProgrammeConventionSearchService
-from programmes.services import get_or_create_conventions_from_operation_number
+from programmes.services import OperationService
 from siap.exceptions import DuplicatedOperationSIAPException
 
 
@@ -15,10 +15,20 @@ def operation_conventions(request, numero_operation):
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
 
-    try:
-        (programme, _, _) = get_or_create_conventions_from_operation_number(
-            request, numero_operation
+    service = OperationService(request=request, numero_operation=numero_operation)
+
+    if service.is_seconde_vie() and not service.has_seconde_vie_conventions():
+        return render(
+            request,
+            "operations/seconde_vie.html",
+            {
+                "programme": service.programme,
+                "is_seconde_vie": service.is_seconde_vie(),
+            },
         )
+
+    try:
+        (programme, _, _) = service.get_or_create_conventions()
     except DuplicatedOperationSIAPException as exc:
         return HttpResponseRedirect(
             f"{reverse('conventions:search')}?search_numero={exc.numero_operation}"
