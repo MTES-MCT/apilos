@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import resolve, reverse
+from django.views.generic import TemplateView
 
 from conventions.services.search import ProgrammeConventionSearchService
 from programmes.services import OperationService
@@ -16,13 +17,14 @@ def operation_conventions(request, numero_operation):
         raise PermissionError("this function is available only for CERBERE user")
 
     service = OperationService(request=request, numero_operation=numero_operation)
+    programme = service.get_or_create_programme()
 
     if service.is_seconde_vie() and not service.has_seconde_vie_conventions():
         return render(
             request,
-            "operations/seconde_vie.html",
+            "operations/seconde_vie/choice.html",
             {
-                "programme": service.programme,
+                "programme": programme,
                 "is_seconde_vie": service.is_seconde_vie(),
             },
         )
@@ -55,3 +57,22 @@ def operation_conventions(request, numero_operation):
             "search_lieu": "",
         },
     )
+
+
+class SecondeVieBaseView(TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        service = OperationService(
+            request=self.request, numero_operation=kwargs["numero_operation"]
+        )
+        context["programme"] = service.get_or_create_programme()
+        context["is_seconde_vie"] = service.is_seconde_vie()
+        return context
+
+
+class SecondeVieNewView(SecondeVieBaseView):
+    template_name = "operations/seconde_vie/new.html"
+
+
+class SecondeVieExistingView(SecondeVieBaseView):
+    template_name = "operations/seconde_vie/existing.html"

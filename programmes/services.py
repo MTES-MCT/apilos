@@ -23,6 +23,7 @@ class OperationService:
     operation: dict[str, Any]
     programme: Programme
     siap_error: bool = False
+    siap_exception_detail: SIAPException
 
     def __init__(self, request: HttpRequest, numero_operation: str) -> None:
         self.request = request
@@ -35,19 +36,23 @@ class OperationService:
                 habilitation_id=request.session["habilitation_id"],
                 operation_identifier=numero_operation,
             )
-        except SIAPException:
+        except SIAPException as e:
             self.siap_error = True
+            self.siap_exception_detail = e
 
     def is_seconde_vie(self):
         # TODO find it in the operation payload
-        return False
+        return True
 
     def has_seconde_vie_conventions(self):
         # TODO get seconde vie operation (to be defined) and get conventions
         return False
 
     def get_or_create_programme(self):
+        if self.siap_error:
+            raise self.siap_exception_detail
         self.programme = get_or_create_programme_from_siap_operation(self.operation)
+        return self.programme
 
     def get_or_create_conventions(self):
         if self.siap_error:
