@@ -107,7 +107,10 @@ class SelectOperationService:
             .annotate(
                 numero_operation_trgrm=TrigramSimilarity(
                     "numero_operation_pour_recherche",
-                    self.numero_operation.replace("-", "").replace("/", ""),
+                    self.numero_operation.replace("-", "")
+                    .replace("/", "")
+                    .replace(".", "")
+                    .replace(" ", ""),
                 )
             )
             .filter(

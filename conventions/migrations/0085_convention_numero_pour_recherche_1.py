@@ -3,16 +3,6 @@
 from django.db import migrations, models
 
 
-def set_numero_op_for_search(apps, schema_editor):
-    Convention = apps.get_model("conventions", "Convention")
-    for c in Convention.objects.exclude(numero__isnull=True).exclude(numero=""):
-        c.numero_pour_recherche = (
-            c.numero.replace("/", "").replace("-", "").replace(" ", "").replace(".", "")
-        )
-
-        c.save()
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -31,5 +21,4 @@ class Migration(migrations.Migration):
                 fields=["numero_pour_recherche"], name="convention_num_for_search_idx"
             ),
         ),
-        migrations.RunPython(set_numero_op_for_search, migrations.RunPython.noop),
     ]

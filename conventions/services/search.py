@@ -214,7 +214,12 @@ class ConventionSearchService(ConventionSearchServiceBase):
             )
 
         if self.search_numero:
-            _search_numero = self.search_numero.replace("-", "").replace("/", "")
+            _search_numero = (
+                self.search_numero.replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+            )
             queryset = queryset.annotate(
                 programme_numero_similarity=self._numero_trgm_similarity(
                     field_name="programme__numero_operation_pour_recherche",
