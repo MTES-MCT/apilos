@@ -77,9 +77,15 @@ def post_save_reset_avenant_fields_after_block_delete(
 
 @receiver(pre_save, sender=Convention)
 def compute_numero_for_search(sender, instance, *args, **kwargs):
-    instance.numero_pour_recherche = (
-        instance.numero.replace("/", "").replace("-", "").replace(" ", "")
-    )
+    if instance.numero is None:
+        instance.numero_pour_recherche = None
+    else:
+        instance.numero_pour_recherche = (
+            instance.numero.replace("/", "")
+            .replace("-", "")
+            .replace(" ", "")
+            .replace(".", "")
+        )
 
 
 @receiver(post_save, sender=ConventionHistory)

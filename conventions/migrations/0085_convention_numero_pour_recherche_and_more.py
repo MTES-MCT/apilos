@@ -5,10 +5,11 @@ from django.db import migrations, models
 
 def set_numero_op_for_search(apps, schema_editor):
     Convention = apps.get_model("conventions", "Convention")
-    for c in Convention.objects.exclude(numero__isnull=True):
+    for c in Convention.objects.exclude(numero__isnull=True).exclude(numero=""):
         c.numero_pour_recherche = (
-            c.numero.replace("/", "").replace("-", "").replace(" ", "")
+            c.numero.replace("/", "").replace("-", "").replace(" ", "").replace(".", "")
         )
+
         c.save()
 
 

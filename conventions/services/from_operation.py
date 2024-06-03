@@ -106,7 +106,7 @@ class SelectOperationService:
             self._user_programmes()
             .annotate(
                 numero_operation_trgrm=TrigramSimilarity(
-                    "numero_operation_for_search",
+                    "numero_operation_pour_recherche",
                     self.numero_operation.replace("-", "").replace("/", ""),
                 )
             )

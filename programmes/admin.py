@@ -59,6 +59,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "code_postal",
         "ville",
         "numero_operation",
+        "numero_operation_pour_recherche",
         "administration",
         "bailleur",
         "zone_123",
@@ -71,6 +72,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "administration",
         "bailleur",
         "search_vector",
+        "numero_operation_pour_recherche",
     )
     list_filter = (
         IsCloneFilter,

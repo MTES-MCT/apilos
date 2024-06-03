@@ -267,14 +267,13 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _search_numero_s = len(_search_numero_n)
             if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
-                    queryset = queryset.annotate(
-                        parent_numero_n="parent__numero_pour_recherche",
-                    ).filter(parent_numero_n__endswith=_search_numero_n)
+                    queryset = queryset.filter(
+                        parent__numero_pour_recherche__endswith=_search_numero_n
+                    )
                 else:
-                    queryset = queryset.annotate(
-                        numero_n="numero_pour_recherche",
-                    ).filter(
-                        Q(parent__isnull=True) & Q(numero_n__endswith=_search_numero_n)
+                    queryset = queryset.filter(
+                        Q(parent__isnull=True)
+                        & Q(numero_pour_recherche__endswith=_search_numero_n)
                     )
             else:
                 if self.avenant_seulement:

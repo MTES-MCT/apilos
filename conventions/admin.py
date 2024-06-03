@@ -105,6 +105,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "lot",
         "parent",
         "numero",
+        "numero_pour_recherche",
         "date_fin_conventionnement",
         "financement",
         "fond_propre",
@@ -138,6 +139,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "lot",
         "administration",
         "parent",
+        "numero_pour_recherche",
         "cree_par",
         "cree_le",
     )
