@@ -268,7 +268,12 @@ class ConventionSearchService(ConventionSearchServiceBase):
             # Si on a moins de 5 caractères, on va effectuer une recherche de type "endswith",
             # uniquement sur les numéros de convention et non les avenants,
             # afin de conserver la recherche par numéro de convention de type "ecoloweb"
-            _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
+            _search_numero_n = (
+                self.search_numero.replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+            )
             _search_numero_s = len(_search_numero_n)
             if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
@@ -284,23 +289,17 @@ class ConventionSearchService(ConventionSearchServiceBase):
                 if self.avenant_seulement:
                     queryset = queryset.filter(
                         Q(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                            programme__numero_operation_pour_recherche__icontains=_search_numero_n
                         )
-                        | Q(
-                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
+                        | Q(parent__numero_pour_recherche__icontains=_search_numero_n)
                     )
                 else:
                     queryset = queryset.filter(
                         Q(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                            programme__numero_operation_pour_recherche__icontains=_search_numero_n
                         )
-                        | Q(
-                            conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
-                        | Q(
-                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
+                        | Q(numero_pour_recherche__icontains=_search_numero_n)
+                        | Q(parent__numero_pour_recherche__icontains=_search_numero_n)
                     )
 
         if self.search_lieu:
