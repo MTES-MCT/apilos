@@ -5,6 +5,7 @@ import uuid
 from datetime import date
 
 from django.apps import apps
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
@@ -36,7 +37,7 @@ class Convention(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["numero"], name="convention_numero_idx"),
-            models.Index(
+            GinIndex(
                 fields=["numero_pour_recherche"], name="convention_num_for_search_idx"
             ),
             models.Index(fields=["statut"], name="convention_statut_idx"),

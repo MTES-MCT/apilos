@@ -33,7 +33,7 @@ class Programme(models.Model):
             models.Index(
                 fields=["numero_operation"], name="programme_numero_operation_idx"
             ),
-            models.Index(
+            GinIndex(
                 fields=["numero_operation_pour_recherche"],
                 name="programme_num_for_search_idx",
             ),
