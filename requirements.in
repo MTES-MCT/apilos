@@ -19,7 +19,7 @@ djangorestframework
 djangorestframework-simplejwt
 docxtpl
 drf-spectacular
-gunicorn
+gunicorn<=21.2.0
 Jinja2
 lxml>=5.0
 openpyxl
