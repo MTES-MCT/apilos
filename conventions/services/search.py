@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Coalesce, Replace, Round
+from django.db.models.functions import Coalesce, Round
 
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Programme
@@ -190,9 +190,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     def _numero_trgm_similarity(
         self, field_name: str, search_term: str
     ) -> TrigramSimilarity:
-        return TrigramSimilarity(
-            Replace(Replace(field_name, Value("/")), Value("-")), search_term
-        )
+        return TrigramSimilarity(field_name, search_term)
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         """
@@ -270,17 +268,11 @@ class ConventionSearchService(ConventionSearchServiceBase):
             if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
                     queryset = queryset.annotate(
-                        parent_numero_n=Replace(
-                            Replace(Replace("parent__numero", Value("/")), Value("-")),
-                            Value(" "),
-                        )
+                        parent_numero_n="parent__numero_pour_recherche",
                     ).filter(parent_numero_n__endswith=_search_numero_n)
                 else:
                     queryset = queryset.annotate(
-                        numero_n=Replace(
-                            Replace(Replace("numero", Value("/")), Value("-")),
-                            Value(" "),
-                        ),
+                        numero_n="numero_pour_recherche",
                     ).filter(
                         Q(parent__isnull=True) & Q(numero_n__endswith=_search_numero_n)
                     )
