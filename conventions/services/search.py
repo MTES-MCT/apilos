@@ -219,19 +219,20 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _search_numero = self.search_numero.replace("-", "").replace("/", "")
             queryset = queryset.annotate(
                 programme_numero_similarity=self._numero_trgm_similarity(
-                    field_name="programme__numero_operation",
+                    field_name="programme__numero_operation_pour_recherche",
                     search_term=_search_numero,
                 )
             ).annotate(
                 parent_conv_numero_similarity=self._numero_trgm_similarity(
-                    field_name="parent__numero", search_term=_search_numero
+                    field_name="parent__numero_pour_recherche",
+                    search_term=_search_numero,
                 )
             )
 
             if not self.avenant_seulement:
                 queryset = queryset.annotate(
                     conv_numero_similarity=self._numero_trgm_similarity(
-                        field_name="numero", search_term=_search_numero
+                        field_name="numero_pour_recherche", search_term=_search_numero
                     )
                 )
 

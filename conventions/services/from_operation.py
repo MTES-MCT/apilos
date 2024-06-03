@@ -4,8 +4,7 @@ from dataclasses import dataclass
 from django.conf import settings
 from django.contrib.postgres.search import TrigramSimilarity
 from django.db import IntegrityError, transaction
-from django.db.models import QuerySet, Value
-from django.db.models.functions import Replace
+from django.db.models import QuerySet
 from django.http import HttpRequest
 
 from conventions.forms.convention_from_operation import (
@@ -107,7 +106,7 @@ class SelectOperationService:
             self._user_programmes()
             .annotate(
                 numero_operation_trgrm=TrigramSimilarity(
-                    Replace(Replace("numero_operation", Value("/")), Value("-")),
+                    "numero_operation_for_search",
                     self.numero_operation.replace("-", "").replace("/", ""),
                 )
             )
