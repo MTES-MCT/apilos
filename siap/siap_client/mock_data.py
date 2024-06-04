@@ -777,3 +777,154 @@ fusion_mock = [
         "dateFinValidite": "2023-09-29",
     }
 ]
+
+operation_seconde_vie_mock = {
+    "donneesMo": {
+        "nom": "3F",
+        "siren": "782855696",
+        "commune": None,
+        "adresseLigne3": "",
+        "adresseLigne4": "80 rue d'Albe BP 31",
+        "adresseLigne6": "13234 Marseille - 4e arrondissement",
+        "codeFamilleMO": "HLM",
+    },
+    "donneesLocalisation": {
+        "region": {"codeInsee": "93", "libelle": None},
+        "departement": {"codeInsee": "13", "libelle": None},
+        "commune": {"codeInsee": "13210", "libelle": "Marseille - 10e arrondissement"},
+        "adresse": "Rue Francois Mauriac 13010 Marseille",
+        "adresseComplete": {
+            "adresse": "Rue Francois Mauriac ",
+            "codePostal": "13010",
+            "commune": "Marseille",
+            "codePostalCommune": "13010 Marseille",
+        },
+        "zonage123": "02",
+        "zonageABC": "A",
+    },
+    "donneesOperation": {
+        "nomOperation": "Programme 2",
+        "numeroOperation": "20220600016",
+        "aides": [{"code": "SECD_VIE", "libelle": "Seconde vie"}],
+        "sousNatureOperation": "CNE",
+        "typeConstruction": "TC_C",
+        "natureLogement": "LOO",
+        "sansTravaux": False,
+    },
+    "detailsOperation": [
+        {
+            "aide": {"code": "PLUS", "libelle": "PLUS"},
+            "logement": {"nbLogementsIndividuels": None, "nbLogementsCollectifs": 1},
+            "detailsTypeLogement": [
+                {
+                    "typeLogement": "T1",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1BIS",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T1P",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T2",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T3",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T4",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T5",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+                {
+                    "typeLogement": "T6",
+                    "nbLogements": None,
+                    "surfaceHabitable": None,
+                    "surfaceAnnexe": None,
+                },
+            ],
+            "garages": [
+                {
+                    "type": "Enterrés / Sous-sol",
+                    "nbGaragesIndividuels": None,
+                    "nbGaragesCollectifs": 0,
+                },
+                {
+                    "type": "Superstructure",
+                    "nbGaragesIndividuels": None,
+                    "nbGaragesCollectifs": 0,
+                },
+            ],
+            "loyers": [
+                {
+                    "type": "Collectif",
+                    "loyerZone": 5.78,
+                    "loyerBase": 0.0,
+                    "loyerReglementaire": 0.0,
+                    "loyerPratique": 0,
+                    "loyerGarages": [
+                        {"type": "Enterrés / Sous-sol", "loyer": 0},
+                        {"type": "Superstructure", "loyer": 0},
+                    ],
+                }
+            ],
+        }
+    ],
+    "planFinancement": {
+        "subventions": [{"type": "PLUS", "montant": None}],
+        "prets": [],
+        "fondsPropres": 0,
+    },
+    "gestionnaire": {
+        "id": 9,
+        "code": "13055",
+        "libelle": "13055 - Métropole d'Aix-Marseille-Provence",
+        "typeDelegation": "3",
+        "typeDelegataire": "1",
+        "typeLocalisation": "EPCI3",
+        "adresse": None,
+        "commune": None,
+        "email": None,
+        "utilisateurs": [
+            {
+                "login": "my.name@beta.gouv.fr",
+                "email": "my.name@beta.gouv.fr",
+                "groupes": [
+                    {
+                        "id": 20,
+                        "profil": {
+                            "code": "SER_GEST",
+                            "libelle": "Service gestionnaire",
+                        },
+                        "codeRole": "SERV_INSTR_DELGEG3_INSTRUCTEUR",
+                        "libelleRole": "Instructeur",
+                        "codePorteeTerrit": "LOC",
+                        "typeDelegation": "T3",
+                    }
+                ],
+            }
+        ],
+    },
+}

@@ -41,8 +41,10 @@ class OperationService:
             self.siap_exception_detail = e
 
     def is_seconde_vie(self):
-        # TODO find it in the operation payload
-        return True
+        for aide in self.operation["donneesOperation"]["aides"]:
+            if aide["code"] == "SECD_VIE":
+                return True
+        return False
 
     def has_seconde_vie_conventions(self):
         # TODO get seconde vie operation (to be defined) and get conventions
