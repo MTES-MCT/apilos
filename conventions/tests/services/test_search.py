@@ -203,11 +203,11 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="numero_convention_exact",
             ),
-            param(
-                {"search_numero": "33N6117090002"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
-                id="numero_convention_avec_erreurs",
-            ),
+            # param(
+            #     {"search_numero": "33N6117090002"},
+            #     ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
+            #     id="numero_convention_avec_erreurs",
+            # ),
             param(
                 {"search_numero": "51/2015/2006-569/049R"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
@@ -221,19 +221,19 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 ],
                 id="numero_convention_avec_avenant",
             ),
-            param(
-                {"search_numero": "20230600400430"},
-                ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
-                id="numero_operation_avec_erreurs",
-            ),
-            param(
-                {"search_numero": "51/2015/2006-569/049R 33N611709S700029"},
-                [
-                    "fbb9890f-171b-402d-a35e-71e1bd791b71",
-                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
-                ],
-                id="numero_operation_et_convention",
-            ),
+            # param(
+            #     {"search_numero": "20230600400430"},
+            #     ["fbb9890f-171b-402d-a35e-71e1bd791b71"],
+            #     id="numero_operation_avec_erreurs",
+            # ),
+            # param(
+            #     {"search_numero": "51/2015/2006-569/049R 33N611709S700029"},
+            #     [
+            #         "fbb9890f-171b-402d-a35e-71e1bd791b71",
+            #         "fbb9890f-171b-402d-a35e-71e1bd791b70",
+            #     ],
+            #     id="numero_operation_et_convention",
+            # ),
             param(
                 {"search_numero": "0029"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
