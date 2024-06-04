@@ -249,7 +249,7 @@ except decouple.UndefinedValueError:
         "TEST": {
             "NAME": get_env_variable("DB_NAME") + "-test",
         },
-        "ATOMIC_REQUESTS": True,
+        "ATOMIC_REQUESTS": False,
     }
 
 # EXPLORER settings
