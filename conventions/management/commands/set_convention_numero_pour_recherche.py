@@ -10,6 +10,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         conventions = (
             Convention.objects.exclude(numero__isnull=True)
+            .exclude(numero_pour_recherche__isnull=True)
             .exclude(numero="")
             .order_by("id")
         )
