@@ -33,6 +33,10 @@ class Programme(models.Model):
             models.Index(
                 fields=["numero_operation"], name="programme_numero_operation_idx"
             ),
+            models.Index(
+                fields=["numero_operation_pour_recherche"],
+                name="programme_num_for_search_idx",
+            ),
             models.Index(fields=["ville"], name="programme_ville_idx"),
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
@@ -49,6 +53,7 @@ class Programme(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
     numero_operation = models.CharField(max_length=255, null=True)
+    numero_operation_pour_recherche = models.CharField(max_length=255, null=True)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur",
         on_delete=models.CASCADE,

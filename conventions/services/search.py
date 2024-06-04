@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Coalesce, Replace, Round
+from django.db.models.functions import Coalesce, Round
 
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Programme
@@ -190,9 +190,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     def _numero_trgm_similarity(
         self, field_name: str, search_term: str
     ) -> TrigramSimilarity:
-        return TrigramSimilarity(
-            Replace(Replace(field_name, Value("/")), Value("-")), search_term
-        )
+        return TrigramSimilarity(field_name, search_term)
 
     def _build_ranking(self, queryset: QuerySet) -> QuerySet:
         """
@@ -216,22 +214,28 @@ class ConventionSearchService(ConventionSearchServiceBase):
             )
 
         if self.search_numero:
-            _search_numero = self.search_numero.replace("-", "").replace("/", "")
+            _search_numero = (
+                self.search_numero.replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+            )
             queryset = queryset.annotate(
                 programme_numero_similarity=self._numero_trgm_similarity(
-                    field_name="programme__numero_operation",
+                    field_name="programme__numero_operation_pour_recherche",
                     search_term=_search_numero,
                 )
             ).annotate(
                 parent_conv_numero_similarity=self._numero_trgm_similarity(
-                    field_name="parent__numero", search_term=_search_numero
+                    field_name="parent__numero_pour_recherche",
+                    search_term=_search_numero,
                 )
             )
 
             if not self.avenant_seulement:
                 queryset = queryset.annotate(
                     conv_numero_similarity=self._numero_trgm_similarity(
-                        field_name="numero", search_term=_search_numero
+                        field_name="numero_pour_recherche", search_term=_search_numero
                     )
                 )
 
@@ -264,46 +268,38 @@ class ConventionSearchService(ConventionSearchServiceBase):
             # Si on a moins de 5 caractères, on va effectuer une recherche de type "endswith",
             # uniquement sur les numéros de convention et non les avenants,
             # afin de conserver la recherche par numéro de convention de type "ecoloweb"
-            _search_numero_n = self.search_numero.replace("-", "").replace("/", "")
+            _search_numero_n = (
+                self.search_numero.replace("-", "")
+                .replace("/", "")
+                .replace(".", "")
+                .replace(" ", "")
+            )
             _search_numero_s = len(_search_numero_n)
             if _search_numero_s > 0 and _search_numero_s < 5:
                 if self.avenant_seulement:
-                    queryset = queryset.annotate(
-                        parent_numero_n=Replace(
-                            Replace(Replace("parent__numero", Value("/")), Value("-")),
-                            Value(" "),
-                        )
-                    ).filter(parent_numero_n__endswith=_search_numero_n)
+                    queryset = queryset.filter(
+                        parent__numero_pour_recherche__endswith=_search_numero_n
+                    )
                 else:
-                    queryset = queryset.annotate(
-                        numero_n=Replace(
-                            Replace(Replace("numero", Value("/")), Value("-")),
-                            Value(" "),
-                        ),
-                    ).filter(
-                        Q(parent__isnull=True) & Q(numero_n__endswith=_search_numero_n)
+                    queryset = queryset.filter(
+                        Q(parent__isnull=True)
+                        & Q(numero_pour_recherche__endswith=_search_numero_n)
                     )
             else:
                 if self.avenant_seulement:
                     queryset = queryset.filter(
                         Q(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                            programme__numero_operation_pour_recherche__icontains=_search_numero_n
                         )
-                        | Q(
-                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
+                        | Q(parent__numero_pour_recherche__icontains=_search_numero_n)
                     )
                 else:
                     queryset = queryset.filter(
                         Q(
-                            programme_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
+                            programme__numero_operation_pour_recherche__icontains=_search_numero_n
                         )
-                        | Q(
-                            conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
-                        | Q(
-                            parent_conv_numero_similarity__gt=settings.TRIGRAM_SIMILARITY_THRESHOLD
-                        )
+                        | Q(numero_pour_recherche__icontains=_search_numero_n)
+                        | Q(parent__numero_pour_recherche__icontains=_search_numero_n)
                     )
 
         if self.search_lieu:
