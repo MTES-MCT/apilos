@@ -10,12 +10,20 @@ from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer, OperationService
 from programmes.tests.factories import DepartementFactory
 from siap.siap_client.client import SIAPClient
-from siap.siap_client.mock_data import operation_seconde_vie_mock
 from users.tests.factories import UserFactory
 
 
 @pytest.fixture
-def operation_service():
+def operation_seconde_vie():
+    return {
+        "donneesOperation": {
+            "aides": [{"code": "SECD_VIE", "libelle": "Seconde vie"}],
+        },
+    }
+
+
+@pytest.fixture
+def operation_service(operation_seconde_vie):
     factory = RequestFactory()
     request = factory.get("/settings/administrations/")
     middleware = SessionMiddleware(lambda x: None)
@@ -26,15 +34,15 @@ def operation_service():
     request.user = user
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_instance = mock_get_instance.return_value
-        mock_instance.get_operation.return_value = operation_seconde_vie_mock
+        mock_instance.get_operation.return_value = operation_seconde_vie
         return OperationService(request=request, numero_operation="20220600016")
 
 
 @pytest.mark.django_db
 class TestOperationService:
-    def test_init(self, operation_service):
+    def test_init(self, operation_seconde_vie, operation_service):
         assert operation_service.numero_operation == "20220600016"
-        assert operation_service.operation == operation_seconde_vie_mock
+        assert operation_service.operation == operation_seconde_vie
 
     @pytest.mark.parametrize(
         "aides,expected",
