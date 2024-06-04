@@ -36,6 +36,9 @@ class Convention(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=["numero"], name="convention_numero_idx"),
+            models.Index(
+                fields=["numero_pour_recherche"], name="convention_num_for_search_idx"
+            ),
             models.Index(fields=["statut"], name="convention_statut_idx"),
             models.Index(fields=["uuid"], name="convention_uuid_idx"),
             models.Index(fields=["valide_le"], name="convention_valid_le_idx"),
@@ -71,6 +74,7 @@ class Convention(models.Model):
         related_name="avenants",
     )
     numero = models.CharField(max_length=255, null=True, blank=True)
+    numero_pour_recherche = models.CharField(max_length=255, null=True, blank=True)
     programme = models.ForeignKey(
         "programmes.Programme",
         related_name="conventions",

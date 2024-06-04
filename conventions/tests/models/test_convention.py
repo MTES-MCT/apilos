@@ -3,6 +3,7 @@ import uuid
 from datetime import date
 from unittest import mock
 
+import pytest
 from django.test import TestCase
 
 from conventions.models import Convention, ConventionHistory, ConventionStatut
@@ -347,6 +348,43 @@ class ConventionHistoryModelsTest(TestCase):
                     "lastname": instructeur.last_name,
                 }
             )
+
+
+@pytest.mark.django_db
+class TestConventionSignals:
+
+    def test_numero_pour_recherche_create_num_none(self):
+        convention = ConventionFactory(numero=None)
+
+        assert convention.numero is None
+        assert convention.numero_pour_recherche is None
+
+    def test_numero_pour_recherche_create_num_alphanum(self):
+        convention = ConventionFactory(numero="ALPHA1230")
+
+        assert convention.numero == "ALPHA1230"
+        assert convention.numero == convention.numero_pour_recherche
+
+    def test_numero_pour_recherche_create_with_special_char(self):
+        convention = ConventionFactory(numero="ALPHA/1-2.3 0")
+
+        assert convention.numero == "ALPHA/1-2.3 0"
+        assert convention.numero_pour_recherche == "ALPHA1230"
+
+    def test_numero_pour_recherche_create_num_update(self):
+        convention = ConventionFactory()
+
+        convention.numero = "ALPHA1230"
+        convention.save()
+
+        assert convention.numero == "ALPHA1230"
+        assert convention.numero == convention.numero_pour_recherche
+
+        convention.numero = "ALPHA/1-2.3 0"
+        convention.save()
+
+        assert convention.numero == "ALPHA/1-2.3 0"
+        assert convention.numero_pour_recherche == "ALPHA1230"
 
 
 def test_convention_date_signature_choices():

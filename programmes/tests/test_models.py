@@ -342,6 +342,43 @@ class ProgrammeModelsTest(TestCase):
         )
 
 
+@pytest.mark.django_db
+class TestProgrammeSignals:
+
+    def test_numero_operation_pour_recherche_create_num_none(self):
+        convention = ProgrammeFactory(numero_operation=None)
+
+        assert convention.numero_operation is None
+        assert convention.numero_operation_pour_recherche is None
+
+    def test_numero_operation_pour_recherche_create_num_alphanum(self):
+        convention = ProgrammeFactory(numero_operation="ALPHA1230")
+
+        assert convention.numero_operation == "ALPHA1230"
+        assert convention.numero_operation == convention.numero_operation_pour_recherche
+
+    def test_numero_operation_pour_recherche_create_with_special_char(self):
+        convention = ProgrammeFactory(numero_operation="ALPHA/1-2.3 0")
+
+        assert convention.numero_operation == "ALPHA/1-2.3 0"
+        assert convention.numero_operation_pour_recherche == "ALPHA1230"
+
+    def test_numero_operation_pour_recherche_create_num_update(self):
+        convention = ProgrammeFactory()
+
+        convention.numero_operation = "ALPHA1230"
+        convention.save()
+
+        assert convention.numero_operation == "ALPHA1230"
+        assert convention.numero_operation == convention.numero_operation_pour_recherche
+
+        convention.numero_operation = "ALPHA/1-2.3 0"
+        convention.save()
+
+        assert convention.numero_operation == "ALPHA/1-2.3 0"
+        assert convention.numero_operation_pour_recherche == "ALPHA1230"
+
+
 class LotModelsTest(TestCase):
     fixtures = [
         "auth.json",

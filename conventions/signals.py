@@ -1,7 +1,7 @@
 from typing import Any
 
 from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.signals import m2m_changed, post_delete, post_save
+from django.db.models.signals import m2m_changed, post_delete, post_save, pre_save
 from django.dispatch import receiver
 
 from conventions.models import Convention, Lot
@@ -73,6 +73,19 @@ def post_save_reset_avenant_fields_after_block_delete(
                     instance=instance,
                     previous_instance=last_avenant_or_parent,
                 )
+
+
+@receiver(pre_save, sender=Convention)
+def compute_numero_for_search(sender, instance, *args, **kwargs):
+    if instance.numero is None:
+        instance.numero_pour_recherche = None
+    else:
+        instance.numero_pour_recherche = (
+            instance.numero.replace("/", "")
+            .replace("-", "")
+            .replace(" ", "")
+            .replace(".", "")
+        )
 
 
 @receiver(post_save, sender=ConventionHistory)
