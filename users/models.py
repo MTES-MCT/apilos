@@ -55,6 +55,10 @@ class GroupProfile(models.TextChoices):
         ]
 
 
+class GroupRoleProfile(models.TextChoices):
+    ADM_CENTRALE_LECTEUR = "ADM_CENTRALE_LECTEUR", "Lecteur national"
+
+
 class User(AbstractUser):
     siap_habilitation = {}
     telephone = models.CharField(

@@ -12,7 +12,7 @@ from siap.exceptions import (
 )
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_administration, get_or_create_bailleur
-from users.models import GroupProfile, Role
+from users.models import GroupProfile, GroupRoleProfile, Role
 from users.type_models import TypeRole
 
 
@@ -126,7 +126,7 @@ def _get_perimetre_geographique(from_habilitation: dict) -> tuple[None, str]:
     return (perimetre_departement, perimetre_region)
 
 
-def _manage_role(from_habilitation, session_only=False, **kwargs):
+def _manage_role(from_habilitation: dict, session_only: bool = False, **kwargs) -> dict:
     (perimetre_departement, perimetre_region) = _get_perimetre_geographique(
         from_habilitation
     )
@@ -255,3 +255,8 @@ def _find_or_create_entity(
             user=request.user,
             group=Group.objects.get(name__iexact="instructeur"),
         )
+
+    # Manage readonly access
+    request.session["readonly"] = from_habilitation["groupe"]["codeRole"] in [
+        GroupRoleProfile.ADM_CENTRALE_LECTEUR
+    ]

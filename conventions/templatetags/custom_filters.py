@@ -58,6 +58,14 @@ def is_instructeur(request: HttpRequest) -> bool:
 
 
 @register.filter
+def is_readonly(request: HttpRequest) -> bool:
+    # Manage is_staff exception
+    if "readonly" in request.session:
+        return request.session["readonly"]
+    return False
+
+
+@register.filter
 def current_administration(request: HttpRequest) -> None | int:
     if is_instructeur(request) and request.session.get("administration"):
         administration = Administration.objects.get(
