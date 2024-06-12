@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -13,6 +15,7 @@ from siap.exceptions import DuplicatedOperationSIAPException
 @login_required
 def operation_conventions(request, numero_operation):
     # Décorator ?
+    logging.warning("operation_conventions %s", numero_operation)
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
 
