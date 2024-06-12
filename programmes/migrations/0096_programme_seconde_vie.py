@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="programme",
             name="seconde_vie",
-            field=models.BooleanField(null=True),
+            field=models.BooleanField(default=False),
         ),
     ]
