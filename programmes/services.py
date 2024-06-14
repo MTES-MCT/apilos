@@ -1,5 +1,4 @@
 import functools
-import logging
 from datetime import date
 from typing import Any
 
@@ -42,7 +41,6 @@ class OperationService:
             self.siap_exception_detail = e
 
     def is_seconde_vie(self):
-        logging.warning("is_seconde_vie %s", self.operation["donneesOperation"])
         for aide in self.operation["donneesOperation"]["aides"]:
             if aide["code"] == "SECD_VIE":
                 return True

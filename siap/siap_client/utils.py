@@ -231,7 +231,6 @@ def get_or_create_programme(
         programme_from_siap["donneesLocalisation"]
     )
 
-    logging.warning(programme_from_siap["detailsOperation"])
     if type_operation != TypeOperation.SANSTRAVAUX and (
         "detailsOperation" not in programme_from_siap
         or [
