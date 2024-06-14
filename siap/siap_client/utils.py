@@ -240,7 +240,10 @@ def get_or_create_programme(
         ]
         == []
     ):
-        raise NoConventionForOperationSIAPException('no code in "detailsOperation"')
+        raise NoConventionForOperationSIAPException(
+            "Les aides définies coté financement ne sont pas prises en charge par le"
+            " conventionnement"
+        )
 
     try:
         (programme, _) = Programme.objects.get_or_create(
