@@ -12,7 +12,7 @@ from programmes.api.operation_serializers import (
 )
 from programmes.api.operation_serializers import OperationSerializer as MySerializer
 from programmes.models import Programme
-from programmes.services import get_or_create_conventions_from_operation_number
+from programmes.services import OperationService
 from siap.siap_authentication import SIAPJWTAuthentication
 
 
@@ -67,9 +67,8 @@ class OperationDetails(OperationApiViewBase):
         + " all those created element",
     )
     def post(self, request, numero_operation):
-        (programme, _, _) = get_or_create_conventions_from_operation_number(
-            request, numero_operation
-        )
+        service = OperationService(request=request, numero_operation=numero_operation)
+        (programme, _, _) = service.get_or_create_conventions()
         serializer = MySerializer(programme)
         return Response(serializer.data)
 

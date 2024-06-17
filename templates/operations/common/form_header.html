@@ -1,30 +1,32 @@
 {% load custom_filters %}
 <div class="apilos-sticky fr-container fr-pt-2w">
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-8 fr-py-3w">
-            <h1 class="fr-h2 apilos-d-inline">{{programme.nom}}</h1>
-            <div class="apilos-text--italic">
-                {% if programme.numero_operation %}
-                    Opération n°{{programme.numero_operation}}
-                {% endif %}
-                {% if request|is_instructeur and programme.bailleur %}
-                    (Entreprise bailleur : {{ programme.bailleur }})
-                {% endif %}
-                {% if request|is_bailleur and programme.administration %}
-                    (Service instructeur : {{ programme.administration }})
-                {% endif %}
+    <div class="{% if is_seconde_vie %}fr-notice fr-notice--info fr-px-5w{% endif %}">
+        <div class="fr-grid-row fr-grid-row--gutters">
+            <div class="fr-col-8 fr-py-3w">
+                <h1 class="fr-h2 apilos-d-inline">{{programme.nom}}</h1>
+                <div class="apilos-text--italic">
+                    {% if programme.numero_operation %}
+                        Opération n°{{programme.numero_operation}}
+                    {% endif %}
+                    {% if request|is_instructeur and programme.bailleur %}
+                        (Entreprise bailleur : {{ programme.bailleur }})
+                    {% endif %}
+                    {% if request|is_bailleur and programme.administration %}
+                        (Service instructeur : {{ programme.administration }})
+                    {% endif %}
+                </div>
             </div>
-        </div>
-        <div class="fr-col-4 fr-grid-row fr-grid-row--right">
-            <div>
-                {% if CERBERE_AUTH and programme.numero_operation %}
-                    <div class="fr-grid-row fr-grid-row--right fr-my-2w">
-                        <a href="{{ request|get_siap_operation_url:programme.numero_operation }}">
-                            Financement
-                            <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
-                        </a>
-                    </div>
-                {% endif %}
+            <div class="fr-col-4 fr-grid-row fr-grid-row--right">
+                <div>
+                    {% if CERBERE_AUTH and programme.numero_operation %}
+                        <div class="fr-grid-row fr-grid-row--right fr-my-2w">
+                            <a href="{{ request|get_siap_operation_url:programme.numero_operation }}">
+                                Financement
+                                <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>

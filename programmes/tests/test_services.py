@@ -1,11 +1,64 @@
 from datetime import date
+from unittest.mock import patch
 
-from django.test import TestCase
+import pytest
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import RequestFactory, TestCase
 
 from apilos_settings.models import Departement
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
-from programmes.services import LoyerRedevanceUpdateComputer
+from programmes.services import LoyerRedevanceUpdateComputer, OperationService
 from programmes.tests.factories import DepartementFactory
+from siap.siap_client.client import SIAPClient
+from users.tests.factories import UserFactory
+
+
+@pytest.fixture
+def operation_seconde_vie():
+    return {
+        "donneesOperation": {
+            "aides": [{"code": "SECD_VIE", "libelle": "Seconde vie"}],
+        },
+    }
+
+
+@pytest.fixture
+def operation_service(operation_seconde_vie):
+    factory = RequestFactory()
+    request = factory.get("/settings/administrations/")
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.session["habilitation_id"] = "1"
+    request.session.save()
+    user = UserFactory(is_superuser=True)
+    request.user = user
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_instance = mock_get_instance.return_value
+        mock_instance.get_operation.return_value = operation_seconde_vie
+        return OperationService(request=request, numero_operation="20220600016")
+
+
+@pytest.mark.django_db
+class TestOperationService:
+    def test_init(self, operation_seconde_vie, operation_service):
+        assert operation_service.numero_operation == "20220600016"
+        assert operation_service.operation == operation_seconde_vie
+
+    @pytest.mark.parametrize(
+        "aides,expected",
+        [
+            ({"code": "SECD_VIE", "libelle": "Seconde vie"}, True),
+            ({"code": "PLUS", "libelle": "PLUS"}, False),
+        ],
+    )
+    def test_is_seconde_vie(self, operation_service, aides, expected):
+        operation_service.operation = {
+            "donneesOperation": {
+                "numeroOperation": "20220600016",
+                "aides": [aides],
+            },
+        }
+        assert operation_service.is_seconde_vie() == expected
 
 
 class LoyerRedevanceUpdateComputerTest(TestCase):
