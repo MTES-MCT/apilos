@@ -12,7 +12,7 @@ from siap.exceptions import (
 )
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_administration, get_or_create_bailleur
-from users.models import GroupProfile, GroupRoleProfile, Role
+from users.models import GroupProfile, GroupProfileRole, Role
 from users.type_models import TypeRole
 
 
@@ -162,6 +162,12 @@ def _find_or_create_entity(
     request.session["role"] = None
     request.session["currently"] = from_habilitation["groupe"]["profil"]["code"]
 
+    # Manage readonly access
+    request.session["readonly"] = (
+        from_habilitation["groupe"]["codeRole"]
+        in GroupProfileRole.readonly_group_profile_roles()
+    )
+
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_ASS_HLM,
     ]:
@@ -174,12 +180,17 @@ def _find_or_create_entity(
         GroupProfile.SIAP_SER_DEP,
         GroupProfile.SIAP_DIR_REG,
     ]:
+        group_name = (
+            "readonly_administrateur"
+            if request.session["readonly"]
+            else "administrateur"
+        )
         request.session["role"] = _manage_role(
             from_habilitation,
             session_only=session_only,
             typologie=TypeRole.ADMINISTRATEUR,
             user=request.user,
-            group=Group.objects.get(name__iexact="administrateur"),
+            group=Group.objects.get(name__iexact=group_name),
         )
 
     if from_habilitation["groupe"]["profil"]["code"] in [
@@ -204,13 +215,14 @@ def _find_or_create_entity(
             ],
         )
         # Manage Role following the habilitation["groupe"]["codeRole"]
+        group_name = "readonly_bailleur" if request.session["readonly"] else "bailleur"
         request.session["role"] = _manage_role(
             from_habilitation,
             session_only=session_only,
             typologie=TypeRole.BAILLEUR,
             bailleur=bailleur,
             user=request.user,
-            group=Group.objects.get(name__iexact="bailleur"),
+            group=Group.objects.get(name__iexact=group_name),
         )
 
         # Manage Bailleur fusion : declare «absorbant» bailleur as parent of «absorbé»
@@ -247,16 +259,14 @@ def _find_or_create_entity(
                 "nom",
             ],
         )
+        group_name = (
+            "readonly_instructeur" if request.session["readonly"] else "instructeur"
+        )
         request.session["role"] = _manage_role(
             from_habilitation,
             session_only=session_only,
             typologie=TypeRole.INSTRUCTEUR,
             administration=administration,
             user=request.user,
-            group=Group.objects.get(name__iexact="instructeur"),
+            group=Group.objects.get(name__iexact="readonly_instructeur"),
         )
-
-    # Manage readonly access
-    request.session["readonly"] = from_habilitation["groupe"]["codeRole"] in [
-        GroupRoleProfile.ADM_CENTRALE_LECTEUR
-    ]

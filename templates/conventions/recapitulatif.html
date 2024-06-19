@@ -30,7 +30,7 @@
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
                 {% endif %}
-                {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur %}
+                {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur and not request|is_readonly %}
                     <div class="fr-grid-row fr-grid-row--right">
                         <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}"
                            class="fr-btn fr-btn--secondary">

@@ -30,7 +30,7 @@ urlpatterns = [
     ),
     path(
         "post_action/<convention_uuid>",
-        views.post_action,
+        views.ActionsPostValidation.as_view(),
         name="post_action",
     ),
     path(

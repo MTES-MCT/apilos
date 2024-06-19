@@ -495,27 +495,44 @@ def sent(request, convention_uuid, *args):
     )
 
 
-@login_required
-@require_http_methods(["GET", "POST"])
-@has_campaign_permission_view_function("convention.change_convention")
-def post_action(request, convention_uuid):
-    # Step 12/12
-    result = convention_post_action(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        if result["form_posted"] == "resiliation":
+class ActionsPostValidation(BaseConventionView):
+    @has_campaign_permission("convention.view_convention")
+    def get(self, request, convention_uuid):
+        result = convention_post_action(request, convention_uuid)
+        if result["success"] == ReturnStatus.SUCCESS:
+            if result["form_posted"] == "resiliation":
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention_uuid])
+                )
             return HttpResponseRedirect(
-                reverse("conventions:recapitulatif", args=[convention_uuid])
+                reverse("conventions:post_action", args=[convention_uuid])
             )
-        return HttpResponseRedirect(
-            reverse("conventions:post_action", args=[convention_uuid])
+        return render(
+            request,
+            "conventions/post_action.html",
+            {
+                **result,
+            },
         )
-    return render(
-        request,
-        "conventions/post_action.html",
-        {
-            **result,
-        },
-    )
+
+    @has_campaign_permission("convention.change_convention")
+    def post(self, request, convention_uuid):
+        result = convention_post_action(request, convention_uuid)
+        if result["success"] == ReturnStatus.SUCCESS:
+            if result["form_posted"] == "resiliation":
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention_uuid])
+                )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+        return render(
+            request,
+            "conventions/post_action.html",
+            {
+                **result,
+            },
+        )
 
 
 @login_required

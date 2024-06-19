@@ -6,7 +6,12 @@ from conventions.models.convention import Convention
 def has_campaign_permission(permission):
     def has_permission(function):
         def wrapper(view, request, **kwargs):
-            request.user.check_perm(permission, view.convention)
+            role_id = (
+                request.session["role"]["id"]
+                if "id" in request.session["role"]
+                else None
+            )
+            request.user.check_perm(permission, obj=view.convention, role_id=role_id)
             return function(view, request, **kwargs)
 
         return wrapper
@@ -18,7 +23,12 @@ def has_campaign_permission_view_function(permission):
     def has_permission(function):
         def wrapper(request, convention_uuid, **kwargs):
             convention = Convention.objects.get(uuid=convention_uuid)
-            request.user.check_perm(permission, convention)
+            role_id = (
+                request.session["role"]["id"]
+                if "id" in request.session["role"]
+                else None
+            )
+            request.user.check_perm(permission, obj=convention, role_id=role_id)
             return function(request, convention_uuid, **kwargs)
 
         return wrapper
