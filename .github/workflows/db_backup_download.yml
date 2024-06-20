@@ -15,7 +15,7 @@ on:
 
 env:
   SCALINGO_APP_REGION: osc-fr1
-  FILE_NAME: db_backup_$(date +%Y%m%d).tar.gz
+  FILE_NAME: db_backup.tar.gz
 
 jobs:
   download-db-backup:
