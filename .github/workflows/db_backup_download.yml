@@ -8,10 +8,8 @@ name: Download DB Backup from Scalingo
 on:
   workflow_dispatch:
   schedule:
-    # At 02:27 UTC every Monday
-    - cron: '27 2 * * 1'
-  pull_request:
-
+    # At 06:31 UTC every day
+    - cron: '31 6 * * *'
 
 env:
   SCALINGO_APP_REGION: osc-fr1
