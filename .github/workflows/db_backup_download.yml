@@ -28,6 +28,7 @@ jobs:
           region: ${{ env.SCALINGO_APP_REGION }}
       - name: Download DB Backup
         run: |
+          scalingo login --api-token ${{ secrets.SCALINGO_API_TOKEN }}
           scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups  | awk 'NR>3 {print $2}' | head -n 1
           today=$(date +"%a, %d %b %Y")
           backup_date=$(scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups | awk 'NR>3 {print $4, $5, $6, $7}' | head -n 1)
