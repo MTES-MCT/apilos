@@ -1,0 +1,47 @@
+name: Download DB Backup from Scalingo
+
+# Needed secrets:
+# - SCALINGO_API_TOKEN
+# - SCALINGO_APP_NAME
+# - SCALINGO_ADDON_ID
+
+on:
+  workflow_dispatch:
+  schedule:
+    # At 02:27 UTC every Monday
+    - cron: '27 2 * * 1'
+
+env:
+  SCALINGO_APP_REGION: osc-fr1
+  FILE_NAME: db_backup_$(date +%Y%m%d).tar.gz
+
+jobs:
+  download-db-backup:
+    name: Backup S3 in Production environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install scalingo CLI
+        uses: scalingo-community/setup-scalingo@v0.1.1
+        with:
+          region: ${{ env.SCALINGO_APP_REGION }}
+      - name: Download DB Backup
+        run: |
+          scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups  | awk 'NR>3 {print $2}' | head -n 1
+          today=$(date +"%a, %d %b %Y")
+          backup_date=$(scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups | awk 'NR>3 {print $4, $5, $6, $7}' | head -n 1)
+          if [[ $backup_date == *"$today"* ]]; then
+            echo "Backup was created yesterday"
+            backup_id=$(scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups  | awk 'NR>3 {print $2}' | head -n 1)
+            scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups-download --backup $backup_id
+            scalingo --app ${{ secrets.SCALINGO_APP_NAME }} --addon ${{ secrets.SCALINGO_ADDON_ID}} backups-download --backup $backup_id --output ${{ env.FILE_NAME }}
+          else
+            echo "Backup was not created today or something went wrong."
+            exit 1
+          fi
+
+      - name: Save db backup as artifact
+        uses: actions/upload-artifact@v4
+        with:
+            name: Save db backup as artifact
+            path: ${{ env.FILE_NAME }}
+
