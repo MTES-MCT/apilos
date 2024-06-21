@@ -151,5 +151,26 @@ def set_from_form_or_object(field, form, obj):
 
 
 def convention_upload_filename(convention: Convention) -> str:
-    now = datetime.now().strftime("%Y-%m-%d_%H-%M")
-    return f"{now}_convention_{convention.uuid}_signed.pdf"
+
+    def _normalize(numero: str | None) -> str | None:
+        if numero:
+            return numero.replace(" ", "_")
+
+    parts = []
+
+    if convention.parent:
+        parts += [
+            f"convention_{_normalize(convention.parent.numero)}",
+            f"avenant_{_normalize(convention.numero) or 'N'}",
+        ]
+    else:
+        parts += [
+            f"convention_{_normalize(convention.numero) or 'NUM'}",
+        ]
+
+    if convention.statut == ConventionStatut.PROJET.label:
+        parts.append("projet")
+
+    parts.append(datetime.now().strftime("%Y-%m-%d_%H-%M"))
+
+    return f"{'_'.join(parts)}_signed.pdf"
