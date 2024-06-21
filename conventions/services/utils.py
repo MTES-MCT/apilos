@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from enum import Enum
 
 from django.http import HttpRequest
@@ -147,3 +148,8 @@ def set_from_form_or_object(field, form, obj):
             else getattr(obj, field)
         ),
     )
+
+
+def convention_upload_filename(convention: Convention) -> str:
+    now = datetime.now().strftime("%Y-%m-%d_%H-%M")
+    return f"{now}_convention_{convention.uuid}_signed.pdf"

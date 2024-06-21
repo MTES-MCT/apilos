@@ -13,6 +13,8 @@ from conventions.services import utils
 from conventions.services.search import AvenantListSearchService
 from upload.services import UploadService
 
+from .utils import convention_upload_filename
+
 logger = logging.getLogger(__name__)
 
 
@@ -143,14 +145,16 @@ def complete_avenants_for_avenant(
         if avenant_form.is_valid():
             file = request.FILES["nom_fichier_signe"]
             if file:
-                now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-                filename = f"{now}_convention_{avenant.uuid}_signed.pdf"
+                upload_filename = convention_upload_filename(avenant)
+
                 upload_service = UploadService(
                     convention_dirpath=f"conventions/{avenant.uuid}/convention_docs",
-                    filename=filename,
+                    filename=upload_filename,
                 )
+
                 upload_service.upload_file(file)
-                avenant.nom_fichier_signe = filename
+                avenant.nom_fichier_signe = upload_filename
+
             for avenant_type in avenant_form.cleaned_data["avenant_types"]:
                 avenanttype = AvenantType.objects.get(nom=avenant_type)
                 avenant.avenant_types.add(avenanttype)
