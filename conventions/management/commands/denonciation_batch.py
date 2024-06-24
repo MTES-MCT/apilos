@@ -1317,6 +1317,9 @@ class Command(BaseCommand):
                 user, convention_origin=last_avenant
             )
             avenant_denonciation.date_denonciation = date_python
+            avenant_denonciation.numero = (
+                avenant_denonciation.get_default_convention_number()
+            )
             avenant_denonciation.save()
             convention_denonciation_validate(convention_uuid=avenant_denonciation.uuid)
 
