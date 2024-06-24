@@ -98,6 +98,8 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     ]:
         if "email" in bailleur_from_siap and bailleur_from_siap["email"]:
             bailleur_siren = bailleur_from_siap["email"]
+        elif bailleur_from_siap.get("siret"):
+            bailleur_siren = bailleur_from_siap["siret"]
         else:
             raise NotHandledBailleurPriveSIAPException(
                 "The « Bailleurs privés » type of bailleur is not handled yet"
