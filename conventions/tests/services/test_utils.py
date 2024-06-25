@@ -16,47 +16,47 @@ class UtilsTest(ParametrizedTestCase, SimpleTestCase):
                 {
                     "numero": "123/456/789",
                 },
-                "convention_123/456/789_projet_2024-06-21_00-00_signed.pdf",
+                "convention_123/456/789_projet_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": None,
                 },
-                "convention_NUM_projet_2024-06-21_00-00_signed.pdf",
+                "convention_NUM_projet_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": "",
                 },
-                "convention_NUM_projet_2024-06-21_00-00_signed.pdf",
+                "convention_NUM_projet_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": "123 456 789",
                     "statut": ConventionStatut.INSTRUCTION.label,
                 },
-                "convention_123_456_789_2024-06-21_00-00_signed.pdf",
+                "convention_123_456_789_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": "1",
                     "parent": ConventionFactory.build(numero="123/456/789"),
                 },
-                "convention_123/456/789_avenant_1_projet_2024-06-21_00-00_signed.pdf",
+                "convention_123/456/789_avenant_1_projet_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": None,
                     "parent": ConventionFactory.build(numero="123/456/789"),
                 },
-                "convention_123/456/789_avenant_N_projet_2024-06-21_00-00_signed.pdf",
+                "convention_123/456/789_avenant_N_projet_2024-06-21_00-00.pdf",
             ),
             (
                 {
                     "numero": "",
                     "parent": ConventionFactory.build(numero="123/456/789"),
                 },
-                "convention_123/456/789_avenant_N_projet_2024-06-21_00-00_signed.pdf",
+                "convention_123/456/789_avenant_N_projet_2024-06-21_00-00.pdf",
             ),
         ],
     )

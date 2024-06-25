@@ -173,4 +173,4 @@ def convention_upload_filename(convention: Convention) -> str:
 
     parts.append(datetime.now().strftime("%Y-%m-%d_%H-%M"))
 
-    return f"{'_'.join(parts)}_signed.pdf"
+    return f"{'_'.join(parts)}.pdf"
