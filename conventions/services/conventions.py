@@ -110,7 +110,9 @@ def convention_post_action(request, convention_uuid):
         resiliation_date_form = ConventionDateResiliationForm
 
     upform = UploadForm()
-    avenant_search_service = AvenantListSearchService(convention, order_by_numero=True)
+    avenant_search_service = AvenantListSearchService(
+        convention, order_by="televersement_convention_signee_le"
+    )
     total_avenants = convention.avenants.without_denonciation_and_resiliation().count()
     denonciation = convention.avenants.filter(avenant_types__nom__in=["denonciation"])
     resiliation = convention.avenants.filter(avenant_types__nom__in=["resiliation"])
