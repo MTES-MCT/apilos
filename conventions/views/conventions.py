@@ -336,7 +336,7 @@ def validate_convention(request, convention_uuid):
 @login_required
 @has_campaign_permission_view_function("convention.change_convention")
 def denonciation_validate(request, convention_uuid):
-    convention_denonciation_validate(request, convention_uuid)
+    convention_denonciation_validate(convention_uuid)
     return HttpResponseRedirect(
         reverse("conventions:post_action", args=[convention_uuid])
     )

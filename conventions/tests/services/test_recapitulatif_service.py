@@ -199,7 +199,7 @@ class AvenantRecapitulatifServiceTests(TestCase):
         self.avenant1.date_denonciation = date(2022, 12, 31)
         self.avenant1.save()
         denonciation_result = recapitulatif.convention_denonciation_validate(
-            self.request, self.avenant1.uuid
+            self.avenant1.uuid
         )
         self.avenant1.refresh_from_db()
         self.convention1.refresh_from_db()
