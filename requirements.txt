@@ -14,9 +14,7 @@ api-insee==1.5 \
 asgiref==3.6.0 \
     --hash=sha256:71e68008da809b957b7ee4b43dbccff33d1b23519fb8344e33f049897077afac \
     --hash=sha256:9567dfe7bd8d3c8c892227827c41cce860b368104c3431da67a0c5a65a949506
-    # via
-    #   django
-    #   django-simple-history
+    # via django
 attrs==22.1.0 \
     --hash=sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6 \
     --hash=sha256:86efa402f67bf2df34f51a335487cf46b1ec130d02b8d39fd248abfd30da551c
@@ -90,6 +88,7 @@ django==4.2.13 \
     #   django-csp
     #   django-defender
     #   django-hijack
+    #   django-simple-history
     #   django-sql-explorer
     #   django-storages
     #   django-waffle
@@ -120,9 +119,9 @@ django-hijack==3.4.5 \
     --hash=sha256:129cbe75444b163135871a947d38ffb72181f4f2583544703fc9efe083c9ddad \
     --hash=sha256:7e45b1de786bdc130628e4230b359dde6d8744ecd3bcd668d2b27c5d614a071c
     # via -r requirements.in
-django-simple-history==3.5.0 \
-    --hash=sha256:0030b3bb5ed219d6453320213e75cfa00dab7a381946124df9411729101c8874 \
-    --hash=sha256:eef2943d7c846270f11c8136f38a3ba00de2bebd7b1b89037de5d9b148ed677a
+django-simple-history==3.7.0 \
+    --hash=sha256:282cb2c4aa63f51547f17da7f2130abaa81ba01694676d19b88d52c94a57a52c \
+    --hash=sha256:ac3b7ca8b0d33f7ea6be8fe7fc98cf43415efa500ff5dfe736fbd1ebc0cf39f9
     # via -r requirements.in
 django-sql-explorer[xls]==4.3 \
     --hash=sha256:9c0735b08270ac60276ea2697a499cb9457acf00f0d0016a230c092ab3b4d310 \
