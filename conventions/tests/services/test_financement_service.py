@@ -68,12 +68,12 @@ class ConventionFinancementServiceTests(TestCase):
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         pret_cdcf = Pret.objects.get(
-            convention=self.service.convention, preteur=Preteur.CDCF
+            lot=self.service.convention.lot, preteur=Preteur.CDCF
         )
         self.assertEqual(pret_cdcf.montant, 1000000.00)
         self.assertEqual(pret_cdcf.duree, 50)
         pret_cdcl = Pret.objects.get(
-            convention=self.service.convention, preteur=Preteur.CDCL
+            lot=self.service.convention.lot, preteur=Preteur.CDCL
         )
         self.assertEqual(pret_cdcl.montant, 200000.00)
         self.assertEqual(pret_cdcl.duree, 20)

@@ -382,7 +382,7 @@ def generate_convention(request, convention_uuid):
         .prefetch_related("lot")
         .prefetch_related("lot__type_stationnements")
         .prefetch_related("lot__logements")
-        .prefetch_related("prets")
+        .prefetch_related("lot__prets")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("programme__logementedds")

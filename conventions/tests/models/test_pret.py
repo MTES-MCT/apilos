@@ -2,7 +2,7 @@ import datetime
 
 from django.test import TestCase
 
-from conventions.models import Convention, Pret, Preteur
+from conventions.models import Convention, Lot, Pret, Preteur
 from core.tests import utils_assertions
 
 
@@ -22,7 +22,7 @@ class PretModelsTest(TestCase):
     def setUpTestData(cls):
         convention = Convention.objects.get(numero="0001")
         Pret.objects.create(
-            convention=convention,
+            lot=convention.lot,
             preteur=Preteur.CDCF,
             date_octroi=datetime.datetime.today(),
             autre="test autre",
@@ -77,11 +77,11 @@ class PretModelsTest(TestCase):
         pret.numero = "001"
         pret.save()
 
-        convention = Convention.objects.first()
+        lot = Lot.objects.first()
 
-        clone = pret.clone(convention=convention, autre="autre chose")
+        clone = pret.clone(lot=lot, autre="autre chose")
 
-        self.assertEqual(clone.convention, convention)
+        self.assertEqual(clone.lot, lot)
         self.assertEqual(clone.numero, "001")
         self.assertEqual(clone.autre, "autre chose")
         for k in ("uuid", "id", "cree_le", "mis_a_jour_le"):

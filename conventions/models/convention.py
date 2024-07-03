@@ -657,8 +657,8 @@ class Convention(models.Model):
         for logement in self.lot.logements.all():
             logement.clone(lot=cloned_lot)
 
-        for pret in convention_origin.prets.all():
-            pret.clone(convention=cloned_convention)
+        for pret in convention_origin.lot.prets.all():
+            pret.clone(lot=cloned_lot)
 
         for type_stationnement in self.lot.type_stationnements.all():
             type_stationnement_fields = model_to_dict(

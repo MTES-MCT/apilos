@@ -4,16 +4,16 @@ from typing import Any
 from django.db import models
 from django.forms import model_to_dict
 
-from conventions.models import Convention
 from conventions.models.choices import Preteur
+from programmes.models import Lot
 
 
 class Pret(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
-    convention = models.ForeignKey(
-        "Convention", on_delete=models.CASCADE, null=False, related_name="prets"
-    )
+
+    lot = models.ForeignKey(Lot, on_delete=models.CASCADE, related_name="prets")
+
     preteur = models.CharField(
         max_length=25,
         choices=Preteur.choices,
@@ -39,9 +39,9 @@ class Pret(models.Model):
     sheet_name = "Financements"
 
     def __str__(self):
-        return f"{self.convention} ({self.preteur})"
+        return f"{self.lot} ({self.preteur})"
 
-    def clone(self, convention: Convention, **kwargs: dict[str, Any]) -> "Pret":
+    def clone(self, lot: Lot, **kwargs: dict[str, Any]) -> "Pret":
         pret_fields = (
             model_to_dict(
                 self,
@@ -52,7 +52,7 @@ class Pret(models.Model):
                     "mis_a_jour_le",
                 ],
             )
-            | {"convention": convention}
+            | {"lot": lot}
             | kwargs
         )
         return Pret.objects.create(**pret_fields)
