@@ -764,3 +764,25 @@ class Convention(models.Model):
 
         years = range(date.today().year, earliest - 1, -1)
         return [(year, str(year)) for year in years]
+
+    def get_contributors(self):
+        result = {"instructeurs": [], "bailleurs": []}
+        user_ids = self.conventionhistories.values_list("user_id", flat=True).distinct()
+        # get_model is used to avoid circular imports
+        user_model = apps.get_model("users", "User")
+        for user_id in user_ids:
+            try:
+                user = user_model.objects.get(id=user_id)
+            except user_model.DoesNotExist as e:
+                logger.error(e)
+                continue
+
+            if user.is_staff or user.is_superuser:
+                continue
+            if user.is_bailleur():
+                # Idée : rajouter le nom du bailleur associé (récupérable dans les habilitations ?)
+                result["bailleurs"].append((user.first_name, user.last_name))
+            if user.is_instructeur():
+                # Idée : rajouter le nom de l'administration (récupérable dans les habilitations ?)
+                result["instructeurs"].append((user.first_name, user.last_name))
+        return result
