@@ -78,20 +78,25 @@ def view_programme_operation(convention):
     return convention.programme.numero_operation
 
 
+@admin.display(description="Financement")
+def view_financement(convention):
+    return convention.lot.financement
+
+
 @admin.register(Convention)
 class ConventionAdmin(ApilosModelAdmin):
     list_display = (
         view_programme,
         "administration",
         "bailleur",
-        "financement",
+        view_financement,
         "uuid",
         view_programme_operation,
     )
     search_fields = [
         "programme__ville",
         "programme__nom",
-        "financement",
+        "lot__financement",
         "uuid",
         "programme__bailleur__nom",
         "programme__administration__nom",
@@ -106,7 +111,6 @@ class ConventionAdmin(ApilosModelAdmin):
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
-        "financement",
         "fond_propre",
         "commentaires",
         "statut",
