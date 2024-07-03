@@ -1,3 +1,5 @@
+from unittest.mock import Mock, patch
+
 import pytest
 from django.test import RequestFactory
 
@@ -54,7 +56,8 @@ def test_get_contributors():
     request = RequestFactory().post("/", {"convention_numero": "1234"})
     request.session = "session"
     request.user = user_instructeur
-    validate_convention(request, convention.uuid)
+    with patch("conventions.tasks.task_generate_and_send.delay", Mock()):
+        validate_convention(request, convention.uuid)
 
     # The instructor should appear in contributors
     assert convention.get_contributors() == {
