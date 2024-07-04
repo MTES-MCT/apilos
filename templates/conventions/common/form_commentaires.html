@@ -12,7 +12,7 @@
             <p class="notes">
                 <em>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</em>
             </p>
-            {% include "common/form/input_upload.html" with form_input=form.commentaires form_input_files=form.commentaires_files object_name='convention' object_uuid=convention.uuid file_list=convention.commentaires|get_files_from_textfiles textarea=True verticalDisplay=True object_field="convention__commentaires__"|add:form.uuid.value %}
+            {% include "common/form/input_upload.html" with form_input=form.commentaires editable=True form_input_files=form.commentaires_files object_name='convention' object_uuid=convention.uuid file_list=convention.commentaires|get_files_from_textfiles textarea=True verticalDisplay=True object_field="convention__commentaires__"|add:form.uuid.value %}
         </div>
     </div>
 </div>
