@@ -10,5 +10,10 @@ class TestDiffProgrammeDuplication(TestCase):
         duplicate = ProgrammeFactory(numero_operation=programme.numero_operation)
         self.assertEqual(
             diff_programme_duplication(programme.numero_operation),
-            {"bailleur_id": sorted([programme.bailleur_id, duplicate.bailleur_id])},
+            {
+                "administration_id": sorted(
+                    [programme.administration_id, duplicate.administration_id]
+                ),
+                "bailleur_id": sorted([programme.bailleur_id, duplicate.bailleur_id]),
+            },
         )

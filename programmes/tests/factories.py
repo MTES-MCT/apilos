@@ -25,6 +25,9 @@ class ProgrammeFactory(BaseFactory, UploadFactoryMixin):
     numero_operation = factory.LazyFunction(lambda: str(uuid.uuid4().int)[:13])
 
     bailleur = factory.SubFactory("bailleurs.tests.factories.BailleurFactory")
+    administration = factory.SubFactory(
+        "instructeurs.tests.factories.AdministrationFactory"
+    )
 
     ville = "Paris"
     code_postal = "75007"
