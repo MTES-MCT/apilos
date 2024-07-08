@@ -5,6 +5,7 @@ import uuid
 from datetime import date
 
 from django.apps import apps
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Q
 from django.forms import model_to_dict
@@ -768,8 +769,8 @@ class Convention(models.Model):
     def get_contributors(self):
         result = {"instructeurs": [], "bailleurs": []}
         user_ids = self.conventionhistories.values_list("user_id", flat=True).distinct()
-        # get_model is used to avoid circular imports
-        user_model = apps.get_model("users", "User")
+        # get_user_model is used to avoid circular imports
+        user_model = get_user_model()
         for user_id in user_ids:
             try:
                 user = user_model.objects.get(id=user_id)
