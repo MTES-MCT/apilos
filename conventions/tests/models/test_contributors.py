@@ -5,6 +5,7 @@ from django.test import RequestFactory
 
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models.choices import ConventionStatut
+from conventions.models.convention import Convention
 from conventions.tests.factories import ConventionFactory
 from conventions.views import save_convention
 from conventions.views.conventions import validate_convention
@@ -64,3 +65,25 @@ def test_get_contributors():
         "instructeurs": [(user_instructeur.first_name, user_instructeur.last_name)],
         "bailleurs": [(user_bailleur.first_name, user_bailleur.last_name)],
     }
+
+
+@pytest.mark.django_db
+@patch.object(Convention, "get_contributors")
+def test_format_contributors_empty(mock_get_contributors):
+    mock_get_contributors.return_value = {"instructeurs": [], "bailleurs": []}
+    convention = ConventionFactory()
+    assert convention.format_contributors() == "aucun contributeur connu pour l'instant"
+
+
+@pytest.mark.django_db
+@patch.object(Convention, "get_contributors")
+def test_format_contributors(mock_get_contributors):
+    mock_get_contributors.return_value = {
+        "instructeurs": [("John", "Doe"), ("Alice", "Tokyo"), ("Jean", "Madrid")],
+        "bailleurs": [("Sarah", "Berlin")],
+    }
+    convention = ConventionFactory()
+    assert (
+        convention.format_contributors()
+        == "pour l'instruction John Doe, Alice Tokyo, Jean Madrid et pour le bailleur Sarah Berlin"
+    )
