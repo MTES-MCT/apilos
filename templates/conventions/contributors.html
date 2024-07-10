@@ -1,5 +1,7 @@
+{% load display_filters %}
+
 <p class="fr-mb-4w">
     <span class="fr-icon-user-line" aria-hidden="true"></span> Contributeurs à la convention :
 
-    {{convention.format_contributors}}
+    {{convention|display_contributors}}
 </p>
