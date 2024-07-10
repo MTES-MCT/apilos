@@ -85,7 +85,7 @@ def upload_avenants_for_avenant(
         .get(uuid=convention_uuid)
     )
     avenant_search_service = AvenantListSearchService(
-        parent_convention, order_by_numero=True
+        parent_convention, order_by="numero"
     )
 
     if request.method == "POST":
@@ -134,9 +134,7 @@ def complete_avenants_for_avenant(
 ) -> dict[str, Any]:
     avenant = Convention.objects.get(uuid=convention_uuid)
     convention_parent = avenant.parent
-    avenant_search_service = AvenantListSearchService(
-        avenant.parent, order_by_numero=True
-    )
+    avenant_search_service = AvenantListSearchService(avenant.parent, order_by="numero")
 
     avenant_numero = avenant.get_default_convention_number()
 

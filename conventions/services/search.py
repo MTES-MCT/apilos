@@ -62,13 +62,13 @@ class ConventionSearchServiceBase:
 class AvenantListSearchService(ConventionSearchServiceBase):
     prefetch = ["programme", "lot"]
 
-    def __init__(self, convention: Convention, order_by_numero: bool = False):
+    def __init__(self, convention: Convention, order_by: str | None = None):
         self.convention: Convention = (
             convention.parent if convention.is_avenant() else convention
         )
 
-        if order_by_numero:
-            self.order_by = "numero"
+        if order_by:
+            self.order_by = order_by
 
     def _get_base_queryset(self) -> QuerySet:
         return self.convention.avenants.without_denonciation_and_resiliation()
