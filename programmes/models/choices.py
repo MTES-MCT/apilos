@@ -32,6 +32,7 @@ class Financement(models.TextChoices):
     LLTS = "LLTS", "LLTS"
     LLTSA = "LLTSA", "LLTSA"
     PLUS_DOM = "PLUS_DOM", "PLUS_DOM"
+    SALLS = "SALLS", "SALLS"
     # Financement spécifique Seconde vie
     SECD_VIE = "SECD_VIE", "SECD_VIE"
 
