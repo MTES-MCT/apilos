@@ -3,6 +3,7 @@ import json
 import logging
 import uuid
 from datetime import date
+from typing import Any
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -766,9 +767,14 @@ class Convention(models.Model):
         years = range(date.today().year, earliest - 1, -1)
         return [(year, str(year)) for year in years]
 
-    def get_contributors(self):
-        result = {"instructeurs": [], "bailleurs": []}
+    def get_contributors(self) -> dict[str, list[tuple[str, Any]]]:
+        result = {
+            "instructeurs": [],
+            "bailleurs": [],
+        }
+
         user_ids = self.conventionhistories.values_list("user_id", flat=True).distinct()
+
         # get_user_model is used to avoid circular imports
         user_model = get_user_model()
         for user_id in user_ids:
@@ -786,27 +792,5 @@ class Convention(models.Model):
             if user.is_instructeur():
                 # Idée : rajouter le nom de l'administration (récupérable dans les habilitations ?)
                 result["instructeurs"].append((user.first_name, user.last_name))
-        return result
 
-    def format_contributors(self):
-        contributors = self.get_contributors()
-        result = ""
-        if not contributors["instructeurs"] and not contributors["bailleurs"]:
-            return "aucun contributeur connu pour l'instant"
-
-        if len(contributors["instructeurs"]) > 0:
-            result += "pour l'instruction "
-            for i, instructeur in enumerate(contributors["instructeurs"]):
-                result += f"{instructeur[0]} {instructeur[1]}"
-                if i != len(contributors["instructeurs"]) - 1:
-                    result += ", "
-
-        if len(contributors["bailleurs"]) > 0:
-            if len(contributors["instructeurs"]) > 0:
-                result += " et "
-            result += "pour le bailleur "
-            for i, bailleur in enumerate(contributors["bailleurs"]):
-                result += f"{bailleur[0]} {bailleur[1]}"
-                if i != len(contributors["bailleurs"]) - 1:
-                    result += ", "
         return result
