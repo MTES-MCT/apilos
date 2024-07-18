@@ -5,9 +5,6 @@ SHELL := /bin/bash
 server:
 	@python manage.py runserver 0.0.0.0:8001
 
-worker:
-	@python -m celery -A core.worker worker -B -l INFO
-
 fmt:
 	@pre-commit run --all-files
 
