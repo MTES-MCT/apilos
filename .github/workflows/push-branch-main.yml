@@ -2,7 +2,7 @@ name: "Test and deploy to staging"
 on:
   push:
     branches:
-      - main
+      - hotfix-django-storage
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
