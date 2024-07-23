@@ -786,4 +786,5 @@ class Convention(models.Model):
             if user.is_instructeur():
                 # Idée : rajouter le nom de l'administration (récupérable dans les habilitations ?)
                 result["instructeurs"].append((user.first_name, user.last_name))
+        result["number"] = len(result["instructeurs"]) + len(result["bailleurs"])
         return result

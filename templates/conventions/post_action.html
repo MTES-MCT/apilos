@@ -10,7 +10,6 @@
         {% include "conventions/common/form_header.html"%}
         {% include "common/nav_bar.html" with nav_bar_step="action" %}
         <div class="fr-container fr-py-5w">
-            {% include "conventions/contributors.html" with contributors=convention.get_contributors %}
             {% if not convention.is_avenant %}
                 <div class="fr-col-12 fr-mt-2w fr-mb-4w">
                     <p class="fr-alert__title">
