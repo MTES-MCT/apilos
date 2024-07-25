@@ -1,22 +1,25 @@
-<p class="fr-mb-4w">
-    <span class="fr-icon-user-line" aria-hidden="true"></span> Contributeurs à la convention :
-
-    {% if not contributors.instructeurs and not contributors.bailleurs %}
-        aucun contributeur pour l'instant
-    {% endif %}
-    {% if contributors.instructeurs %}
-        pour l'instruction
-        {% for instructeur in contributors.instructeurs %}
-            <strong>{{instructeur.0}} {{instructeur.1}}</strong>
-            {% if not forloop.last %} et {% endif %}
-        {% endfor %}
-        {% if contributors.bailleurs %}, {% endif %}
-    {% endif %}
-    {% if contributors.bailleurs %}
-        pour le bailleur
-        {% for bailleur in contributors.bailleurs %}
-            <strong>{{bailleur.0}} {{bailleur.1}}</strong>
-            {% if not forloop.last %} et {% endif %}
-        {% endfor %}
-    {% endif %}
-</p>
+<div class="fr-pl-2w">
+    <a class="fr-link fr-text--sm" aria-describedby="tooltip-2989" id="link-2990" href="#">
+        {{contributors.number}} contributeur{% if contributors.number > 1 %}s{% endif %}
+    </a>
+    <span class="fr-tooltip fr-placement" id="tooltip-2989" role="tooltip" aria-hidden="true">
+        {% if contributors.number == 0 %}
+            APiLos n'a pas connaissance de contributeurs à cette convention
+        {% endif %}
+        {% if contributors.instructeurs %}
+            pour l'instruction
+            {% for instructeur in contributors.instructeurs %}
+                <strong>{{instructeur.0}} {{instructeur.1}}</strong>
+                {% if not forloop.last %} et {% endif %}
+            {% endfor %}
+            {% if contributors.bailleurs %}, {% endif %}
+        {% endif %}
+        {% if contributors.bailleurs %}
+            pour le bailleur
+            {% for bailleur in contributors.bailleurs %}
+                <strong>{{bailleur.0}} {{bailleur.1}}</strong>
+                {% if not forloop.last %} et {% endif %}
+            {% endfor %}
+        {% endif %}
+    </span>
+</div>

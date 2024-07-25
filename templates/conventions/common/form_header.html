@@ -41,12 +41,15 @@
                                 <a class='fr-link apilos-link fr-text--sm' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale n°{{convention.parent.numero}} <span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span></a>
                             </div>
                         {% else %}
-                            {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.is_resiliation_due %}
-                                <span class="apilos-h2-thin apilos-text--black">Résiliation - </span>
-                            {% elif convention.statut == CONVENTION_STATUT.DENONCEE and convention.is_denonciation_due %}
-                                <span class="apilos-h2-thin apilos-text--black">Dénonciation - </span>
-                            {% endif %}
-                            <h1 class="fr-h3 apilos-d-inline">{{convention.programme.nom}}</h1>
+                            <div class="apilos-input-group--inline">
+                                {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.is_resiliation_due %}
+                                    <span class="apilos-h2-thin apilos-text--black">Résiliation - </span>
+                                {% elif convention.statut == CONVENTION_STATUT.DENONCEE and convention.is_denonciation_due %}
+                                    <span class="apilos-h2-thin apilos-text--black">Dénonciation - </span>
+                                {% endif %}
+                                <h1 class="fr-h3 apilos-d-inline">{{convention.programme.nom}}</h1>
+                                {% include "conventions/contributors.html" with contributors=convention.get_contributors %}
+                            </div>
                             {% if convention.statut != CONVENTION_STATUT.RESILIEE and convention.statut != CONVENTION_STATUT.DENONCEE %}
                                 <div class="apilos-input-group--inline">
                                     <div class="fr-grid-row fr-mt-2w apilos-text--black">

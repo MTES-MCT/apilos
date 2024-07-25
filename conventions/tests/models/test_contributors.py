@@ -50,6 +50,7 @@ def test_get_contributors():
     assert convention.get_contributors() == {
         "instructeurs": [],
         "bailleurs": [(user_bailleur.first_name, user_bailleur.last_name)],
+        "number": 1,
     }
 
     # Validate convention with an instructeur
@@ -63,4 +64,5 @@ def test_get_contributors():
     assert convention.get_contributors() == {
         "instructeurs": [(user_instructeur.first_name, user_instructeur.last_name)],
         "bailleurs": [(user_bailleur.first_name, user_bailleur.last_name)],
+        "number": 2,
     }
