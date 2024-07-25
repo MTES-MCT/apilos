@@ -8,6 +8,8 @@ from conventions.models import Convention, ConventionStatut, PieceJointe
 from core.storage import client
 from upload.services import UploadService
 
+from .utils import convention_upload_filename
+
 logger = logging.getLogger(__name__)
 
 
@@ -16,11 +18,11 @@ class ConventionFileService:
     def upload_convention_file(
         cls, convention: Convention, file: File, update_statut: bool = True
     ):
-        now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        filename = f"{now}_convention_{convention.uuid}_signed.pdf"
+        upload_filename = convention_upload_filename(convention)
+
         upload_service = UploadService(
             convention_dirpath=f"conventions/{convention.uuid}/convention_docs",
-            filename=filename,
+            filename=upload_filename,
         )
         upload_service.upload_file(file)
 
@@ -28,7 +30,7 @@ class ConventionFileService:
             convention.statut = ConventionStatut.SIGNEE.label
             convention.televersement_convention_signee_le = datetime.date.today()
 
-        convention.nom_fichier_signe = filename
+        convention.nom_fichier_signe = upload_filename
         convention.save()
 
     @classmethod
