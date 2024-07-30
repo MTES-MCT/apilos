@@ -31,6 +31,12 @@ from programmes.models import Annexe, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
+foyer_attributions_mapping = {
+    "agees": "Personnes âgées seules ou en ménage",
+    "handicapes": "Personnes handicapées seules ou en ménage",
+    "inclusif": "Habitat inclusif",
+}
+
 
 class ConventionTypeConfigurationError(Exception):
     pass
@@ -628,14 +634,7 @@ def _get_foyer_attributions(convention: Convention) -> str:
     if not convention.programme.is_foyer():
         return ""
 
-    if convention.attribution_type == "agees":
-        return "Personnes âgées seules ou en ménage"
-    elif convention.attribution_type == "handicapes":
-        return "Personnes handicapées seules ou en ménage"
-    elif convention.attribution_type == "inclusif":
-        return "Habitat inclusif"
-    else:
-        return ""
+    return foyer_attributions_mapping.get(convention.attribution_type, "")
 
 
 def fiche_caf_doc(convention):
