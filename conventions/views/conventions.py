@@ -477,8 +477,9 @@ def preview(request, convention_uuid):
     )
 
 
+# FIXME : update it as a ConventionView
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@has_campaign_permission_view_function("convention.view_convention")
 def sent(request, convention_uuid, *args):
     result = convention_sent(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
