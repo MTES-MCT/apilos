@@ -36,10 +36,11 @@ from conventions.permissions import (
 from conventions.services import convention_generator
 from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
-from conventions.services.conventions import convention_post_action, convention_sent
+from conventions.services.conventions import convention_post_action
 from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
+    ConventionSentService,
     convention_denonciation_validate,
     convention_feedback,
     convention_resiliation_validate,
@@ -477,23 +478,35 @@ def preview(request, convention_uuid):
     )
 
 
-# FIXME : update it as a ConventionView
-@login_required
-@has_campaign_permission_view_function("convention.view_convention")
-def sent(request, convention_uuid, *args):
-    result = convention_sent(request, convention_uuid)
-    if result["success"] == ReturnStatus.SUCCESS:
-        return HttpResponseRedirect(
-            reverse("conventions:preview", args=[convention_uuid])
+class ConventionSentView(BaseConventionView):
+    @has_campaign_permission("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.get()
+        return render(
+            request,
+            "conventions/sent.html",
+            {
+                **result,
+            },
         )
 
-    return render(
-        request,
-        "conventions/sent.html",
-        {
-            **result,
-        },
-    )
+    @has_campaign_permission("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.save()
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:preview", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            "conventions/sent.html",
+            {
+                **result,
+            },
+        )
 
 
 class ActionsPostValidation(BaseConventionView):

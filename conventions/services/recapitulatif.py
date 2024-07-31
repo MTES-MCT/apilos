@@ -12,6 +12,7 @@ from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.forms.type1and2 import ConventionType1and2Form
+from conventions.forms.upload import UploadForm
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
@@ -571,3 +572,37 @@ def convention_resiliation_validate(request, convention_uuid):
         "success": result_status,
         "convention": convention,
     }
+
+
+class ConventionSentService(ConventionService):
+    # convention: Convention
+    # request: HttpRequest
+    # upform: UploadForm = UploadForm()
+    # return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+
+    def get(self):
+        upform = UploadForm()
+        return {
+            "convention": self.convention,
+            "upform": upform,
+            "extra_forms": {
+                "upform": upform,
+            },
+        }
+
+    def save(self):
+        upform = UploadForm(self.request.POST, self.request.FILES)
+        if upform.is_valid():
+            ConventionFileService.upload_convention_file(
+                self.convention, self.request.FILES["file"]
+            )
+            self.result_status = utils.ReturnStatus.SUCCESS
+
+        return {
+            "success": self.result_status,
+            "convention": self.convention,
+            "upform": upform,
+            "extra_forms": {
+                "upform": upform,
+            },
+        }

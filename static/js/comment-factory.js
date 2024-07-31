@@ -428,13 +428,13 @@ class CommentFactory {
         }
         let selects = this.empty_toggle_on.getElementsByTagName("select");
         for (var i = 0; i < selects.length; i++) {
-          if (inputs[i].dataset["readonly"] != "true") {
+          if (selects[i].dataset["readonly"] != "true") {
             selects[i].disabled = false;
           }
         }
         let textareas = this.empty_toggle_on.getElementsByTagName("textarea");
         for (var i = 0; i < textareas.length; i++) {
-          if (inputs[i].dataset["readonly"] != "true") {
+          if (textareas[i].dataset["readonly"] != "true") {
             textareas[i].disabled = false;
           }
         }

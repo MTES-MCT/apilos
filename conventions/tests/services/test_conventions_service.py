@@ -4,11 +4,7 @@ from django.http import HttpRequest, QueryDict
 from django.test import RequestFactory, TestCase
 
 from conventions.models import Convention
-from conventions.services.conventions import (
-    ConventionService,
-    convention_post_action,
-    convention_sent,
-)
+from conventions.services.conventions import ConventionService, convention_post_action
 from users.models import User
 
 
@@ -45,10 +41,6 @@ class ConventionConventionsServiceTests(TestCase):
         service = ConventionServiceImpl(self.convention, self.request)
         self.assertEqual(self.convention, service.convention)
         self.assertEqual(self.request, service.request)
-
-    def test_convention_sent_basic(self):
-        result = convention_sent(self.request, self.convention.uuid)
-        self.assertEqual(result["convention"], self.convention)
 
     def test_convention_post_action_basic(self):
         self.request.POST = QueryDict()

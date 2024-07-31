@@ -275,7 +275,7 @@ urlpatterns = [
     ),
     path(
         "sent/<convention_uuid>",
-        views.sent,
+        views.ConventionSentView.as_view(),
         name="sent",
     ),
     path(
