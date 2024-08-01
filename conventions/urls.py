@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import permission_required
 from django.urls import path
 from django.views.generic import RedirectView, TemplateView
 
@@ -51,16 +50,12 @@ urlpatterns = [
     ),
     path(
         "from_operation/add_convention/<numero_operation>",
-        permission_required("convention.add_convention")(
-            views.AddConventionView.as_view()
-        ),
+        views.AddConventionView.as_view(),
         name="from_operation_add_convention",
     ),
     path(
         "from_operation/add_avenants/<uuid:convention_uuid>",
-        permission_required("convention.add_convention")(
-            views.AddAvenantsView.as_view()
-        ),
+        views.AddAvenantsView.as_view(),
         name="from_operation_add_avenants",
     ),
     # Pages pour la finalisation d'une convention par un instructeur
@@ -87,9 +82,7 @@ urlpatterns = [
     ),
     path(
         "new_convention_anru",
-        permission_required("convention.add_convention")(
-            views.NewConventionAnruView.as_view()
-        ),
+        views.NewConventionAnruView.as_view(),
         name="new_convention_anru",
     ),
     path(
@@ -317,9 +310,7 @@ urlpatterns = [
     ),
     path(
         "search_for_avenant",
-        permission_required("convention.add_convention")(
-            views.SearchForAvenantResultView.as_view()
-        ),
+        views.SearchForAvenantResultView.as_view(),
         name="search_for_avenant",
     ),
     path(

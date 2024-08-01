@@ -574,6 +574,7 @@ def convention_resiliation_validate(request, convention_uuid):
     }
 
 
+# FIXME to be tested
 class ConventionSentService(ConventionService):
     # convention: Convention
     # request: HttpRequest

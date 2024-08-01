@@ -5,7 +5,7 @@ from datetime import date
 from typing import Any
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files import File
@@ -30,8 +30,9 @@ from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurFo
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
 from conventions.permissions import (
-    has_campaign_permission,
-    has_campaign_permission_view_function,
+    currentrole_campaign_permission_required,
+    currentrole_campaign_permission_required_view_function,
+    currentrole_permission_required,
 )
 from conventions.services import convention_generator
 from conventions.services.avenants import create_avenant
@@ -74,7 +75,7 @@ class RecapitulatifView(BaseConventionView):
             uuid=convention_uuid,
         )
 
-    @has_campaign_permission("convention.view_convention")
+    @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request: HttpRequest, **kwargs):
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
@@ -98,7 +99,7 @@ class RecapitulatifView(BaseConventionView):
             },
         )
 
-    @has_campaign_permission("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request: HttpRequest, **kwargs):
         service = ConventionRecapitulatifService(
             request=request, convention=self.convention
@@ -248,7 +249,7 @@ class LoyerSimulateurView(LoginRequiredMixin, View):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function("convention.change_convention")
 def save_convention(request, convention_uuid):
     # could be in a summary service
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -276,7 +277,7 @@ def save_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.delete_convention")
+@currentrole_campaign_permission_required_view_function("convention.delete_convention")
 def delete_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     convention.delete()
@@ -285,7 +286,7 @@ def delete_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function("convention.change_convention")
 def feedback_convention(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
@@ -297,7 +298,7 @@ def feedback_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function("convention.change_convention")
 def validate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -335,7 +336,7 @@ def validate_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function("convention.change_convention")
 def denonciation_validate(request, convention_uuid):
     convention_denonciation_validate(convention_uuid)
     return HttpResponseRedirect(
@@ -345,7 +346,7 @@ def denonciation_validate(request, convention_uuid):
 
 @require_POST
 @login_required
-@has_campaign_permission_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function("convention.change_convention")
 def resiliation_validate(request, convention_uuid):
     convention_resiliation_validate(request, convention_uuid)
     return HttpResponseRedirect(
@@ -355,7 +356,7 @@ def resiliation_validate(request, convention_uuid):
 
 @login_required
 @require_POST
-@has_campaign_permission_view_function("convention.view_convention")
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
 def get_or_generate_cerfa(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
 
@@ -376,7 +377,7 @@ def get_or_generate_cerfa(request, convention_uuid):
 
 @login_required
 @require_POST
-@has_campaign_permission_view_function("convention.view_convention")
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
 def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
@@ -467,7 +468,7 @@ def load_xlsx_model(request, file_type):
 
 @require_GET
 @login_required
-@has_campaign_permission_view_function("convention.view_convention")
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
 def preview(request, convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
@@ -478,8 +479,9 @@ def preview(request, convention_uuid):
     )
 
 
+# FIXME : to be tested
 class ConventionSentView(BaseConventionView):
-    @has_campaign_permission("convention.view_convention")
+    @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         service = ConventionSentService(convention=self.convention, request=request)
         result = service.get()
@@ -491,7 +493,7 @@ class ConventionSentView(BaseConventionView):
             },
         )
 
-    @has_campaign_permission("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
         service = ConventionSentService(convention=self.convention, request=request)
         result = service.save()
@@ -510,7 +512,7 @@ class ConventionSentView(BaseConventionView):
 
 
 class ActionsPostValidation(BaseConventionView):
-    @has_campaign_permission("convention.view_convention")
+    @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         result = convention_post_action(request, convention_uuid)
         if result["success"] == ReturnStatus.SUCCESS:
@@ -529,7 +531,7 @@ class ActionsPostValidation(BaseConventionView):
             },
         )
 
-    @has_campaign_permission("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
         result = convention_post_action(request, convention_uuid)
         if result["success"] == ReturnStatus.SUCCESS:
@@ -550,7 +552,7 @@ class ActionsPostValidation(BaseConventionView):
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def denonciation_start(request, convention_uuid):
     result = create_avenant(request, convention_uuid)
 
@@ -569,7 +571,7 @@ def denonciation_start(request, convention_uuid):
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def resiliation_start(request, convention_uuid):
     result = create_avenant(request, convention_uuid)
 
@@ -594,7 +596,7 @@ def resiliation_start(request, convention_uuid):
 
 
 @login_required
-@has_campaign_permission_view_function("convention.view_convention")
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -693,7 +695,7 @@ def journal(request, convention_uuid):
 
 @login_required
 @require_GET
-@has_campaign_permission_view_function("convention.view_convention")
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
 def fiche_caf(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
@@ -714,7 +716,7 @@ def fiche_caf(request, convention_uuid):
 
 @login_required
 @require_GET
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def piece_jointe_access(request, piece_jointe_uuid):
     """
     Display the raw file associated to the pièce jointe
@@ -737,7 +739,7 @@ def piece_jointe_access(request, piece_jointe_uuid):
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def piece_jointe_promote(request, piece_jointe_uuid):
     """
     Promote a pièce jointe to the official PDF document of a convention
@@ -760,7 +762,7 @@ def piece_jointe_promote(request, piece_jointe_uuid):
 
 
 @login_required
-@permission_required("convention.change_convention")
+@currentrole_permission_required("convention.change_convention")
 def expert_mode(request, convention_uuid):
     request.session["is_expert"] = not request.session.get("is_expert")
     return HttpResponseRedirect(

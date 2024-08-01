@@ -4,12 +4,13 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
 
+from conventions.permissions import currentrole_permission_required_view_function
 from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
 
 
 class NewConventionAnruView(LoginRequiredMixin, View):
-    # @permission_required("convention.add_convention")
+    @currentrole_permission_required_view_function("convention.add_convention")
     def get(self, request):
         service = ConventionSelectionService(request)
         service.get_create_convention()
@@ -23,7 +24,7 @@ class NewConventionAnruView(LoginRequiredMixin, View):
             },
         )
 
-    # @permission_required("convention.add_convention")
+    @currentrole_permission_required_view_function("convention.add_convention")
     def post(self, request):
         service = ConventionSelectionService(request)
         service.post_create_convention()

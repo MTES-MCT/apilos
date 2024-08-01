@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views import View
 
 from conventions.models import Convention
-from conventions.permissions import has_campaign_permission
+from conventions.permissions import currentrole_campaign_permission_required
 from conventions.services.conventions import ConventionService
 from conventions.services.utils import (
     ReturnStatus,
@@ -369,7 +369,7 @@ class ConventionView(ABC, BaseConventionView):
             active_classname=type(self).__name__,
         )
 
-    @has_campaign_permission("convention.view_convention")
+    @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, **kwargs):
         service = self.service_class(convention=self.convention, request=request)
         service.get()
@@ -394,7 +394,7 @@ class ConventionView(ABC, BaseConventionView):
     def post_action(self):
         self.service.save()
 
-    @has_campaign_permission("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
         self.request = request
         self.service = self.service_class(convention=self.convention, request=request)

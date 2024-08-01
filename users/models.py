@@ -332,6 +332,7 @@ class User(AbstractUser):
 
         # check permission itself
         permissions = []
+        # Get current role here
         roles = self.roles.all()
         if role_id:
             roles = roles.filter(id=role_id)
