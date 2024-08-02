@@ -25,6 +25,7 @@ from conventions.services.convention_generator import (
     _to_fr_float,
     compute_mixte,
     default_str_if_none,
+    fiche_caf_doc,
     generate_convention_doc,
     generate_pdf,
     get_convention_template_path,
@@ -622,3 +623,80 @@ class TestGetOrGenerateConventionDoc(ParametrizedTestCase, TestCase):
         assert docx.is_saved is False
 
         os.remove(expected_filepath)
+
+
+class ConventionGeneratorFicheCafTest(TestCase):
+    fixtures = [
+        "auth.json",
+        "bailleurs_for_tests.json",
+        "instructeurs_for_tests.json",
+        "programmes_for_tests.json",
+        "conventions_for_tests.json",
+    ]
+
+    def _fiche_caf_context(self):
+        return {
+            "administration",
+            "bailleur",
+            "convention",
+            "foyer_attributions",
+            "logements",
+            "lot",
+            "lot_num",
+            "loyer_m2",
+            "loyer_total",
+            "nb_logements_par_type",
+            "programme",
+            "residence_attributions",
+            "sa_totale",
+            "sar_totale",
+            "sh_totale",
+            "su_totale",
+        }
+
+    def test_context_residence(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.programme.nature_logement = NatureLogement.RESISDENCESOCIALE
+        convention.attribution_residence_sociale_ordinaire = True
+        convention.programme.save()
+        convention.save()
+
+        with patch(
+            "conventions.services.convention_generator.DocxTemplate.render"
+        ) as mocked_render:
+            fiche_caf_doc(convention)
+
+        args, _ = mocked_render.call_args
+        context = args[0]
+
+        mocked_render.assert_called_once()
+        assert set(context.keys()) == self._fiche_caf_context()
+        assert context["foyer_attributions"] == ""
+        assert (
+            context["residence_attributions"]
+            == "Résidence sociale ordinaire (accueil de jeunes travailleurs ; de travailleurs migrants ; "
+            "de personnes éprouvant des difficultés sociale et économique particulières au sens de l'article "
+            "1er de la loi n° 90-449 du 31 mai 1990 visant à la mise en œuvre du droit au logement ainsi que "
+            "les étudiants en situation de rupture sociale et familiale qui peuvent, à titre exceptionnel, "
+            "avoir accès à un nombre de places très minoritaires)"
+        )
+
+    def test_context_foyer(self):
+        convention = Convention.objects.get(numero="0001")
+        convention.programme.nature_logement = NatureLogement.AUTRE
+        convention.attribution_agees_autonomie = True
+        convention.programme.save()
+        convention.save()
+
+        with patch(
+            "conventions.services.convention_generator.DocxTemplate.render"
+        ) as mocked_render:
+            fiche_caf_doc(convention)
+
+        args, _ = mocked_render.call_args
+        context = args[0]
+
+        mocked_render.assert_called_once()
+        assert set(context.keys()) == self._fiche_caf_context()
+        assert context["foyer_attributions"] == "Personnes âgées seules ou en ménage"
+        assert context["residence_attributions"] == ""

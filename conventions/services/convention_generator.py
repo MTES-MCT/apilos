@@ -18,6 +18,9 @@ from django.template.defaultfilters import date as template_date
 from docx.shared import Inches
 from docxtpl import DocxTemplate, InlineImage
 
+from conventions.forms.convention_form_attribution import (
+    ConventionResidenceAttributionForm,
+)
 from conventions.models import Convention, ConventionType1and2
 from conventions.templatetags.custom_filters import (
     get_text_as_list,
@@ -27,6 +30,12 @@ from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import Annexe, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
+
+foyer_attributions_mapping = {
+    "agees": "Personnes âgées seules ou en ménage",
+    "handicapes": "Personnes handicapées seules ou en ménage",
+    "inclusif": "Habitat inclusif",
+}
 
 
 class ConventionTypeConfigurationError(Exception):
@@ -597,6 +606,37 @@ def _list_to_dict(object_list):
     return list(map(model_to_dict, object_list))
 
 
+def _get_residence_attributions(convention: Convention) -> str:
+    if not convention.programme.is_residence():
+        return ""
+
+    result = []
+    attribution_form = ConventionResidenceAttributionForm
+    if convention.attribution_residence_sociale_ordinaire:
+        result.append(
+            f"{attribution_form.base_fields['attribution_residence_sociale_ordinaire'].label} "
+            f"({attribution_form.base_fields['attribution_residence_sociale_ordinaire'].help_text})"
+        )
+    if convention.attribution_pension_de_famille:
+        result.append(
+            f"{attribution_form.base_fields['attribution_pension_de_famille'].label} "
+            f"({attribution_form.base_fields['attribution_pension_de_famille'].help_text})"
+        )
+    if convention.attribution_residence_accueil:
+        result.append(
+            f"{attribution_form.base_fields['attribution_residence_accueil'].label} "
+            f"({attribution_form.base_fields['attribution_residence_accueil'].help_text})"
+        )
+    return " ; ".join(result)
+
+
+def _get_foyer_attributions(convention: Convention) -> str:
+    if not convention.programme.is_foyer():
+        return ""
+
+    return foyer_attributions_mapping.get(convention.attribution_type, "")
+
+
 def fiche_caf_doc(convention):
     filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
 
@@ -623,6 +663,9 @@ def fiche_caf_doc(convention):
     lot_num = _prepare_logement_edds(convention)
     # tester si le logement existe avant de commencer
 
+    residence_attributions = _get_residence_attributions(convention)
+    foyer_attributions = _get_foyer_attributions(convention)
+
     context = {
         "convention": convention,
         "bailleur": convention.programme.bailleur,
@@ -633,6 +676,8 @@ def fiche_caf_doc(convention):
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
+        "residence_attributions": residence_attributions,
+        "foyer_attributions": foyer_attributions,
     }
     context.update(logements_totale)
 
