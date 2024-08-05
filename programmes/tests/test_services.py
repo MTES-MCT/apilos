@@ -6,9 +6,10 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from apilos_settings.models import Departement
+from conventions.tests.factories import ConventionFactory
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer, OperationService
-from programmes.tests.factories import DepartementFactory
+from programmes.tests.factories import DepartementFactory, ProgrammeFactory
 from siap.siap_client.client import SIAPClient
 from users.tests.factories import UserFactory
 
@@ -19,6 +20,14 @@ def operation_seconde_vie():
         "donneesOperation": {
             "aides": [{"code": "SECD_VIE", "libelle": "Seconde vie"}],
         },
+        "detailsOperation": [
+            {
+                "aide": {"code": "PLUS", "libelle": "PLUS"},
+            },
+            {
+                "aide": {"code": "PLAI", "libelle": "PLAI"},
+            },
+        ],
     }
 
 
@@ -59,6 +68,13 @@ class TestOperationService:
             },
         }
         assert operation_service.is_seconde_vie() == expected
+
+    def test_has_conventions(self, operation_service):
+        operation_service.programme = ProgrammeFactory()
+        assert not operation_service.has_conventions()
+
+        ConventionFactory.create_batch(2, lot__programme=operation_service.programme)
+        assert operation_service.has_conventions()
 
 
 class LoyerRedevanceUpdateComputerTest(TestCase):

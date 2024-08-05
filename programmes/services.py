@@ -2,10 +2,13 @@ import functools
 from datetime import date
 from typing import Any
 
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
+from django.urls import resolve
 
 from apilos_settings.models import Departement
+from conventions.models.convention import Convention
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.models.models import Programme
 from siap.exceptions import SIAPException
@@ -46,9 +49,11 @@ class OperationService:
                 return True
         return False
 
-    def has_seconde_vie_conventions(self):
-        # TODO get seconde vie operation (to be defined) and get conventions
-        return False
+    def has_conventions(self):
+        conventions_num = Convention.objects.filter(
+            programme_id=self.programme.id
+        ).count()
+        return conventions_num == len(self.operation["detailsOperation"])
 
     def get_or_create_programme(self):
         if self.siap_error:
@@ -61,6 +66,21 @@ class OperationService:
             # impossible to get operation from SIAP
             return (None, None, None)
         return get_or_create_conventions(self.operation, self.request.user)
+
+    def get_context_list_conventions(self, paginator) -> dict:
+        return {
+            "url_name": resolve(self.request.path_info).url_name,
+            "order_by": self.request.GET.get("order_by", ""),
+            "numero_operation": self.numero_operation,
+            "programme": self.programme,
+            "conventions": paginator.get_page(self.request.GET.get("page", 1)),
+            "filtered_conventions_count": paginator.count,
+            "all_conventions_count": paginator.count,
+            "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
+            "search_operation_nom": "",
+            "search_numero": "",
+            "search_lieu": "",
+        }
 
 
 def _find_index_by_annee(annee: str, evolutions: list[dict[str, Any]]) -> int:
