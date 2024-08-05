@@ -81,6 +81,7 @@ def new_avenants_for_avenant(
     )
 
 
+# FIXME : update to View class
 @login_required
 def form_avenants_for_avenant(request, convention_uuid):
     result = complete_avenants_for_avenant(request, convention_uuid)

@@ -73,8 +73,8 @@ def create_all_for_siap():
         cerbere=True,
     )
 
-    GroupFactory(name="Instructeur", rwd=["logement", "convention"])
-    GroupFactory(name="Bailleur", rw=["logement", "convention"])
+    GroupFactory(name="instructeur", rwd=["logement", "convention"])
+    GroupFactory(name="bailleur", rw=["logement", "convention"])
 
     administration = AdministrationFactory(
         nom="CA d'Arles-Crau-Camargue-Montagnette",

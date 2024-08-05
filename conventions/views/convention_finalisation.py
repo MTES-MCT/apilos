@@ -1,11 +1,10 @@
 import json
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic.base import TemplateView
-from waffle.mixins import WaffleFlagMixin
 
+from conventions.permissions import currentrole_campaign_permission_required
 from conventions.services import utils
 from conventions.services.finalisation import (
     FinalisationCerfaService,
@@ -13,11 +12,11 @@ from conventions.services.finalisation import (
     FinalisationServiceBase,
     FinalisationValidationService,
 )
+from conventions.views.convention_form import BaseConventionView
 from core.stepper import Stepper
 
 
-class FinalisationBase(WaffleFlagMixin, TemplateView):
-    waffle_flag = settings.FLAG_OVERRIDE_CERFA
+class FinalisationBase(BaseConventionView, TemplateView):
     service_class: FinalisationServiceBase
 
     def __init__(self, *args, **kwargs) -> None:
@@ -58,12 +57,21 @@ class FinalisationBase(WaffleFlagMixin, TemplateView):
             context["form"] = service.form
         return context
 
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
 
 class FinalisationNumero(FinalisationBase):
     template_name = "conventions/finalisation/numero.html"
     step_number = 1
     service_class = FinalisationNumeroService
 
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, **kwargs):
         convention_uuid = str(kwargs.get("convention_uuid"))
         service = self.service_class(convention_uuid=convention_uuid, request=request)
@@ -93,6 +101,7 @@ class FinalisationCerfa(FinalisationBase):
     step_number = 2
     service_class = FinalisationCerfaService
 
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, **kwargs):
         convention_uuid = str(kwargs.get("convention_uuid"))
         service = self.service_class(convention_uuid=convention_uuid, request=request)
