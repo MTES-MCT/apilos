@@ -9,18 +9,6 @@ from users.models import User
 
 class UserService:
     @classmethod
-    def extract_username_from_email(cls, email: str | None = None):
-        if email is None:
-            return ""
-
-        parts = email.split("@", maxsplit=1)
-
-        if len(parts) > 1:
-            return parts[0].lower()
-
-        return ""
-
-    @classmethod
     def email_mensuel(cls) -> dict:
         nb_sent_emails = {
             "bailleur": 0,
