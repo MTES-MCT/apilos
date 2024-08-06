@@ -1,27 +1,30 @@
 from uuid import UUID
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views import View
-from django.http import HttpRequest, HttpResponse
+from django.views.decorators.http import require_http_methods
 
 from conventions.forms import AvenantSearchForm
+from conventions.permissions import (
+    currentrole_permission_required,
+    currentrole_permission_required_view_function,
+)
 from conventions.services.avenants import (
-    create_avenant,
-    upload_avenants_for_avenant,
     complete_avenants_for_avenant,
+    create_avenant,
     remove_avenant_type_from_avenant,
+    upload_avenants_for_avenant,
 )
 from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
-from django.views.decorators.http import require_http_methods
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
     result = create_avenant(request, convention_uuid)
     if result["success"] == ReturnStatus.SUCCESS:
@@ -57,7 +60,7 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 def new_avenants_for_avenant(
     request: HttpRequest, convention_uuid: UUID
 ) -> HttpResponse:
@@ -78,6 +81,7 @@ def new_avenants_for_avenant(
     )
 
 
+# FIXME : update to View class
 @login_required
 def form_avenants_for_avenant(request, convention_uuid):
     result = complete_avenants_for_avenant(request, convention_uuid)
@@ -98,7 +102,7 @@ def form_avenants_for_avenant(request, convention_uuid):
 
 
 @login_required
-@permission_required("convention.add_convention")
+@currentrole_permission_required("convention.add_convention")
 @require_http_methods(["POST"])
 def remove_from_avenant(
     request: HttpRequest, convention_uuid: UUID
@@ -114,6 +118,7 @@ def remove_from_avenant(
 
 
 class SearchForAvenantResultView(LoginRequiredMixin, View):
+    @currentrole_permission_required_view_function("convention.view_convention")
     def get(self, request):
         is_submitted = request.GET.get("departement", None) is not None
         search_form = (
@@ -149,6 +154,7 @@ class SearchForAvenantResultView(LoginRequiredMixin, View):
             {"conventions": None, "search_form": search_form},
         )
 
+    @currentrole_permission_required_view_function("convention.add_convention")
     def post(self, request):
         service = ConventionSelectionService(request)
         service.post_for_avenant()

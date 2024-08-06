@@ -1,8 +1,7 @@
 import pytest
-from django.conf import settings
+from django.core.management import call_command
 from django.urls import reverse
 from pytest_django.asserts import assertTemplateUsed
-from waffle.testutils import override_flag
 
 from conventions.forms.convention_form_finalisation import (
     FinalisationCerfaForm,
@@ -10,6 +9,14 @@ from conventions.forms.convention_form_finalisation import (
 )
 from conventions.models.choices import ConventionStatut
 from conventions.tests.factories import ConventionFactory
+from users.tests.factories import GroupFactory, RoleFactory, UserFactory
+from users.type_models import TypeRole
+
+
+@pytest.fixture(scope="session")
+def django_db_setup(django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("loaddata", "auth.json")
 
 
 @pytest.fixture
@@ -23,19 +30,38 @@ def convention():
 
 
 @pytest.fixture
+def logged_in_user(client, convention):
+    user = UserFactory()
+    role = RoleFactory(
+        user=user,
+        administration=convention.programme.administration,
+        typologie=TypeRole.INSTRUCTEUR.label,
+        group=GroupFactory(name="instructeur"),
+    )
+    client.force_login(user)
+
+    # Définir manuellement les données de session
+    session = client.session
+    session["role"] = {"id": role.id}
+    session.save()
+
+    return user
+
+
+@pytest.fixture
 def avenant(convention):
     return ConventionFactory(
         statut=ConventionStatut.INSTRUCTION.label,
         numero="3456",
         parent_id=convention.id,
+        programme=convention.programme,
         fichier_override_cerfa='{"files": {"705e2175-4a1d-4670-b9d0-de8f3c4a5432": {"uuid": "705e2175-4a1d-4670-b9d0-'
         'de8f3c4a5432", "size": 345913, "filename": "Cerfa.docx"}}, "text": ""}',
     )
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_get_numero(client, convention):
+def test_get_numero(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_numero", args=[convention.uuid])
     response = client.get(url)
     assert response.status_code == 200
@@ -49,8 +75,7 @@ def test_get_numero(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_get_numero_avenant(client, avenant):
+def test_get_numero_avenant(client, avenant, logged_in_user):
     url = reverse("conventions:finalisation_numero", args=[avenant.uuid])
     response = client.get(url)
     assert response.status_code == 200
@@ -64,8 +89,7 @@ def test_get_numero_avenant(client, avenant):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_post_numero_fail(client, convention):
+def test_post_numero_fail(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_numero", args=[convention.uuid])
     data = {"numero": ""}
     response = client.post(url, data)
@@ -75,8 +99,7 @@ def test_post_numero_fail(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_post_numero_success(client, convention):
+def test_post_numero_success(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_numero", args=[convention.uuid])
     data = {"numero": "1234567"}
     response = client.post(url, data)
@@ -89,8 +112,7 @@ def test_post_numero_success(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_get_cerfa(client, convention):
+def test_get_cerfa(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_cerfa", args=[convention.uuid])
     response = client.get(url)
     assert response.status_code == 200
@@ -100,8 +122,7 @@ def test_get_cerfa(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_post_cerfa(client, convention):
+def test_post_cerfa(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_cerfa", args=[convention.uuid])
     data = {}
     response = client.post(url, data)
@@ -114,8 +135,7 @@ def test_post_cerfa(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_get_validation(client, convention):
+def test_get_validation(client, convention, logged_in_user):
     url = reverse("conventions:finalisation_validation", args=[convention.uuid])
     response = client.get(url)
     assert response.status_code == 200
@@ -127,8 +147,7 @@ def test_get_validation(client, convention):
 
 
 @pytest.mark.django_db
-@override_flag(settings.FLAG_OVERRIDE_CERFA, active=True)
-def test_get_validation_avenant(client, avenant):
+def test_get_validation_avenant(client, avenant, logged_in_user):
     url = reverse("conventions:finalisation_validation", args=[avenant.uuid])
     response = client.get(url)
     assert response.status_code == 200

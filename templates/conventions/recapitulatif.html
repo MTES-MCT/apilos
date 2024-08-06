@@ -30,7 +30,7 @@
                         {% include "comments/opened_comments.html" %}
                     </turbo-frame>
                 {% endif %}
-                {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur %}
+                {% if convention.statut == CONVENTION_STATUT.SIGNEE and request|is_instructeur and not request|is_readonly %}
                     <div class="fr-grid-row fr-grid-row--right">
                         <a href="{% url 'conventions:expert_mode' convention_uuid=convention.uuid %}"
                            class="fr-btn fr-btn--secondary">
@@ -129,44 +129,46 @@
                     {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:variantes' %}
                     {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:commentaires' %}
                 {% endif %}
-                <turbo-frame id="convention_actions" data-turbo="true">
-                    {% include "conventions/actions/submit_convention.html" %}
-                    {% include "conventions/actions/instructeur_notification.html" %}
-                    {% if not convention|display_is_validated %}
-                        <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-                            {% include "conventions/actions/bailleur_notification.html" %}
-                            {% if not convention.is_resiliation %}
-                                <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
-                            {% endif %}
-                            {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
-                                <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
-                            {% endif %}
-                            {% if convention.is_denonciation %}
-                                {% include "conventions/actions/validate_denonciation.html" %}
-                            {% elif convention.is_resiliation %}
-                                {% if request.user.is_instructeur_departemental %}
-                                    {% include "conventions/actions/validate_resiliation.html" %}
+                {% if not request|is_readonly %}
+                    <turbo-frame id="convention_actions" data-turbo="true">
+                        {% include "conventions/actions/submit_convention.html" %}
+                        {% include "conventions/actions/instructeur_notification.html" %}
+                        {% if not convention|display_is_validated %}
+                            <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
+                                {% include "conventions/actions/bailleur_notification.html" %}
+                                {% if not convention.is_resiliation %}
+                                    <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
                                 {% endif %}
-                            {% else %}
-                                {% include "conventions/actions/instructeur_validation.html" %}
-                            {% endif %}
-                            {% if not convention.is_resiliation %}
-                                </div>
-                            {% endif %}
-                            {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
-                                </div>
-                            {% endif %}
-                        </div>
-                    {% endif %}
-                    {% include "conventions/actions/type1and2_options.html" %}
-                    {% if not convention.is_denonciation and not convention.is_resiliation %}
-                        {% include "conventions/actions/generate_convention.html" %}
-                    {% endif %}
-                    {% include "conventions/actions/cancel_convention.html" %}
-                    {% include "conventions/actions/delete.html" %}
-                    {% include "conventions/actions/display_spf_info.html" %}
-                    {% include "conventions/actions/display_resiliation_info.html" %}
-                </turbo-frame>
+                                {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
+                                    <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
+                                {% endif %}
+                                {% if convention.is_denonciation %}
+                                    {% include "conventions/actions/validate_denonciation.html" %}
+                                {% elif convention.is_resiliation %}
+                                    {% if request.user.is_instructeur_departemental %}
+                                        {% include "conventions/actions/validate_resiliation.html" %}
+                                    {% endif %}
+                                {% else %}
+                                    {% include "conventions/actions/instructeur_validation.html" %}
+                                {% endif %}
+                                {% if not convention.is_resiliation %}
+                                    </div>
+                                {% endif %}
+                                {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        {% include "conventions/actions/type1and2_options.html" %}
+                        {% if not convention.is_denonciation and not convention.is_resiliation %}
+                            {% include "conventions/actions/generate_convention.html" %}
+                        {% endif %}
+                        {% include "conventions/actions/cancel_convention.html" %}
+                        {% include "conventions/actions/delete.html" %}
+                        {% include "conventions/actions/display_spf_info.html" %}
+                        {% include "conventions/actions/display_resiliation_info.html" %}
+                    </turbo-frame>
+                {% endif %}
                 <div class="fr-col-12 fr-py-5w">{% include "common/button/return_convention_index.html" %}</div>
             </div>
         </div>

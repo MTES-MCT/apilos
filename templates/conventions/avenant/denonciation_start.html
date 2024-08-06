@@ -12,7 +12,7 @@
             {% csrf_token %}
             <input id="denonciation_start" type="hidden" name="denonciation_start" value="true">
             <input type="hidden" value="denonciation" name="avenant_type">
-            <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w">Dénoncer la convention</button>
+            <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w" {% include "common/form/disable_form_input.html" %}>Dénoncer la convention</button>
         </form>
     {% else %}
         <button class="fr-btn fr-btn--icon-left fr-icon-delete-line fr-my-2w" disabled>Dénoncer la convention</button>

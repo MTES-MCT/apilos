@@ -15,6 +15,7 @@ from django.views.generic.base import (
 from waffle.mixins import WaffleFlagMixin
 
 from conventions.models import ConventionStatut
+from conventions.permissions import currentrole_permission_required_view_function
 from conventions.services import utils
 from conventions.services.from_operation import (
     AddAvenantsService,
@@ -68,9 +69,11 @@ class AddConventionView(
     template_name = "conventions/from_operation/add_convention.html"
     step_number = 2
 
+    @currentrole_permission_required_view_function("convention.add_convention")
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return self._handle(request, *args, **kwargs)
 
+    @currentrole_permission_required_view_function("convention.add_convention")
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return self._handle(request, *args, **kwargs)
 
@@ -109,9 +112,11 @@ class AddAvenantsView(FromOperationBaseView, TemplateResponseMixin, ContextMixin
     template_name = "conventions/from_operation/add_avenants.html"
     step_number = 3
 
+    @currentrole_permission_required_view_function("convention.add_convention")
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return self._handle(request, *args, **kwargs)
 
+    @currentrole_permission_required_view_function("convention.add_convention")
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         return self._handle(request, *args, **kwargs)
 

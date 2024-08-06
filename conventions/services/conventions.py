@@ -10,7 +10,6 @@ from conventions.forms.convention_form_dates import (
 from conventions.forms.convention_form_resiliation import ConventionResiliationForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services import utils
-from conventions.services.file import ConventionFileService
 from conventions.services.search import AvenantListSearchService
 from core.request import AuthenticatedHttpRequest
 
@@ -42,29 +41,6 @@ class ConventionService(ABC):
     @abstractmethod
     def save(self):
         pass
-
-
-def convention_sent(request, convention_uuid):
-    convention = Convention.objects.get(uuid=convention_uuid)
-    result_status = None
-    if request.method == "POST":
-        upform = UploadForm(request.POST, request.FILES)
-        if upform.is_valid():
-            ConventionFileService.upload_convention_file(
-                convention, request.FILES["file"]
-            )
-            result_status = utils.ReturnStatus.SUCCESS
-    else:
-        upform = UploadForm()
-
-    return {
-        "success": result_status,
-        "convention": convention,
-        "upform": upform,  # Obsolète: cette approche sera dépréciée dans le futur, au profit de extra_forms.
-        "extra_forms": {
-            "upform": upform,
-        },
-    }
 
 
 def convention_post_action(request, convention_uuid):

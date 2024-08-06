@@ -12,7 +12,8 @@
 
     <div class="block--row-strech">
         <div>
-            <button id="{{upform.file.id_for_label}}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
+            <button id="{{upform.file.id_for_label}}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button"
+                    {% if request|is_readonly %}disabled{% endif %}>
                 {% if convention.is_denonciation %}
                     Déposer l'acte de dénonciation publié
                 {% else %}

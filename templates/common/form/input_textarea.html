@@ -60,7 +60,7 @@
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
             rows="{% if rows %}{{rows}}{% else %}3{% endif %}"
-            {% if not editable %}disabled{% endif %}>{{ form_input.value|default_if_none:'' }}</textarea>
+            {% include "common/form/disable_form_input.html" %}>{{ form_input.value|default_if_none:'' }}</textarea>
         {% include "common/utils/comments_field.html" %}
     </div>
     {% for error in form_input.errors %}

@@ -94,12 +94,14 @@
                                             <div class="fr-radio-group">
                                                 <input type="radio" value= "achevement" id="achevement" name="achevement" class="achevement_choice_button"
                                                        {% if convention.programme.date_achevement %} checked {% endif %}
+                                                       {% include "common/form/disable_form_input.html" %}
                                                 >
                                                 <label for="achevement">Mon bâtiment est achevé</label>
                                             </div>
                                             <div class="fr-radio-group">
                                                 <input type="radio" value= "achevement_previsible" id="achevement_previsible" name="achevement"class="achevement_choice_button"
                                                        {% if convention.programme.date_achevement_previsible and convention.programme.date_achevement is None %} checked {% endif %}
+                                                       {% include "common/form/disable_form_input.html" %}
                                                 >
                                                 <label for="achevement_previsible">Mon bâtiment est en construction</label>
                                             </div>

@@ -21,7 +21,7 @@
                     </div>
                     <details {% if form.errors %}open=""{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
                         <summary>
-                            <div class="fr-btn fr-mt-auto fr-ml-auto fr-mb-1w">Changer l'administration</div>
+                            <div class="fr-btn fr-btn--secondary fr-mt-auto fr-ml-auto fr-mb-1w">Changer l'administration</div>
                         </summary>
                         {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
                             {% url 'users:search_administration' as search_administration_url %}
@@ -31,7 +31,9 @@
                         <button
                             name="change_administration"
                             value="True"
-                            class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-warning-line" type="submit"
+                            class="fr-btn fr-btn--icon-left fr-icon-warning-line"
+                            type="submit"
+                            {% include "common/form/disable_form_input.html" %}
                         >
                             Valider le changement d'administration
                         </button>

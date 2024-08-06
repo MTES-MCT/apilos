@@ -12,7 +12,7 @@
             {% csrf_token %}
             <input id="resiliation_start" type="hidden" name="resiliation_start" value="true">
             <input type="hidden" value="resiliation" name="avenant_type">
-            <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w">Résilier la convention</button>
+            <button class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-2w" {% include "common/form/disable_form_input.html" %}>Résilier la convention</button>
         </form>
     {% else %}
         <button class="fr-btn fr-btn--icon-left fr-icon-delete-line fr-my-2w" disabled>Résilier la convention</button>

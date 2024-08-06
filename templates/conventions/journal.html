@@ -10,43 +10,45 @@
         {% include "common/nav_bar.html" with nav_bar_step="journal" %}
 
         <div class="fr-container fr-my-6w">
-            <div class="fr-card fr-card--no-arrow">
-                <div class="fr-card__body fr-my-2w">
-                    <h2 class="fr-text--lg">Ajouter un évènement au journal</h2>
-                    {% if action == 'create' %}
-                        <form method="POST">
-                            {% csrf_token %}
-                            <div class="fr-col-12 fr-mb-2w">
-                                {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
-                            </div>
-
-                            <div class="fr-col-12 fr-mb-4w">
-                                {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
-                            </div>
-
-                            <div class="fr-grid-row fr-grid-row--right">
-                                <div class="fr-mr-4w fr-mt-1w">
-                                    <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
-                                </div>
-                                <button class="fr-btn" name="action" value="submit" type="submit">
-                                    <span class="fr-icon-save-line fr-mr-1w" aria-hidden="true"></span>Enregistrer
-                                </button>
-                            </div>
-                        </form>
-                    {% else %}
-                        <div class="fr-col-12 block--row-strech">
-                            <div class="block--row-strech-1 fr-mr-6w">
-                                <p>Un nouvel évènement est survenu dans la vie de la convention, vous pouvez le signaler ici.</p>
-                            </div>
+            {% if not request|is_readonly %}
+                <div class="fr-card fr-card--no-arrow">
+                    <div class="fr-card__body fr-my-2w">
+                        <h2 class="fr-text--lg">Ajouter un évènement au journal</h2>
+                        {% if action == 'create' %}
                             <form method="POST">
                                 {% csrf_token %}
-                                <button class="fr-btn fr-btn--secondary fr-icon-add-circle-line fr-btn--icon-left fr-my-1w fr-mr-2w" name="action" value="create" type="submit">Ajouter un évènement
-                                </button>
+                                <div class="fr-col-12 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
+                                </div>
+
+                                <div class="fr-col-12 fr-mb-4w">
+                                    {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
+                                </div>
+
+                                <div class="fr-grid-row fr-grid-row--right">
+                                    <div class="fr-mr-4w fr-mt-1w">
+                                        <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
+                                    </div>
+                                    <button class="fr-btn" name="action" value="submit" type="submit">
+                                        <span class="fr-icon-save-line fr-mr-1w" aria-hidden="true"></span>Enregistrer
+                                    </button>
+                                </div>
                             </form>
-                        </div>
-                    {% endif %}
+                        {% else %}
+                            <div class="fr-col-12 block--row-strech">
+                                <div class="block--row-strech-1 fr-mr-6w">
+                                    <p>Un nouvel évènement est survenu dans la vie de la convention, vous pouvez le signaler ici.</p>
+                                </div>
+                                <form method="POST">
+                                    {% csrf_token %}
+                                    <button class="fr-btn fr-btn--secondary fr-icon-add-circle-line fr-btn--icon-left fr-my-1w fr-mr-2w" name="action" value="create" type="submit">Ajouter un évènement
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             <div class="fr-mt-4w">
                 {% for evenement in events %}
                     {% if action == 'edit' and selected == evenement %}

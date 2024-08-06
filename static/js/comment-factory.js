@@ -422,15 +422,21 @@ class CommentFactory {
       if (this.empty_toggle_on) {
         let inputs = this.empty_toggle_on.getElementsByTagName("input");
         for (var i = 0; i < inputs.length; i++) {
-          inputs[i].disabled = false;
+          if (inputs[i].dataset["readonly"] != "true") {
+            inputs[i].disabled = false;
+          }
         }
         let selects = this.empty_toggle_on.getElementsByTagName("select");
         for (var i = 0; i < selects.length; i++) {
-          selects[i].disabled = false;
+          if (selects[i].dataset["readonly"] != "true") {
+            selects[i].disabled = false;
+          }
         }
         let textareas = this.empty_toggle_on.getElementsByTagName("textarea");
         for (var i = 0; i < textareas.length; i++) {
-          textareas[i].disabled = false;
+          if (textareas[i].dataset["readonly"] != "true") {
+            textareas[i].disabled = false;
+          }
         }
         if (this.empty_toggle_on.tagName == "TR") {
           if (document.getElementById("download_upload_block") !== null) {

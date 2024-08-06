@@ -37,21 +37,185 @@ class GroupProfile(models.TextChoices):
     @classmethod
     def instructeur_profiles(cls):
         return [
-            GroupProfile.STAFF,
-            GroupProfile.INSTRUCTEUR,
-            GroupProfile.SIAP_SER_GEST,
-            GroupProfile.SIAP_ADM_CENTRALE,
-            GroupProfile.SIAP_DIR_REG,
-            GroupProfile.SIAP_SER_DEP,
+            cls.STAFF,
+            cls.INSTRUCTEUR,
+            cls.SIAP_SER_GEST,
+            cls.SIAP_ADM_CENTRALE,
+            cls.SIAP_DIR_REG,
+            cls.SIAP_SER_DEP,
         ]
 
     @classmethod
     def bailleur_profiles(cls):
         return [
-            GroupProfile.STAFF,
-            GroupProfile.BAILLEUR,
-            GroupProfile.SIAP_MO_PERS_MORALE,
-            GroupProfile.SIAP_MO_PERS_PHYS,
+            cls.STAFF,
+            cls.BAILLEUR,
+            cls.SIAP_MO_PERS_MORALE,
+            cls.SIAP_MO_PERS_PHYS,
+        ]
+
+
+class GroupProfileRole(models.TextChoices):
+    ADM_CENTRALE_ADMIN = (
+        "ADM_CENTRALE_ADMIN",
+        "appartient au groupe ADM_CENTRALE, périmètre NAT",
+    )
+    ADM_CENTRALE_LECTEUR = (
+        "ADM_CENTRALE_LECTEUR",
+        "appartient au groupe ADM_CENTRALE, périmètre NAT",
+    )
+    DIR_REG_ADMIN = "DIR_REG_ADMIN", "appartient au groupe DIR_REG, périmètre REG"
+    DIR_REG_INSTRUCTEUR = (
+        "DIR_REG_INSTRUCTEUR",
+        "appartient au groupe DIR_REG, périmètre REG",
+    )
+    DIR_REG_LECTEUR = "DIR_REG_LECTEUR", "appartient au groupe DIR_REG, périmètre REG"
+    SERV_DEP_ADMIN = "SERV_DEP_ADMIN", "appartient au groupe SER_DEP, périmètre DEP"
+    SERV_DEP_INSTRUCTEUR = (
+        "SERV_DEP_INSTRUCTEUR",
+        "appartient au groupe SER_DEP, périmètre DEP",
+    )
+    SERV_DEP_LECTEUR = "SERV_DEP_LECTEUR", "appartient au groupe SER_DEP, périmètre DEP"
+    SERV_INSTR_ADMIN = (
+        "SERV_INSTR_ADMIN",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_INSTRUCTEUR = (
+        "SERV_INSTR_INSTRUCTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_VALIDEUR = (
+        "SERV_INSTR_VALIDEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_INSTRUCTEUR_CHORUS = (
+        "SERV_INSTR_INSTRUCTEUR_CHORUS",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_LECTEUR = (
+        "SERV_INSTR_LECTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG2_ADMIN = (
+        "SERV_INSTR_DELGEG2_ADMIN",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG2_INSTRUCTEUR = (
+        "SERV_INSTR_DELGEG2_INSTRUCTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG2_VALIDEUR = (
+        "SERV_INSTR_DELGEG2_VALIDEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG2_LECTEUR = (
+        "SERV_INSTR_DELGEG2_LECTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG3_ADMIN = (
+        "SERV_INSTR_DELGEG3_ADMIN",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG3_INSTRUCTEUR = (
+        "SERV_INSTR_DELGEG3_INSTRUCTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG3_VALIDEUR = (
+        "SERV_INSTR_DELGEG3_VALIDEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG3_LECTEUR = (
+        "SERV_INSTR_DELGEG3_LECTEUR",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    ASS_HLM_NAT_LECTEUR = (
+        "ASS_HLM_NAT_LECTEUR",
+        "appartient au groupe ASS_HLM, périmètre NAT",
+    )
+    ASS_HLM_REG_LECTEUR = (
+        "ASS_HLM_REG_LECTEUR",
+        "appartient au groupe ASS_HLM, périmètre REG",
+    )
+    MO_MORAL_NAT_ADMIN = (
+        "MO_MORAL_NAT_ADMIN",
+        "appartient au groupe MO_PERS_MORALE, périmètre NAT",
+    )
+    MO_MORAL_NAT_LECTEUR = (
+        "MO_MORAL_NAT_LECTEUR",
+        "appartient au groupe MO_PERS_MORALE, périmètre NAT",
+    )
+    MO_MORAL_REG_ADMIN = (
+        "MO_MORAL_REG_ADMIN",
+        "appartient au groupe MO_PERS_MORALE, périmètre REG",
+    )
+    MO_MORAL_REG_INSTRUCTEUR = (
+        "MO_MORAL_REG_INSTRUCTEUR",
+        "appartient au groupe MO_PERS_MORALE, périmètre REG",
+    )
+    MO_MORAL_REG_VALIDEUR = (
+        "MO_MORAL_REG_VALIDEUR",
+        "appartient au groupe MO_PERS_MORALE, périmètre REG",
+    )
+    MO_MORAL_REG_LECTEUR = (
+        "MO_MORAL_REG_LECTEUR",
+        "appartient au groupe MO_PERS_MORALE, périmètre REG",
+    )
+    MO_PHYS = "MO_PHYS", "appartient au groupe MO_PERS_PHYS, périmètre COM"
+    DIR_REG_VALIDEUR = "DIR_REG_VALIDEUR", "appartient au groupe DIR_REG, périmètre REG"
+    DIR_REG_INSTRUCTEUR_CHORUS = (
+        "DIR_REG_INSTRUCTEUR_CHORUS",
+        "appartient au groupe DIR_REG, périmètre REG",
+    )
+    SERV_DEP_VALIDEUR = (
+        "SERV_DEP_VALIDEUR",
+        "appartient au groupe SER_DEP, périmètre DEP",
+    )
+    SERV_DEP_INSTRUCTEUR_CHORUS = (
+        "SERV_DEP_INSTRUCTEUR_CHORUS",
+        "appartient au groupe SER_DEP, périmètre DEP",
+    )
+    SERV_INSTR_SIGNATAIRE = (
+        "SERV_INSTR_SIGNATAIRE",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    SERV_INSTR_DELGEG3_SIGNATAIRE = (
+        "SERV_INSTR_DELGEG3_SIGNATAIRE",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+    MO_MORAL_REG_SIGNATAIRE = (
+        "MO_MORAL_REG_SIGNATAIRE",
+        "appartient au groupe MO_PERS_MORALE, périmètre REG",
+    )
+    DIR_REG_SIGNATAIRE = (
+        "DIR_REG_SIGNATAIRE",
+        "appartient au groupe DIR_REG, périmètre REG",
+    )
+    SERV_DEP_SIGNATAIRE = (
+        "SERV_DEP_SIGNATAIRE",
+        "appartient au groupe SER_DEP, périmètre DEP",
+    )
+    SERV_INSTR_DELGEG2_SIGNATAIRE = (
+        "SERV_INSTR_DELGEG2_SIGNATAIRE",
+        "appartient au groupe SER_GEST, périmètre LOC",
+    )
+
+    @classmethod
+    def readonly_group_profile_roles(cls):
+        return [
+            cls.ADM_CENTRALE_LECTEUR,
+            cls.DIR_REG_LECTEUR,
+            cls.SERV_DEP_LECTEUR,
+            cls.SERV_INSTR_LECTEUR,
+            cls.SERV_INSTR_DELGEG2_LECTEUR,
+            cls.SERV_INSTR_DELGEG3_LECTEUR,
+            cls.SERV_INSTR_LECTEUR,
+            cls.SERV_INSTR_LECTEUR,
+            cls.ASS_HLM_NAT_LECTEUR,
+            cls.ASS_HLM_REG_LECTEUR,
+            cls.MO_MORAL_NAT_LECTEUR,
+            cls.MO_MORAL_REG_LECTEUR,
+            cls.DIR_REG_INSTRUCTEUR_CHORUS,
+            cls.SERV_DEP_INSTRUCTEUR_CHORUS,
         ]
 
 
@@ -158,7 +322,7 @@ class User(AbstractUser):
             + "permission 'change_convention'"
         )
 
-    def has_perm(self, perm, obj=None):
+    def has_perm(self, perm, obj=None, role_id: int | None = None):
         if self.is_staff or self.is_superuser:
             return self.is_active
 
@@ -168,7 +332,11 @@ class User(AbstractUser):
 
         # check permission itself
         permissions = []
-        for role in self.roles.all():
+        # Get current role here
+        roles = self.roles.all()
+        if role_id:
+            roles = roles.filter(id=role_id)
+        for role in roles:
             permissions += map(
                 lambda permission: permission.content_type.name
                 + "."
@@ -177,8 +345,8 @@ class User(AbstractUser):
             )
         return perm in permissions
 
-    def check_perm(self, perm, obj=None):
-        if not self.has_perm(perm, obj):
+    def check_perm(self, perm, obj=None, role_id: int | None = None):
+        if not self.has_perm(perm, obj=obj, role_id=role_id):
             raise PermissionDenied
 
     def is_bailleur(self, bailleur_id=None):

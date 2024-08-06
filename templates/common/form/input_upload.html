@@ -39,7 +39,7 @@
             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
 
-        {% if not editable and comments|hasnt_active_comments:object_field %}
+        {% if not editable and comments|hasnt_active_comments:object_field or request|is_readonly %}
             <div class="fr-mt-6w">
                 {% include "common/display_files.html" with file_list=file_list %}
             </div>

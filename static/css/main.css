@@ -950,10 +950,10 @@ table .apilos-badge {
   top: 0;
 }
 .apilos-sticky-2 {
-  top: 176px;
+  top: 141px;
 }
 .fr-container-fluid:has(.apilos-notice--warning) .apilos-sticky-2 {
-  top: 248px;
+  top: 213px;
 }
 .recapitulatif .recapitulatif-link {
   display: none;
