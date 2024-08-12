@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views.decorators.http import require_safe
 from django.views.generic import TemplateView
 
 from conventions.services.search import ProgrammeConventionSearchService
@@ -74,6 +75,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
 
 
 @login_required
+@require_safe
 def seconde_vie_new(request, numero_operation):
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
