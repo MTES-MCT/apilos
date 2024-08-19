@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path(
         "<path:numero_operation>/seconde_vie/new",
-        views.SecondeVieNewView.as_view(),
+        views.seconde_vie_new,
         name="seconde_vie_new",
     ),
     path(
