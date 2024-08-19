@@ -1,6 +1,7 @@
 from unittest.mock import Mock, patch
 
 import pytest
+from django.core.management import call_command
 from django.test import RequestFactory
 
 from bailleurs.tests.factories import BailleurFactory
@@ -12,6 +13,12 @@ from instructeurs.tests.factories import AdministrationFactory
 from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
 from users.type_models import TypeRole
+
+
+@pytest.fixture(scope="session")
+def django_db_setup(django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("loaddata", "auth.json")
 
 
 @pytest.mark.django_db
@@ -30,14 +37,14 @@ def test_get_contributors():
         user=user_bailleur,
         bailleur=bailleur,
         typologie=TypeRole.BAILLEUR,
-        group=GroupFactory(name="Bailleur", rw=["logement", "convention"]),
+        group=GroupFactory(name="bailleur"),
     )
     user_instructeur = UserFactory()
     RoleFactory(
         user=user_instructeur,
         administration=administration,
         typologie=TypeRole.INSTRUCTEUR,
-        group=GroupFactory(name="Instructeur", rwd=["logement", "convention"]),
+        group=GroupFactory(name="instructeur"),
     )
 
     # Submit the convention to instruction with a bailleur
@@ -54,7 +61,9 @@ def test_get_contributors():
     }
 
     # Validate convention with an instructeur
-    request = RequestFactory().post("/", {"convention_numero": "1234"})
+    request = RequestFactory().post(
+        "/", {"convention_numero": "1234", "finalisationform": True}
+    )
     request.session = "session"
     request.user = user_instructeur
     with patch("conventions.tasks.task_generate_and_send.delay", Mock()):
