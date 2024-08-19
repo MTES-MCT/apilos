@@ -20,7 +20,7 @@ def attach_prets_to_lot(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("conventions", "0087_pret_lot"),
+        ("conventions", "0090_pret_lot"),
     ]
 
     operations = [
