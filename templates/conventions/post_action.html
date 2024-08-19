@@ -133,7 +133,7 @@
                                 accept="application/pdf">
                             <div class="block--row-strech">
                                 <div>
-                                    <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button" {% include "common/form/disable_form_input.html" %}>
+                                    <button id="{{upform.file.id_for_label}}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button"{% if request|is_readonly %} disabled{% endif %}>
                                         {% if convention.is_denonciation %}
                                             Déposer la dénonciation
                                         {% else %}
