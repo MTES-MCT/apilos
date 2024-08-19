@@ -298,7 +298,9 @@ def feedback_convention(request, convention_uuid):
 
 @require_POST
 @login_required
-@currentrole_campaign_permission_required_view_function("convention.change_convention")
+@currentrole_campaign_permission_required_view_function(
+    "convention.validate_convention"
+)
 def validate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
