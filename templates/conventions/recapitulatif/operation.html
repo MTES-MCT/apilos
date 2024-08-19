@@ -34,7 +34,7 @@
                         {% if convention.adresse %}
                             {% include "common/display_field_if_exists.html" with label="Adresse" value=convention.adresse object_field="convention__adresse__"|add:convention_uuid %}
                         {% else %}
-                            {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="programme__adresse__"|add:programme_uuid %}
+                            {% include "common/display_field_if_exists.html" with label="Adresse" value=programme.adresse object_field="convention__adresse__"|add:convention_uuid %}
                         {% endif %}
                         {% include "common/display_field_if_exists.html" with label="Code postal" value=programme.code_postal object_field="programme__code_postal__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Ville" value=programme.ville object_field="programme__ville__"|add:programme_uuid %}
