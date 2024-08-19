@@ -63,7 +63,6 @@ class Comment(models.Model):
             ),
             "bailleur__signataire_bloc_signature": "Bloc signature du bailleur",
             "programme__nom": "Nom de l'opération",
-            "programme__adresse": "Adresse de l'opération",
             "programme__code_postal": "Code postal de l'opération",
             "programme__ville": "Ville de l'opération",
             # FIXME : should be lot__nb_logements
@@ -130,6 +129,7 @@ class Comment(models.Model):
             "programme__mention_publication_edd_classique": (
                 "Mention de publication de l'edd classique"
             ),
+            "convention__adresse": "Adresse de l'opération",
             "convention__type1and2": "Selection du type I ou II de la convention",
             "convention__type2_lgts_concernes_option1": (
                 "Option 1 pour les convention de type II"
