@@ -18,8 +18,6 @@ class EmailTemplateID(enum.Enum):
     B_AVENANT_A_INSTRUIRE_CONFIRMATION = 106
     # [PLATEFORME] BAILLEUR - Convention à instruire - confirmation
     B_CONVENTION_A_INSTRUIRE_CONFIRMATION = 105
-    # [PLATEFORME] BAILLEURS - Bienvenu sur la plateforme APiLos
-    B_WELCOME = 84
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Avenant à instruire
     BtoI_AVENANT_A_INSTRUIRE = 167
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Convention à instruire
@@ -28,8 +26,6 @@ class EmailTemplateID(enum.Enum):
     BtoI_AVENANT_CORRECTIONS_FAITES = 169
     # [PLATEFORME] BAILLEUR à INSTRUCTEUR - Corrections faites - convention à instruire à nouveau
     BtoI_CONVENTION_CORRECTIONS_FAITES = 168
-    # [PLATEFORME] INSTRUCTEUR - Bienvenu sur la plateforme APiLos
-    I_WELCOME = 96
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Avenant validé
     ItoB_AVENANT_VALIDE = 104
     # [PLATEFORME] INSTRUCTEUR à BAILLEUR - Convention validée

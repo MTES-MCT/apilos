@@ -16,7 +16,7 @@ class EmailServiceTests(TestCase):
     def test_basic_send_transactional_email(self):
         EmailService(
             to_emails=["bailleur@apilos.fr"],
-            email_template_id=EmailTemplateID.B_WELCOME,
+            email_template_id=EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
         ).send_transactional_email(email_data={"email_param_key": "email_param_value"})
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["bailleur@apilos.fr"])
