@@ -72,7 +72,7 @@ class ConventionFinancementViewTests(AbstractEditViewTestCase, TestCase):
 
     def _test_data_integrity(self):
         self.convention_75.refresh_from_db()
-        prets = self.convention_75.prets
+        prets = self.convention_75.lot.prets
         self.assertEqual(
             prets.count(),
             2,

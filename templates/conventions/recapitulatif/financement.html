@@ -15,7 +15,7 @@
                         {% include "conventions/actions/goto.html" %}
                     </div>
                     <p class="fr-my-1w">Prêts et Subventions : </p>
-                    {% if convention.prets.all %}
+                    {% if convention.lot.prets.all %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                             <table  aria-label="Prêts">
                                 <caption>Table des financements</caption>
@@ -33,7 +33,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for pret in convention.prets.all %}
+                                    {% for pret in convention.lot.prets.all %}
                                         {% with pret_uuid=pret.uuid|slugify %}
                                             {% with main_object_field="pret__uuid__"|add:pret_uuid %}
                                                 <tr id="{{main_object_field}}_group">

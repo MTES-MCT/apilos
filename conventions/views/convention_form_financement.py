@@ -11,7 +11,7 @@ class ConventionFinancementView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
-            Convention.objects.prefetch_related("prets"),
+            Convention.objects.prefetch_related("lot__prets"),
             uuid=convention_uuid,
         )
 

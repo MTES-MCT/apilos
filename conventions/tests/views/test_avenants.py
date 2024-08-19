@@ -77,9 +77,9 @@ class RemoveAvenantViewDureeTest(RemoveFromAvenantViewBaseTest):
     def test_reset_avenant_type_duree_prets(self):
         self._login_as_superuser()
 
-        Pret.objects.create(id=888, convention=self.convention_75, montant=100000)
-        Pret.objects.create(id=999, convention=self.convention_75, montant=100001)
-        assert self.convention_75.prets.count() == 2
+        Pret.objects.create(id=888, lot=self.convention_75.lot, montant=100000)
+        Pret.objects.create(id=999, lot=self.convention_75.lot, montant=100001)
+        assert self.convention_75.lot.prets.count() == 2
         assert Pret.objects.count() == 2
 
         avenant = self.convention_75.clone(
@@ -89,9 +89,9 @@ class RemoveAvenantViewDureeTest(RemoveFromAvenantViewBaseTest):
         avenant_type_duree = AvenantType.objects.get(pk=3)
         avenant.avenant_types.add(avenant_type_duree)
 
-        self.assertEqual(self.convention_75.prets.count(), 2)
+        self.assertEqual(self.convention_75.lot.prets.count(), 2)
         self.assertEqual(Pret.objects.count(), 4)
-        avenant_pret_ids = list(avenant.prets.values_list("id", flat=True))
+        avenant_pret_ids = list(avenant.lot.prets.values_list("id", flat=True))
 
         response = self.client.post(
             reverse("conventions:remove_from_avenant", args=[avenant.uuid]),
@@ -101,9 +101,9 @@ class RemoveAvenantViewDureeTest(RemoveFromAvenantViewBaseTest):
             response.status_code, self.post_success_http_code, msg=f"{self.msg_prefix}"
         )
 
-        self.assertEqual(self.convention_75.prets.count(), 2)
+        self.assertEqual(self.convention_75.lot.prets.count(), 2)
         self.assertEqual(Pret.objects.count(), 4)
-        cloned_pret_ids = list(avenant.prets.values_list("id", flat=True))
+        cloned_pret_ids = list(avenant.lot.prets.values_list("id", flat=True))
 
         self.assertFalse(Pret.objects.filter(pk__in=avenant_pret_ids).exists())
         self.assertTrue(Pret.objects.filter(pk__in=cloned_pret_ids).exists())

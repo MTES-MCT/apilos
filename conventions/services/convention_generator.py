@@ -179,8 +179,8 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
-        "prets_cdc": convention.prets.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+        "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
+        "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
@@ -304,10 +304,10 @@ def _save_convention_donnees_validees(
         "annexes": _list_to_dict(annexes),
         "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
         "prets_cdc": _list_to_dict(
-            convention.prets.filter(preteur__in=["CDCF", "CDCL"])
+            convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"])
         ),
         "autres_prets": _list_to_dict(
-            convention.prets.exclude(preteur__in=["CDCF", "CDCL"])
+            convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"])
         ),
         "references_cadastrales": _list_to_dict(
             convention.programme.referencecadastrales.all()

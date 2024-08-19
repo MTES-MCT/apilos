@@ -156,13 +156,13 @@ class ConventionAdmin(ApilosModelAdmin):
 class PretAdmin(ApilosModelAdmin):
     list_display = (
         "id",
-        "convention",
+        "lot",
         "preteur",
         "date_octroi",
         "numero",
         "montant",
     )
-    readonly_fields = ("convention",)
+    readonly_fields = ("lot",)
 
 
 @admin.register(AvenantType)

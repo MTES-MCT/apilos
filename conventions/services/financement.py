@@ -13,8 +13,7 @@ class ConventionFinancementService(ConventionService):
 
     def get(self):
         initial = []
-        prets = self.convention.prets.all()
-        for pret in prets:
+        for pret in self.convention.lot.prets.all():
             initial.append(
                 {
                     "uuid": pret.uuid,
@@ -54,7 +53,7 @@ class ConventionFinancementService(ConventionService):
 
     def _add_uuid_to_prets(self, result):
         prets_by_numero = {}
-        for pret in self.convention.prets.all():
+        for pret in self.convention.lot.prets.all():
             prets_by_numero[pret.numero] = pret.uuid
         for obj in result["objects"]:
             if "numero" in obj and obj["numero"] in prets_by_numero:
@@ -179,7 +178,7 @@ class ConventionFinancementService(ConventionService):
     def _save_convention_financement_prets(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        self.convention.prets.exclude(uuid__in=obj_uuids).delete()
+        self.convention.lot.prets.exclude(uuid__in=obj_uuids).delete()
         for form_pret in self.formset:
             if form_pret.cleaned_data["uuid"]:
                 pret = Pret.objects.get(uuid=form_pret.cleaned_data["uuid"])
@@ -192,7 +191,7 @@ class ConventionFinancementService(ConventionService):
 
             else:
                 pret = Pret.objects.create(
-                    convention=self.convention,
+                    lot=self.convention.lot,
                     numero=form_pret.cleaned_data["numero"],
                     date_octroi=form_pret.cleaned_data["date_octroi"],
                     duree=form_pret.cleaned_data["duree"],

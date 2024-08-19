@@ -38,7 +38,7 @@ AVENANT_TYPE_FIELDS_MAPPING = {
         "commentaires",
     ],
     "duree": [
-        "prets",
+        "lot.prets",
         "date_fin_conventionnement",
         "fond_propre",
         "historique_financement_public",
