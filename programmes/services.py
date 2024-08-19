@@ -50,10 +50,10 @@ class OperationService:
         return False
 
     def has_conventions(self):
-        conventions_num = Convention.objects.filter(
+        number_of_conventions = Convention.objects.filter(
             programme_id=self.programme.id
         ).count()
-        return conventions_num == len(self.operation["detailsOperation"])
+        return number_of_conventions == len(self.operation["detailsOperation"])
 
     def get_or_create_programme(self):
         if self.siap_error:
