@@ -57,11 +57,11 @@ class FinalisationBase(BaseConventionView, TemplateView):
             context["form"] = service.form
         return context
 
-    @currentrole_campaign_permission_required("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.validate_convention")
     def get(self, request, *args, **kwargs):
         return super().get(request, *args, **kwargs)
 
-    @currentrole_campaign_permission_required("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.validate_convention")
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
 
@@ -71,7 +71,7 @@ class FinalisationNumero(FinalisationBase):
     step_number = 1
     service_class = FinalisationNumeroService
 
-    @currentrole_campaign_permission_required("convention.change_convention")
+    @currentrole_campaign_permission_required("convention.validate_convention")
     def post(self, request, **kwargs):
         convention_uuid = str(kwargs.get("convention_uuid"))
         service = self.service_class(convention_uuid=convention_uuid, request=request)
