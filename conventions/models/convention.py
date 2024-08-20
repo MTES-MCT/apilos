@@ -48,22 +48,23 @@ class Convention(models.Model):
                 name="convention_tele_signee_le_idx",
             ),
         ]
-        constraints = [
-            # https://github.com/betagouv/SPPNautInterface/issues/227
-            models.UniqueConstraint(
-                fields=["programme_id", "lot_id", "financement"],
-                condition=models.Q(
-                    statut__in=[
-                        ConventionStatut.PROJET.label,
-                        ConventionStatut.INSTRUCTION.label,
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ]
-                ),
-                name="unique_display_name",
-            )
-        ]
+        # FIXME: This constraint is not working anymore
+        # constraints = [
+        #     # https://github.com/betagouv/SPPNautInterface/issues/227
+        #     models.UniqueConstraint(
+        #         fields=["programme_id", "lot_id", "financement"],
+        #         condition=models.Q(
+        #             statut__in=[
+        #                 ConventionStatut.PROJET.label,
+        #                 ConventionStatut.INSTRUCTION.label,
+        #                 ConventionStatut.CORRECTION.label,
+        #                 ConventionStatut.A_SIGNER.label,
+        #                 ConventionStatut.SIGNEE.label,
+        #             ]
+        #         ),
+        #         name="unique_display_name",
+        #     )
+        # ]
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -89,11 +90,6 @@ class Convention(models.Model):
         related_name="conventions",
     )
     date_fin_conventionnement = models.DateField(null=True, blank=True)
-    financement = models.CharField(
-        max_length=25,
-        choices=Financement.choices,
-        default=Financement.PLUS,
-    )
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     commentaires = models.TextField(null=True, blank=True)
