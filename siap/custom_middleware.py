@@ -268,5 +268,5 @@ def _find_or_create_entity(
             typologie=TypeRole.INSTRUCTEUR,
             administration=administration,
             user=request.user,
-            group=Group.objects.get(name__iexact="readonly_instructeur"),
+            group=Group.objects.get(name__iexact=group_name),
         )
