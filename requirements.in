@@ -14,7 +14,7 @@ django-simple-history
 django-sql-explorer[xls]
 django-storages
 django-waffle
-Django<5.0
+Django==4.2.15
 djangorestframework
 djangorestframework-simplejwt
 docxtpl
