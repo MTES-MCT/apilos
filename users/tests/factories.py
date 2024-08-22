@@ -29,6 +29,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Group
         django_get_or_create = ("name",)
+        skip_postgeneration_save = True
 
     name = factory.Faker("word")
 

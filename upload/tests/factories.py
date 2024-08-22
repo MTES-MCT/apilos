@@ -49,6 +49,7 @@ def create_upload_files() -> str:
 class UploadFactoryMixin(factory.django.DjangoModelFactory):
     class Meta:
         abstract = True
+        skip_postgeneration_save = True
 
     @factory.post_generation
     def make_upload_on_fields(instance, create, extracted, **kwargs):  # noqa: N805

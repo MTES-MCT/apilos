@@ -20,6 +20,7 @@ from upload.tests.factories import UploadFactoryMixin
 class ProgrammeFactory(BaseFactory, UploadFactoryMixin):
     class Meta:
         model = Programme
+        skip_postgeneration_save = True
 
     nom = factory.Sequence(lambda n: f"Programme {n}")
     numero_operation = factory.LazyFunction(lambda: str(uuid.uuid4().int)[:13])
@@ -90,6 +91,7 @@ class LogementFactory(BaseFactory):
 class LotFactory(BaseFactory, UploadFactoryMixin):
     class Meta:
         model = Lot
+        skip_postgeneration_save = True
 
     financement = fuzzy.FuzzyChoice(Financement)
     type_habitat = fuzzy.FuzzyChoice(TypeHabitat)
