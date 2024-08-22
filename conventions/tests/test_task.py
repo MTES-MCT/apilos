@@ -1,7 +1,6 @@
 from pathlib import Path
 from unittest.mock import Mock, patch
 
-from django.conf import settings
 from django.core import mail
 from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
@@ -27,11 +26,7 @@ from programmes.tests.factories import ProgrammeFactory
 class GenerateAndSendTest(TestCase):
     def _create_pdf_file_in_storage(self, convention_uuid: str):
         dst_path = Path(
-            settings.MEDIA_ROOT,
-            "conventions",
-            convention_uuid,
-            "convention_docs",
-            f"{convention_uuid}.pdf",
+            "conventions", convention_uuid, "convention_docs", f"{convention_uuid}.pdf"
         )
         with (Path(__file__).parent / "fixtures" / "convention.pdf").open("r") as f:
             default_storage.save(dst_path, f)
