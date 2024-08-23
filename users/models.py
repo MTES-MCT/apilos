@@ -341,7 +341,7 @@ class User(AbstractUser):
                 lambda permission: permission.content_type.name
                 + "."
                 + permission.codename,
-                role.group.permissions.all(),
+                role.group.permissions.prefetch_related("content_type").all(),
             )
         return perm in permissions
 
