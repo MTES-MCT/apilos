@@ -169,7 +169,9 @@ class ConventionSearchView(LoginRequiredMixin, View):
             "conventions": paginator.get_page(request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
             "url_name": resolve(request.path_info).url_name,
-            "total_conventions": request.user.conventions().count(),
+            "user_has_conventions": bool(
+                paginator.count or request.user.conventions().count()
+            ),
             "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
             "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,

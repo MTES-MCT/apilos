@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block content %}
-    {% if total_conventions > 0 %}
+    {% if user_has_conventions %}
         <div class="fr-container-fluid ds_banner">
             <div class="fr-container">{% include "./_partial/search_header.html" %}</div>
         </div>
