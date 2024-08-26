@@ -65,15 +65,16 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "zone_123",
         "zone_abc",
         "nature_logement",
+        "date_achevement",
+        "surface_utile_totale",
         "search_vector",
     )
     readonly_fields = (
         "uuid",
-        "administration",
-        "bailleur",
         "search_vector",
         "numero_operation_pour_recherche",
     )
+    autocomplete_fields = ("administration", "bailleur")
     list_filter = (
         IsCloneFilter,
         "nature_logement",
@@ -106,6 +107,16 @@ def view_programme(lot):
 class LotAdmin(ApilosModelAdmin):
     list_display = (view_programme, "financement", "uuid")
 
+    list_select_related = ("programme",)
+
+    search_fields = [
+        "programme__ville",
+        "programme__nom",
+        "programme__numero_operation",
+        "financement",
+        "uuid",
+    ]
+
     fields = (
         "uuid",
         "financement",
@@ -114,12 +125,9 @@ class LotAdmin(ApilosModelAdmin):
         "programme",
     )
 
-    readonly_fields = (
-        "uuid",
-        "programme",
-    )
+    readonly_fields = ("uuid",)
 
-    list_select_related = ("programme",)
+    autocomplete_fields = ("programme",)
 
 
 @admin.register(Annexe)

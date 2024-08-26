@@ -134,15 +134,14 @@ class ConventionAdmin(ApilosModelAdmin):
     )
     readonly_fields = (
         "uuid",
-        "programme",
         "bailleur",
-        "lot",
         "administration",
         "parent",
         "numero_pour_recherche",
         "cree_par",
         "cree_le",
     )
+    autocomplete_fields = ("programme", "lot")
     list_filter = (
         IsAvenantFilter,
         ("statut", StatutFilter),
