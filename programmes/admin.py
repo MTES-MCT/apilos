@@ -67,6 +67,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "nature_logement",
         "date_achevement",
         "surface_utile_totale",
+        "type_operation",
         "search_vector",
     )
     readonly_fields = (
