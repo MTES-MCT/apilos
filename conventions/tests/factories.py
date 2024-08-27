@@ -8,6 +8,7 @@ from upload.tests.factories import UploadFactoryMixin
 class ConventionFactory(BaseFactory, UploadFactoryMixin):
     class Meta:
         model = Convention
+        skip_postgeneration_save = True
 
     numero = factory.Sequence(lambda n: f"Convention {n}")
 

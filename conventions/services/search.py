@@ -50,6 +50,8 @@ class ConventionSearchServiceBase:
 
         if order_by := self._get_order_by():
             queryset = queryset.order_by(*order_by)
+        else:
+            queryset = queryset.order_by("-cree_le")
 
         return queryset
 

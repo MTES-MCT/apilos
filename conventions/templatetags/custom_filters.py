@@ -500,3 +500,11 @@ def get_ordered_full_path(request, order_field):
     get_copy["order_by"] = order_field
     get_copy["page"] = 1
     return f"{request.path}?{get_copy.urlencode()}"
+
+
+@register.filter
+def length_is(value, arg):
+    try:
+        return len(value) == int(arg)
+    except (ValueError, TypeError):
+        return False
