@@ -426,6 +426,7 @@ def load_xlsx_model(request, file_type):
         "logements_edd",
         "logements",
         "stationnements",
+        "communes",
     ]:
         raise PermissionDenied
 

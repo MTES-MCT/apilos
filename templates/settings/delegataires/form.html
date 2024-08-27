@@ -1,9 +1,8 @@
 {% extends "layout/base.html" %}
 
 {% load static %}
-{% load custom_filters %}
 
-{% block page_title %}Selection - APiLos{% endblock%}
+{% block page_title %}Délégataires - APiLos{% endblock%}
 
 {% block javascript_extras %}
     <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
@@ -14,10 +13,15 @@
 {% endblock %}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
+    <div class="fr-container-fluid">
         <div class="fr-container">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-my-5w">
+            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
+                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
+                    {% include 'settings/common/side_menu.html' with active_menu='delegataires' %}
+                </div>
+                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
+                    {% include "../../conventions/common/stepper.html"%}
+                    <h4>Gestion des délégataires</h4>
                     <form method="post" action="">
                         {% csrf_token %}
                         {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
@@ -33,6 +37,13 @@
                                 });
                             });
                         </script>
+                        {% include "common/form/input_select.html" with form_input=form.departement editable=True %}
+                        <input type="hidden" name="no_dry_run" id="no_dry_run" value=false>
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" {% if targetted_form %}form="{{ targetted_form }}"{% endif %}>
+                                Suivant
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

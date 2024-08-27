@@ -33,4 +33,9 @@ urlpatterns = [
         views.users,
         name="users",
     ),
+    path(
+        "delegataires/",
+        views.DelegatairesFormView.as_view(),
+        name="delegataires",
+    ),
 ]

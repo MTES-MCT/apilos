@@ -3,16 +3,19 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.forms import model_to_dict
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import require_GET, require_http_methods
+from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
 from apilos_settings import services
+from apilos_settings.services.delegataires import DelegatairesService
 from bailleurs.models import Bailleur
 from conventions.forms import BailleurForm
 from conventions.services import utils
+from core.stepper import Stepper
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import UserNotificationForm
@@ -37,6 +40,69 @@ def bailleurs(request: HttpRequest) -> HttpResponse:
         "settings/bailleurs.html",
         services.bailleur_list(request),
     )
+
+
+class DelegatairesFormView(TemplateView):
+    template_name: str = "settings/delegataires/form.html"
+    service_class = DelegatairesService
+    delegataires_stepper = Stepper(
+        steps=[
+            "Remplissez le formulaire",
+            "Vérifiez les conventions impactées",
+        ]
+    )
+
+    def get_context_data(self, **kwargs):
+        service = self.service_class(request=self.request)
+        service.create_form()
+        context = super().get_context_data(**kwargs)
+        context["form"] = service.form
+        context["editable"] = True
+        context["form_step"] = self.delegataires_stepper.get_form_step(step_number=1)
+        return context
+
+    def post(self, request, **kwargs):
+        service = self.service_class(request=request)
+        service.create_form()
+        if service.form.is_valid():
+            reassignation_preview = service.get_reassignation_data()
+            if service.form.data["no_dry_run"] == "true":
+                service.reassign(
+                    new_admin=reassignation_preview["new_admin"],
+                    programmes=reassignation_preview["programmes"],
+                )
+                if service.success:
+                    messages.add_message(
+                        request,
+                        messages.SUCCESS,
+                        service.get_success_message(
+                            conventions_count=reassignation_preview[
+                                "conventions_count"
+                            ],
+                            new_admin=reassignation_preview["new_admin"],
+                        ),
+                    )
+                    return HttpResponseRedirect(reverse("conventions:index"))
+                else:
+                    raise Exception("error during reassignation")
+            else:
+                return render(
+                    request,
+                    "settings/delegataires/preview.html",
+                    {
+                        "form_step": self.delegataires_stepper.get_form_step(
+                            step_number=2
+                        ),
+                        "conventions_count": reassignation_preview["conventions_count"],
+                        "programmes_count": reassignation_preview["programmes_count"],
+                        "conventions": reassignation_preview["conventions"],
+                        "old_admins": reassignation_preview["old_admins"],
+                        "new_admin": reassignation_preview["new_admin"],
+                        "form": service.form,
+                    },
+                )
+        else:
+            raise Exception("form invalid", service.form.errors)
 
 
 @require_http_methods(["GET", "POST"])
