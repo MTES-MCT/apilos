@@ -89,6 +89,7 @@
                             {% csrf_token %}
                             <input type="hidden" name="administration" value={{form.administration.value}}>
                             <input type="hidden" name="departement" value={{form.departement.value}}>
+                            <input type="hidden" name="communes" id="communes" value='{{communes_str}}'>
                             <input type="hidden" name="no_dry_run" value=true>
                             <div class="form-button-footer fr-col-md-12 fr-py-5w">
                                 <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" {% if targetted_form %}form="{{ targetted_form }}"{% endif %}>

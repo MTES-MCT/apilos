@@ -1,7 +1,10 @@
+import json
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
+from django.db import models
 from django.forms import model_to_dict
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -14,7 +17,7 @@ from apilos_settings import services
 from apilos_settings.services.delegataires import DelegatairesService
 from bailleurs.models import Bailleur
 from conventions.forms import BailleurForm
-from conventions.services import utils
+from conventions.services import upload_objects, utils
 from core.stepper import Stepper
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
@@ -42,6 +45,18 @@ def bailleurs(request: HttpRequest) -> HttpResponse:
     )
 
 
+class Commune(models.Model):
+    managed = False
+    code_postal = models.CharField(max_length=5, null=True)
+    commune = models.CharField(max_length=255, null=True)
+    # Needed to import xlsx files
+    import_mapping = {
+        "Code postal": code_postal,
+        "Commune": commune,
+    }
+    sheet_name: str = "Communes"
+
+
 class DelegatairesFormView(TemplateView):
     template_name: str = "settings/delegataires/form.html"
     service_class = DelegatairesService
@@ -54,17 +69,24 @@ class DelegatairesFormView(TemplateView):
 
     def get_context_data(self, **kwargs):
         service = self.service_class(request=self.request)
-        service.create_form()
+        service.create_forms()
         context = super().get_context_data(**kwargs)
         context["form"] = service.form
         context["editable"] = True
         context["form_step"] = self.delegataires_stepper.get_form_step(step_number=1)
+        context["upform"] = service.upform
         return context
 
     def post(self, request, **kwargs):
         service = self.service_class(request=request)
-        service.create_form()
-        if service.form.is_valid():
+        service.create_forms()
+        if service.upform.is_valid():
+            communes = self.handle_upload_communes(upform=service.upform)
+            communes_str = json.dumps(communes)
+            return self.get(
+                request=request, communes=communes, communes_str=communes_str
+            )
+        elif service.form.is_valid():
             reassignation_preview = service.get_reassignation_data()
             if service.form.data["no_dry_run"] == "true":
                 service.reassign(
@@ -86,6 +108,7 @@ class DelegatairesFormView(TemplateView):
                 else:
                     raise Exception("error during reassignation")
             else:
+                communes_str = service.form.data.get("communes")
                 return render(
                     request,
                     "settings/delegataires/preview.html",
@@ -99,10 +122,23 @@ class DelegatairesFormView(TemplateView):
                         "old_admins": reassignation_preview["old_admins"],
                         "new_admin": reassignation_preview["new_admin"],
                         "form": service.form,
+                        "communes_str": communes_str,
                     },
                 )
         else:
-            raise Exception("form invalid", service.form.errors)
+            # TODO handle error
+            raise Exception("form and upform invalids")
+
+    def handle_upload_communes(self, upform):
+        result = upload_objects.handle_uploaded_xlsx(
+            upform,
+            self.request.FILES["file"],
+            Commune,
+            None,
+            "communes.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            return result["objects"]
 
 
 @require_http_methods(["GET", "POST"])

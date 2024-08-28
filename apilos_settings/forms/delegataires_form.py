@@ -24,4 +24,6 @@ class DelegatairesForm(forms.Form):
         empty_label=None,
     )
 
+    communes = forms.CharField(label="Code postaux et communes", required=False)
+
     no_dry_run = forms.BooleanField(label="No dry run", required=False)
