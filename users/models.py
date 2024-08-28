@@ -39,10 +39,11 @@ class GroupProfile(models.TextChoices):
         return [
             cls.STAFF,
             cls.INSTRUCTEUR,
-            cls.SIAP_SER_GEST,
             cls.SIAP_ADM_CENTRALE,
+            cls.SIAP_ASS_HLM,
             cls.SIAP_DIR_REG,
             cls.SIAP_SER_DEP,
+            cls.SIAP_SER_GEST,
         ]
 
     @classmethod
@@ -366,10 +367,11 @@ class User(AbstractUser):
             return "currently" in self.siap_habilitation and self.siap_habilitation[
                 "currently"
             ] in [
-                GroupProfile.SIAP_SER_GEST,
+                GroupProfile.SIAP_ADM_CENTRALE,
+                GroupProfile.SIAP_ASS_HLM,
                 GroupProfile.SIAP_DIR_REG,
                 GroupProfile.SIAP_SER_DEP,
-                GroupProfile.SIAP_ADM_CENTRALE,
+                GroupProfile.SIAP_SER_GEST,
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 

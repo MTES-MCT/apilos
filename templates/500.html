@@ -14,11 +14,6 @@
                         <p class="fr-mb-3w">
                             Nous vous prions de nous excuser pour la gène occasionnée. Si votre besoin est urgent, merci de contacter notre assistance à l'adresse suivante : <a href="mailto:contact@apilos.beta.gouv.fr" target="_blank">contact@apilos.beta.gouv.fr</a>.
                         </p>
-                    {% elif exception_type == 'AssociationHLMSIAPException' %}
-                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Votre habilitation n'est pas prise en charge par le module conventionnement du SIAP (APiLos).</h2>
-                        <p class="fr-mb-3w">
-                            Le module de conventionnement n'est pas accessible avec l'habilitation « Association HLM ».
-                        </p>
                     {% elif exception_type == 'NoConventionForOperationSIAPException' %}
                         <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Cette opération ne donne pas lieu à un conventionnement.</h2>
                         <p class="fr-mb-3w">

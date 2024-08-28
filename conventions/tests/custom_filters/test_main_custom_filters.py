@@ -45,8 +45,11 @@ class CustomFiltersTest(TestCase):
             self.assertFalse(custom_filters.is_instructeur(self.request))
         for profile in [
             GroupProfile.INSTRUCTEUR,
-            GroupProfile.SIAP_SER_GEST,
             GroupProfile.SIAP_ADM_CENTRALE,
+            GroupProfile.SIAP_ASS_HLM,
+            GroupProfile.SIAP_DIR_REG,
+            GroupProfile.SIAP_SER_DEP,
+            GroupProfile.SIAP_SER_GEST,
         ]:
             self.request.session["currently"] = profile
             self.assertFalse(custom_filters.is_bailleur(self.request))
