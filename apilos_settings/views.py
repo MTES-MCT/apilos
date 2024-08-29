@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.db import models
 from django.forms import model_to_dict
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -13,16 +12,20 @@ from django.views.decorators.http import require_GET, require_http_methods
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-from apilos_settings import services
+from apilos_settings.services import list_services as services
 from apilos_settings.services.delegataires import DelegatairesService
 from bailleurs.models import Bailleur
 from conventions.forms import BailleurForm
-from conventions.services import upload_objects, utils
+from conventions.services import utils
 from core.stepper import Stepper
 from instructeurs.forms import AdministrationForm
 from instructeurs.models import Administration
 from users.forms import UserNotificationForm
 from users.models import User
+
+
+class ReassignationError(Exception):
+    pass
 
 
 @require_GET
@@ -45,18 +48,6 @@ def bailleurs(request: HttpRequest) -> HttpResponse:
     )
 
 
-class Commune(models.Model):
-    managed = False
-    code_postal = models.CharField(max_length=5, null=True)
-    commune = models.CharField(max_length=255, null=True)
-    # Needed to import xlsx files
-    import_mapping = {
-        "Code postal": code_postal,
-        "Commune": commune,
-    }
-    sheet_name: str = "Communes"
-
-
 class DelegatairesFormView(TemplateView):
     template_name: str = "settings/delegataires/form.html"
     service_class = DelegatairesService
@@ -69,76 +60,73 @@ class DelegatairesFormView(TemplateView):
 
     def get_context_data(self, **kwargs):
         service = self.service_class(request=self.request)
-        service.create_forms()
         context = super().get_context_data(**kwargs)
         context["form"] = service.form
         context["editable"] = True
         context["form_step"] = self.delegataires_stepper.get_form_step(step_number=1)
-        context["upform"] = service.upform
+        context["upform"] = service.form
         return context
 
     def post(self, request, **kwargs):
         service = self.service_class(request=request)
-        service.create_forms()
-        if service.upform.is_valid():
-            communes = self.handle_upload_communes(upform=service.upform)
-            communes_str = json.dumps(communes)
+        if service.form.data.get("Upload") and service.form.is_valid():
+            communes = service.handle_upload_communes()
             return self.get(
-                request=request, communes=communes, communes_str=communes_str
+                request=request, communes=communes, communes_str=json.dumps(communes)
             )
         elif service.form.is_valid():
-            reassignation_preview = service.get_reassignation_data()
+            reassignation_data = service.get_reassignation_data()
             if service.form.data["no_dry_run"] == "true":
-                service.reassign(
-                    new_admin=reassignation_preview["new_admin"],
-                    programmes=reassignation_preview["programmes"],
+                return self.handle_reassign(
+                    request=request,
+                    service=service,
+                    reassignation_data=reassignation_data,
                 )
-                if service.success:
-                    messages.add_message(
-                        request,
-                        messages.SUCCESS,
-                        service.get_success_message(
-                            conventions_count=reassignation_preview[
-                                "conventions_count"
-                            ],
-                            new_admin=reassignation_preview["new_admin"],
-                        ),
-                    )
-                    return HttpResponseRedirect(reverse("conventions:index"))
-                else:
-                    raise Exception("error during reassignation")
             else:
-                communes_str = service.form.data.get("communes")
-                return render(
-                    request,
-                    "settings/delegataires/preview.html",
-                    {
-                        "form_step": self.delegataires_stepper.get_form_step(
-                            step_number=2
-                        ),
-                        "conventions_count": reassignation_preview["conventions_count"],
-                        "programmes_count": reassignation_preview["programmes_count"],
-                        "conventions": reassignation_preview["conventions"],
-                        "old_admins": reassignation_preview["old_admins"],
-                        "new_admin": reassignation_preview["new_admin"],
-                        "form": service.form,
-                        "communes_str": communes_str,
-                    },
+                return self.handle_preview(
+                    request=request,
+                    service=service,
+                    reassignation_data=reassignation_data,
                 )
-        else:
-            # TODO handle error
-            raise Exception("form and upform invalids")
+        return self.get(request=request)
 
-    def handle_upload_communes(self, upform):
-        result = upload_objects.handle_uploaded_xlsx(
-            upform,
-            self.request.FILES["file"],
-            Commune,
-            None,
-            "communes.xlsx",
+    def handle_preview(self, request, service, reassignation_data):
+        # Dry run, show preview
+        context = {
+            "form_step": self.delegataires_stepper.get_form_step(step_number=2),
+            "conventions_count": reassignation_data["conventions_count"],
+            "programmes_count": reassignation_data["programmes_count"],
+            "conventions": reassignation_data["conventions"],
+            "old_admins": reassignation_data["old_admins"],
+            "new_admin": reassignation_data["new_admin"],
+            "form": service.form,
+        }
+        communes_str = service.form.data.get("communes")
+        if communes_str:
+            context["communes_str"] = communes_str
+        return render(
+            request,
+            "settings/delegataires/preview.html",
+            context,
         )
-        if result["success"] != utils.ReturnStatus.ERROR:
-            return result["objects"]
+
+    def handle_reassign(self, request, service, reassignation_data):
+        service.reassign(
+            new_admin=reassignation_data["new_admin"],
+            programmes=reassignation_data["programmes"],
+        )
+        if service.success:
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                service.get_success_message(
+                    conventions_count=reassignation_data["conventions_count"],
+                    new_admin=reassignation_data["new_admin"],
+                ),
+            )
+            return HttpResponseRedirect(reverse("conventions:index"))
+        else:
+            raise ReassignationError("Error during reassignation")
 
 
 @require_http_methods(["GET", "POST"])

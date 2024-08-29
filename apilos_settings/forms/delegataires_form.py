@@ -20,9 +20,12 @@ class DelegatairesForm(forms.Form):
     departement = forms.ModelChoiceField(
         label="Département",
         queryset=Departement.objects.all(),
-        required=True,
+        required=False,
         empty_label=None,
+        initial=None,
     )
+
+    file = forms.FileField(required=False)
 
     communes = forms.CharField(label="Code postaux et communes", required=False)
 

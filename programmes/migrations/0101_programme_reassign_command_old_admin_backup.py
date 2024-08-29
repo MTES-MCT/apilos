@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("programmes", "0099_remove_programme_reassign_command_old_admin_backup"),
+        ("programmes", "0100_remove_programme_reassign_command_old_admin_backup"),
     ]
 
     operations = [

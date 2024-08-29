@@ -12,7 +12,7 @@
             class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
             id="{{form_input.id_for_label}}"
             name="{{form_input.html_name}}"
-            required="{{ form_input.required }}"
+            {% if form_input.required %}required{% endif %}
             {% include "common/form/disable_form_input.html" %}>
             {% if not without_empty_option %}
                 <option value="" {% if not form_input.value %}selected{% endif %} disabled hidden></option>

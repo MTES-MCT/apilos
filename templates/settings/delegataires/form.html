@@ -1,91 +1,67 @@
-{% extends "layout/base.html" %}
+{% extends "settings/delegataires/base.html" %}
 
-{% load static %}
-
-{% block page_title %}Délégataires - APiLos{% endblock%}
-
-{% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
-
-{% block css_extras %}
-    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
-
-{% block content %}
-    <div class="fr-container-fluid">
-        <div class="fr-container">
-            <div class="fr-grid-row fr-grid-row--gutters fr-py-5w fr-mb-1w">
-                <div class='fr-col-12 fr-col-md-4 fr-col-lg-3'>
-                    {% include 'settings/common/side_menu.html' with active_menu='delegataires' %}
-                </div>
-                <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    {% include "../../conventions/common/stepper.html"%}
-                    <h4>Gestion des délégataires</h4>
-                    <form method="post" action="" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                VirtualSelect.init({
-                                    ele: '#{{form.administration.id_for_label}}',
-                                    multiple: false,
-                                    hideClearButton: true,
-                                    search: true,
-                                    searchPlaceholderText: "Rechercher votre administration...",
-                                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
-                                });
-                            });
-                        </script>
-                        {% include "common/form/input_select.html" with form_input=form.departement editable=True %}
-                        <div id='download_upload_block'>
-                            {% include "common/form/download_upload_form.html" with file_type='communes' upform=upform  what='communes' %}
-                        </div>
-                        {% for error in import_warnings %}
-                            <p id="text-input-error-desc-error" class="fr-error-text">
-                                {{ error }}
-                            </p>
-                        {% endfor %}
-
-                        {% for error in formset.non_form_errors %}
-                            <p id="text-input-error-desc-error" class="fr-error-text">
-                                {{ error }}
-                            </p>
-                        {% endfor %}
-                        {% if communes %}
-                            <div class="fr-table fr-table--bordered table--layout-fixed">
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">
-                                                Code postal
-                                            </th>
-                                            <th scope="col">
-                                                Commune
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for commune in communes %}
-                                            <tr>
-                                                <td>{{ commune.code_postal }}</td>
-                                                <td>{{ commune.commune }}</td>
-                                            </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <input type="hidden" name="communes" id="communes" value='{{communes_str}}'>
-                        {% endif %}
-                        <input type="hidden" name="no_dry_run" id="no_dry_run" value=false>
-                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
-                            <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" {% if targetted_form %}form="{{ targetted_form }}"{% endif %}>
-                                Suivant
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+{% block inner_content %}
+    <h4>Gestion des délégataires</h4>
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            document.addEventListener('DOMContentLoaded', function () {
+                VirtualSelect.init({
+                    ele: '#{{form.administration.id_for_label}}',
+                    multiple: false,
+                    hideClearButton: true,
+                    search: true,
+                    searchPlaceholderText: "Rechercher votre administration...",
+                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
+                });
+            });
+        </script>
+        {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False%}
+        <div id='download_upload_block'>
+            {% include "common/form/download_upload_form.html" with file_type='communes' upform=form  what='communes' %}
         </div>
-    </div>
+        {% for error in import_warnings %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+
+        {% for error in formset.non_form_errors %}
+            <p id="text-input-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+        {% if communes %}
+            <div class="fr-table fr-table--bordered table--layout-fixed">
+                <table>
+                    <thead>
+                        <tr>
+                            <th scope="col">
+                                Code postal
+                            </th>
+                            <th scope="col">
+                                Commune
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for commune in communes %}
+                            <tr>
+                                <td>{{ commune.code_postal }}</td>
+                                <td>{{ commune.commune }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <input type="hidden" name="communes" id="communes" value='{{communes_str}}'>
+        {% endif %}
+        <input type="hidden" name="no_dry_run" id="no_dry_run" value=false>
+        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+            <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" {% if targetted_form %}form="{{ targetted_form }}"{% endif %}>
+                Suivant
+            </button>
+        </div>
+    </form>
 {% endblock %}

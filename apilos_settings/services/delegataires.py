@@ -6,8 +6,9 @@ from django.db.models import F, Q, QuerySet
 from django.http import HttpRequest
 
 from apilos_settings.forms.delegataires_form import DelegatairesForm
-from conventions.forms.upload import UploadForm
+from apilos_settings.models import Commune
 from conventions.models.convention import Convention
+from conventions.services import upload_objects, utils
 from conventions.services.selection import _get_choices_from_object
 from conventions.templatetags.custom_filters import is_instructeur
 from instructeurs.models import Administration
@@ -17,19 +18,19 @@ from programmes.models.models import Programme
 class DelegatairesService:
     request: HttpRequest
     form: DelegatairesForm
-    upform: UploadForm
 
     def __init__(self, request: HttpRequest) -> None:
         self.request = request
+        self.create_form()
 
-    def create_forms(self):
+    def create_form(self):
         admins = self._get_administration_choices()
         if self.request.POST:
-            self.form = DelegatairesForm(self.request.POST, administrations=admins)
-            self.upform = UploadForm(self.request.POST, self.request.FILES)
+            self.form = DelegatairesForm(
+                self.request.POST, self.request.FILES, administrations=admins
+            )
         else:
             self.form = DelegatairesForm(administrations=admins)
-            self.upform = UploadForm()
 
     def _get_administration_choices(self):
         return _get_choices_from_object(
@@ -43,12 +44,10 @@ class DelegatairesService:
 
     def get_reassignation_data(self):
         new_admin = Administration.objects.get(uuid=self.form.data["administration"])
-        code_insee_departement = self.form.data["departement"]
+        code_insee_departement = self.form.data.get("departement")
         communes = self.form.data.get("communes")
         if communes:
             communes = json.loads(communes)
-
-        if communes:
             programmes = self._get_programme_qs_from_communes(communes)
         else:
             programmes = self._get_programme_qs_from_dpts(code_insee_departement)
@@ -92,3 +91,14 @@ class DelegatairesService:
             )
 
         return queryset.filter(filters)
+
+    def handle_upload_communes(self):
+        result = upload_objects.handle_uploaded_xlsx(
+            self.form,
+            self.request.FILES["file"],
+            Commune,
+            None,
+            "communes.xlsx",
+        )
+        if result["success"] != utils.ReturnStatus.ERROR:
+            return result["objects"]
