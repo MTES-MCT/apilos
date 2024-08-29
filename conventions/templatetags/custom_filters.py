@@ -60,7 +60,7 @@ def is_instructeur(request: HttpRequest) -> bool:
 @register.filter
 def is_readonly(request: HttpRequest) -> bool:
     # Manage is_staff exception
-    if "readonly" in request.session:
+    if "readonly" in request.session and not request.user.is_superuser:
         return request.session["readonly"]
     return False
 
