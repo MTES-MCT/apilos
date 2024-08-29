@@ -32,4 +32,4 @@ jobs:
           aws configure set s3.multipart_threshold '50 MB'
           aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
       - name: Backup
-        run: aws s3 sync --quiet ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
+        run: aws s3 sync --only-show-errors ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
