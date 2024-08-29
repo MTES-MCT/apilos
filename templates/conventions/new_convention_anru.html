@@ -18,21 +18,68 @@
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-my-5w">
+                    <h1 class="fr-h2">Convention sans agrément : créez votre convention ANRU</h1>
                     <form method="post" action="">
                         {% csrf_token %}
-                        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                VirtualSelect.init({
-                                    ele: '#{{form.administration.id_for_label}}',
-                                    multiple: false,
-                                    hideClearButton: true,
-                                    search: true,
-                                    searchPlaceholderText: "Rechercher votre administration...",
-                                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
+                        <div class="fr-col-12">
+                            <div class="fr-mb-3w">
+                                {% url 'users:search_bailleur' as search_bailleur_url %}
+                                {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url %}
+                            </div>
+
+                            {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
+                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    VirtualSelect.init({
+                                        ele: '#{{form.administration.id_for_label}}',
+                                        multiple: false,
+                                        hideClearButton: true,
+                                        search: true,
+                                        searchPlaceholderText: "Rechercher votre administration...",
+                                        noSearchResultsText: "Aucune administration ne correspond à votre recherche"
+                                    });
                                 });
-                            });
-                        </script>
+                            </script>
+
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-md-12 fr-col-lg-8 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.nom %}
+                                </div>
+                                <div class="fr-col-md-12 fr-col-lg-4 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.numero_operation %}
+                                </div>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--bottom fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.nature_logement %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_number.html" with form_input=form.nb_logements %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.type_habitat %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_select.html" with form_input=form.financement %}
+                                </div>
+                            </div>
+
+                            <div class="fr-grid-row fr-grid-row--gutters">
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.code_postal %}
+                                </div>
+                                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                                    {% include "common/form/input_text.html" with form_input=form.ville %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+                            {% include "common/button/next_and_save.html" %}
+                            <a class="fr-btn fr-btn--secondary" href='{% url 'conventions:index' %}'>
+                                Revenir à la liste des conventions
+                            </a>
+                        </div>
                     </form>
                 </div>
             </div>
