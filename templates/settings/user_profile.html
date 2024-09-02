@@ -26,7 +26,7 @@
                             <form method="post" action="">
                                 {% csrf_token %}
 
-                                {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email %}
+                                {% include "settings/form/email_preferences.html" with user=request.user form_input=form.preferences_email editable=True %}
 
                                 <button class="fr-btn fr-icon-save-line fr-btn--icon-left fr-mt-3w" type="submit">
                                     Enregistrer
