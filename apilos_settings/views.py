@@ -48,7 +48,7 @@ def bailleurs(request: HttpRequest) -> HttpResponse:
     )
 
 
-class DelegatairesFormView(TemplateView):
+class DelegatairesFormView(LoginRequiredMixin, TemplateView):
     template_name: str = "settings/delegataires/form.html"
     service_class = DelegatairesService
     delegataires_stepper = Stepper(
@@ -68,6 +68,8 @@ class DelegatairesFormView(TemplateView):
         return context
 
     def post(self, request, **kwargs):
+        if not request.user.is_staff:
+            raise PermissionDenied
         service = self.service_class(request=request)
         if service.form.data.get("Upload") and service.form.is_valid():
             communes = service.handle_upload_communes()

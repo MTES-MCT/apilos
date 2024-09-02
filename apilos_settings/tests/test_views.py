@@ -7,6 +7,7 @@ from django.test import Client, RequestFactory, TestCase
 from django.urls import reverse
 
 from apilos_settings.views import (
+    DelegatairesFormView,
     EditAdministrationView,
     EditBailleurView,
     UserProfileView,
@@ -373,3 +374,36 @@ class TestUserProfileView:
 
         user.refresh_from_db()
         assert user.preferences_email == EmailPreferences.PARTIEL
+
+
+@pytest.mark.django_db
+class TestDelegatairesFormView:
+    def test_get(self):
+        user = UserFactory(is_staff=True)
+
+        request = RequestFactory().get("/settings/delegataires/")
+        request.user = user
+        request.session = "session"
+
+        response = DelegatairesFormView.as_view()(request)
+
+        assert response.status_code == 200
+        assert response.context_data["form_step"]["number"] == 1
+        assert response.template_name == ["settings/delegataires/form.html"]
+
+    def test_post(self):
+        user = UserFactory(is_staff=True)
+        admin = AdministrationFactory()
+
+        # Form is invalid with this params, can be improved for better coverage
+        request = RequestFactory().post(
+            "/settings/delegataires/",
+            {"departement": "01", "Upload": True, "administration": str(admin.uuid)},
+        )
+        request.user = user
+        request.session = "session"
+
+        response = DelegatairesFormView.as_view()(request)
+
+        assert response.status_code == 200
+        assert response.template_name == ["settings/delegataires/form.html"]
