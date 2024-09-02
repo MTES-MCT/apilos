@@ -21,3 +21,18 @@ class Departement(models.Model):
 
     def __str__(self) -> str:
         return f"{self.code_insee} - {self.nom}"
+
+
+# Not a table in DB, only used to handle excel upload on delegataires
+class Commune(models.Model):
+    code_postal = models.CharField(max_length=5, blank=True)
+    commune = models.CharField(max_length=255, blank=True)
+    # Needed to import xlsx files
+    import_mapping = {
+        "Code postal": code_postal,
+        "Commune": commune,
+    }
+    sheet_name: str = "Communes"
+
+    class Meta:
+        managed = False

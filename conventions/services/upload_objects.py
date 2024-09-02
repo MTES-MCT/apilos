@@ -64,7 +64,8 @@ def handle_uploaded_xlsx(
         if my_wb["Data"]["E2"].value:
             min_row = int(my_wb["Data"]["E2"].value)
 
-    _save_uploaded_file(my_file, convention, file_name)
+    if convention is not None:
+        _save_uploaded_file(my_file, convention, file_name)
 
     column_from_index, import_warnings = _check_not_useful_columns(
         my_ws, my_class, class_field_mapping

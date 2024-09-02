@@ -19,6 +19,12 @@
                     </li>
                 {% endif %}
 
+                {% if request.user.is_staff %}
+                    <li class="fr-sidemenu__item{% if active_menu == 'delegataires' %} fr-sidemenu__item--active{% endif %}">
+                        <a class="fr-sidemenu__link" href="{% url 'settings:delegataires' %}" target="_self" {% if active_menu == 'delegataires' %}aria-current="page"{% endif %}>Gestion des délégataires</a>
+                    </li>
+                {% endif %}
+
                 {% if request.user.is_admin %}
                     <li class="fr-sidemenu__item{% if active_menu == 'bailleurs' %} fr-sidemenu__item--active{% endif %}">
                         <a class="fr-sidemenu__link" href="{% url 'settings:bailleurs' %}" target="_self" {% if active_menu == 'bailleurs' %}aria-current="page"{% endif %}>Bailleurs</a>

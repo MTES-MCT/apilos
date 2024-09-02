@@ -1,0 +1,81 @@
+{% extends "settings/delegataires/base.html" %}
+
+{% block inner_content %}
+    <h4 class="fr-mt-3w">Impact de la réassignation</h4>
+    <p><strong>{{conventions_count}}</strong> conventions seront réassignées, concernant <strong>{{programmes_count}}</strong> opérations distinctes.</p>
+    <p>Les conventions sont pour l'instant attribuées aux administrations suivantes : </p>
+    <ul>
+        {% for old_admin in old_admins %}
+            <li><strong>{{old_admin.administration__code}}</strong> : <strong>{{old_admin.count}}</strong> opérations</li>
+        {% endfor %}
+    </ul>
+
+    <p>Elles seront réattribuées à l'administration <strong>{{new_admin}}</strong>.</p>
+
+    <div class="fr-table fr-table--bordered table--layout-fixed fr-mt-6w">
+        <table>
+            <caption>Exemple de conventions impactées</caption>
+
+            <thead>
+                <tr>
+                    <th scope="col">
+                        Commune
+                    </th>
+                    <th scope="col">
+                        Nom de l'opération
+                    </th>
+                    <th scope="col">
+                        Nombre de logements
+                    </th>
+                    <th scope="col">
+                        Financement
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for convention in conventions %}
+                    <tr id="convention_redirect_{{convention.uuid}}"
+                        class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                        <td>{{ convention.programme.ville }}</td>
+                        <td>{{ convention.programme.nom }}</td>
+                        <td>{{ convention.lot.nb_logements }}</td>
+                        <td>{{ convention.financement }}</td>
+                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            document.addEventListener('DOMContentLoaded', function () {
+                                document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                    if (this.classList.contains("sent")) {
+                                        location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                    }
+                                    else if (this.classList.contains("signed")) {
+                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                    }
+                                    else if (this.classList.contains("project")) {
+                                        location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                    }
+                                    else {
+                                        location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                    }
+                                });
+                            });
+                        </script>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="administration" value={{form.administration.value}}>
+        {% if form.departement.value %}
+            <input type="hidden" name="departement" value={{form.departement.value}}>
+        {% endif %}
+        <input type="hidden" name="communes" id="communes" value='{{communes_str}}'>
+        <input type="hidden" name="no_dry_run" value=true>
+        <div class="form-button-footer fr-col-md-12 fr-py-5w">
+            <button class="fr-btn fr-icon-arrow-right-s-line fr-btn--icon-right" {% if targetted_form %}form="{{ targetted_form }}"{% endif %}>
+                Réassigner les conventions
+            </button>
+        </div>
+    </form>
+{% endblock %}
