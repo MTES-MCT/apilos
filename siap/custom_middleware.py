@@ -5,7 +5,6 @@ from django.http import HttpRequest
 
 from bailleurs.models import Bailleur, NatureBailleur
 from siap.exceptions import (
-    AssociationHLMSIAPException,
     FusionAPISIAPException,
     HabilitationSIAPException,
     TimeoutSIAPException,
@@ -169,16 +168,10 @@ def _find_or_create_entity(
     )
 
     if from_habilitation["groupe"]["profil"]["code"] in [
-        GroupProfile.SIAP_ASS_HLM,
-    ]:
-        raise AssociationHLMSIAPException(
-            "Le module de conventionnement n'est accessible avec l'habilitation « Association HLM »"
-        )
-
-    if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_ADM_CENTRALE,
-        GroupProfile.SIAP_SER_DEP,
+        GroupProfile.SIAP_ASS_HLM,
         GroupProfile.SIAP_DIR_REG,
+        GroupProfile.SIAP_SER_DEP,
     ]:
         group_name = (
             "readonly_administrateur"
