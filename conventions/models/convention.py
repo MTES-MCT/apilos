@@ -772,10 +772,12 @@ class Convention(models.Model):
         # get_user_model is used to avoid circular imports
         user_model = get_user_model()
         for user_id in user_ids:
+            if not user_id:
+                continue
             try:
                 user = user_model.objects.get(id=user_id)
             except user_model.DoesNotExist as e:
-                logger.error(e)
+                logger.warning(e)
                 continue
 
             if user.is_staff or user.is_superuser:
