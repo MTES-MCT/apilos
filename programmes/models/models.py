@@ -54,10 +54,8 @@ class Programme(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nom = models.CharField(max_length=255)
-    numero_operation = models.CharField(max_length=255, null=True, blank=True)
-    numero_operation_pour_recherche = models.CharField(
-        max_length=255, null=True, blank=True
-    )
+    numero_operation = models.CharField(max_length=255, blank=True)
+    numero_operation_pour_recherche = models.CharField(max_length=255, blank=True)
     seconde_vie = models.BooleanField(default=False)
     bailleur = models.ForeignKey(
         "bailleurs.Bailleur",
@@ -67,12 +65,12 @@ class Programme(models.Model):
     administration = models.ForeignKey(
         "instructeurs.Administration", on_delete=models.SET_NULL, null=True, blank=True
     )
-    adresse = models.TextField(null=True, blank=True)
-    code_postal = models.CharField(max_length=5, null=True, blank=True)
-    ville = models.CharField(max_length=255, null=True, blank=True)
-    code_insee_commune = models.CharField(max_length=10, null=True, blank=True)
-    code_insee_departement = models.CharField(max_length=10, null=True, blank=True)
-    code_insee_region = models.CharField(max_length=10, null=True, blank=True)
+    adresse = models.TextField(blank=True)
+    code_postal = models.CharField(max_length=5, blank=True)
+    ville = models.CharField(max_length=255, blank=True)
+    code_insee_commune = models.CharField(max_length=10, blank=True)
+    code_insee_departement = models.CharField(max_length=10, blank=True)
+    code_insee_region = models.CharField(max_length=10, blank=True)
     annee_gestion_programmation = models.IntegerField(null=True, blank=True)
 
     zone_123 = models.CharField(
@@ -109,26 +107,22 @@ class Programme(models.Model):
     anru = models.BooleanField(default=False)
     nb_locaux_commerciaux = models.IntegerField(null=True, blank=True)
     nb_bureaux = models.IntegerField(null=True, blank=True)
-    autres_locaux_hors_convention = models.TextField(null=True, blank=True)
-    vendeur = models.TextField(null=True, blank=True)
-    acquereur = models.TextField(null=True, blank=True)
+    autres_locaux_hors_convention = models.TextField(blank=True)
+    vendeur = models.TextField(blank=True)
+    acquereur = models.TextField(blank=True)
     date_acte_notarie = models.DateField(null=True, blank=True)
-    reference_notaire = models.TextField(null=True, blank=True)
-    reference_publication_acte = models.TextField(null=True, blank=True)
-    acte_de_propriete = models.TextField(null=True, blank=True)
-    effet_relatif = models.TextField(null=True, blank=True)
-    certificat_adressage = models.TextField(null=True, blank=True)
-    reference_cadastrale = models.TextField(null=True, blank=True)
-    edd_volumetrique = models.TextField(max_length=5000, null=True, blank=True)
-    mention_publication_edd_volumetrique = models.TextField(
-        max_length=5000, null=True, blank=True
-    )
-    edd_classique = models.TextField(max_length=5000, null=True, blank=True)
-    mention_publication_edd_classique = models.TextField(
-        max_length=5000, null=True, blank=True
-    )
-    edd_stationnements = models.TextField(max_length=5000, null=True, blank=True)
-    permis_construire = models.CharField(max_length=255, null=True, blank=True)
+    reference_notaire = models.TextField(blank=True)
+    reference_publication_acte = models.TextField(blank=True)
+    acte_de_propriete = models.TextField(blank=True)
+    effet_relatif = models.TextField(blank=True)
+    certificat_adressage = models.TextField(blank=True)
+    reference_cadastrale = models.TextField(blank=True)
+    edd_volumetrique = models.TextField(max_length=5000, blank=True)
+    mention_publication_edd_volumetrique = models.TextField(max_length=5000, blank=True)
+    edd_classique = models.TextField(max_length=5000, blank=True)
+    mention_publication_edd_classique = models.TextField(max_length=5000, blank=True)
+    edd_stationnements = models.TextField(max_length=5000, blank=True)
+    permis_construire = models.CharField(max_length=255, blank=True)
     date_achevement_previsible = models.DateField(null=True, blank=True)
     date_achat = models.DateField(null=True, blank=True)
     date_achevement = models.DateField(null=True, blank=True)
@@ -143,10 +137,10 @@ class Programme(models.Model):
         null=True, blank=True
     )  # RESIDENCE
     departement_residence_argement_gestionnaire_intermediation = models.CharField(
-        null=True, blank=True, max_length=255
+        blank=True, max_length=255
     )  # RESIDENCE
     ville_signature_residence_agrement_gestionnaire_intermediation = models.CharField(
-        null=True, blank=True, max_length=255
+        blank=True, max_length=255
     )  # RESIDENCE
 
     date_achevement_compile = models.DateField(null=True, blank=True)
@@ -340,7 +334,7 @@ class LogementEDD(models.Model):
         choices=FinancementEDD.choices,
         default=FinancementEDD.PLUS,
     )
-    numero_lot = models.CharField(max_length=255, null=True, blank=True)
+    numero_lot = models.CharField(max_length=255, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
     lot_num = 0
@@ -370,10 +364,10 @@ class ReferenceCadastrale(models.Model):
         null=False,
         related_name="referencecadastrales",
     )
-    section = models.CharField(max_length=255, null=True, blank=True)
+    section = models.CharField(max_length=255, blank=True)
     numero = models.IntegerField(null=True, blank=True)
-    lieudit = models.CharField(max_length=255, null=True, blank=True)
-    surface = models.CharField(max_length=255, null=True, blank=True)
+    lieudit = models.CharField(max_length=255, blank=True)
+    surface = models.CharField(max_length=255, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
@@ -456,8 +450,8 @@ class Lot(models.Model):
         choices=TypeHabitat.choices,
         default=TypeHabitat.INDIVIDUEL,
     )
-    edd_volumetrique = models.TextField(max_length=50000, null=True, blank=True)
-    edd_classique = models.TextField(max_length=50000, null=True, blank=True)
+    edd_volumetrique = models.TextField(max_length=50000, blank=True)
+    edd_classique = models.TextField(max_length=50000, blank=True)
     annexe_caves = models.BooleanField(default=False)
     annexe_soussols = models.BooleanField(default=False)
     annexe_remises = models.BooleanField(default=False)
