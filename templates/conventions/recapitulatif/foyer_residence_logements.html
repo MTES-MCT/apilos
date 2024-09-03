@@ -19,55 +19,61 @@
                     </div>
                     {% if logements %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                            <table  aria-label="Logements">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
-                                        {% endif %}
-                                        <th scope="col" class="col__width--150">Numéro du logement (désignation) {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--120">Surface habitable par local {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--120">Redevance maximale en € {% include "common/form/required_field_star.html" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for logement in logements %}
-                                        {% with logement_uuid=logement.uuid|slugify %}
-                                            {% with main_object_field="logement__uuid__"|add:logement_uuid %}
-                                                <tr id="{{main_object_field}}_group">
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table  aria-label="Logements">
+                                            <thead>
+                                                <tr>
                                                     {% if convention|display_comments %}
-                                                        <td id="{{main_object_field}}_div">
-                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
-                                                        </td>
+                                                        {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
                                                     {% endif %}
-                                                    <td>
-                                                        {{ logement.designation }}
+                                                    <th scope="col" class="col__width--150">Numéro du logement (désignation) {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface habitable par local {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Redevance maximale en € {% include "common/form/required_field_star.html" %}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for logement in logements %}
+                                                    {% with logement_uuid=logement.uuid|slugify %}
+                                                        {% with main_object_field="logement__uuid__"|add:logement_uuid %}
+                                                            <tr id="{{main_object_field}}_group">
+                                                                {% if convention|display_comments %}
+                                                                    <td id="{{main_object_field}}_div">
+                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement" callback_click="refresh_opened_comments" %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                <td>
+                                                                    {{ logement.designation }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ logement.typologie }}
+                                                                </td>
+                                                                <td id="lgt_sh">
+                                                                    {{ logement.surface_habitable|floatformat:2 }}
+                                                                </td>
+                                                                <td id="lgt_loyer">
+                                                                    {{ logement.loyer|floatformat:2 }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                                <tr>
+                                                    <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                                        Total
                                                     </td>
-                                                    <td>
-                                                        {{ logement.typologie }}
+                                                    <td id="total_sh" class="fr-text--lg">
                                                     </td>
-                                                    <td id="lgt_sh">
-                                                        {{ logement.surface_habitable|floatformat:2 }}
-                                                    </td>
-                                                    <td id="lgt_loyer">
-                                                        {{ logement.loyer|floatformat:2 }}
+                                                    <td id="total_loyer" class="fr-text--lg">
                                                     </td>
                                                 </tr>
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endfor %}
-                                    <tr>
-                                        <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
-                                            Total
-                                        </td>
-                                        <td id="total_sh" class="fr-text--lg">
-                                        </td>
-                                        <td id="total_loyer" class="fr-text--lg">
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="fr-my-2w">

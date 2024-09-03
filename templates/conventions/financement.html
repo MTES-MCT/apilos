@@ -46,57 +46,63 @@
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered table--layout-fixed">
-                            <table aria-label="Prêts">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
-                                        {% endif %}
-                                        <th scope="col">Numéro</th>
-                                        <th scope="col">Date d'octroi</th>
-                                        <th scope="col">Durée (en années)</th>
-                                        <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col">Préteur</th>
-                                        <th scope="col">Préciser le prêteur si 'Autre'</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for form_pret in formset %}
-                                        {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
-                                            <tr id="{{form_pret.uuid.id_for_label}}_group">
-                                                {% if convention|display_comments %}
-                                                    <td id="{{form_pret.uuid.id_for_label}}_div">
-                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
-                                                    </td>
-                                                {% endif %}
-                                                <td>
-                                                    <input
-                                                        type="hidden"
-                                                        id="{{form_pret.uuid.id_for_label}}"
-                                                        name="{{form_pret.uuid.html_name}}"
-                                                        value="{{ form_pret.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_number.html" with form_input=form_pret.duree parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_select.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_pret.autre parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table aria-label="Prêts">
+                                            <thead>
+                                                <tr>
+                                                    {% if convention|display_comments %}
+                                                        {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
+                                                    {% endif %}
+                                                    <th scope="col">Numéro</th>
+                                                    <th scope="col">Date d'octroi</th>
+                                                    <th scope="col">Durée (en années)</th>
+                                                    <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                                    <th scope="col">Préteur</th>
+                                                    <th scope="col">Préciser le prêteur si 'Autre'</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for form_pret in formset %}
+                                                    {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
+                                                        <tr id="{{form_pret.uuid.id_for_label}}_group">
+                                                            {% if convention|display_comments %}
+                                                                <td id="{{form_pret.uuid.id_for_label}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                <input
+                                                                    type="hidden"
+                                                                    id="{{form_pret.uuid.id_for_label}}"
+                                                                    name="{{form_pret.uuid.html_name}}"
+                                                                    value="{{ form_pret.uuid.value|default_if_none:'' }}">
+                                                                {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_number.html" with form_input=form_pret.duree parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_number.html" with form_input=form_pret.montant step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_select.html" with form_input=form_pret.preteur parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_text.html" with form_input=form_pret.autre parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <hr class="fr-col-12 fr-my-3w">

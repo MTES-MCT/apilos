@@ -32,57 +32,63 @@
 
         {{ formset.management_form }}
         <div class="fr-table fr-table--bordered table--layout-fixed">
-            <table  aria-label="Annexes">
-                <thead>
-                    <tr>
-                        {% if convention|display_comments %}
-                            {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
-                        {% endif %}
-                        <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--150">Typologie des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--120">Surface de l'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--120">Loyer unitaire en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--120">Loyer maximum du logement en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for form_annexe in formset %}
-                        {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
-                            <tr id="{{form_annexe.uuid.id_for_label}}_group">
-                                {% if convention|display_comments %}
-                                    <td id="{{form_annexe.uuid.id_for_label}}_div">
-                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_annexe.uuid %}
-                                    </td>
-                                {% endif %}
-                                <td>
-                                    <input
-                                        type="hidden"
-                                        id="{{form_annexe.uuid.id_for_label}}"
-                                        name="{{form_annexe.uuid.html_name}}"
-                                        value="{{ form_annexe.uuid.value|default_if_none:'' }}">
-                                    {% include "common/form/input_select.html" with form_input=form_annexe.typologie parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_text.html" with form_input=form_annexe.logement_designation parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_select.html" with form_input=form_annexe.logement_typologie parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form_annexe.loyer step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                            </tr>
-                        {% endwith %}
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="fr-table__wrapper">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table  aria-label="Annexes">
+                            <thead>
+                                <tr>
+                                    {% if convention|display_comments %}
+                                        {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" %}
+                                    {% endif %}
+                                    <th scope="col" class="col__width--150">Type d'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--200">Désignation des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--150">Typologie des logements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--120">Surface de l'annexe {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--120">Loyer unitaire en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--120">Loyer maximum du logement en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form_annexe in formset %}
+                                    {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
+                                        <tr id="{{form_annexe.uuid.id_for_label}}_group">
+                                            {% if convention|display_comments %}
+                                                <td id="{{form_annexe.uuid.id_for_label}}_div">
+                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_annexe.uuid %}
+                                                </td>
+                                            {% endif %}
+                                            <td>
+                                                <input
+                                                    type="hidden"
+                                                    id="{{form_annexe.uuid.id_for_label}}"
+                                                    name="{{form_annexe.uuid.html_name}}"
+                                                    value="{{ form_annexe.uuid.value|default_if_none:'' }}">
+                                                {% include "common/form/input_select.html" with form_input=form_annexe.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_annexe.logement_designation parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_select.html" with form_input=form_annexe.logement_typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_annexe.surface_hors_surface_retenue step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_annexe.loyer_par_metre_carre step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_annexe.loyer step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
 

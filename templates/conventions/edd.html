@@ -70,45 +70,51 @@
 
                         {{ formset.management_form }}
                         <div class="fr-table fr-table--bordered table--layout-fixed">
-                            <table aria-label="Logement de l'EDD">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
-                                        {% endif %}
-                                        <th scope="col">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                        <th scope="col">Numéro de lot {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for form_edd in formset %}
-                                        {% with input_id="logement_edd_"|add:form_edd.uuid.value main_object_field="logement_edd__uuid__"|add:form_edd.uuid.value %}
-                                            <tr id="{{form_edd.uuid.id_for_label}}_group">
-                                                {% if convention|display_comments %}
-                                                    <td id="{{form_edd.uuid.id_for_label}}_div">
-                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_edd.uuid %}
-                                                    </td>
-                                                {% endif %}
-                                                <td>
-                                                    <input
-                                                        type="hidden"
-                                                        id="{{form_edd.uuid.id_for_label}}"
-                                                        name="{{form_edd.uuid.html_name}}"
-                                                        value="{{ form_edd.uuid.value|default_if_none:'' }}">
-                                                    {% include "common/form/input_select.html" with form_input=form_edd.financement parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_edd.designation parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                                <td>
-                                                    {% include "common/form/input_text.html" with form_input=form_edd.numero_lot parent_object_field=main_object_field editable=editable_after_upload %}
-                                                </td>
-                                            </tr>
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table aria-label="Logement de l'EDD">
+                                            <thead>
+                                                <tr>
+                                                    {% if convention|display_comments %}
+                                                        {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" %}
+                                                    {% endif %}
+                                                    <th scope="col">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                                    <th scope="col">Désignation {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                                    <th scope="col">Numéro de lot {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for form_edd in formset %}
+                                                    {% with input_id="logement_edd_"|add:form_edd.uuid.value main_object_field="logement_edd__uuid__"|add:form_edd.uuid.value %}
+                                                        <tr id="{{form_edd.uuid.id_for_label}}_group">
+                                                            {% if convention|display_comments %}
+                                                                <td id="{{form_edd.uuid.id_for_label}}_div">
+                                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_edd.uuid %}
+                                                                </td>
+                                                            {% endif %}
+                                                            <td>
+                                                                <input
+                                                                    type="hidden"
+                                                                    id="{{form_edd.uuid.id_for_label}}"
+                                                                    name="{{form_edd.uuid.html_name}}"
+                                                                    value="{{ form_edd.uuid.value|default_if_none:'' }}">
+                                                                {% include "common/form/input_select.html" with form_input=form_edd.financement parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_text.html" with form_input=form_edd.designation parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_text.html" with form_input=form_edd.numero_lot parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                        </tr>
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <hr>
                         {% include "common/form/input_upload.html" with form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}

@@ -13,40 +13,46 @@
                     </div>
                 </div>
                 <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                    <table  aria-label="Annexes">
-                        <thead>
-                            <tr>
-                                <th scope="col">Type de document</th>
-                                <th scope="col">Nom du fichier </th>
-                                <th scope="col">Description </th>
-                                <th scope="col">Ajouté le </th>
-                                <th scope="col">&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for piece_jointe in convention.pieces_jointes.all %}
-                                <tr>
-                                    <td>{{ piece_jointe.type }}</td>
-                                    <td>{{ piece_jointe.nom_reel }}</td>
-                                    <td>{{ piece_jointe.description }}</td>
-                                    <td>{{ piece_jointe.cree_le }}</td>
-                                    <td>
-                                        <a class="fr-btn fr-btn--sm fr-icon-download-fill"
-                                           title="Consulter"
-                                           download="{{ piece_jointe.nom_reel }}"
-                                           href="{% url 'conventions:piece_jointe' piece_jointe_uuid=piece_jointe.uuid %}"
-                                        >Consulter</a>
-                                        {% if piece_jointe|can_promote %}
-                                            <a class="fr-btn fr-btn--green fr-btn--sm fr-icon-checkbox-circle-fill"
-                                               title="Définir comme document de convention"
-                                               href="{% url 'conventions:piece_jointe_promote' piece_jointe_uuid=piece_jointe.uuid %}"
-                                            >Définir comme document de convention</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="fr-table__wrapper">
+                        <div class="fr-table__container">
+                            <div class="fr-table__content">
+                                <table  aria-label="Annexes">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Type de document</th>
+                                            <th scope="col">Nom du fichier </th>
+                                            <th scope="col">Description </th>
+                                            <th scope="col">Ajouté le </th>
+                                            <th scope="col">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for piece_jointe in convention.pieces_jointes.all %}
+                                            <tr>
+                                                <td>{{ piece_jointe.type }}</td>
+                                                <td>{{ piece_jointe.nom_reel }}</td>
+                                                <td>{{ piece_jointe.description }}</td>
+                                                <td>{{ piece_jointe.cree_le }}</td>
+                                                <td>
+                                                    <a class="fr-btn fr-btn--sm fr-icon-download-fill"
+                                                       title="Consulter"
+                                                       download="{{ piece_jointe.nom_reel }}"
+                                                       href="{% url 'conventions:piece_jointe' piece_jointe_uuid=piece_jointe.uuid %}"
+                                                    >Consulter</a>
+                                                    {% if piece_jointe|can_promote %}
+                                                        <a class="fr-btn fr-btn--green fr-btn--sm fr-icon-checkbox-circle-fill"
+                                                           title="Définir comme document de convention"
+                                                           href="{% url 'conventions:piece_jointe_promote' piece_jointe_uuid=piece_jointe.uuid %}"
+                                                        >Définir comme document de convention</a>
+                                                    {% endif %}
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

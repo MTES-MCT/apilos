@@ -12,56 +12,62 @@
 
     <p>Elles seront réattribuées à l'administration <strong>{{new_admin}}</strong>.</p>
 
-    <div class="fr-table fr-table--bordered table--layout-fixed fr-mt-6w">
-        <table>
-            <caption>Exemple de conventions impactées</caption>
-
-            <thead>
-                <tr>
-                    <th scope="col">
-                        Commune
-                    </th>
-                    <th scope="col">
-                        Nom de l'opération
-                    </th>
-                    <th scope="col">
-                        Nombre de logements
-                    </th>
-                    <th scope="col">
-                        Financement
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for convention in conventions %}
-                    <tr id="convention_redirect_{{convention.uuid}}"
-                        class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
-                        <td>{{ convention.programme.ville }}</td>
-                        <td>{{ convention.programme.nom }}</td>
-                        <td>{{ convention.lot.nb_logements }}</td>
-                        <td>{{ convention.financement }}</td>
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
-                                    if (this.classList.contains("sent")) {
-                                        location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                    }
-                                    else if (this.classList.contains("signed")) {
-                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                    }
-                                    else if (this.classList.contains("project")) {
-                                        location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                    }
-                                    else {
-                                        location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                    }
-                                });
-                            });
-                        </script>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div class="fr-table" id="table-md-component">
+        <div class="fr-table__wrapper">
+            <div class="fr-table__container">
+                <div class="fr-table__content">
+                    <table id="table-md">
+                        <caption>
+                            Exemple de conventions impactées
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">
+                                    Commune
+                                </th>
+                                <th scope="col">
+                                    Nom de l'opération
+                                </th>
+                                <th scope="col">
+                                    Nombre de logements
+                                </th>
+                                <th scope="col">
+                                    Financement
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for convention in conventions %}
+                                <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                                    <td>{{ convention.programme.ville }}</td>
+                                    <td>{{ convention.programme.nom }}</td>
+                                    <td>{{ convention.lot.nb_logements }}</td>
+                                    <td>{{ convention.financement }}</td>
+                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        document.addEventListener('DOMContentLoaded', function () {
+                                            document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                                if (this.classList.contains("sent")) {
+                                                    location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                                }
+                                                else if (this.classList.contains("signed")) {
+                                                    location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                                }
+                                                else if (this.classList.contains("project")) {
+                                                    location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                                }
+                                                else {
+                                                    location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                }
+                                            });
+                                        });
+                                    </script>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <form method="post" action="">

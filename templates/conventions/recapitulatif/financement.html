@@ -17,55 +17,61 @@
                     <p class="fr-my-1w">Prêts et Subventions : </p>
                     {% if convention.lot.prets.all %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                            <table  aria-label="Prêts">
-                                <caption>Table des financements</caption>
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Subventions' callback_click="refresh_opened_comments" %}
-                                        {% endif %}
-                                        <th scope="col">Numéro</th>
-                                        <th scope="col">Date d'octroi</th>
-                                        <th scope="col">Durée (en années)</th>
-                                        <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col">Préteur</th>
-                                        <th scope="col">Préciser le prêteur si 'Autre'</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for pret in convention.lot.prets.all %}
-                                        {% with pret_uuid=pret.uuid|slugify %}
-                                            {% with main_object_field="pret__uuid__"|add:pret_uuid %}
-                                                <tr id="{{main_object_field}}_group">
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table  aria-label="Prêts">
+                                            <caption>Table des financements</caption>
+                                            <thead>
+                                                <tr>
                                                     {% if convention|display_comments %}
-                                                        <td id="{{main_object_field}}_div">
-                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
-                                                        </td>
+                                                        {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Subventions' callback_click="refresh_opened_comments" %}
                                                     {% endif %}
-                                                    <td>
-                                                        {{ pret.numero|default_if_none:'-' }}
-                                                    </td>
-                                                    <td>
-                                                        {{ pret.date_octroi|default_if_none:'-' }}
-                                                    </td>
-                                                    <td>
-                                                        {{ pret.duree|default_if_none:'-' }}
-                                                    </td>
-                                                    <td>
-                                                        {{ pret.montant }}
-                                                    </td>
-                                                    <td>
-                                                        {{ pret.preteur }}
-                                                    </td>
-                                                    <td>
-                                                        {{ pret.autre }}
-                                                    </td>
+                                                    <th scope="col">Numéro</th>
+                                                    <th scope="col">Date d'octroi</th>
+                                                    <th scope="col">Durée (en années)</th>
+                                                    <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col">Préteur</th>
+                                                    <th scope="col">Préciser le prêteur si 'Autre'</th>
                                                 </tr>
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for pret in convention.lot.prets.all %}
+                                                    {% with pret_uuid=pret.uuid|slugify %}
+                                                        {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                            <tr id="{{main_object_field}}_group">
+                                                                {% if convention|display_comments %}
+                                                                    <td id="{{main_object_field}}_div">
+                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                <td>
+                                                                    {{ pret.numero|default_if_none:'-' }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ pret.date_octroi|default_if_none:'-' }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ pret.duree|default_if_none:'-' }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ pret.montant }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ pret.preteur }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ pret.autre }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="fr-my-2w">

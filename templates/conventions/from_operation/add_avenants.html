@@ -21,43 +21,49 @@
 
         {% if avenants %}
             <div class="fr-table fr-table--bordered fr-table--layout-fixed apilos-text--black fr-mt-2w">
-                <table>
-                    <caption class="fr-text--sm fr-text--regular">Avenant(s) associé(s) à cette opération</caption>
-                    <thead>
-                        <tr class="th_inline">
-                            <th scope="col">Statut</th>
-                            <th scope="col">Numéro de l'avenant</th>
-                            <th scope="col">Année de signature de l'avenant</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for avenant in avenants %}
-                            <tr class="clickable" id="convention_redirect_{{avenant.uuid}}">
-                                <td>
-                                    <div class="fr-pr-2w">
-                                        {% include "conventions/home/statut_tag.html" with convention=avenant %}
-                                    </div>
-                                </td>
-                                <td>{{ avenant.numero|default_if_none:"-" }}</td>
-                                <td>{{ avenant.televersement_convention_signee_le.year }}</td>
-                                <td>
-                                    <div class="fr-grid-row fr-grid-row--center">
-                                        <span class="fr-icon-eye-line" aria-hidden="true"></span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    document.getElementById('convention_redirect_{{avenant.uuid}}').addEventListener('click', function(){
-                                        const url = "{% url 'conventions:post_action' convention_uuid=avenant.uuid %}";
-                                        window.open(url, "_blank");
-                                    })
-                                });
-                            </script>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="fr-table__wrapper">
+                    <div class="fr-table__container">
+                        <div class="fr-table__content">
+                            <table>
+                                <caption class="fr-text--sm fr-text--regular">Avenant(s) associé(s) à cette opération</caption>
+                                <thead>
+                                    <tr class="th_inline">
+                                        <th scope="col">Statut</th>
+                                        <th scope="col">Numéro de l'avenant</th>
+                                        <th scope="col">Année de signature de l'avenant</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for avenant in avenants %}
+                                        <tr class="clickable" id="convention_redirect_{{avenant.uuid}}">
+                                            <td>
+                                                <div class="fr-pr-2w">
+                                                    {% include "conventions/home/statut_tag.html" with convention=avenant %}
+                                                </div>
+                                            </td>
+                                            <td>{{ avenant.numero|default_if_none:"-" }}</td>
+                                            <td>{{ avenant.televersement_convention_signee_le.year }}</td>
+                                            <td>
+                                                <div class="fr-grid-row fr-grid-row--center">
+                                                    <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                            document.addEventListener('DOMContentLoaded', function () {
+                                                document.getElementById('convention_redirect_{{avenant.uuid}}').addEventListener('click', function(){
+                                                    const url = "{% url 'conventions:post_action' convention_uuid=avenant.uuid %}";
+                                                    window.open(url, "_blank");
+                                                })
+                                            });
+                                        </script>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         {% endif %}
 

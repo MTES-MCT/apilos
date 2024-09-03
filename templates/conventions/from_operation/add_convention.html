@@ -44,59 +44,65 @@
                 </div>
                 {% if conventions.count > 0 %}
                     <div class="fr-table fr-table--bordered fr-table--layout-fixed apilos-text--black">
-                        <table>
-                            <caption class="fr-text--sm fr-text--regular">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
-                            <thead>
-                                <tr class="th_inline">
-                                    <th scope="col">Statut</th>
-                                    <th scope="col">Numéro de convention</th>
-                                    <th scope="col">Financement</th>
-                                    <th scope="col">Logements</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for convention in conventions %}
-                                    <tr class="clickable" id="convention_redirect_{{convention.uuid}}">
-                                        <td>
-                                            <div class="fr-pr-2w">
-                                                {% include "conventions/home/statut_tag.html"  %}
-                                            </div>
-                                        </td>
-                                        <td>{{ convention.numero|default_if_none:"-" }}</td>
-                                        <td>{{ convention.lot.financement }}</td>
-                                        <td>{{ convention.lot.nb_logements }}</td>
-                                        <td>
-                                            <div class="fr-grid-row fr-grid-row--center">
-                                                <span class="fr-icon-eye-line" aria-hidden="true"></span>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                                        document.addEventListener('DOMContentLoaded', function () {
-                                            document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
-                                                if (this.classList.contains("sent")) {
-                                                    const url="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                    window.open(url, "_blank");
-                                                }
-                                                else if (this.classList.contains("signed")) {
-                                                    const url="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                    window.open(url, "_blank");
-                                                }
-                                                else if (this.classList.contains("project")) {
-                                                    const url="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                    window.open(url, "_blank");
-                                                }
-                                                else {
-                                                    const url="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                    window.open(url, "_blank");
-                                                }
-                                            });
-                                        });
-                                    </script>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                        <div class="fr-table__wrapper">
+                            <div class="fr-table__container">
+                                <div class="fr-table__content">
+                                    <table>
+                                        <caption class="fr-text--sm fr-text--regular">Convention(s) liée(s) à cette opération et enregistrée(s) dans le SIAP / Apilos</caption>
+                                        <thead>
+                                            <tr class="th_inline">
+                                                <th scope="col">Statut</th>
+                                                <th scope="col">Numéro de convention</th>
+                                                <th scope="col">Financement</th>
+                                                <th scope="col">Logements</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for convention in conventions %}
+                                                <tr class="clickable" id="convention_redirect_{{convention.uuid}}">
+                                                    <td>
+                                                        <div class="fr-pr-2w">
+                                                            {% include "conventions/home/statut_tag.html"  %}
+                                                        </div>
+                                                    </td>
+                                                    <td>{{ convention.numero|default_if_none:"-" }}</td>
+                                                    <td>{{ convention.lot.financement }}</td>
+                                                    <td>{{ convention.lot.nb_logements }}</td>
+                                                    <td>
+                                                        <div class="fr-grid-row fr-grid-row--center">
+                                                            <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                    document.addEventListener('DOMContentLoaded', function () {
+                                                        document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                                            if (this.classList.contains("sent")) {
+                                                                const url="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
+                                                                window.open(url, "_blank");
+                                                            }
+                                                            else if (this.classList.contains("signed")) {
+                                                                const url="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                                                window.open(url, "_blank");
+                                                            }
+                                                            else if (this.classList.contains("project")) {
+                                                                const url="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                                                window.open(url, "_blank");
+                                                            }
+                                                            else {
+                                                                const url="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                                window.open(url, "_blank");
+                                                            }
+                                                        });
+                                                    });
+                                                </script>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
             </div>

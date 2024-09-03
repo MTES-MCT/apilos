@@ -26,45 +26,51 @@
 
         {{ formset.management_form }}
         <div class="fr-table fr-table--bordered table--layout-fixed">
-            <table  aria-label="Types de stationnement">
-                <thead>
-                    <tr>
-                        {% if convention|display_comments %}
-                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label='Types de stationnement' %}
-                        {% endif %}
-                        <th scope="col" class="col__width--150">Type de stationnement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--200">Nombre de stationnements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--150">Loyer maximum en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for form in formset %}
-                        {% with main_object_field="type_stationnement__uuid__"|add:form.uuid.value %}
-                            <tr id="{{form.uuid.id_for_label}}_group">
-                                {% if convention|display_comments %}
-                                    <td id="{{form.uuid.id_for_label}}_div">
-                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
-                                    </td>
-                                {% endif %}
-                                <td>
-                                    <input
-                                        type="hidden"
-                                        id="{{form.uuid.id_for_label}}"
-                                        name="{{form.uuid.html_name}}"
-                                        value="{{ form.uuid.value|default_if_none:'' }}">
-                                    {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                            </tr>
-                        {% endwith %}
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="fr-table__wrapper">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table  aria-label="Types de stationnement">
+                            <thead>
+                                <tr>
+                                    {% if convention|display_comments %}
+                                        {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label='Types de stationnement' %}
+                                    {% endif %}
+                                    <th scope="col" class="col__width--150">Type de stationnement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--200">Nombre de stationnements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--150">Loyer maximum en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form in formset %}
+                                    {% with main_object_field="type_stationnement__uuid__"|add:form.uuid.value %}
+                                        <tr id="{{form.uuid.id_for_label}}_group">
+                                            {% if convention|display_comments %}
+                                                <td id="{{form.uuid.id_for_label}}_div">
+                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
+                                                </td>
+                                            {% endif %}
+                                            <td>
+                                                <input
+                                                    type="hidden"
+                                                    id="{{form.uuid.id_for_label}}"
+                                                    name="{{form.uuid.html_name}}"
+                                                    value="{{ form.uuid.value|default_if_none:'' }}">
+                                                {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
