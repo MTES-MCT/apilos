@@ -12,7 +12,7 @@ django-defender
 django-hijack
 django-simple-history
 django-sql-explorer[xls]
-django-storages
+django-storages==1.14.3
 django-waffle
 Django==4.2.15
 djangorestframework
