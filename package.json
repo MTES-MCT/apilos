@@ -4,7 +4,7 @@
     "url": "git@github.com:MTES-MCT/apilos.git"
   },
   "dependencies": {
-    "@gouvfr/dsfr": "^1.11.0",
+    "@gouvfr/dsfr": "^1.11.1",
     "@hotwired/turbo": "^8.0.5",
     "virtual-select-plugin": "^1.0.45"
   }
