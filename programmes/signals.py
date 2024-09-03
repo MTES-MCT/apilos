@@ -28,7 +28,7 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
         instance.date_achevement or instance.date_achevement_previsible
     )
     if instance.code_postal and len(instance.code_postal) == 5:
-        if int(instance.code_postal) >= 97000:
+        if instance.code_postal.isnumeric() and int(instance.code_postal) >= 97000:
             code_departement = instance.code_postal[0:3]
         else:
             code_departement = instance.code_postal[0:2]

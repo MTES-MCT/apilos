@@ -5,9 +5,10 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.forms import model_to_dict
+from simple_history.models import HistoricalRecords
 
 from conventions.models.choices import ConventionStatut
-from core.utils import get_key_from_json_field
+from core.utils import custom_history_user_setter, get_key_from_json_field
 
 from .choices import (
     Financement,
@@ -141,6 +142,11 @@ class Programme(models.Model):
 
     search_vector = SearchVectorField(null=True, blank=True)
     reassign_command_old_admin_backup = models.IntegerField(null=True)
+
+    history = HistoricalRecords(
+        history_user_id_field=models.IntegerField(null=True),
+        history_user_setter=custom_history_user_setter,
+    )
 
     @property
     def all_conventions_are_signed(self):
