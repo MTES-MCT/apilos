@@ -24,34 +24,50 @@ class Migration(migrations.Migration):
                 to="programmes.programme",
             ),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET permis_construire = '' WHERE"
+            " permis_construire IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="permis_construire",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
             model_name="programme",
             name="reassign_command_old_admin_backup",
             field=models.IntegerField(blank=True, null=True),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET reference_cadastrale = '' WHERE"
+            " reference_cadastrale IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="reference_cadastrale",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET reference_notaire = '' WHERE"
+            " reference_notaire IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="reference_notaire",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET reference_publication_acte = '' WHERE"
+            " reference_publication_acte IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="reference_publication_acte",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
         ),
         migrations.AlterField(
             model_name="programme",
@@ -67,23 +83,34 @@ class Migration(migrations.Migration):
                 blank=True, decimal_places=2, max_digits=10, null=True
             ),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET vendeur = '' WHERE" " vendeur IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="vendeur",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET ville = '' WHERE" " ville IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="ville",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET"
+            " ville_signature_residence_agrement_gestionnaire_intermediation = '' WHERE"
+            " ville_signature_residence_agrement_gestionnaire_intermediation IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="ville_signature_residence_agrement_gestionnaire_intermediation",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
             model_name="programme",
