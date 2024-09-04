@@ -287,8 +287,8 @@ class ProgrammeModelsTest(TestCase):
             bailleur=bailleur,
             administration=administration,
         )
-        self.assertIsNone(programme_00.code_insee_departement)
-        self.assertIsNone(programme_00.code_insee_region)
+        self.assertEqual(programme_00.code_insee_departement, "")
+        self.assertEqual(programme_00.code_insee_region, "")
 
         programme_20 = Programme.objects.create(
             nom="test",
@@ -346,10 +346,10 @@ class ProgrammeModelsTest(TestCase):
 class TestProgrammeSignals:
 
     def test_numero_operation_pour_recherche_create_num_none(self):
-        convention = ProgrammeFactory(numero_operation=None)
+        convention = ProgrammeFactory(numero_operation="")
 
-        assert convention.numero_operation is None
-        assert convention.numero_operation_pour_recherche is None
+        assert convention.numero_operation == ""
+        assert convention.numero_operation_pour_recherche == ""
 
     def test_numero_operation_pour_recherche_create_num_alphanum(self):
         convention = ProgrammeFactory(numero_operation="ALPHA1230")
