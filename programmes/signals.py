@@ -11,13 +11,12 @@ logger = logging.getLogger(__name__)
 
 @receiver(pre_save, sender=Programme)
 def compute_numero_operation_for_search(sender, instance, *args, **kwargs):
-    if isinstance(instance.numero_operation, str):
-        instance.numero_operation_pour_recherche = (
-            instance.numero_operation.replace("/", "")
-            .replace("-", "")
-            .replace(" ", "")
-            .replace(".", "")
-        )
+    instance.numero_operation_pour_recherche = (
+        instance.numero_operation.replace("/", "")
+        .replace("-", "")
+        .replace(" ", "")
+        .replace(".", "")
+    )
 
 
 @receiver(pre_save, sender=Programme)
