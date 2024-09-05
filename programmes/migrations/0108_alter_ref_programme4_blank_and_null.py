@@ -13,41 +13,65 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET edd_classique = '' WHERE"
+            " edd_classique IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="edd_classique",
-            field=models.TextField(blank=True, default="", max_length=5000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=5000),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET edd_stationnements = '' WHERE"
+            " edd_stationnements IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="edd_stationnements",
-            field=models.TextField(blank=True, default="", max_length=5000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=5000),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET edd_volumetrique = '' WHERE"
+            " edd_volumetrique IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="edd_volumetrique",
-            field=models.TextField(blank=True, default="", max_length=5000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=5000),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET effet_relatif = '' WHERE"
+            " effet_relatif IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="effet_relatif",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET mention_publication_edd_classique = '' WHERE"
+            " mention_publication_edd_classique IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="mention_publication_edd_classique",
-            field=models.TextField(blank=True, default="", max_length=5000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=5000),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET mention_publication_edd_volumetrique = ''"
+            " WHERE mention_publication_edd_volumetrique IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="mention_publication_edd_volumetrique",
-            field=models.TextField(blank=True, default="", max_length=5000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=5000),
         ),
         migrations.AlterField(
             model_name="programme",

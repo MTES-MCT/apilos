@@ -89,10 +89,14 @@ class Migration(migrations.Migration):
                 verbose_name="Surface utile",
             ),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_logement SET numero_lot = '' WHERE"
+            " numero_lot IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="logementedd",
             name="numero_lot",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
         ),
     ]

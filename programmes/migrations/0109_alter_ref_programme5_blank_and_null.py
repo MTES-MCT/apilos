@@ -18,15 +18,15 @@ class Migration(migrations.Migration):
             " numero_operation IS NULL;",
             migrations.RunSQL.noop,
         ),
-        migrations.RunSQL(
-            "UPDATE programmes_programme SET numero_operation_pour_recherche = '' WHERE"
-            " numero_operation_pour_recherche IS NULL;",
-            migrations.RunSQL.noop,
-        ),
         migrations.AlterField(
             model_name="programme",
             name="numero_operation",
             field=models.CharField(blank=True, max_length=255),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET numero_operation_pour_recherche = '' WHERE"
+            " numero_operation_pour_recherche IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",

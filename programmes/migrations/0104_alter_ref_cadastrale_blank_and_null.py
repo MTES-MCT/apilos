@@ -13,27 +13,39 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            "UPDATE programmes_referencecadastrale SET lieudit = '' WHERE"
+            " lieudit IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="referencecadastrale",
             name="lieudit",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
         ),
         migrations.AlterField(
             model_name="referencecadastrale",
             name="numero",
             field=models.IntegerField(blank=True, null=True),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_referencecadastrale SET section = '' WHERE"
+            " section IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="referencecadastrale",
             name="section",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_referencecadastrale SET surface = '' WHERE"
+            " surface IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="referencecadastrale",
             name="surface",
-            field=models.CharField(blank=True, default="", max_length=255),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=255),
         ),
     ]

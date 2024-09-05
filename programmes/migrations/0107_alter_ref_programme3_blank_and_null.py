@@ -48,10 +48,16 @@ class Migration(migrations.Migration):
             name="date_residence_argement_gestionnaire_intermediation",
             field=models.DateField(blank=True, null=True),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET"
+            " departement_residence_argement_gestionnaire_intermediation = '' WHERE"
+            " departement_residence_argement_gestionnaire_intermediation IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="departement_residence_argement_gestionnaire_intermediation",
-            field=models.CharField(blank=True, default="", max_length=255),
+            field=models.CharField(blank=True, max_length=255),
             preserve_default=False,
         ),
     ]

@@ -18,41 +18,65 @@ class Migration(migrations.Migration):
             name="annee_gestion_programmation",
             field=models.IntegerField(blank=True, null=True),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET autres_locaux_hors_convention = '' WHERE"
+            " autres_locaux_hors_convention IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="autres_locaux_hors_convention",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET certificat_adressage = '' WHERE"
+            " certificat_adressage IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="certificat_adressage",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET code_insee_commune = '' WHERE"
+            " code_insee_commune IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="code_insee_commune",
-            field=models.CharField(blank=True, default="", max_length=10),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=10),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET code_insee_departement = '' WHERE"
+            " code_insee_departement IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="code_insee_departement",
-            field=models.CharField(blank=True, default="", max_length=10),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=10),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET code_insee_region = '' WHERE"
+            " code_insee_region IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="code_insee_region",
-            field=models.CharField(blank=True, default="", max_length=10),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=10),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET code_postal = '' WHERE"
+            " code_postal IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="code_postal",
-            field=models.CharField(blank=True, default="", max_length=5),
-            preserve_default=False,
+            field=models.CharField(blank=True, max_length=5),
         ),
         migrations.AlterField(
             model_name="programme",

@@ -14,17 +14,25 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            "UPDATE programmes_lot SET edd_classique = '' WHERE"
+            " edd_classique IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="lot",
             name="edd_classique",
-            field=models.TextField(blank=True, default="", max_length=50000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=50000),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_lot SET edd_volumetrique = '' WHERE"
+            " edd_volumetrique IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="lot",
             name="edd_volumetrique",
-            field=models.TextField(blank=True, default="", max_length=50000),
-            preserve_default=False,
+            field=models.TextField(blank=True, max_length=50000),
         ),
         migrations.AlterField(
             model_name="lot",

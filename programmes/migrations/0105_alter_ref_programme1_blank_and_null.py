@@ -14,17 +14,25 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET acquereur = '' WHERE"
+            " acquereur IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="acquereur",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
+        ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET acte_de_propriete = '' WHERE"
+            " acte_de_propriete IS NULL;",
+            migrations.RunSQL.noop,
         ),
         migrations.AlterField(
             model_name="programme",
             name="acte_de_propriete",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
         ),
         migrations.AlterField(
             model_name="programme",
@@ -36,10 +44,13 @@ class Migration(migrations.Migration):
                 to="instructeurs.administration",
             ),
         ),
+        migrations.RunSQL(
+            "UPDATE programmes_programme SET adresse = '' WHERE adresse IS NULL;",
+            migrations.RunSQL.noop,
+        ),
         migrations.AlterField(
             model_name="programme",
             name="adresse",
-            field=models.TextField(blank=True, default=""),
-            preserve_default=False,
+            field=models.TextField(blank=True),
         ),
     ]
