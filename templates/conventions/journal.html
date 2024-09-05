@@ -4,6 +4,18 @@
 
 {% load static %}
 
+{% block javascript_extras %}
+    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
+{% endblock %}
+
+{% block css_extras %}
+    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
+    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
@@ -20,11 +32,13 @@
                                 <div class="fr-col-12 fr-mb-2w">
                                     {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
                                 </div>
-
-                                <div class="fr-col-12 fr-mb-4w">
+                                <div class="fr-col-12 fr-mb-2w">
                                     {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
                                 </div>
-
+                                <div class="fr-col-12 fr-mb-4w">
+                                    <label class="fr-label">Ajouter un fichier (optionnel)</label>
+                                    {% include "common/form/input_upload.html" with no_title=True form_input=form.piece_jointe form_input_files=form.piece_jointe_files object_name='convention' single_file=True object_uuid=convention.uuid file_list=evenement.piece_jointe|get_files_from_textfiles object_field="evenement__piece_jointe__"|add:form.uuid.value %}
+                                </div>
                                 <div class="fr-grid-row fr-grid-row--right">
                                     <div class="fr-mr-4w fr-mt-1w">
                                         <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
@@ -65,8 +79,12 @@
                                             {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
                                         </div>
 
-                                        <div class="fr-col-12 fr-mb-4w">
+                                        <div class="fr-col-12 fr-mb-2w">
                                             {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
+                                        </div>
+                                        <div class="fr-col-12 fr-mb-4w">
+                                            <label class="fr-label">Ajouter un fichier (optionnel)</label>
+                                            {% include "common/form/input_upload.html" with no_title=True form_input=form.piece_jointe form_input_files=form.piece_jointe_files object_name='convention' single_file=True object_uuid=convention.uuid file_list=evenement.piece_jointe|get_files_from_textfiles object_field="evenement__piece_jointe__"|add:form.uuid.value %}
                                         </div>
                                     </div>
                                     <div class="fr-grid-row fr-grid-row--right">
@@ -100,6 +118,9 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-ml-4w">{{ evenement.description|linebreaksbr }}</div>
+                                <div class="fr-col-12 fr-ml-4w">
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Fichier joint" text=evenement.piece_jointe|get_text_from_textfiles file_list=evenement.piece_jointe|get_files_from_textfiles object_field="evenement__piece_jointe__"|add:evenement.uuid %}
+                                </div>
                             </div>
                         </div>
                     {% endif %}
