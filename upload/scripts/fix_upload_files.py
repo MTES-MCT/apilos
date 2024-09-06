@@ -2,6 +2,7 @@
 
 import json
 import re
+from os.path import splitext
 from pathlib import Path
 
 from django.conf import settings
@@ -50,39 +51,43 @@ def handle_conv_upload(convention_uuid: str, upload_file_uuid: str):
     assert uploaded_file is not None, f"UploadedFile {upload_file_uuid} not found"
 
     for field_name in _get_conv_upload_fields():
+        if not (field_value := getattr(convention, field_name)):
+            continue
         try:
-            field_value = json.loads(getattr(convention, field_name))
+            json_field_value = json.loads(field_value)
         except json.JSONDecodeError:
             continue
-
-        if upload_file_uuid not in field_value["files"]:
+        if upload_file_uuid not in json_field_value["files"]:
             continue
 
         # get the current upload data
         upload_filepath = uploaded_file.filepath(convention_uuid)
         upload_content = default_storage.open(
             uploaded_file.filepath(convention_uuid), "rb"
-        ).read()
+        )
 
         # compute the new file name
-        new_filename = slugify(field_value["files"][upload_file_uuid]["filename"])
+        name, extension = splitext(
+            json_field_value["files"][upload_file_uuid]["filename"]
+        )
+        new_filename = f"{slugify(name)}{extension}"
 
         with transaction.atomic():
             # update the convention field value
-            field_value["files"][upload_file_uuid]["filename"] = new_filename
-            setattr(convention, field_name, json.dumps(field_value))
+            json_field_value["files"][upload_file_uuid]["filename"] = new_filename
+            setattr(convention, field_name, json.dumps(json_field_value))
             convention.save()
 
             # update the upload file name
             uploaded_file.filename = new_filename
             uploaded_file.save()
 
-            # save the new file on S3
-            new_upload_filepath = uploaded_file.filepath(convention_uuid)
-            default_storage.save(name=new_upload_filepath, content=upload_content)
+        # save the new file on S3
+        new_upload_filepath = uploaded_file.filepath(convention_uuid)
+        default_storage.save(name=new_upload_filepath, content=upload_content)
 
-            # delete the previous file on S3
-            default_storage.delete(upload_filepath)
+        # delete the previous file on S3
+        default_storage.delete(upload_filepath)
 
 
 def main():
