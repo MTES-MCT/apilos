@@ -17,7 +17,7 @@ def _update_nested_convention_field(
     instance: Convention | Programme | Lot,
     previous_instance: Convention | Programme | Lot,
 ) -> None:
-    if type(instance) != type(previous_instance):
+    if type(instance) is not type(previous_instance):
         raise TypeError(
             f"instance and previous instance must be of the same type ({type(instance)} != {type(previous_instance)})"
         )
