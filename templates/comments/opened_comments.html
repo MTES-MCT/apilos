@@ -15,31 +15,37 @@
             </div>
 
             <div class="fr-table  fr-table--bordered table--layout-fixed table--limited-height fr-table--no-caption">
-                <table>
-                    <caption>Commentaires ouverts liés à la convention</caption>
-                    <thead>
-                        <tr>
-                            <th scope="col" class="col__width--150">Élements de la convention commentés </th>
-                            <th scope="col">Message</th>
-                            <th scope="col" class="col__width--150">Créé le</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for opened_comment in opened_comments %}
-                            <tr>
-                                <td>
-                                    {{opened_comment.object_detail}}
-                                </td>
-                                <td>
-                                    {{opened_comment.message}}
-                                </td>
-                                <td>
-                                    {{ opened_comment.cree_le|date:"d/m/Y" }} {{ opened_comment.cree_le|time:"H:i" }}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="fr-table__wrapper">
+                    <div class="fr-table__container">
+                        <div class="fr-table__content">
+                            <table>
+                                <caption>Commentaires ouverts liés à la convention</caption>
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="col__width--150">Élements de la convention commentés </th>
+                                        <th scope="col">Message</th>
+                                        <th scope="col" class="col__width--150">Créé le</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for opened_comment in opened_comments %}
+                                        <tr>
+                                            <td>
+                                                {{opened_comment.object_detail}}
+                                            </td>
+                                            <td>
+                                                {{opened_comment.message}}
+                                            </td>
+                                            <td>
+                                                {{ opened_comment.cree_le|date:"d/m/Y" }} {{ opened_comment.cree_le|time:"H:i" }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
 
         </div>

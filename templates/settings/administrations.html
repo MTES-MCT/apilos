@@ -31,42 +31,48 @@
                     </form>
 
                     <div class="fr-table fr-table--bordered table--layout-fixed">
-                        <table>
-                            <caption>{{paginated_items.paginator.count}}{% if paginated_items.paginator.count != total_items %} / {{ total_items }}{% endif %} administration{{ paginated_items.paginator.count|pluralize }}</caption>
+                        <div class="fr-table__wrapper">
+                            <div class="fr-table__container">
+                                <div class="fr-table__content">
+                                    <table>
+                                        <caption>{{paginated_items.paginator.count}}{% if paginated_items.paginator.count != total_items %} / {{ total_items }}{% endif %} administration{{ paginated_items.paginator.count|pluralize }}</caption>
 
-                            <thead>
-                                <tr>
-                                    <th scope="col">
-                                        Nom
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:administration' %}
-                                    </th>
-                                    <th scope="col">
-                                        Code
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='code' url_target='settings:administration' %}
-                                    </th>
-                                    <th scope="col">
-                                        Ville de signature
-                                        {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' %}
-                                    </th>
-                                    <th scope="col">
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for administration in paginated_items %}
-                                    <tr>
-                                        <td>{{ administration.nom }}</td>
-                                        <td>{{ administration.code }}</td>
-                                        <td>{{ administration.ville_signature }}</td>
-                                        <td>
-                                            <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_administration' administration_uuid=administration.uuid %}" >
-                                                <span class="fr-icon-edit-line" aria-hidden="true"></span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">
+                                                    Nom
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:administration' %}
+                                                </th>
+                                                <th scope="col">
+                                                    Code
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='code' url_target='settings:administration' %}
+                                                </th>
+                                                <th scope="col">
+                                                    Ville de signature
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' %}
+                                                </th>
+                                                <th scope="col">
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for administration in paginated_items %}
+                                                <tr>
+                                                    <td>{{ administration.nom }}</td>
+                                                    <td>{{ administration.code }}</td>
+                                                    <td>{{ administration.ville_signature }}</td>
+                                                    <td>
+                                                        <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_administration' administration_uuid=administration.uuid %}" >
+                                                            <span class="fr-icon-edit-line" aria-hidden="true"></span>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     {% include 'common/table/pagination.html' with paginate_list=paginated_items %}

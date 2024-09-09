@@ -22,42 +22,48 @@
                     <p class="fr-my-1w">EDD Simplifé : </p>
                     {% if logement_edds %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                            <table  aria-label="Logements de l'EDD">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
-                                        {% endif %}
-                                        <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for lgt in logement_edds %}
-                                        {% with lgt_uuid=lgt.uuid|slugify %}
-                                            {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
-                                                <tr id="{{main_object_field}}_group">
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table  aria-label="Logements de l'EDD">
+                                            <thead>
+                                                <tr>
                                                     {% if convention|display_comments %}
-                                                        <td id="{{main_object_field}}_div">
-                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
-                                                        </td>
+                                                        {% include 'common/utils/comments_header.html' with object_name='logement_edd' label="Logements de l'EDD" callback_click="refresh_opened_comments" %}
                                                     {% endif %}
-                                                    <td>
-                                                        {{lgt.financement}}
-                                                    </td>
-                                                    <td>
-                                                        {{lgt.designation}}
-                                                    </td>
-                                                    <td>
-                                                        {{lgt.numero_lot}}
-                                                    </td>
+                                                    <th scope="col">Financement {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col">Désignation {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col">Numéro de lot {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for lgt in logement_edds %}
+                                                    {% with lgt_uuid=lgt.uuid|slugify %}
+                                                        {% with main_object_field="logement_edd__uuid__"|add:lgt_uuid %}
+                                                            <tr id="{{main_object_field}}_group">
+                                                                {% if convention|display_comments %}
+                                                                    <td id="{{main_object_field}}_div">
+                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Logement de l'EDD" callback_click="refresh_opened_comments" %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                <td>
+                                                                    {{lgt.financement}}
+                                                                </td>
+                                                                <td>
+                                                                    {{lgt.designation}}
+                                                                </td>
+                                                                <td>
+                                                                    {{lgt.numero_lot}}
+                                                                </td>
+                                                            </tr>
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="fr-my-2w">

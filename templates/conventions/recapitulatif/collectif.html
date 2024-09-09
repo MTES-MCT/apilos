@@ -16,42 +16,48 @@
                     </div>
                     {% if locaux_collectifs %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                            <table  aria-label="Surface à usage collectif">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='locaux_collectifs' label='LocauxCollectifs' callback_click="refresh_opened_comments" %}
-                                        {% endif %}
-                                        <th scope="col" class="col__width--150">Type de local (désignation) {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--120">Surface Habitable {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--120">Nombre {% include "common/form/required_field_star.html" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for locaux_collectif in locaux_collectifs %}
-                                        {% with locaux_collectif_uuid=locaux_collectif.uuid|slugify %}
-                                            {% with main_object_field="locaux_collectif__uuid__"|add:locaux_collectif_uuid %}
-                                                <tr id="{{main_object_field}}_group">
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table  aria-label="Surface à usage collectif">
+                                            <thead>
+                                                <tr>
                                                     {% if convention|display_comments %}
-                                                        <td id="{{main_object_field}}_div">
-                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Locaux Collectif" callback_click="refresh_opened_comments" %}
-                                                        </td>
+                                                        {% include 'common/utils/comments_header.html' with object_name='locaux_collectifs' label='LocauxCollectifs' callback_click="refresh_opened_comments" %}
                                                     {% endif %}
-                                                    <td>
-                                                        {{ locaux_collectif.type_local }}
-                                                    </td>
-                                                    <td>
-                                                        {{ locaux_collectif.surface_habitable|floatformat:2 }}
-                                                    </td>
-                                                    <td>
-                                                        {{ locaux_collectif.nombre }}
-                                                    </td>
+                                                    <th scope="col" class="col__width--150">Type de local (désignation) {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface Habitable {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Nombre {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for locaux_collectif in locaux_collectifs %}
+                                                    {% with locaux_collectif_uuid=locaux_collectif.uuid|slugify %}
+                                                        {% with main_object_field="locaux_collectif__uuid__"|add:locaux_collectif_uuid %}
+                                                            <tr id="{{main_object_field}}_group">
+                                                                {% if convention|display_comments %}
+                                                                    <td id="{{main_object_field}}_div">
+                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Locaux Collectif" callback_click="refresh_opened_comments" %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                <td>
+                                                                    {{ locaux_collectif.type_local }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ locaux_collectif.surface_habitable|floatformat:2 }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ locaux_collectif.nombre }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="fr-my-2w">

@@ -29,40 +29,46 @@
 
         {{ formset.management_form }}
         <div class="fr-table fr-table--bordered table--layout-fixed">
-            <table aria-label="Surface à usage collectif">
-                <thead>
-                    <tr>
-                        {% if convention|display_comments %}
-                            {% include 'common/utils/comments_header.html' with object_name='locaux_collectifs' label="Locaux Collectifs" %}
-                        {% endif %}
-                        <th scope="col" class="col__width--150">Type de local {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--120">Surface Habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                        <th scope="col" class="col__width--120">Nombre {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for form_locaux_collectifs in formset %}
-                        {% with main_object_field="locaux_collectifs__uuid__"|add:form_locaux_collectifs.uuid.value %}
-                            <tr id="{{form_locaux_collectifs.uuid.id_for_label}}_group">
-                                {% if convention|display_comments %}
-                                    <td id="{{form_locaux_collectifs.uuid.id_for_label}}_div">
-                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_locaux_collectifs.uuid %}
-                                    </td>
-                                {% endif %}
-                                <td>
-                                    {% include "common/form/input_text.html" with form_input=form_locaux_collectifs.type_local parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.surface_habitable step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                                <td>
-                                    {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.nombre step="1" parent_object_field=main_object_field editable=editable_after_upload %}
-                                </td>
-                            </tr>
-                        {% endwith %}
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="fr-table__wrapper">
+                <div class="fr-table__container">
+                    <div class="fr-table__content">
+                        <table aria-label="Surface à usage collectif">
+                            <thead>
+                                <tr>
+                                    {% if convention|display_comments %}
+                                        {% include 'common/utils/comments_header.html' with object_name='locaux_collectifs' label="Locaux Collectifs" %}
+                                    {% endif %}
+                                    <th scope="col" class="col__width--150">Type de local {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--120">Surface Habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--120">Nombre {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for form_locaux_collectifs in formset %}
+                                    {% with main_object_field="locaux_collectifs__uuid__"|add:form_locaux_collectifs.uuid.value %}
+                                        <tr id="{{form_locaux_collectifs.uuid.id_for_label}}_group">
+                                            {% if convention|display_comments %}
+                                                <td id="{{form_locaux_collectifs.uuid.id_for_label}}_div">
+                                                    {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_locaux_collectifs.uuid %}
+                                                </td>
+                                            {% endif %}
+                                            <td>
+                                                {% include "common/form/input_text.html" with form_input=form_locaux_collectifs.type_local parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.surface_habitable step="0.01" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_number.html" with form_input=form_locaux_collectifs.nombre step="1" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                        </tr>
+                                    {% endwith %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <h4 class="fr-mb-1w">Autres locaux auxquels ne s'appliquent pas la convention</h4>

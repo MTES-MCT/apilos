@@ -2,46 +2,52 @@
 {% if operations %}
 
     <div class="fr-table fr-table--bordered table--layout-fixed">
-        <table aria-label="Operations">
-            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                <thead>
-                    <tr class="th_inline">
-                        <th title="Numéro de l'opération" scope="col">
-                            Numéro de l'opération
-                        </th>
-                        <th title="Nom de l'opération" scope="col">
-                            Nom de l'opération
-                        </th>
-                        <th title="Bailleur" scope="col">
-                            Bailleur
-                        </th>
-                        <th title="Nature de l'opération" scope="col">
-                            Nature de l'opération
-                        </th>
-                        <th title="Commune" scope="col">
-                            Commune
-                        </th>
-                        <th title="" scope="col">
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for operation in operations %}
-                        <tr class="clickable">
-                            <td>{{ operation.numero }}</td>
-                            <td>{{ operation.nom }}</td>
-                            <td>{{ operation.bailleur }}</td>
-                            <td>{{ operation.nature }}</td>
-                            <td>{{ operation.commune }}</td>
-                            <td>
-                                <button class="fr-btn fr-btn--tertiary-no-outline">
-                                    <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
-                                </button>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="fr-table__wrapper">
+            <div class="fr-table__container">
+                <div class="fr-table__content">
+                    <table aria-label="Operations">
+                        <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
+                            <thead>
+                                <tr class="th_inline">
+                                    <th title="Numéro de l'opération" scope="col">
+                                        Numéro de l'opération
+                                    </th>
+                                    <th title="Nom de l'opération" scope="col">
+                                        Nom de l'opération
+                                    </th>
+                                    <th title="Bailleur" scope="col">
+                                        Bailleur
+                                    </th>
+                                    <th title="Nature de l'opération" scope="col">
+                                        Nature de l'opération
+                                    </th>
+                                    <th title="Commune" scope="col">
+                                        Commune
+                                    </th>
+                                    <th title="" scope="col">
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for operation in operations %}
+                                    <tr class="clickable">
+                                        <td>{{ operation.numero }}</td>
+                                        <td>{{ operation.nom }}</td>
+                                        <td>{{ operation.bailleur }}</td>
+                                        <td>{{ operation.nature }}</td>
+                                        <td>{{ operation.commune }}</td>
+                                        <td>
+                                            <button class="fr-btn fr-btn--tertiary-no-outline">
+                                                <span class="fr-icon-arrow-right-line" aria-hidden="true"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">

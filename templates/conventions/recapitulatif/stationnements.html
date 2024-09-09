@@ -15,42 +15,48 @@
                     </div>
                     {% if stationnements %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
-                            <table aria-label="Types de stationnement">
-                                <thead>
-                                    <tr>
-                                        {% if convention|display_comments %}
-                                            {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
-                                        {% endif %}
-                                        <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
-                                        <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {% for stationnement in stationnements %}
-                                        {% with stationnement_uuid=stationnement.uuid|slugify %}
-                                            {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
-                                                <tr id="{{main_object_field}}_group">
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table aria-label="Types de stationnement">
+                                            <thead>
+                                                <tr>
                                                     {% if convention|display_comments %}
-                                                        <td id="{{main_object_field}}_div">
-                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
-                                                        </td>
+                                                        {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
                                                     {% endif %}
-                                                    <td>
-                                                        {{ stationnement.get_typologie_display }}
-                                                    </td>
-                                                    <td>
-                                                        {{ stationnement.nb_stationnements }}
-                                                    </td>
-                                                    <td>
-                                                        {{ stationnement.loyer|floatformat:2 }}
-                                                    </td>
+                                                    <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
-                                            {% endwith %}
-                                        {% endwith %}
-                                    {% endfor %}
-                                </tbody>
-                            </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for stationnement in stationnements %}
+                                                    {% with stationnement_uuid=stationnement.uuid|slugify %}
+                                                        {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
+                                                            <tr id="{{main_object_field}}_group">
+                                                                {% if convention|display_comments %}
+                                                                    <td id="{{main_object_field}}_div">
+                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
+                                                                    </td>
+                                                                {% endif %}
+                                                                <td>
+                                                                    {{ stationnement.get_typologie_display }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ stationnement.nb_stationnements }}
+                                                                </td>
+                                                                <td>
+                                                                    {{ stationnement.loyer|floatformat:2 }}
+                                                                </td>
+                                                            </tr>
+                                                        {% endwith %}
+                                                    {% endwith %}
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     {% else %}
                         <div class="fr-my-2w">
