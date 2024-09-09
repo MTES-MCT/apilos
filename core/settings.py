@@ -41,7 +41,7 @@ else:
 
 def get_env_variable(name, cast=str, default=""):
     try:
-        if cast == bool:
+        if cast is bool:
             return os.environ[name].lower() in [
                 "true",
                 "1",
