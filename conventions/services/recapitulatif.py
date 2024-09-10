@@ -64,11 +64,13 @@ class ConventionRecapitulatifService(ConventionService):
                 if self.convention.parent
                 else self.convention.programme_id
             )
-            Programme.objects.filter(
+            for programme in Programme.objects.filter(
                 Q(id=programme_id) | Q(parent_id=programme_id)
-            ).update(
-                numero_operation=programme_number_form.cleaned_data["numero_operation"]
-            )
+            ):
+                programme.numero_operation = programme_number_form.cleaned_data[
+                    "numero_operation"
+                ]
+                programme.save()
         return self.get_convention_recapitulatif(
             programme_number_form=programme_number_form
         )
