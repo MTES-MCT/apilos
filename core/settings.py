@@ -65,6 +65,7 @@ SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 CRON_ENABLED = get_env_variable("CRON_ENABLED", default=False, cast=bool)
+CRISP_WEBSITE_ID = get_env_variable("CRISP_WEBSITE_ID", default="")
 
 LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
@@ -377,7 +378,6 @@ SESSION_COOKIE_SAMESITE = "Lax"
 # https://django-csp.readthedocs.io/en/latest/configuration.html
 CSP_DEFAULT_SRC = "'none'"
 CSP_SCRIPT_SRC = (
-    "https://stats.data.gouv.fr/piwik.js",
     "'self'",
     "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
     "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
@@ -391,13 +391,19 @@ CSP_SCRIPT_SRC = (
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
     # Matomo
+    "https://stats.data.gouv.fr/piwik.js",
     "https://stats.beta.gouv.fr/matomo.js",
     "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
+    # CRISP
+    "https://client.crisp.chat/",
 )
 CSP_IMG_SRC = (
     "'self'",
     "data:",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
+    # CRISP
+    "https://image.crisp.chat/",
+    "https://client.crisp.chat/",
 )
 CSP_OBJECT_SRC = "'none'"
 
@@ -413,6 +419,8 @@ CSP_FRAME_SRC = (
 CSP_FONT_SRC = (
     "'self'",
     "data:",
+    # CRISP
+    "https://client.crisp.chat/",
 )
 CSP_CONNECT_SRC = (
     "'self'",
@@ -420,12 +428,17 @@ CSP_CONNECT_SRC = (
     # Matomo
     "https://stats.beta.gouv.fr/matomo.php",
     "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
+    # CRISP
+    "wss://client.relay.crisp.chat",
+    "https://client.crisp.chat/",
 )
 CSP_STYLE_SRC = (
     "'self'",
     "https://code.highcharts.com/css/highcharts.css",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
     "'unsafe-inline'",
+    # CRISP
+    "https://client.crisp.chat/",
 )
 CSP_MANIFEST_SRC = "'self'"
 CSP_INCLUDE_NONCE_IN = [
