@@ -49,8 +49,8 @@ class ConventionJournalTests(TestCase):
                 "action": "submit",
                 "description": "Signé par le préfet",
                 "type_evenement": TypeEvenement.RETOUR_PREFET,
-                "piece_jointe": "filename.jpg",
-                "piece_jointe_files": "",
+                "pieces_jointes": "filename.jpg",
+                "pieces_jointes_files": "",
             },
         )
         self.assertEqual(response.status_code, 200, msg="[ConventionJournalTests] ")
@@ -61,7 +61,7 @@ class ConventionJournalTests(TestCase):
         self.assertIsNotNone(evenement)
         self.assertEqual(evenement.description, "Signé par le préfet")
         self.assertEqual(evenement.type_evenement, TypeEvenement.RETOUR_PREFET)
-        assert evenement.piece_jointe == '{"files": [], "text": "filename.jpg"}'
+        assert evenement.pieces_jointes == '{"files": [], "text": "filename.jpg"}'
 
     def test_edit_journal_evenement(self):
         """
@@ -78,8 +78,8 @@ class ConventionJournalTests(TestCase):
                 "uuid": self.convention_75.evenements.first().uuid,
                 "description": "Contact prélimiaire au préfet pour signature",
                 "type_evenement": TypeEvenement.ECHANGE,
-                "piece_jointe": "filename_update.jpg",
-                "piece_jointe_files": "",
+                "pieces_jointes": "filename_update.jpg",
+                "pieces_jointes_files": "",
             },
         )
         self.assertEqual(response.status_code, 200, msg="[ConventionJournalTests] ")
@@ -94,4 +94,6 @@ class ConventionJournalTests(TestCase):
             "Contact prélimiaire au préfet pour signature",
         )
         self.assertEqual(evenement.type_evenement, TypeEvenement.ECHANGE)
-        assert evenement.piece_jointe == '{"files": [], "text": "filename_update.jpg"}'
+        assert (
+            evenement.pieces_jointes == '{"files": [], "text": "filename_update.jpg"}'
+        )

@@ -668,8 +668,8 @@ def journal(request, convention_uuid):
                     description=selected.description,
                     type_evenement=selected.type_evenement,
                     **utils.get_text_and_files_from_field(
-                        "piece_jointe",
-                        selected.piece_jointe,
+                        "pieces_jointes",
+                        selected.pieces_jointes,
                     ),
                 )
             )
@@ -682,7 +682,7 @@ def journal(request, convention_uuid):
                     "description": request.POST.get("description"),
                     "type_evenement": request.POST.get("type_evenement"),
                     **utils.init_text_and_files_from_field(
-                        request, None, "piece_jointe"
+                        request, None, "pieces_jointes"
                     ),
                 }
             )
@@ -691,9 +691,9 @@ def journal(request, convention_uuid):
                     evenement = Evenement.objects.get(uuid=form.cleaned_data["uuid"])
                     evenement.description = form.cleaned_data["description"]
                     evenement.type_evenement = form.cleaned_data["type_evenement"]
-                    evenement.piece_jointe = utils.set_files_and_text_field(
-                        form.cleaned_data["piece_jointe_files"],
-                        form.cleaned_data["piece_jointe"],
+                    evenement.pieces_jointes = utils.set_files_and_text_field(
+                        form.cleaned_data["pieces_jointes_files"],
+                        form.cleaned_data["pieces_jointes"],
                     )
                     evenement.save()
                 else:
@@ -702,9 +702,9 @@ def journal(request, convention_uuid):
                         description=form.cleaned_data["description"],
                         type_evenement=form.cleaned_data["type_evenement"],
                     )
-                    evenement.piece_jointe = utils.set_files_and_text_field(
-                        form.cleaned_data["piece_jointe_files"],
-                        form.cleaned_data["piece_jointe"],
+                    evenement.pieces_jointes = utils.set_files_and_text_field(
+                        form.cleaned_data["pieces_jointes_files"],
+                        form.cleaned_data["pieces_jointes"],
                     )
                     evenement.save()
 
