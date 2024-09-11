@@ -103,7 +103,6 @@ class ConventionAdmin(ApilosModelAdmin):
         "bailleur",
         "programme",
         "lot",
-        "parent",
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
@@ -126,6 +125,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "date_denonciation",
         "motif_denonciation",
         "adresse",
+        "parent",
     )
     list_select_related = (
         "programme__bailleur",
@@ -136,12 +136,11 @@ class ConventionAdmin(ApilosModelAdmin):
         "uuid",
         "bailleur",
         "administration",
-        "parent",
         "numero_pour_recherche",
         "cree_par",
         "cree_le",
     )
-    autocomplete_fields = ("programme", "lot")
+    autocomplete_fields = ("programme", "lot", "parent")
     list_filter = (
         IsAvenantFilter,
         ("statut", StatutFilter),
