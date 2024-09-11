@@ -55,6 +55,7 @@ def get_text_and_files_from_field(name, field):
         returned_files[str(file.uuid)] = {
             "uuid": str(file.uuid),
             "filename": file.filename,
+            "realname": file.realname,
             "size": file.size,
             "content_type": file.content_type,
             "thumbnail": (
