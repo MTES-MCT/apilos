@@ -69,13 +69,14 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "surface_utile_totale",
         "type_operation",
         "search_vector",
+        "parent",
     )
     readonly_fields = (
         "uuid",
         "search_vector",
         "numero_operation_pour_recherche",
     )
-    autocomplete_fields = ("administration", "bailleur")
+    autocomplete_fields = ("administration", "bailleur", "parent")
     list_filter = (
         IsCloneFilter,
         "nature_logement",
@@ -124,11 +125,12 @@ class LotAdmin(ApilosModelAdmin):
         "nb_logements",
         "type_habitat",
         "programme",
+        "parent",
     )
 
     readonly_fields = ("uuid",)
 
-    autocomplete_fields = ("programme",)
+    autocomplete_fields = ("programme", "parent")
 
 
 @admin.register(Annexe)
