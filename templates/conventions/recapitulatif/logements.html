@@ -18,7 +18,7 @@
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                     </div>
                     {% if logements %}
-                        <div class="fr-table">
+                        <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
                                     <div class="fr-table__content">
