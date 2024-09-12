@@ -7,23 +7,23 @@
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
                 {% if filtered_conventions_count > 0 %}
-                    <div class="fr-table fr-table--bordered table--layout-fixed">
+                    <div class="fr-table table--header-lg fr-table--sm">
+                        {% if filtered_conventions_count != all_conventions_count %}
+                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
+                                <div class="fr-grid-row fr-col-12">
+
+                                    <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
+                                    <a href="/" class="fr-link">
+                                        <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                        Réinitialiser la recherche
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
                                     <table aria-label="Conventions">
-                                        {% if filtered_conventions_count != all_conventions_count %}
-                                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                                                <div class="fr-grid-row fr-col-12">
-
-                                                    <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
-                                                    <a href="/" class="fr-link">
-                                                        <span class="fr-icon-close-circle-line fr-mr-1w"></span>
-                                                        Réinitialiser la recherche
-                                                    </a>
-                                                </div>
-                                            </div>
-                                        {% endif %}
                                         <thead>
                                             <tr class="th_inline">
                                                 {% if debug_search_scoring %}

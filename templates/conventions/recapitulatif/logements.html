@@ -18,7 +18,7 @@
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                     </div>
                     {% if logements %}
-                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                        <div class="fr-table">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
                                     <div class="fr-table__content">
@@ -113,7 +113,7 @@
 
                             {% if convention.ecolo_reference and repartition_surfaces %}
                                 <p class="fr-my-2w notes"><em>Cependant, vous avez déclaré depuis Ecoloweb la répartition des logement suivante:</em></p>
-                                <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                                <div class="fr-table table--limited-height">
                                     <div class="fr-table__wrapper">
                                         <div class="fr-table__container">
                                             <div class="fr-table__content">
