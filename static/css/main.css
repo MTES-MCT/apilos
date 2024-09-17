@@ -163,7 +163,7 @@ details > summary::-webkit-details-marker {
   color: #e10600;
 }
 
-.table--limited-height {
+.fr-table.table--limited-height .fr-table__content{
   max-height: 400px;
   overflow-y: auto;
 }
@@ -662,17 +662,15 @@ a[href].apilos-block-faqlink:after {
 .apilos-order-menu .apilos-order-menu--open a {
   background-image: none;
 }
-table.fullwidth {
-  width: 100%;
+
+.fr-table--sm.table--header-lg .fr-table__content th {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
-.table--layout-fixed {
-  width: 100%;
-}
-
-.table--layout-fixed table {
-  display: table;
-  /* table-layout: fixed; */
+.fr-table .fr-table__wrapper .fr-table__content table th,
+.fr-table .fr-table__wrapper .fr-table__content table td {
+  white-space: normal;
 }
 
 .clickable {
@@ -730,10 +728,12 @@ table.fullwidth {
 .fr-link--sm:before {
   margin: 0.1rem !important;
 }
-.fr-table--bordered tbody tr:hover {
-  background-color: white;
+.table--hover-animation tbody tr:hover {
   transform: scale(1.02);
   background-size: 98% 1px;
+}
+.table--hover-animation tbody tr:hover td{
+  background-color: #f6f6f6;
 }
 
 .apilos-link {

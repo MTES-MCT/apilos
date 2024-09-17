@@ -19,7 +19,7 @@
                     </div>
                     {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale|get_text_from_textfiles file_list=programme.reference_cadastrale|get_files_from_textfiles %}
                     {% if reference_cadastrales %}
-                        <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
+                        <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
                                     <div class="fr-table__content">
