@@ -272,6 +272,11 @@ urlpatterns = [
         name="sent",
     ),
     path(
+        "validate_sign/<convention_uuid>",
+        views.ConventionValidateSignView.as_view(),
+        name="validate_sign",
+    ),
+    path(
         "display_pdf/<convention_uuid>",
         views.display_pdf,
         name="display_pdf",

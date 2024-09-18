@@ -609,3 +609,16 @@ class ConventionSentService(ConventionService):
                 "upform": upform,
             },
         }
+
+
+class ConventionValidateSignService(ConventionService):
+    # convention: Convention
+    # request: HttpRequest
+    # upform: UploadForm = UploadForm()
+    # return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
+
+    def get(self):
+        return {"convention": self.convention}
+
+    def save(self):
+        return

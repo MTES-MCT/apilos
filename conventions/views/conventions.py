@@ -42,6 +42,7 @@ from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
+    ConventionValidateSignService,
     convention_denonciation_validate,
     convention_feedback,
     convention_resiliation_validate,
@@ -504,12 +505,28 @@ class ConventionSentView(BaseConventionView):
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
-                reverse("conventions:preview", args=[convention_uuid])
+                reverse("conventions:validate_sign", args=[convention_uuid])
             )
 
         return render(
             request,
             "conventions/sent.html",
+            {
+                **result,
+            },
+        )
+
+
+class ConventionValidateSignView(BaseConventionView):
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionValidateSignService(
+            convention=self.convention, request=request
+        )
+        result = service.get()
+        return render(
+            request,
+            "conventions/validate_sign.html",
             {
                 **result,
             },
