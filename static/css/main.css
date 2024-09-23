@@ -663,7 +663,8 @@ a[href].apilos-block-faqlink:after {
   background-image: none;
 }
 
-.fr-table--sm.table--header-lg .fr-table__content th {
+.fr-table--sm.table--vertical-lg .fr-table__content th,
+.fr-table--sm.table--vertical-lg .fr-table__content td {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
