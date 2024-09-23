@@ -240,7 +240,10 @@ def _find_or_create_entity(
                 f"Error while get bailleur fusion : {str(exc)}"
             ) from exc
 
-    if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_GEST:
+    if from_habilitation["groupe"]["profil"]["code"] in [
+        GroupProfile.SIAP_SER_GEST,
+        GroupProfile.SIAP_SER_DEP,
+    ]:
         # create if not exists gestionnaire
         administration = get_or_create_administration(from_habilitation["gestionnaire"])
         request.session["administration"] = model_to_dict(
