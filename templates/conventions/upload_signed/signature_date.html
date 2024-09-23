@@ -1,0 +1,40 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Envoi - APiLos {% endblock%}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html"%}
+        {% include "common/nav_bar.html" with nav_bar_step="sent" %}
+
+        <div class="fr-container fr-py-5w">
+            {% include "conventions/common/stepper.html"%}
+            <h4>Indiquez la date de signature de la convention</h4>
+            <form method="POST">
+                {% csrf_token %}
+                <div class="fr-grid-row">
+                    <div class="fr-col-4">
+                        {% include "common/form/input_date.html" with form_input=signature_date_form.televersement_convention_signee_le editable=True %}
+                    </div>
+                </div>
+
+                <ul class="fr-my-7w fr-btns-group fr-btns-group--inline-md fr-btns-group--right">
+                    <li>
+                        <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}">
+                            Annuler
+                        </a>
+                    </li>
+                    <li>
+                        <button type="submit" class="fr-btn">
+                            Valider le document et la date de signature
+                        </button>
+                    </li>
+                </ul>
+            </form>
+
+            {% include "conventions/actions/back_to_instruction.html" %}
+        </div>
+    </div>
+{% endblock %}

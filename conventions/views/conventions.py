@@ -505,7 +505,7 @@ class ConventionSentView(BaseConventionView):
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
-                reverse("conventions:validate_sign", args=[convention_uuid])
+                reverse("conventions:preview_upload_signed", args=[convention_uuid])
             )
 
         return render(
@@ -517,16 +517,53 @@ class ConventionSentView(BaseConventionView):
         )
 
 
-class ConventionValidateSignView(BaseConventionView):
+class ConventionPreviewUploadSignedView(BaseConventionView):
+
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         service = ConventionValidateSignService(
-            convention=self.convention, request=request
+            convention=self.convention, request=request, step_number=1
         )
         result = service.get()
         return render(
             request,
-            "conventions/validate_sign.html",
+            "conventions/upload_signed/preview_document.html",
+            {
+                **result,
+            },
+        )
+
+
+class ConventionDateUploadSignedView(BaseConventionView):
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionValidateSignService(
+            convention=self.convention, request=request, step_number=2
+        )
+        result = service.get()
+        return render(
+            request,
+            "conventions/upload_signed/signature_date.html",
+            {
+                **result,
+            },
+        )
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionValidateSignService(
+            convention=self.convention, request=request, step_number=2
+        )
+        result = service.save()
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            "conventions/sent.html",
             {
                 **result,
             },
