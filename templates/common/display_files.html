@@ -4,7 +4,7 @@
         <div class='fr-mx-1w dz-image'>
             <img class="small_thumbnail" {% if file.thumbnail %}src='{{file.thumbnail}}'{% endif %}/>
         </div>
-        <a class='fr-mx-1w' href='{% url 'upload:display_file' convention_uuid=convention.uuid uploaded_file_uuid=file.uuid %}'>{{file.realname}}</a>
+        <a class='fr-mx-1w' href='{% url 'upload:display_file' convention_uuid=convention.uuid uploaded_file_uuid=file.uuid %}'>{{file.realname|default:file.filename}}</a>
         - <span class='fr-mx-1w'>{{file.size|filesizeformat}}</span>
     </div>
 {% endfor %}

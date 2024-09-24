@@ -58,7 +58,6 @@ from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.models import UploadedFile
-from upload.services import UploadService
 
 template_sent = "conventions/sent.html"
 
@@ -373,11 +372,16 @@ def get_or_generate_cerfa(request, convention_uuid):
     if len(files) > 0:
         file_dict = files[0]
         uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
-        file = UploadService().get_file(uploaded_file.filepath(convention_uuid))
-
         return FileResponse(
-            file,
-            filename=file_dict["filename"],
+            default_storage.open(
+                name=uploaded_file.filepath(convention_uuid),
+                mode="rb",
+            ),
+            filename=(
+                file_dict["realname"]
+                if "realname" in file_dict
+                else file_dict["filename"]
+            ),
             as_attachment=True,
         )
     return generate_convention(request, convention_uuid)
@@ -662,6 +666,8 @@ def resiliation_start(request, convention_uuid):
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
+    convention_path = f"conventions/{convention.uuid}/convention_docs"
+
     filename = None
     if (
         convention.statut
@@ -673,25 +679,20 @@ def display_pdf(request, convention_uuid):
             ConventionStatut.A_SIGNER.label,
         ]
         and convention.nom_fichier_signe
-        and default_storage.exists(
-            f"conventions/{convention.uuid}/convention_docs/{convention.nom_fichier_signe}"
-        )
+        and default_storage.exists(f"{convention_path}/{convention.nom_fichier_signe}")
     ):
         filename = convention.nom_fichier_signe
-    elif default_storage.exists(
-        f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.pdf"
-    ):
+    elif default_storage.exists(f"{convention_path}/{convention.uuid}.pdf"):
         filename = f"{convention.uuid}.pdf"
-    elif default_storage.exists(
-        f"conventions/{convention.uuid}/convention_docs/{convention.uuid}.docx"
-    ):
+    elif default_storage.exists(f"{convention_path}/{convention.uuid}.docx"):
         filename = f"{convention.uuid}.docx"
+
     if filename:
         return FileResponse(
-            UploadService(
-                convention_dirpath=f"conventions/{convention.uuid}/convention_docs",
-                filename=filename,
-            ).get_file(),
+            default_storage.open(
+                name=f"{convention_path}/{filename}",
+                mode="rb",
+            ),
             filename=filename,
         )
 
