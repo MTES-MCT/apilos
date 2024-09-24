@@ -72,7 +72,7 @@ class TestConventionDateUploadSignedView:
         assert response.status_code == 302
         assert (
             response.headers["Location"]
-            == "/conventions/post_action/42196b48-1cdd-4ccb-b14b-d42c38269f11"
+            == f"/conventions/post_action/{convention.uuid}"
         )
         assert convention.televersement_convention_signee_le == datetime.date(
             2024, 8, 9
