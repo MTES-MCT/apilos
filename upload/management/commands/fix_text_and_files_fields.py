@@ -85,8 +85,15 @@ class Command(BaseCommand):
             )
             return
 
+        is_candidate: bool = False
         for v in json_content["files"].values():
+            if not is_candidate and "filename" in v:
+                is_candidate = True
             v.update({"realname": v["filename"]})
+
+        if not is_candidate:
+            self.stdout.write("No change needed.")
+            return
 
         setattr(instance, field_name, json.dumps(json_content))
 
