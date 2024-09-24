@@ -1,5 +1,6 @@
 import json
 import re
+from collections.abc import Generator
 from os.path import splitext
 from pathlib import Path
 
@@ -21,9 +22,7 @@ class Command(BaseCommand):
                 upload_file_uuid=uuids["upload_file_uuid"],
             )
 
-    def _load_uuids_from_log(self) -> list[dict[str, str]]:
-        uuids = []
-
+    def _load_uuids_from_log(self) -> Generator[dict[str, str]]:
         log_filepath = Path(
             settings.BASE_DIR,
             "upload",
@@ -31,21 +30,27 @@ class Command(BaseCommand):
             "commands",
             "s3-backup-errors.log",
         )
+        self.stdout.write(f"Reading log file {log_filepath}")
+
+        pattern = re.compile(
+            r"apilos-prod/conventions/([0-9a-fA-F-]+)/media/([0-9a-fA-F-]+)"
+        )
+
         with open(log_filepath) as f:
-            pattern = re.compile(
-                r"apilos-prod/conventions/([0-9a-fA-F-]+)/media/([0-9a-fA-F-]+)"
-            )
             for line in f.readlines():
                 parts = pattern.findall(line)[0]
-                assert len(parts) == 2, f"Expected 2 UUIDs, got {len(parts)}"
-                uuids.append(
-                    {
-                        "convention_uuid": parts[0],
-                        "upload_file_uuid": parts[1],
-                    }
-                )
+                if not len(parts) == 2:
+                    self.stdout.write(
+                        self.style.ERROR(
+                            f"Failed to parse line, expected 2 UUIDs, got {len(parts)}"
+                        )
+                    )
+                    continue
 
-        return uuids
+                yield {
+                    "convention_uuid": parts[0],
+                    "upload_file_uuid": parts[1],
+                }
 
     def _get_conv_upload_fields(self) -> list[str]:
         return [
@@ -56,10 +61,22 @@ class Command(BaseCommand):
 
     def _handle_conv_upload(self, convention_uuid: str, upload_file_uuid: str):
         convention = Convention.objects.filter(uuid=convention_uuid).first()
-        assert convention is not None, f"Convention {convention_uuid} not found"
+        if convention is None:
+            self.stdout.write(
+                self.style.ERROR(f"Convention {convention_uuid} not found")
+            )
+            return
 
         uploaded_file = UploadedFile.objects.filter(uuid=upload_file_uuid).first()
-        assert uploaded_file is not None, f"UploadedFile {upload_file_uuid} not found"
+        if uploaded_file is None:
+            self.stdout.write(
+                self.style.ERROR(f"UploadedFile {upload_file_uuid} not found")
+            )
+            return
+
+        self.stdout.write(
+            f"Processing convention {convention_uuid} and upload {upload_file_uuid}"
+        )
 
         for field_name in self._get_conv_upload_fields():
             if not (field_value := getattr(convention, field_name)):
@@ -82,6 +99,9 @@ class Command(BaseCommand):
                 json_field_value["files"][upload_file_uuid]["filename"]
             )
             new_filename = f"{slugify(name)}{extension}"
+            self.stdout.write(
+                f"Changing {json_field_value['files'][upload_file_uuid]['filename']} to {new_filename}"
+            )
 
             with transaction.atomic():
                 # update the convention field value

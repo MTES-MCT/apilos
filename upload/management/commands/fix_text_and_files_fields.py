@@ -48,6 +48,10 @@ class Command(BaseCommand):
         if not field:
             return
 
+        self.stdout.write(
+            self.style.SUCCESS(f"Processing {instance} field {field_name}")
+        )
+
         try:
             json_content = json.loads(field)
         except json.JSONDecodeError:
