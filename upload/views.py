@@ -1,3 +1,4 @@
+from django.core.files.storage import default_storage
 from django.http.response import FileResponse, JsonResponse
 from django.views.decorators.http import require_GET, require_POST
 
@@ -31,11 +32,12 @@ def _compute_dirpath(request):
 @require_GET
 def display_file(request, convention_uuid, uploaded_file_uuid):
     uploaded_file = UploadedFile.objects.get(uuid=uploaded_file_uuid)
-    file = UploadService().get_file(uploaded_file.filepath(convention_uuid))
-
     return FileResponse(
-        file,
-        filename=uploaded_file.filename,
+        default_storage.open(
+            name=uploaded_file.filepath(convention_uuid),
+            mode="rb",
+        ),
+        filename=uploaded_file.realname,
         as_attachment=True,
     )
 
