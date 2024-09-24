@@ -42,7 +42,7 @@ from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
-    ConventionValidateSignService,
+    ConventionUploadSignedService,
     convention_denonciation_validate,
     convention_feedback,
     convention_resiliation_validate,
@@ -523,7 +523,7 @@ class ConventionPreviewUploadSignedView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        service = ConventionValidateSignService(
+        service = ConventionUploadSignedService(
             convention=self.convention, request=request, step_number=1
         )
         result = service.get()
@@ -540,7 +540,7 @@ class ConventionDateUploadSignedView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        service = ConventionValidateSignService(
+        service = ConventionUploadSignedService(
             convention=self.convention, request=request, step_number=2
         )
         result = service.get()
@@ -554,7 +554,7 @@ class ConventionDateUploadSignedView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        service = ConventionValidateSignService(
+        service = ConventionUploadSignedService(
             convention=self.convention, request=request, step_number=2
         )
         result = service.save()

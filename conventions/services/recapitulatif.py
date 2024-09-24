@@ -602,10 +602,9 @@ class ConventionSentService(ConventionService):
             ConventionFileService.upload_convention_file(
                 self.convention, self.request.FILES["file"], update_statut=False
             )
-            self.result_status = utils.ReturnStatus.SUCCESS
-
+            self.return_status = utils.ReturnStatus.SUCCESS
         return {
-            "success": self.result_status,
+            "success": self.return_status,
             "convention": self.convention,
             "upform": upform,
             "extra_forms": {
@@ -614,13 +613,13 @@ class ConventionSentService(ConventionService):
         }
 
 
-class ConventionValidateSignService(ConventionService):
+class ConventionUploadSignedService(ConventionService):
 
     def __init__(
         self,
         convention: Convention,
         request: AuthenticatedHttpRequest,
-        step_number: int,
+        step_number: int = 1,
     ):
         super().__init__(convention, request)
         self.stepper = Stepper(
@@ -646,10 +645,10 @@ class ConventionValidateSignService(ConventionService):
             ]
             self.convention.statut = ConventionStatut.SIGNEE.label
             self.convention.save()
-            self.result_status = utils.ReturnStatus.SUCCESS
+            self.return_status = utils.ReturnStatus.SUCCESS
 
         return {
-            "success": self.result_status,
+            "success": self.return_status,
             "convention": self.convention,
             "form": form,
         }
