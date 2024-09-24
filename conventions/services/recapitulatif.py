@@ -615,10 +615,6 @@ class ConventionSentService(ConventionService):
 
 
 class ConventionValidateSignService(ConventionService):
-    # convention: Convention
-    # request: HttpRequest
-    # upform: UploadForm = UploadForm()
-    # return_status: utils.ReturnStatus = utils.ReturnStatus.ERROR
 
     def __init__(
         self,

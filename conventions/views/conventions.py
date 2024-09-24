@@ -59,6 +59,8 @@ from programmes.services import LoyerRedevanceUpdateComputer
 from upload.models import UploadedFile
 from upload.services import UploadService
 
+path_to_sent = "conventions/sent.html"
+
 
 class RecapitulatifView(BaseConventionView):
     forms: dict
@@ -493,7 +495,7 @@ class ConventionSentView(BaseConventionView):
         result = service.get()
         return render(
             request,
-            "conventions/sent.html",
+            path_to_sent,
             {
                 **result,
             },
@@ -510,7 +512,7 @@ class ConventionSentView(BaseConventionView):
 
         return render(
             request,
-            "conventions/sent.html",
+            path_to_sent,
             {
                 **result,
             },
@@ -563,7 +565,7 @@ class ConventionDateUploadSignedView(BaseConventionView):
 
         return render(
             request,
-            "conventions/sent.html",
+            path_to_sent,
             {
                 **result,
             },
