@@ -675,7 +675,6 @@ def journal(request, convention_uuid):
             )
         # Handle submitted data
         if action == "submit":
-            form = EvenementForm(request.POST)
             form = EvenementForm(
                 {
                     "uuid": request.POST.get("uuid"),
