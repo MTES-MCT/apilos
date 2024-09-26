@@ -4,6 +4,14 @@
 
 {% load static %}
 
+{% block javascript_extras %}
+    {% include "conventions/common/dropzone_js.html" %}
+{% endblock %}
+
+{% block css_extras %}
+    {% include "conventions/common/dropzone_css.html" %}
+{% endblock %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html"%}
@@ -20,11 +28,13 @@
                                 <div class="fr-col-12 fr-mb-2w">
                                     {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
                                 </div>
-
-                                <div class="fr-col-12 fr-mb-4w">
+                                <div class="fr-col-12 fr-mb-2w">
                                     {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
                                 </div>
-
+                                <div class="fr-col-12 fr-mb-4w">
+                                    <label class="fr-label">Ajouter un fichier (optionnel)</label>
+                                    {% include "common/form/input_upload.html" with no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
+                                </div>
                                 <div class="fr-grid-row fr-grid-row--right">
                                     <div class="fr-mr-4w fr-mt-1w">
                                         <a class="fr-link" href={% url 'conventions:journal' convention_uuid=convention.uuid %}>Annuler</a>
@@ -65,8 +75,12 @@
                                             {% include "common/form/input_select.html" with form_input=form.type_evenement editable=True %}
                                         </div>
 
-                                        <div class="fr-col-12 fr-mb-4w">
+                                        <div class="fr-col-12 fr-mb-2w">
                                             {% include "common/form/input_textarea.html" with form_input=form.description editable=True %}
+                                        </div>
+                                        <div class="fr-col-12 fr-mb-4w">
+                                            <label class="fr-label">Ajouter des fichiers (optionnel)</label>
+                                            {% include "common/form/input_upload.html" with no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
                                         </div>
                                     </div>
                                     <div class="fr-grid-row fr-grid-row--right">
@@ -100,6 +114,9 @@
                                     </div>
                                 </div>
                                 <div class="fr-col-12 fr-ml-4w">{{ evenement.description|linebreaksbr }}</div>
+                                <div class="fr-col-12 fr-ml-4w">
+                                    {% include "common/display_text_and_files_if_exists.html" with label="Fichiers joints" text=evenement.pieces_jointes|get_text_from_textfiles file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:evenement.uuid %}
+                                </div>
                             </div>
                         </div>
                     {% endif %}

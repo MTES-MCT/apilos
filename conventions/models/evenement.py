@@ -22,6 +22,7 @@ class Evenement(models.Model):
     )
     survenu_le = models.DateField(editable=False)
     description = models.TextField(null=True, blank=True)
+    pieces_jointes = models.TextField(blank=True)
 
     def save(
         self, force_insert=False, force_update=False, using=None, update_fields=None

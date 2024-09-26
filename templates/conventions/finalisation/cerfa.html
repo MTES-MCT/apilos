@@ -5,15 +5,12 @@
 {% load static %}
 
 {% block javascript_extras %}
-    <script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+    {% include "conventions/common/dropzone_js.html" %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
 {% endblock %}
 
 {% block css_extras %}
-    <link rel="stylesheet" href="{% static "dropzonejs/min/basic.min.css" %}">
-    <link rel="stylesheet" href="{% static "dropzonejs/min/dropzone.min.css" %}">
+    {% include "conventions/common/dropzone_css.html" %}
 {% endblock %}
 
 {% block content %}
@@ -45,7 +42,7 @@
                     </div>
                     <form id="cerfa-form" method="post" action="{% url 'conventions:finalisation_cerfa' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
-                        {% include "common/form/input_upload.html" with form_input=form.fichier_override_cerfa form_input_files=form.fichier_override_cerfa_files object_name='convention' single_file=True override_cerfa=True object_uuid=convention.uuid file_list=convention.fichier_override_cerfa|get_files_from_textfiles object_field="convention__fichier_override_cerfa__"|add:form.uuid.value %}
+                        {% include "common/form/input_upload.html" with form_input=form.fichier_override_cerfa form_input_files=form.fichier_override_cerfa_files object_name='convention' single_file=True override_cerfa=True no_title=True object_uuid=convention.uuid file_list=convention.fichier_override_cerfa|get_files_from_textfiles object_field="convention__fichier_override_cerfa__"|add:form.uuid.value %}
                     </form>
                 </div>
             </section>

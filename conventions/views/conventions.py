@@ -34,7 +34,7 @@ from conventions.permissions import (
     currentrole_campaign_permission_required_view_function,
     currentrole_permission_required,
 )
-from conventions.services import convention_generator
+from conventions.services import convention_generator, utils
 from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import convention_post_action
@@ -667,23 +667,45 @@ def journal(request, convention_uuid):
                     uuid=selected.uuid,
                     description=selected.description,
                     type_evenement=selected.type_evenement,
+                    **utils.get_text_and_files_from_field(
+                        "pieces_jointes",
+                        selected.pieces_jointes,
+                    ),
                 )
             )
         # Handle submitted data
         if action == "submit":
-            form = EvenementForm(request.POST)
+            form = EvenementForm(
+                {
+                    "uuid": request.POST.get("uuid"),
+                    "description": request.POST.get("description"),
+                    "type_evenement": request.POST.get("type_evenement"),
+                    **utils.init_text_and_files_from_field(
+                        request, None, "pieces_jointes"
+                    ),
+                }
+            )
             if form.is_valid():
                 if form.cleaned_data["uuid"] is not None:
                     evenement = Evenement.objects.get(uuid=form.cleaned_data["uuid"])
                     evenement.description = form.cleaned_data["description"]
                     evenement.type_evenement = form.cleaned_data["type_evenement"]
+                    evenement.pieces_jointes = utils.set_files_and_text_field(
+                        form.cleaned_data["pieces_jointes_files"],
+                        form.cleaned_data["pieces_jointes"],
+                    )
                     evenement.save()
                 else:
-                    Evenement.objects.create(
+                    evenement = Evenement.objects.create(
                         convention=convention,
                         description=form.cleaned_data["description"],
                         type_evenement=form.cleaned_data["type_evenement"],
                     )
+                    evenement.pieces_jointes = utils.set_files_and_text_field(
+                        form.cleaned_data["pieces_jointes_files"],
+                        form.cleaned_data["pieces_jointes"],
+                    )
+                    evenement.save()
 
     return render(
         request,

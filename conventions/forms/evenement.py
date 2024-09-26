@@ -13,3 +13,8 @@ class EvenementForm(forms.Form):
         label="Type d'évènement",
         choices=TypeEvenement.choices,
     )
+    pieces_jointes = forms.CharField(required=False, label="Fichier joint")
+    pieces_jointes_files = forms.CharField(
+        required=False,
+        help_text="Les fichiers de type docx sont acceptés dans la limite de 100 Mo",
+    )
