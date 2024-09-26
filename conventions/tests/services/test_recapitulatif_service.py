@@ -3,6 +3,7 @@ from unittest import mock
 from unittest.mock import patch
 
 import pytest
+import time_machine
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
@@ -449,18 +450,23 @@ class TestConventionUploadSignedService:
         service = recapitulatif.ConventionUploadSignedService(
             convention=convention, request=request
         )
+        with time_machine.travel("2024-06-21"):
+            result = service.get()
 
-        result = service.get()
-
-        assert len(result) == 3
-        assert result["convention"] == convention
-        assert isinstance(result["form_step"], dict)
-        assert isinstance(result["signature_date_form"], ConventionDateSignatureForm)
+            assert len(result) == 3
+            assert result["convention"] == convention
+            assert isinstance(result["form_step"], dict)
+            assert isinstance(
+                result["signature_date_form"], ConventionDateSignatureForm
+            )
+            assert result["signature_date_form"].initial == {
+                "televersement_convention_signee_le": "2024-06-21"
+            }
 
     def test_save(self):
         convention = ConventionFactory()
         request = RequestFactory().post(
-            "/", data={"televersement_convention_signee_le": "08/09/2024"}
+            "/", data={"televersement_convention_signee_le": "15/04/2023"}
         )
         service = recapitulatif.ConventionUploadSignedService(
             convention=convention, request=request

@@ -633,7 +633,13 @@ class ConventionUploadSignedService(ConventionService):
     def get(self):
         return {
             "convention": self.convention,
-            "signature_date_form": ConventionDateSignatureForm(),
+            "signature_date_form": ConventionDateSignatureForm(
+                initial={
+                    "televersement_convention_signee_le": datetime.date.today().strftime(
+                        "%Y-%m-%d"
+                    )
+                }
+            ),
             "form_step": self.stepper.get_form_step(step_number=self.step_number),
         }
 
