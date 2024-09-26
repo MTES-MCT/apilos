@@ -1,6 +1,7 @@
 import datetime
 
 import pytest
+from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory
 from django.urls import reverse
 
@@ -44,6 +45,8 @@ class TestConventionDateUploadSignedView:
         user = UserFactory(is_superuser=True)
         request.user = user
         request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
 
         response = ConventionDateUploadSignedView.as_view()(
             request, convention_uuid=convention.uuid
@@ -63,6 +66,8 @@ class TestConventionDateUploadSignedView:
         user = UserFactory(is_superuser=True)
         request.user = user
         request.session = "session"
+        messages = FallbackStorage(request)
+        request._messages = messages
 
         response = ConventionDateUploadSignedView.as_view()(
             request, convention_uuid=convention.uuid
