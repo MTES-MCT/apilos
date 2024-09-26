@@ -61,6 +61,6 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
 
 @receiver(post_delete, sender=Lot)
 def remove_lot(sender, instance, *args, **kwargs):
-    programme = Programme.objects.get(id=instance.programme_id)
-    if programme.conventions.count() == 0:
+    programme = Programme.objects.filter(id=instance.programme_id).first()
+    if programme and programme.conventions.count() == 0:
         programme.delete()
