@@ -658,3 +658,9 @@ class ConventionUploadSignedService(ConventionService):
             "convention": self.convention,
             "form": form,
         }
+
+    def get_success_message(self):
+        date_signature = self.convention.televersement_convention_signee_le.strftime(
+            "%d/%m/%Y"
+        )
+        return f"Convention signée avec succès le {date_signature}"

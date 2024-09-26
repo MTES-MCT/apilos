@@ -478,3 +478,17 @@ class TestConventionUploadSignedService:
         assert result["convention"] == convention
         assert isinstance(result["form"], ConventionDateSignatureForm)
         assert result["success"] == ReturnStatus.SUCCESS
+
+    def test_get_success_message(self):
+        convention = ConventionFactory()
+        request = RequestFactory().post(
+            "/", data={"televersement_convention_signee_le": "15/04/2023"}
+        )
+        service = recapitulatif.ConventionUploadSignedService(
+            convention=convention, request=request
+        )
+
+        service.save()
+        message = service.get_success_message()
+
+        assert message == "Convention signée avec succès le 15/04/2023"
