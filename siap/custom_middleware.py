@@ -167,6 +167,19 @@ def _find_or_create_entity(
         in GroupProfileRole.readonly_group_profile_roles()
     )
 
+    # Set admininistration in session for SIAP_SER_DEP to give access to "Votre administration"
+    if from_habilitation["groupe"]["profil"]["code"] == GroupProfile.SIAP_SER_DEP:
+        administration = get_or_create_administration(from_habilitation["gestionnaire"])
+        request.session["administration"] = model_to_dict(
+            administration,
+            fields=[
+                "id",
+                "uuid",
+                "code",
+                "nom",
+            ],
+        )
+
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_ADM_CENTRALE,
         GroupProfile.SIAP_ASS_HLM,
@@ -242,7 +255,6 @@ def _find_or_create_entity(
 
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_SER_GEST,
-        GroupProfile.SIAP_SER_DEP,
     ]:
         # create if not exists gestionnaire
         administration = get_or_create_administration(from_habilitation["gestionnaire"])
