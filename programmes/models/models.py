@@ -42,6 +42,11 @@ class Programme(models.Model):
             models.Index(fields=["code_postal"], name="programme_code_postal_idx"),
             models.Index(fields=["nom"], name="programme_nom_idx"),
             models.Index(fields=["-date_achevement_compile"]),
+            models.Index(fields=["code_insee_region"], name="prog_code_insee_reg_idx"),
+            models.Index(
+                fields=["code_insee_departement"],
+                name="prog_code_insee_dept_idx",
+            ),
             GinIndex(fields=["search_vector"], name="search_vector_programme_idx"),
         ]
 

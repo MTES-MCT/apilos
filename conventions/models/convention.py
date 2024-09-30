@@ -47,6 +47,7 @@ class Convention(models.Model):
                 fields=["televersement_convention_signee_le"],
                 name="convention_tele_signee_le_idx",
             ),
+            models.Index(fields=["cree_le"], name="convention_cree_le_idx"),
         ]
         constraints = [
             # https://github.com/betagouv/SPPNautInterface/issues/227
