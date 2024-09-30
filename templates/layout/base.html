@@ -61,16 +61,19 @@
         {% endblock %}
 
         <main role="main" class="contentAll">
-            <div class="fr-container">
-                {% for message in messages %}
-                    <div class="fr-alert {% if message.tags %}fr-alert--{{message.tags}}{% endif %} fr-mt-2w">
-                        <p>{{ message }}</p>
-                    </div>
-                {% endfor %}
-            </div>
+            {% block message %}
+                <div class="fr-container">
+                    {% for message in messages %}
+                        <div class="fr-alert {% if message.tags %}fr-alert--{{message.tags}}{% endif %} fr-mt-2w">
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}
 
             {% block content %}{% endblock %}
         </main>
+
 
         {% block footer %}
             {% include "layout/footer.html" %}
