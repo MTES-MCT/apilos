@@ -3,6 +3,7 @@ import re
 from django.core.management.base import BaseCommand
 from django.db.models import Count
 
+from conventions.models.choices import ConventionStatut
 from programmes.models import Programme
 
 
@@ -42,6 +43,23 @@ class Command(BaseCommand):
             if to_continue:
                 continue
             # cas simple, les lot sont tous de financement différent
+
+            if len(set(financements)) == 1:
+                # On vérifie si il y a une convention par lot et si il y a une
+                #  convnetion annulé en suivi, on la supprime
+                for programme in programmes:
+                    for lot in programme.lots.all():
+                        for convention in lot.conventions.all():
+                            if convention.statut == ConventionStatut.ANNULEE.label:
+                                self.stdout.write(
+                                    self.style.SUCCESS(
+                                        f"Convention {convention.id} supprimée"
+                                    )
+                                )
+                                convention.delete()
+                                count += 1
+                continue
+
             if len(set(financements)) != 2:
                 continue
 
