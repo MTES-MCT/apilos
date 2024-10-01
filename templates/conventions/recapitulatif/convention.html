@@ -1,14 +1,15 @@
 {% extends "conventions/recapitulatif/_card.html" %}
+{% load display_filters %}
 {% load custom_filters %}
 
 {% block card_classes %}fr-mt-1w{% endblock card_classes %}
-{% block title %}Convention{% endblock title %}
+{% block title %}{{convention|display_kind|capfirst}}{% endblock title %}
 
 {% block body %}
     <div class="table--limited-height">
         {% if request.user.is_instructeur %}
             <p class="fr-mt-1w fr-mb-0">
-                <strong>Numéro de convention : {{convention.numero}}</strong>
+                <strong>Numéro {{convention|display_kind_with_preposition}} : {{convention.numero}}</strong>
             </p>
             {% if request.session.is_expert %}
                 {% include "conventions/actions/edit_numero_convention.html" %}

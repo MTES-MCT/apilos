@@ -18,7 +18,7 @@
             <div class="fr-container fr-mt-5w">
                 {% if convention.statut == CONVENTION_STATUT.SIGNEE %}
                     <div class="fr-px-2w">
-                        Convention n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{convention|display_gender_terminaison}} le <span class="fr-ml-1v">{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</span>
+                        {{convention|display_kind|capfirst}} n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{convention|display_gender_terminaison}} le <span class="fr-ml-1v">{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</span>
                     </div>
                 {% endif %}
                 {% csrf_token %}
