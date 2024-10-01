@@ -1,5 +1,7 @@
+{% load display_filters %}
+
 <button class="fr-btn fr-btn--secondary" data-fr-opened="false" type="button" aria-controls="fr-modal-update-convention-number">
-    Éditer le numéro de convention
+    Éditer le numéro {{convention|display_kind_with_preposition}}
 </button>
 
 {% if conventionNumberForm.errors %}
@@ -18,8 +20,8 @@
                         {% csrf_token %}
                         <div class="fr-modal__content">
                             <div role="alert" class="fr-alert fr-alert--warning">
-                                <p class="fr-alert__title">Modifier le numéro de convention</p>
-                                <p>la modification de ce numero de convention peut avoir des conséquences ... </p>
+                                <p class="fr-alert__title">Modifier le numéro {{convention|display_kind_with_preposition}}</p>
+                                <p>La modification de ce numero {{convention|display_kind_with_preposition}} peut avoir des conséquences. </p>
                             </div>
                             {% include "common/form/input_text.html" with form_input=conventionNumberForm.convention_numero editable=True%}
 
@@ -33,7 +35,7 @@
                                 </li>
                                 <li>
                                     <button class="fr-btn fr-icon-checkbox-line" name='update_convention_number' value=1>
-                                        Changer le numéro de convention
+                                        Changer le numéro {{convention|display_kind_with_preposition}}
                                     </button>
                                 </li>
                             </ul>
