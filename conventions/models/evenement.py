@@ -24,11 +24,8 @@ class Evenement(models.Model):
     description = models.TextField(null=True, blank=True)
     pieces_jointes = models.TextField(blank=True)
 
-    def save(
-        self, force_insert=False, force_update=False, using=None, update_fields=None
-    ):
+    def save(self, *args, **kwargs) -> None:
         if not self.id and not self.survenu_le:
             # Définition de la data d'évènement à la date actuelle si omise à la création
             self.survenu_le = timezone.now()
-
-        super().save(force_insert, force_update, using, update_fields)
+        super().save(*args, **kwargs)
