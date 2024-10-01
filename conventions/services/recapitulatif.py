@@ -8,6 +8,7 @@ from django.utils import timezone
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
+from conventions.forms.convention_form_dates import ConventionDateSignatureForm
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -20,7 +21,9 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import task_generate_and_send
+from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
+from core.stepper import Stepper
 from programmes.models import Annexe, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -597,15 +600,67 @@ class ConventionSentService(ConventionService):
         upform = UploadForm(self.request.POST, self.request.FILES)
         if upform.is_valid():
             ConventionFileService.upload_convention_file(
-                self.convention, self.request.FILES["file"]
+                self.convention, self.request.FILES["file"], update_statut=False
             )
-            self.result_status = utils.ReturnStatus.SUCCESS
-
+            self.return_status = utils.ReturnStatus.SUCCESS
         return {
-            "success": self.result_status,
+            "success": self.return_status,
             "convention": self.convention,
             "upform": upform,
             "extra_forms": {
                 "upform": upform,
             },
         }
+
+
+class ConventionUploadSignedService(ConventionService):
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: AuthenticatedHttpRequest,
+        step_number: int = 1,
+    ):
+        super().__init__(convention, request)
+        self.stepper = Stepper(
+            steps=[
+                "Prévisualiser le document",
+                "Indiquer la date de signature",
+            ]
+        )
+        self.step_number = step_number
+
+    def get(self):
+        return {
+            "convention": self.convention,
+            "signature_date_form": ConventionDateSignatureForm(
+                initial={
+                    "televersement_convention_signee_le": datetime.date.today().strftime(
+                        "%Y-%m-%d"
+                    )
+                }
+            ),
+            "form_step": self.stepper.get_form_step(step_number=self.step_number),
+        }
+
+    def save(self):
+        form = ConventionDateSignatureForm(self.request.POST)
+        if form.is_valid():
+            self.convention.televersement_convention_signee_le = form.cleaned_data[
+                "televersement_convention_signee_le"
+            ]
+            self.convention.statut = ConventionStatut.SIGNEE.label
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+        return {
+            "success": self.return_status,
+            "convention": self.convention,
+            "form": form,
+        }
+
+    def get_success_message(self):
+        date_signature = self.convention.televersement_convention_signee_le.strftime(
+            "%d/%m/%Y"
+        )
+        return f"Convention signée avec succès le {date_signature}"

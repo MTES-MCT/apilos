@@ -5,6 +5,7 @@ from datetime import date
 from typing import Any
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
@@ -42,6 +43,7 @@ from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
+    ConventionUploadSignedService,
     convention_denonciation_validate,
     convention_feedback,
     convention_resiliation_validate,
@@ -57,6 +59,8 @@ from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from upload.models import UploadedFile
 from upload.services import UploadService
+
+template_sent = "conventions/sent.html"
 
 
 class RecapitulatifView(BaseConventionView):
@@ -492,7 +496,7 @@ class ConventionSentView(BaseConventionView):
         result = service.get()
         return render(
             request,
-            "conventions/sent.html",
+            template_sent,
             {
                 **result,
             },
@@ -504,12 +508,65 @@ class ConventionSentView(BaseConventionView):
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
-                reverse("conventions:preview", args=[convention_uuid])
+                reverse("conventions:preview_upload_signed", args=[convention_uuid])
             )
 
         return render(
             request,
-            "conventions/sent.html",
+            template_sent,
+            {
+                **result,
+            },
+        )
+
+
+class ConventionBaseUploadSignedView(BaseConventionView):
+    step_number: int
+    template_path: str
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionUploadSignedService(
+            convention=self.convention, request=request, step_number=self.step_number
+        )
+        result = service.get()
+        return render(
+            request,
+            self.template_path,
+            {
+                **result,
+            },
+        )
+
+
+class ConventionPreviewUploadSignedView(ConventionBaseUploadSignedView):
+    step_number: int = 1
+    template_path: str = "conventions/upload_signed/preview_document.html"
+
+
+class ConventionDateUploadSignedView(ConventionBaseUploadSignedView):
+    step_number: int = 2
+    template_path: str = "conventions/upload_signed/signature_date.html"
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionUploadSignedService(
+            convention=self.convention, request=request, step_number=2
+        )
+        result = service.save()
+        if result["success"] == ReturnStatus.SUCCESS:
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                service.get_success_message(),
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            template_sent,
             {
                 **result,
             },

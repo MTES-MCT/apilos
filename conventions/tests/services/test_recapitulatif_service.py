@@ -2,17 +2,22 @@ from datetime import date
 from unittest import mock
 from unittest.mock import patch
 
+import pytest
+import time_machine
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
 from comments.models import Comment, CommentStatut
+from conventions.forms.convention_form_dates import ConventionDateSignatureForm
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.programme_number import ProgrammeNumberForm
+from conventions.forms.upload import UploadForm
 from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
+from conventions.tests.factories import ConventionFactory
 from programmes.models import Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
@@ -403,3 +408,87 @@ class CollectInstructeurEmailsTestCase(TestCase):
 
                 self.assertEqual([], instructeur_emails)
                 self.assertEqual(ReturnStatus.WARNING, submitted)
+
+
+@pytest.mark.django_db
+class TestConventionSentService:
+    def test_get(self):
+        convention = ConventionFactory()
+        request = RequestFactory().get("/")
+        service = recapitulatif.ConventionSentService(
+            convention=convention, request=request
+        )
+
+        result = service.get()
+
+        assert len(result) == 3
+        assert result["convention"] == convention
+        assert isinstance(result["upform"], UploadForm)
+        assert result["upform"] == result["extra_forms"]["upform"]
+
+    def test_save_error(self):
+        convention = ConventionFactory()
+        request = RequestFactory().post("/", data={"file": "myfile"})
+        service = recapitulatif.ConventionSentService(
+            convention=convention, request=request
+        )
+
+        result = service.save()
+
+        assert len(result) == 4
+        assert result["success"] == ReturnStatus.ERROR
+        assert result["convention"] == convention
+        assert isinstance(result["upform"], UploadForm)
+        assert result["upform"] == result["extra_forms"]["upform"]
+
+
+@pytest.mark.django_db
+class TestConventionUploadSignedService:
+    def test_get(self):
+        convention = ConventionFactory()
+        request = RequestFactory().get("/")
+        service = recapitulatif.ConventionUploadSignedService(
+            convention=convention, request=request
+        )
+        with time_machine.travel("2024-06-21"):
+            result = service.get()
+
+            assert len(result) == 3
+            assert result["convention"] == convention
+            assert isinstance(result["form_step"], dict)
+            assert isinstance(
+                result["signature_date_form"], ConventionDateSignatureForm
+            )
+            assert result["signature_date_form"].initial == {
+                "televersement_convention_signee_le": "2024-06-21"
+            }
+
+    def test_save(self):
+        convention = ConventionFactory()
+        request = RequestFactory().post(
+            "/", data={"televersement_convention_signee_le": "15/04/2023"}
+        )
+        service = recapitulatif.ConventionUploadSignedService(
+            convention=convention, request=request
+        )
+
+        result = service.save()
+
+        assert len(result) == 3
+        assert result["convention"] == convention
+        assert isinstance(result["form"], ConventionDateSignatureForm)
+        assert result["success"] == ReturnStatus.SUCCESS
+
+    def test_get_success_message(self):
+        convention = ConventionFactory()
+        request = RequestFactory().post(
+            "/", data={"televersement_convention_signee_le": "15/04/2023"}
+        )
+        service = recapitulatif.ConventionUploadSignedService(
+            convention=convention, request=request
+        )
+
+        service.save()
+        message = service.get_success_message()
+
+        assert message == "Convention signée avec succès le 15/04/2023"
