@@ -17,7 +17,7 @@ class ConventionLogementsService(ConventionService):
 
     def get(self):
         initial = []
-        logements = self.convention.lot.logements.all()
+        logements = self.convention.lot.logements.order_by("import_order")
         for logement in logements:
             initial.append(
                 {
@@ -67,6 +67,7 @@ class ConventionLogementsService(ConventionService):
                 Logement,
                 self.convention,
                 "logements.xlsx",
+                import_order=True,
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
@@ -142,6 +143,9 @@ class ConventionLogementsService(ConventionService):
                     f"form-{idx}-loyer": utils.get_form_value(
                         form_logement, logement, "loyer"
                     ),
+                    f"form-{idx}-import_order": utils.get_form_value(
+                        form_logement, logement, "import_order"
+                    ),
                 }
             else:
                 initformset = {
@@ -163,6 +167,7 @@ class ConventionLogementsService(ConventionService):
                     ].value(),
                     f"form-{idx}-coeficient": form_logement["coeficient"].value(),
                     f"form-{idx}-loyer": form_logement["loyer"].value(),
+                    f"form-{idx}-import_order": form_logement["import_order"].value(),
                 }
         self.formset = LogementFormSet(initformset)
         self.formset.programme_id = self.convention.programme_id
@@ -212,6 +217,7 @@ class ConventionLogementsService(ConventionService):
                 ]
                 logement.coeficient = form_logement.cleaned_data["coeficient"]
                 logement.loyer = form_logement.cleaned_data["loyer"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
                     lot=self.convention.lot,
@@ -228,6 +234,7 @@ class ConventionLogementsService(ConventionService):
                     ],
                     coeficient=form_logement.cleaned_data["coeficient"],
                     loyer=form_logement.cleaned_data["loyer"],
+                    import_order=form_logement.cleaned_data["import_order"],
                 )
             logement.save()
 
@@ -239,7 +246,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
 
     def get(self):
         initial = []
-        logements = self.convention.lot.logements.all()
+        logements = self.convention.lot.logements.order_by("import_order")
         for logement in logements:
             initial.append(
                 {
@@ -281,6 +288,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 "foyer_residence_logements.xlsx",
                 class_field_mapping="foyer_residence_import_mapping",
                 class_field_needed_mapping="foyer_residence_needed_in_mapping",
+                import_order=True,
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
@@ -330,6 +338,9 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     f"form-{idx}-loyer": utils.get_form_value(
                         form_logement, logement, "loyer"
                     ),
+                    f"form-{idx}-import_order": utils.get_form_value(
+                        form_logement, logement, "import_order"
+                    ),
                 }
             else:
                 initformset = {
@@ -340,6 +351,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                         "surface_habitable"
                     ].value(),
                     f"form-{idx}-loyer": form_logement["loyer"].value(),
+                    f"form-{idx}-import_order": form_logement["import_order"].value(),
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
         self.formset.lot_id = self.convention.lot_id
@@ -390,6 +402,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     "surface_habitable"
                 ]
                 logement.loyer = form_logement.cleaned_data["loyer"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
                     lot=self.convention.lot,
@@ -397,5 +410,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
                     loyer=form_logement.cleaned_data["loyer"],
+                    import_order=form_logement.cleaned_data["import_order"],
                 )
             logement.save()
