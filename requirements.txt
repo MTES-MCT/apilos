@@ -8,8 +8,8 @@ amqp==5.1.1 \
     --hash=sha256:2c1b13fecc0893e946c65cbd5f36427861cffa4ea2201d8f6fca22e2a373b5e2 \
     --hash=sha256:6f0956d2c23d8fa6e7691934d8c3930eadb44972cbbd1a7ae3a520f735d43359
     # via kombu
-api-insee==1.5 \
-    --hash=sha256:c69ecdc4ddc03308bb7fc68dff3fadd43706772c55aed8b703d70526485250a2
+api-insee==1.6 \
+    --hash=sha256:a7d5f6324e1ed432c7acd16a10e7abfed908fe41fc64c6d669748e75e35f9487
     # via -r requirements.in
 asgiref==3.8.1 \
     --hash=sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47 \
