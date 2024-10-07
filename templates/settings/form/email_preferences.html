@@ -14,8 +14,7 @@
                         id="tous"
                         value="TOUS"
                         {% if form_input.value == "TOUS" %}checked{% endif %}
-                        name="{{ form_input.html_name }}"
-                        {% include "common/form/disable_form_input.html" %}>
+                        name="{{ form_input.html_name }}">
                     <label class="fr-label" for="tous">
                         {% if user.is_bailleur %}
                             Toutes les conventions
@@ -35,8 +34,7 @@
                         id="partiel"
                         value="PARTIEL"
                         {% if form_input.value == "PARTIEL" %}checked{% endif %}
-                        name="{{ form_input.html_name }}"
-                        {% include "common/form/disable_form_input.html" %}>
+                        name="{{ form_input.html_name }}">
                     <label class="fr-label" for="partiel">
                         {% if user.is_bailleur %}
                             Les conventions que vous avez soumises à l'instruction
@@ -56,8 +54,7 @@
                         id="aucun"
                         value="AUCUN"
                         {% if form_input.value == "AUCUN" %}checked{% endif %}
-                        name="{{ form_input.html_name }}"
-                        {% include "common/form/disable_form_input.html" %}>
+                        name="{{ form_input.html_name }}">
                     <label class="fr-label" for="aucun">
                         {% if user.is_bailleur %}
                             Aucun email
