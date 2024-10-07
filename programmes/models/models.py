@@ -516,6 +516,10 @@ class Lot(models.Model):
     def annexes(self):
         return Annexe.objects.filter(logement__lot=self)
 
+    @property
+    def logements_import_ordered(self):
+        return self.logements.order_by("import_order")
+
     def clone(self, cloned_programme):
         parent_id = self.parent_id or self.id
         lot_fields = model_to_dict(
@@ -663,6 +667,7 @@ class Logement(models.Model):
     loyer = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    import_order = models.IntegerField(null=True, blank=True)
 
     import_mapping = {
         "Désignation des logements": designation,

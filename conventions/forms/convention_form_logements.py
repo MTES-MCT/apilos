@@ -81,6 +81,10 @@ class LotLgtsOptionForm(forms.Form):
             "required": "Le nombre de logements est obligatoire",
         },
     )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
+    )
 
 
 class LotFoyerResidenceLgtsDetailsForm(forms.Form):
@@ -219,6 +223,10 @@ class LogementForm(forms.Form):
             "required": "Le loyer est obligatoire",
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
+    )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
     )
 
     def clean_loyer(self):
@@ -456,6 +464,10 @@ class FoyerResidenceLogementForm(forms.Form):
             "required": "La redevance maximale est obligatoire",
             "max_digits": "La redevance maximale inférieur à 10000 €",
         },
+    )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
     )
 
 
