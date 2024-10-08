@@ -374,7 +374,6 @@ def convention_feedback(request: HttpRequest, convention: Convention):
             cc,
             notification_form.cleaned_data["from_instructeur"],
             notification_form.cleaned_data["comment"],
-            all_bailleur_users=(notification_form.cleaned_data["all_bailleur_users"]),
         )
         target_status = ConventionStatut.INSTRUCTION.label
         if notification_form.cleaned_data["from_instructeur"]:
@@ -407,7 +406,6 @@ def send_email_correction(
     cc,
     from_instructeur,
     comment=None,
-    all_bailleur_users=False,
 ):
     """
     send email to notify correction is needed of correction is done:
@@ -418,7 +416,7 @@ def send_email_correction(
 
     if from_instructeur:
         # Get bailleurs list following email preferences and interaction with the convention
-        to = convention.get_email_bailleur_users(all_bailleur_users=all_bailleur_users)
+        to = convention.get_email_bailleur_users()
         if convention.is_avenant():
             email_template_id = EmailTemplateID.ItoB_AVENANT_CORRECTIONS_REQUISES
         else:
