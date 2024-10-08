@@ -211,6 +211,10 @@ class LogementForm(forms.Form):
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
     )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
+    )
 
     def clean_loyer(self):
         """

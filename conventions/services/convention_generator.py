@@ -137,7 +137,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     adresse = _get_adresse(convention)
 
     # Logements should keep the importation order
-    logements = convention.lot.logements.all()
+    logements = convention.lot.logements.order_by("import_order")
 
     context = {
         **avenant_data,

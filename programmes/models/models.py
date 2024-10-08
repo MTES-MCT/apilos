@@ -656,6 +656,7 @@ class Logement(models.Model):
     loyer = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    import_order = models.IntegerField(null=True, blank=True)
 
     import_mapping = {
         "Désignation des logements": designation,
