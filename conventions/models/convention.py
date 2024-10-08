@@ -354,25 +354,13 @@ class Convention(models.Model):
     def get_last_instructeur_notification(self):
         return self._get_last_notification_by_role(TypeRole.INSTRUCTEUR)
 
-    def get_email_bailleur_users(self, all_bailleur_users=False):
+    def get_email_bailleur_users(self):
         """
-        return the email of the bailleurs to send them an email following their email preferences
+        return the email of the bailleurs to send them an email following their email
+         preferences
         partial should include only the bailleur which interact with the convention
         using convention statut
         """
-        if all_bailleur_users:
-            return list(
-                set(
-                    map(
-                        lambda x: x.email,
-                        [
-                            r.user
-                            for r in self.programme.bailleur.roles.all()
-                            if r.user.preferences_email != EmailPreferences.AUCUN
-                        ],
-                    )
-                )
-            )
         users_partial = list(
             set(
                 map(
@@ -394,7 +382,10 @@ class Convention(models.Model):
                 )
             )
         )
-        return users_partial + users_all_email
+        all_users = list(set(users_partial + users_all_email))
+        # TODO : Find a wait to catch when no bailleur is set and ask instructeur to set
+        #  one
+        return all_users
 
     def get_email_instructeur_users(self, include_partial: bool = False):
         """
