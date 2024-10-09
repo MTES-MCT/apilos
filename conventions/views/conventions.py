@@ -356,7 +356,7 @@ def denonciation_validate(request, convention_uuid):
 @login_required
 @currentrole_campaign_permission_required_view_function("convention.change_convention")
 def resiliation_validate(request, convention_uuid):
-    convention_resiliation_validate(request, convention_uuid)
+    convention_resiliation_validate(convention_uuid)
     return HttpResponseRedirect(
         reverse("conventions:post_action", args=[convention_uuid])
     )
