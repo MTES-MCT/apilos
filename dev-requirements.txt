@@ -198,9 +198,9 @@ filelock==3.8.0 \
     --hash=sha256:55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc \
     --hash=sha256:617eb4e5eedc82fc5f47b6d61e4d11cb837c56cb4544e39081099fa17ad109d4
     # via virtualenv
-honcho==1.1.0 \
-    --hash=sha256:a4d6e3a88a7b51b66351ecfc6e9d79d8f4b87351db9ad7e923f5632cc498122f \
-    --hash=sha256:c5eca0bded4bef6697a23aec0422fd4f6508ea3581979a3485fc4b89357eb2a9
+honcho==2.0.0 \
+    --hash=sha256:56dcd04fc72d362a4befb9303b1a1a812cba5da283526fbc6509be122918ddf3 \
+    --hash=sha256:af3815c03c634bf67d50f114253ea9fef72ecff26e4fd06b29234789ac5b8b2e
     # via -r dev-requirements.in
 identify==2.5.8 \
     --hash=sha256:48b7925fe122720088aeb7a6c34f17b27e706b72c61070f27fe3789094233440 \
