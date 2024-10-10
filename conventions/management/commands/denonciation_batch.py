@@ -48,11 +48,11 @@ class Command(BaseCommand):
 
     def convention_update(self, numero, date, mode: str):
         if mode == "resiliation":
-            statut = ConventionStatut.RESILIEE.label
-            date_name = "date_resiliation"
+            target_statut = ConventionStatut.RESILIEE.label
+            db_field_date_name = "date_resiliation"
         else:
-            statut = ConventionStatut.DENONCEE.label
-            date_name = "date_denonciation"
+            target_statut = ConventionStatut.DENONCEE.label
+            db_field_date_name = "date_denonciation"
         date_python = datetime.datetime.strptime(date, "%d/%m/%Y").date()
         user = User.objects.filter(email="sylvain.delabye@beta.gouv.fr").first()
         qs = Convention.objects.filter(numero=numero)
@@ -68,10 +68,10 @@ class Command(BaseCommand):
             )
 
         for convention in qs:
-            if convention.statut == statut:
+            if convention.statut == target_statut:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Convention {numero} already in statut {statut}"
+                        f"Convention {numero} already in statut {target_statut}"
                     )
                 )
                 return
@@ -91,7 +91,7 @@ class Command(BaseCommand):
         self.counter_success += 1
         self.stdout.write(
             f"Updated convention {numero} with statut "
-            f"{statut} and {date_name} {date_python}"
+            f"{target_statut} and {db_field_date_name} {date_python}"
         )
 
     def handle(self, *args, **options):
@@ -100,18 +100,16 @@ class Command(BaseCommand):
         numeros = options["numeros"]
         dates = options["dates"]
 
-        assert len(numeros) == len(dates)
+        if len(numeros) == len(dates):
+            self.stdout.write(
+                self.style.ERROR(
+                    f"There must be the same number of numeros ({len(numeros)}) and dates ({len(dates)})"
+                )
+            )
+            return
 
-        if mode == "denonciation":
-            for i in range(len(numeros)):
-                self.convention_update(
-                    numero=numeros[i], date=dates[i], mode="denonciaiton"
-                )
-        elif mode == "resiliation":
-            for i in range(len(numeros)):
-                self.convention_update(
-                    numero=numeros[i], date=dates[i], mode="resiliation"
-                )
+        for i in range(len(numeros)):
+            self.convention_update(numero=numeros[i], date=dates[i], mode=mode)
 
         self.stdout.write("===== EXECUTION SUMMARY ====== ")
         self.stdout.write(f"Conventions updated: {self.counter_success}")
