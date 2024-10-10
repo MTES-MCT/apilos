@@ -561,7 +561,7 @@ def convention_denonciation_validate(convention_uuid):
     }
 
 
-def convention_resiliation_validate(request, convention_uuid):
+def convention_resiliation_validate(convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
     parent = convention.parent
     date_resiliation = convention.date_resiliation
