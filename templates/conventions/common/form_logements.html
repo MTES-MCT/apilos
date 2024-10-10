@@ -83,6 +83,9 @@
                                             {% include "common/form/required_field_star.html" %}
                                         {% endif %}
                                     </th>
+                                    <th scope="col" class="col__width--120">
+                                        Ordre d'affichage
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -122,6 +125,9 @@
                                             </td>
                                             <td id="lgt_loyer">
                                                 {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td id="import_order">
+                                                {% include "common/form/input_number.html" with form_input=form.import_order step="1" parent_object_field=main_object_field editable=editable_after_upload %}
                                             </td>
                                         </tr>
                                     {% endwith %}

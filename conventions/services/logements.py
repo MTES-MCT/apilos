@@ -67,6 +67,7 @@ class ConventionLogementsService(ConventionService):
                 Logement,
                 self.convention,
                 "logements.xlsx",
+                import_order=True,
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
@@ -142,6 +143,9 @@ class ConventionLogementsService(ConventionService):
                     f"form-{idx}-loyer": utils.get_form_value(
                         form_logement, logement, "loyer"
                     ),
+                    f"form-{idx}-import_order": utils.get_form_value(
+                        form_logement, logement, "import_order"
+                    ),
                 }
             else:
                 initformset = {
@@ -163,6 +167,7 @@ class ConventionLogementsService(ConventionService):
                     ].value(),
                     f"form-{idx}-coeficient": form_logement["coeficient"].value(),
                     f"form-{idx}-loyer": form_logement["loyer"].value(),
+                    f"form-{idx}-import_order": form_logement["import_order"].value(),
                 }
         self.formset = LogementFormSet(initformset)
         self.formset.programme_id = self.convention.programme_id
@@ -212,6 +217,7 @@ class ConventionLogementsService(ConventionService):
                 ]
                 logement.coeficient = form_logement.cleaned_data["coeficient"]
                 logement.loyer = form_logement.cleaned_data["loyer"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
                     lot=self.convention.lot,
@@ -228,6 +234,7 @@ class ConventionLogementsService(ConventionService):
                     ],
                     coeficient=form_logement.cleaned_data["coeficient"],
                     loyer=form_logement.cleaned_data["loyer"],
+                    import_order=form_logement.cleaned_data["import_order"],
                 )
             logement.save()
 
