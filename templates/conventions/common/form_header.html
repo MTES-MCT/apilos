@@ -107,7 +107,7 @@
             </div>
         {% endif %}
     </div>
-    {% if convention.ecolo_reference %}
+    {% if convention.ecolo_reference and not request|is_readonly %}
         <div class="fr-container fr-pt-2w">
             <div role="alert" class="fr-col-12 fr-mb-3w apilos-alert apilos-alert-ecoloweb fr-pr-2w">
                 <p class="fr-text--lg">Cette convention a été importée automatiquement depuis <span class="fr-text--bold">Ecoloweb</span>, vous pouvez compléter ou corriger des informations en mode expert</p>
