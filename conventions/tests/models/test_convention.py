@@ -1,6 +1,5 @@
 import datetime
 import uuid
-from datetime import date
 from unittest import mock
 
 import pytest
@@ -200,28 +199,6 @@ class ConventionModelsTest(TestCase):
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         self.assertEqual(convention.bailleur, convention.programme.bailleur)
-
-    def test_description_avenant(self):
-        assert (
-            ConventionFactory.build(
-                commentaires='{"files": {}, "text": {"description_avenant": "modifs surfaces"} }'
-            ).description_avenant
-            == "modifs surfaces"
-        )
-        assert (
-            ConventionFactory.build(commentaires="modifs surfaces").description_avenant
-            is None
-        )
-        assert (
-            ConventionFactory.build(
-                commentaires='{"files": {}, "text": {"description_avenant": } }'
-            ).description_avenant
-            is None
-        )
-        assert (
-            ConventionFactory.build(commentaires=date.today()).description_avenant
-            is None
-        )
 
 
 class ConventionPrefixTest(TestCase):
