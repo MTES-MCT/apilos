@@ -215,23 +215,34 @@ class ConventionServiceGeneratorTest(TestCase):
     def test_generate_convention_doc(self):
         convention = Convention.objects.get(numero="0001")
         Logement.objects.create(
-            lot=convention.lot, typologie=TypologieLogement.T2, designation="Logement 2"
+            lot=convention.lot,
+            typologie=TypologieLogement.T2,
+            designation="Logement 2",
+            import_order=3,
         )
         Logement.objects.create(
-            lot=convention.lot, typologie=TypologieLogement.T2, designation="Logement 1"
+            lot=convention.lot,
+            typologie=TypologieLogement.T2,
+            designation="Logement 1",
+            import_order=1,
         )
         Logement.objects.create(
-            lot=convention.lot, typologie=TypologieLogement.T1, designation="Logement 3"
+            lot=convention.lot,
+            typologie=TypologieLogement.T1,
+            designation="Logement 3",
+            import_order=2,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T1BIS,
             designation="Logement 4",
+            import_order=4,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T1BIS,
             designation="Logement 34",
+            import_order=0,
         )
         convention.programme.nature_logement = NatureLogement.RESISDENCESOCIALE
 
@@ -246,11 +257,11 @@ class ConventionServiceGeneratorTest(TestCase):
             mocked_render.assert_called_once()
             assert set(context.keys()) == convention_context_keys()
             assert [logement.designation for logement in context["logements"]] == [
-                "Logement 2",
+                "Logement 34",
                 "Logement 1",
                 "Logement 3",
+                "Logement 2",
                 "Logement 4",
-                "Logement 34",
             ]
 
     def test_get_convention_template_path(self):

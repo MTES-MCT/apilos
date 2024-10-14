@@ -81,10 +81,6 @@ class LotLgtsOptionForm(forms.Form):
             "required": "Le nombre de logements est obligatoire",
         },
     )
-    import_order = forms.IntegerField(
-        label="",
-        required=False,
-    )
 
 
 class LotFoyerResidenceLgtsDetailsForm(forms.Form):
