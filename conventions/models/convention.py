@@ -1,5 +1,4 @@
 import datetime
-import json
 import logging
 import uuid
 from datetime import date
@@ -280,25 +279,6 @@ class Convention(models.Model):
             return EcoloReference.objects.filter(
                 apilos_model="conventions.Convention", apilos_id=self.id
             ).first()
-
-        return None
-
-    @property
-    def description_avenant(self):
-        if self.commentaires is None:
-            return
-        try:
-            json_data = json.loads(self.commentaires)
-            if (
-                "text" in json_data
-                and isinstance(json_data["text"], dict)
-                and "description_avenant" in json_data["text"]
-            ):
-                return json_data["text"]["description_avenant"]
-        except (json.decoder.JSONDecodeError, TypeError):
-            logger.error(
-                f"Error while parsing commentaires for convention {self.id}, invalid JSON content"
-            )
 
         return None
 
