@@ -10,6 +10,7 @@ AVENANT_TYPE_FIELDS_MAPPING = {
         "lot.logements",
         "lot.loyer_derogatoire",
         "lot.surface_locaux_collectifs_residentiels",
+        "lot.loyer_associations_foncieres",
         "lot.annexe_caves",
         "lot.annexe_soussols",
         "lot.annexe_remises",
