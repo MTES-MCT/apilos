@@ -9,10 +9,6 @@ from pathlib import Path
 import jinja2
 from django.conf import settings
 from django.core.files.storage import default_storage
-from django.db import transaction
-from django.db.models import F, Func, IntegerField, Value
-from django.db.models.functions import Cast
-from django.db.utils import DataError
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
 from docx.shared import Inches
@@ -140,31 +136,8 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
 
     adresse = _get_adresse(convention)
 
-    # Logements are ordered by typologie first, then by designation
-    # Designation is a string, we try to find a number in it and cast it as a number to sort
-    # If the cast fail, we order by designation as a string
-    try:
-        with transaction.atomic():
-            logements = (
-                convention.lot.logements.all()
-                .annotate(
-                    int_designation=Cast(
-                        Func(
-                            F("designation"),
-                            Value(r"\D"),
-                            Value(""),
-                            Value("g"),
-                            function="regexp_replace",
-                        ),
-                        IntegerField(),
-                    )
-                )
-                .order_by("typologie", "int_designation")
-            )
-            # Force queryset execution
-            list(logements)
-    except DataError:
-        logements = convention.lot.logements.all().order_by("typologie", "designation")
+    # Logements should keep the importation order
+    logements = convention.lot.logements.order_by("import_order")
 
     context = {
         **avenant_data,
@@ -672,7 +645,7 @@ def fiche_caf_doc(convention):
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,
-        "logements": convention.lot.logements.all(),
+        "logements": convention.lot.logements.order_by("import_order"),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),

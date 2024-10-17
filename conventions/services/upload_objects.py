@@ -27,6 +27,7 @@ def handle_uploaded_xlsx(
     file_name,
     class_field_mapping="import_mapping",
     class_field_needed_mapping="needed_in_mapping",
+    import_order=False,
 ):
     try:
         my_file.seek(0)
@@ -85,6 +86,7 @@ def handle_uploaded_xlsx(
         min_row,
         class_field_mapping=class_field_mapping,
         class_field_needed_mapping=class_field_needed_mapping,
+        import_order=import_order,
     )
 
     return {
@@ -150,15 +152,21 @@ def _get_object_from_worksheet(
     *,
     class_field_mapping,
     class_field_needed_mapping,
+    import_order: bool,
 ):
     my_objects = []
 
-    for row in my_ws.iter_rows(
-        min_row=min_row, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+    for index, row in enumerate(
+        my_ws.iter_rows(
+            min_row=min_row, max_row=my_ws.max_row, min_col=1, max_col=my_ws.max_column
+        )
     ):
         my_row, empty_line, new_warnings = _extract_row(
             row, column_from_index, my_class, class_field_mapping=class_field_mapping
         )
+
+        if import_order:
+            my_row["import_order"] = index
 
         if hasattr(my_class, class_field_needed_mapping):
             if not empty_line and getattr(my_class, class_field_needed_mapping):

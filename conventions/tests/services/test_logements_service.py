@@ -97,6 +97,7 @@ class ConventionLogementsServiceTests(TestCase):
                     "loyer_par_metre_carre",
                     "coeficient",
                     "loyer",
+                    "import_order",
                 ],
             ),
             {
@@ -109,6 +110,7 @@ class ConventionLogementsServiceTests(TestCase):
                 "loyer_par_metre_carre": Decimal("4.5"),
                 "coeficient": Decimal("1.0000"),
                 "loyer": Decimal("135.00"),
+                "import_order": 0,
             },
         )
         self.assertEqual(logement_b1.lot.loyer_derogatoire, 10.00)
