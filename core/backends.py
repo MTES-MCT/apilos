@@ -7,7 +7,8 @@ from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 from django_cas_ng.backends import CASBackend
 
-from users.models import GroupProfile
+from core import settings
+from users.models import GroupProfile, User
 
 
 class CerbereCASBackend(CASBackend):
@@ -20,6 +21,14 @@ class CerbereCASBackend(CASBackend):
 
 
 UserModel = get_user_model()
+
+
+class MockCerbereBackend:
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        return User.objects.get(id=settings.MOCK_CERBERE_USER_ID)
+
+    def get_user(self, user_id):
+        return User.objects.get(pk=settings.MOCK_CERBERE_USER_ID)
 
 
 class EmailBackend(ModelBackend):
