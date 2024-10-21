@@ -13,7 +13,7 @@
             <p>Si vous avez encore des modifications à apporter au projet de {{convention|display_kind_with_preposition}}, vous pouvez y revenir plus tard.
             </p>
             {% with numero_operation=convention.programme.numero_operation %}
-                {% if not numero_operation %}
+                {% if not numero_operation and not convention.is_avenant %}
                     <div class="fr-grid-row fr-my-2w">
                         <div class="fr-icon-warning-line fr-mr-2w"></div>
                         <div class="fr-col-11">
@@ -26,8 +26,8 @@
                 {% endif %}
                 <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
-                    <button name="SubmitConvention" value=True class="fr-btn fr-my-3w" {% if not numero_operation %}disabled{% endif %}>
-                        {% if not numero_operation %}Veuillez définir le numéro d'opération avant de soumettre{% else %}Soumettre{% endif %} au service instructeur
+                    <button name="SubmitConvention" value=True class="fr-btn fr-my-3w" {% if not numero_operation and not convention.is_avenant %}disabled{% endif %}>
+                        {% if not numero_operation and not convention.is_avenant %}Veuillez définir le numéro d'opération avant de soumettre{% else %}Soumettre{% endif %} au service instructeur
                     </button>
                 </form>
             {% endwith %}
