@@ -23,6 +23,14 @@
             {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature object_field="bailleur__signataire_bloc_signature__"|add:form.uuid.value %}
         </div>
 
+        {% if convention.programme.is_logements_ordinaires %}
+            <div class="fr-toggle">
+                <input type="checkbox" {% if form.signataire_personalise.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{form.signataire_personalise.html_name}}-messages" id="{{form.signataire_personalise.html_name}}" name="{{form.signataire_personalise.html_name}}"{% include "common/form/disable_form_input.html" %}>
+                <label class="fr-toggle__label" for="{{form.signataire_personalise.html_name}}">{{form.signataire_personalise.label}}</label>
+                <div class="fr-messages-group" id="{{form.signataire_personalise.html_name}}-messages" aria-live="polite"></div>
+            </div>
+        {% endif %}
+
         {% if convention.programme.is_foyer or convention.programme.is_residence %}
             <h4>Gestionnaire des logements conventionnés</h4>
             {% with convention_uuid=convention.uuid|slugify %}

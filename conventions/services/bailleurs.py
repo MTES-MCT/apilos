@@ -94,6 +94,7 @@ class ConventionBailleurService(ConventionService):
                 ),
                 "signataire_bloc_signature": self.convention.signataire_bloc_signature
                 or bailleur.signataire_bloc_signature,
+                "signataire_personalise": self.convention.signataire_personalise,
                 "gestionnaire": self.convention.gestionnaire,
                 "gestionnaire_signataire_nom": (
                     self.convention.gestionnaire_signataire_nom
@@ -201,6 +202,9 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_bloc_signature
                     or bailleur.signataire_bloc_signature,
                 ),
+                "signataire_personalise": self.request.POST.get(
+                    "signataire_personalise", False
+                ),
                 "gestionnaire": self.request.POST.get(
                     "gestionnaire", self.convention.gestionnaire
                 ),
@@ -226,7 +230,6 @@ class ConventionBailleurService(ConventionService):
                 ),
             },
         )
-
         if self.form.is_valid():
             self._save_convention_signataire()
             self.return_status = utils.ReturnStatus.SUCCESS
@@ -241,6 +244,9 @@ class ConventionBailleurService(ConventionService):
         ]
         self.convention.signataire_bloc_signature = self.form.cleaned_data[
             "signataire_bloc_signature"
+        ]
+        self.convention.signataire_personalise = self.form.cleaned_data[
+            "signataire_personalise"
         ]
         self.convention.gestionnaire = self.form.cleaned_data["gestionnaire"]
         self.convention.gestionnaire_signataire_nom = self.form.cleaned_data[

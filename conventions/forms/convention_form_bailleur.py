@@ -70,6 +70,11 @@ class ConventionBailleurForm(forms.Form):
         },
     )
 
+    signataire_personalise = forms.BooleanField(
+        required=False,
+        label="Personaliser la partie signataire de la convention qui apparait sur la première page",
+    )
+
     nature_bailleur = forms.TypedChoiceField(
         required=False, label="Nature du bailleur", choices=NatureBailleur.choices
     )
