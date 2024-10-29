@@ -273,15 +273,13 @@ DUMP_FILE=</path/to/dump/file>
 pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
 ```
 
-## Utilisateurs
+## MOCK
 
-DEPRECATED ?
+En cas de non disponibilité de CERBERE en recette, il est possible de bouchonner l'authentification via CERBERE en définisant en variable d'environnement l'id de l'utilisateur à authentifier (à récupérer en base de données directement):
 
-L'import des fixtures crée plusieurs utilisateurs utiles lors du développement
+```sh
+# Mock Cerbere user id - in case of CERBERE authentication failure
+MOCK_CERBERE_USER_ID=
+```
 
-|             | identifiant      | mot de passe | email                       |
-|-------------|------------------|--------------|-----------------------------|
-| bailleur    | demo.bailleur    | demo.12345   | demo.bailleur@oudard.org    |
-| instructeur | demo.instructeur | instru12345  | demo.instructeur@oudard.org |
-
-TODO : décrire ici le mode autonome et le mode SIAP
+Si cette variable est définie, alors l'utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.
