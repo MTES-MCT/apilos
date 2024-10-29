@@ -956,3 +956,23 @@ class CustomFiltersTest(TestCase):
             ),
             ["First line", "Second line", "Third line"],
         )
+
+    def _setup_expert_mode(self):
+        self.convention.statut = ConventionStatut.SIGNEE.label
+        self.request.session["currently"] = GroupProfile.SIAP_SER_GEST
+        self.request.session["readonly"] = False
+
+    def test_can_use_expert_mode(self):
+        self._setup_expert_mode()
+        assert custom_filters.can_use_expert_mode(self.request, self.convention)
+
+        self.convention.statut = ConventionStatut.CORRECTION.label
+        assert not custom_filters.can_use_expert_mode(self.request, self.convention)
+
+        self._setup_expert_mode()
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        assert not custom_filters.can_use_expert_mode(self.request, self.convention)
+
+        self._setup_expert_mode()
+        self.request.session["readonly"] = True
+        assert not custom_filters.can_use_expert_mode(self.request, self.convention)
