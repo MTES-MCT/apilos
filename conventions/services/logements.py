@@ -42,6 +42,7 @@ class ConventionLogementsService(ConventionService):
                 "surface_locaux_collectifs_residentiels": (
                     self.convention.lot.surface_locaux_collectifs_residentiels
                 ),
+                "loyer_associations_foncieres": self.convention.lot.loyer_associations_foncieres,
                 "nb_logements": self.convention.lot.nb_logements,
             }
         )
@@ -93,6 +94,7 @@ class ConventionLogementsService(ConventionService):
                         "lgts_mixite_sociale_negocies",
                         "loyer_derogatoire",
                         "surface_locaux_collectifs_residentiels",
+                        "loyer_associations_foncieres",
                         "nb_logements",
                     ],
                 ),
@@ -188,6 +190,9 @@ class ConventionLogementsService(ConventionService):
         lot.surface_locaux_collectifs_residentiels = (
             self.form.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
         )
+        lot.loyer_associations_foncieres = self.form.cleaned_data[
+            "loyer_associations_foncieres"
+        ]
         lot.save()
 
     def _save_logements(self):

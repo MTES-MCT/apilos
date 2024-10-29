@@ -496,6 +496,13 @@ class Lot(models.Model):
     foyer_residence_locaux_hors_convention = models.TextField(
         max_length=5000, blank=True, null=True
     )
+    loyer_associations_foncieres = models.DecimalField(
+        max_digits=6,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        verbose_name="Montant du loyer pour les associations foncières et leurs filiales",
+    )
 
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)

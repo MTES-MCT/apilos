@@ -165,6 +165,9 @@
     <div class="fr-col-12 fr-mb-2w">
         {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:form.uuid.value %}
     </div>
+    <div class="fr-col-12 fr-mb-2w">
+        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:form.uuid.value %}
+    </div>
 </div>
 
 {% if convention.mixity_option %}

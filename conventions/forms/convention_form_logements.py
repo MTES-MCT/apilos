@@ -62,8 +62,17 @@ class LotLgtsOptionForm(forms.Form):
         error_messages={
             "max_digits": """
                 La surface des locaux collectifs
-                résidentiels doit-être inférieur à 100000 m²
+                résidentiels doit-être inférieure à 100000 m²
             """,
+        },
+    )
+    loyer_associations_foncieres = forms.DecimalField(
+        required=False,
+        label="Montant du loyer pour les associations foncières et leurs filiales",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "max_digits": "Le montant du loyer  par m² pour les associations foncières doit être inférieur à 10000€",
         },
     )
     nb_logements = forms.IntegerField(
