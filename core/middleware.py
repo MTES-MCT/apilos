@@ -1,17 +1,18 @@
+from django.conf import settings
+from django.contrib.auth import get_user_model, login
 
-from django.contrib.auth import get_user_model
-from django.contrib.auth import login
+UserModel = get_user_model()
+
 
 class AutoLoginMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        User = get_user_model()
         try:
-            user = User.objects.get(pk=725)
-            login(request, user, backend='core.backends.MockCerbereBackend')
-        except User.DoesNotExist:
+            user = UserModel.objects.get(pk=settings.MOCK_CERBERE_USER_ID)
+            login(request, user, backend="core.backends.MockCerbereBackend")
+        except UserModel.DoesNotExist:
             pass
 
         response = self.get_response(request)

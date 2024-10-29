@@ -487,7 +487,7 @@ NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 
 MOCK_CERBERE_USER_ID = get_env_variable("MOCK_CERBERE_USER_ID")
 
-if MOCK_CERBERE_USER_ID and ENVIRONMENT == 'development':
+if MOCK_CERBERE_USER_ID and ENVIRONMENT == "development":
     AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
         "core.backends.MockCerbereBackend",
     ]
