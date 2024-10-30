@@ -220,6 +220,10 @@ class LogementForm(forms.Form):
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
     )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
+    )
 
     def clean_loyer(self):
         """
@@ -456,6 +460,10 @@ class FoyerResidenceLogementForm(forms.Form):
             "required": "La redevance maximale est obligatoire",
             "max_digits": "La redevance maximale inférieur à 10000 €",
         },
+    )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
     )
 
 
