@@ -508,3 +508,10 @@ def length_is(value, arg):
         return len(value) == int(arg)
     except (ValueError, TypeError):
         return False
+
+
+@register.filter
+def can_use_expert_mode(request, convention):
+    is_readonly = "readonly" in request.session and request.session["readonly"]
+    is_signee = convention.statut == ConventionStatut.SIGNEE.label
+    return is_signee and is_instructeur(request) and not is_readonly
