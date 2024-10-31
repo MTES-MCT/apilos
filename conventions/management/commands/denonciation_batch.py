@@ -100,7 +100,7 @@ class Command(BaseCommand):
         numeros = options["numeros"]
         dates = options["dates"]
 
-        if len(numeros) == len(dates):
+        if len(numeros) != len(dates):
             self.stdout.write(
                 self.style.ERROR(
                     f"There must be the same number of numeros ({len(numeros)}) and dates ({len(dates)})"
