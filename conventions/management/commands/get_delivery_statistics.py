@@ -2,7 +2,6 @@ import csv
 import re
 from collections import defaultdict
 from datetime import datetime
-from typing import Dict, List, Tuple
 
 import requests
 from django.core.management.base import BaseCommand
@@ -29,7 +28,7 @@ monthly_stats = defaultdict(
 
 def get_tags_from_release(
     start_date: datetime, headers: dict
-) -> Tuple[List[dict], dict]:
+) -> tuple[list[dict], dict]:
     returned_releases = []
     previous_release = {}
 
@@ -65,8 +64,8 @@ def get_tags_from_release(
         error_message = response.json()
         raise Exception(
             f"Erreur: {response.status_code} : {
-                error_message['message'] 
-                if 'message' in error_message 
+                error_message['message']
+                if 'message' in error_message
                 else response.json()
             }."
         )
@@ -74,7 +73,7 @@ def get_tags_from_release(
     return returned_releases, previous_release
 
 
-def get_release_stats(tags: List[dict]) -> Dict[str, Dict]:
+def get_release_stats(tags: list[dict]) -> dict[str, dict]:
     monthly_stats = defaultdict(
         lambda: {
             "major": 0,
@@ -104,8 +103,8 @@ def get_release_stats(tags: List[dict]) -> Dict[str, Dict]:
 
 
 def get_tags_with_details(
-    previous_tag: dict, tags: List[dict], headers: dict
-) -> List[dict]:
+    previous_tag: dict, tags: list[dict], headers: dict
+) -> list[dict]:
     tags_with_details = []
 
     # Trier les tags par date de publication
@@ -163,8 +162,8 @@ def get_tags_with_details(
 
 
 def get_stats_by_month(
-    tags_with_prs_and_nb_commits_and_labels: List[Dict],
-) -> Dict[str, Dict]:
+    tags_with_prs_and_nb_commits_and_labels: list[dict],
+) -> dict[str, dict]:
     consolidation_par_mois = defaultdict(
         lambda: {"nb_commits": 0, "labels_count": defaultdict(int)}
     )
@@ -184,7 +183,7 @@ def get_stats_by_month(
             consolidation_par_mois[mois_annee]["labels_count"][label] += count
 
     # Convertir les defaultdict en dict pour un affichage plus propre
-    for mois_annee, data in consolidation_par_mois.items():
+    for _, data in consolidation_par_mois.items():
         data["labels_count"] = dict(data["labels_count"])
 
     return dict(consolidation_par_mois)
@@ -222,7 +221,7 @@ def merge_dicts_by_month(tag_stats_by_month, release_stats_by_month):
     return {month: dict(stats) for month, stats in merged_stats.items()}
 
 
-def exporter_dict_en_csv(data: Dict[str, Dict], fichier_csv: str) -> None:
+def exporter_dict_en_csv(data: dict[str, dict], fichier_csv: str) -> None:
     with open(fichier_csv, mode="w", newline="") as file:
         writer = csv.writer(file)
 
@@ -263,7 +262,7 @@ class Command(BaseCommand):
         parser.add_argument(
             "--token",
             help="""
-Les tokens doivent être créés manuellement dans les paramètres de compte GitHub pour 
+Les tokens doivent être créés manuellement dans les paramètres de compte GitHub pour
 des raisons de sécurité : https://github.com/settings/tokens
 Un token est nécessaire pour que la commande soit executée sans atteindre de limite.
 """,
