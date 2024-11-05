@@ -7,17 +7,17 @@
 {% block content %}
     <div class="fr-col-12">
         {% if convention.programme.is_logements_ordinaires %}
-            <div class="fr-toggle">
+            <div class="fr-toggle fr-mb-2w">
                 <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{form.identification_bailleur.html_name}}-messages" id="{{form.identification_bailleur.html_name}}" name="{{form.identification_bailleur.html_name}}"{% include "common/form/disable_form_input.html" %}>
                 <label class="fr-toggle__label" for="{{form.identification_bailleur.html_name}}">{{form.identification_bailleur.label}}</label>
                 <div class="fr-messages-group" id="{{form.identification_bailleur.html_name}}-messages" aria-live="polite"></div>
             </div>
-            <div class="identification_bailleur_detail_outer_div {% if not convention.identification_bailleur %}hidden{% endif %}">
-                {% include "common/form/input_textarea.html" with form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
+            <div class="identification_bailleur_detail_outer_div fr-mb-2w">
+                {% include "common/form/input_textarea.html" with mandatory_input=True form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
             </div>
         {% endif %}
 
-        <div class="signataire_infos {% if convention.programme.is_logements_ordinaires and convention.identification_bailleur %}hidden{% endif %}">
+        <div class="signataire_infos">
             {% include "common/form/input_text.html" with mandatory_input=True form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
             <div class="fr-mb-2w">
@@ -70,9 +70,20 @@
     </div>
     {% if convention.programme.is_logements_ordinaires %}
         <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            // Script to switch between bailleurs infos and identification personalisée depending on a toggle
             textarea_outer_div = document.getElementsByClassName("identification_bailleur_detail_outer_div")[0]
             signataire_infos_div = document.getElementsByClassName("signataire_infos")[0]
             input_checkbox = document.getElementById("identification_bailleur")
+            // Initialize
+            if (input_checkbox.checked) {
+                textarea_outer_div.classList.remove("hidden");
+                signataire_infos_div.classList.add("hidden");
+            } else {
+                textarea_outer_div.classList.add("hidden");
+                signataire_infos_div.classList.remove("hidden");
+            }
+
+            // Listen to change on checkbox
             input_checkbox.onchange = (e) => {
                 textarea_outer_div.classList.toggle("hidden");
                 signataire_infos_div.classList.toggle("hidden");

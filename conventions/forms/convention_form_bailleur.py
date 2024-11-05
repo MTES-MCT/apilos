@@ -77,7 +77,7 @@ class ConventionBailleurForm(forms.Form):
     )
 
     identification_bailleur_detail = forms.CharField(
-        label="",
+        label="Identification du bailleur personnalisée",
         help_text='Apparaît uniquement sur la première page de la convention, en dessous de "d\'une part"',
         required=False,
     )
@@ -184,4 +184,18 @@ class ConventionBailleurForm(forms.Form):
                     "Lorsque l'entreprise gestionnaire est renseignée, La date de"
                     + " délibération du signataire du gestionnaire de la convention"
                     + " doit être renseignée",
+                )
+
+        if not self.cleaned_data.get("identification_bailleur"):
+            if not self.cleaned_data.get("signataire_nom"):
+                self.add_error(
+                    "signataire_nom",
+                    "Le nom du signataire de la convention est obligatoire",
+                )
+        else:
+            if not self.cleaned_data.get("identification_bailleur_detail"):
+                self.add_error(
+                    "identification_bailleur_detail",
+                    "Le détail de l'identification du bailleur est obligatoire "
+                    "lorsque vous avez choisi l'identification du bailleur personnalisée",
                 )
