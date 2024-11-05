@@ -283,3 +283,20 @@ MOCK_CERBERE_USER_ID=
 ```
 
 Si cette variable est définie, alors l'utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.
+
+## Catégoriser les PR
+
+On catégorise chaque PR en utilisant les labels suivants :
+
+- bug
+- enhancement
+- documentation
+- technical
+- dependencies
+
+Inspiré des labels proposés par défaut par Github
+
+On ajoute 2 labels en plus de cette catégorisation :
+
+- escalation : quand la PR vient de notre processus d'escalade avec l'équipe Support
+- regression : Pour le suivi des regressions
