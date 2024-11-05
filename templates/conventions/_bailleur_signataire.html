@@ -71,9 +71,9 @@
     {% if convention.programme.is_logements_ordinaires %}
         <script type="text/javascript" nonce="{{request.csp_nonce}}">
             // Script to switch between bailleurs infos and identification personalisée depending on a toggle
-            textarea_outer_div = document.getElementsByClassName("identification_bailleur_detail_outer_div")[0]
-            signataire_infos_div = document.getElementsByClassName("signataire_infos")[0]
-            input_checkbox = document.getElementById("identification_bailleur")
+            const textarea_outer_div = document.getElementsByClassName("identification_bailleur_detail_outer_div")[0]
+            const signataire_infos_div = document.getElementsByClassName("signataire_infos")[0]
+            const input_checkbox = document.getElementById("identification_bailleur")
             // Initialize
             if (input_checkbox.checked) {
                 textarea_outer_div.classList.remove("hidden");
