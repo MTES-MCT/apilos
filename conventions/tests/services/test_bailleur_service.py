@@ -132,6 +132,6 @@ def test_form_clean():
     form.is_valid()
     assert (
         form.errors["identification_bailleur_detail"][0]
-        == "Le détail de l'identification du bailleur est obligatoire Convention "
+        == "Le détail de l'identification du bailleur est obligatoire "
         "lorsque vous avez choisi l'identification du bailleur personnalisée"
     )
