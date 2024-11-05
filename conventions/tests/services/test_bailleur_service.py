@@ -83,6 +83,22 @@ class ConventionBailleurServiceTests(TestCase):
         )
         self.assertEqual(self.service.convention.signataire_bloc_signature, "Mon Dirlo")
 
+    def test_update_bailleur_success_signataire_perso(self):
+        convention = self.service.convention
+
+        self.service.request.POST = {
+            "identification_bailleur": True,
+            "identification_bailleur_detail": "Identification personalisée",
+        }
+
+        self.service.update_bailleur()
+        convention.refresh_from_db()
+        assert self.service.return_status == utils.ReturnStatus.SUCCESS
+        assert convention.identification_bailleur
+        assert (
+            convention.identification_bailleur_detail == "Identification personalisée"
+        )
+
     def test_should_add_siren(self):
         habilitation = {
             # …
@@ -102,3 +118,20 @@ class ConventionBailleurServiceTests(TestCase):
         self.assertTrue(self.service.should_add_sirens(habilitation))
         habilitation["statut"] = "A_VALIDER"
         self.assertFalse(self.service.should_add_sirens(habilitation))
+
+
+def test_form_clean():
+    form = ConventionBailleurForm(data={"identification_bailleur": False})
+    form.is_valid()
+    assert (
+        form.errors["signataire_nom"][0]
+        == "Le nom du signataire de la convention est obligatoire"
+    )
+
+    form = ConventionBailleurForm(data={"identification_bailleur": True})
+    form.is_valid()
+    assert (
+        form.errors["identification_bailleur_detail"][0]
+        == "Le détail de l'identification du bailleur est obligatoire Convention "
+        "lorsque vous avez choisi l'identification du bailleur personnalisée"
+    )
