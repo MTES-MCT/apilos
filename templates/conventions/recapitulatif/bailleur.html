@@ -26,6 +26,9 @@
                 <div>
                     {% include "common/display_field_if_exists.html" with label="SIRET" value=bailleur.siret object_field="bailleur__siret__"|add:bailleur_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Capital social" value=bailleur.capital_social object_field="bailleur__capital_social__"|add:bailleur_uuid %}
+                    {% if convention.identification_bailleur %}
+                        {% include "common/display_field_if_exists.html" with label="Identification du bailleur" value=convention.identification_bailleur_detail object_field="convention__identification_bailleur_detail__"|add:convention_uuid %}
+                    {% endif %}
                 </div>
             </div>
 

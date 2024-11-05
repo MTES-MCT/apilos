@@ -34,6 +34,7 @@ class ConventionBailleurForm(forms.Form):
             "max_length": "Le nom du signataire de la convention "
             + "ne doit pas excéder 255 caractères",
         },
+        required=False,
     )
     signataire_fonction = forms.CharField(
         label="Fonction du signataire de la convention",
@@ -70,9 +71,15 @@ class ConventionBailleurForm(forms.Form):
         },
     )
 
-    signataire_personalise = forms.BooleanField(
+    identification_bailleur = forms.BooleanField(
         required=False,
-        label="Personaliser la partie signataire de la convention qui apparait sur la première page",
+        label="Personaliser l'identification du bailleur qui apparait sur la première page de la convention",
+    )
+
+    identification_bailleur_detail = forms.CharField(
+        label="",
+        help_text='Apparaît uniquement sur la première page de la convention, en dessous de "d\'une part"',
+        required=False,
     )
 
     nature_bailleur = forms.TypedChoiceField(

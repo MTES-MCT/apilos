@@ -6,15 +6,28 @@
 
 {% block content %}
     <div class="fr-col-12">
-        {% include "common/form/input_text.html" with form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
+        {% if convention.programme.is_logements_ordinaires %}
+            <div class="fr-toggle">
+                <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{form.identification_bailleur.html_name}}-messages" id="{{form.identification_bailleur.html_name}}" name="{{form.identification_bailleur.html_name}}"{% include "common/form/disable_form_input.html" %}>
+                <label class="fr-toggle__label" for="{{form.identification_bailleur.html_name}}">{{form.identification_bailleur.label}}</label>
+                <div class="fr-messages-group" id="{{form.identification_bailleur.html_name}}-messages" aria-live="polite"></div>
+            </div>
+            <div class="identification_bailleur_detail_outer_div {% if not convention.identification_bailleur %}hidden{% endif %}">
+                {% include "common/form/input_textarea.html" with form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
+            </div>
+        {% endif %}
 
-        <div class="fr-mb-2w">
-            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
-                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                    {% include "common/form/input_text.html" with form_input=form.signataire_fonction object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
-                </div>
-                <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
-                    {% include "common/form/input_date.html" with form_input=form.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:form.uuid.value %}
+        <div class="signataire_infos {% if convention.programme.is_logements_ordinaires and convention.identification_bailleur %}hidden{% endif %}">
+            {% include "common/form/input_text.html" with mandatory_input=True form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
+
+            <div class="fr-mb-2w">
+                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+                        {% include "common/form/input_text.html" with form_input=form.signataire_fonction object_field="bailleur__signataire_fonction__"|add:form.uuid.value %}
+                    </div>
+                    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-pl-md-1w fr-mb-2w">
+                        {% include "common/form/input_date.html" with form_input=form.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:form.uuid.value %}
+                    </div>
                 </div>
             </div>
         </div>
@@ -22,14 +35,6 @@
         <div class="fr-mb-2w">
             {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature object_field="bailleur__signataire_bloc_signature__"|add:form.uuid.value %}
         </div>
-
-        {% if convention.programme.is_logements_ordinaires %}
-            <div class="fr-toggle">
-                <input type="checkbox" {% if form.signataire_personalise.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{form.signataire_personalise.html_name}}-messages" id="{{form.signataire_personalise.html_name}}" name="{{form.signataire_personalise.html_name}}"{% include "common/form/disable_form_input.html" %}>
-                <label class="fr-toggle__label" for="{{form.signataire_personalise.html_name}}">{{form.signataire_personalise.label}}</label>
-                <div class="fr-messages-group" id="{{form.signataire_personalise.html_name}}-messages" aria-live="polite"></div>
-            </div>
-        {% endif %}
 
         {% if convention.programme.is_foyer or convention.programme.is_residence %}
             <h4>Gestionnaire des logements conventionnés</h4>
@@ -63,5 +68,16 @@
             </div>
         {% endif %}
     </div>
+    {% if convention.programme.is_logements_ordinaires %}
+        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            textarea_outer_div = document.getElementsByClassName("identification_bailleur_detail_outer_div")[0]
+            signataire_infos_div = document.getElementsByClassName("signataire_infos")[0]
+            input_checkbox = document.getElementById("identification_bailleur")
+            input_checkbox.onchange = (e) => {
+                textarea_outer_div.classList.toggle("hidden");
+                signataire_infos_div.classList.toggle("hidden");
+            }
+        </script>
+    {% endif %}
     {% include "common/required_fields_info.html" %}
 {% endblock content %}

@@ -94,7 +94,8 @@ class ConventionBailleurService(ConventionService):
                 ),
                 "signataire_bloc_signature": self.convention.signataire_bloc_signature
                 or bailleur.signataire_bloc_signature,
-                "signataire_personalise": self.convention.signataire_personalise,
+                "identification_bailleur": self.convention.identification_bailleur,
+                "identification_bailleur_detail": self.convention.identification_bailleur_detail,
                 "gestionnaire": self.convention.gestionnaire,
                 "gestionnaire_signataire_nom": (
                     self.convention.gestionnaire_signataire_nom
@@ -202,8 +203,12 @@ class ConventionBailleurService(ConventionService):
                     self.convention.signataire_bloc_signature
                     or bailleur.signataire_bloc_signature,
                 ),
-                "signataire_personalise": self.request.POST.get(
-                    "signataire_personalise", False
+                "identification_bailleur": self.request.POST.get(
+                    "identification_bailleur", False
+                ),
+                "identification_bailleur_detail": self.request.POST.get(
+                    "identification_bailleur_detail",
+                    self.convention.identification_bailleur_detail,
                 ),
                 "gestionnaire": self.request.POST.get(
                     "gestionnaire", self.convention.gestionnaire
@@ -245,8 +250,11 @@ class ConventionBailleurService(ConventionService):
         self.convention.signataire_bloc_signature = self.form.cleaned_data[
             "signataire_bloc_signature"
         ]
-        self.convention.signataire_personalise = self.form.cleaned_data[
-            "signataire_personalise"
+        self.convention.identification_bailleur = self.form.cleaned_data[
+            "identification_bailleur"
+        ]
+        self.convention.identification_bailleur_detail = self.form.cleaned_data[
+            "identification_bailleur_detail"
         ]
         self.convention.gestionnaire = self.form.cleaned_data["gestionnaire"]
         self.convention.gestionnaire_signataire_nom = self.form.cleaned_data[
