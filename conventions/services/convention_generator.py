@@ -143,7 +143,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         **avenant_data,
         "convention": convention,
         "bailleur": convention.programme.bailleur,
-        "outre_mer": convention.is_outre_mer,
+        "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
         "lot": convention.lot,
         "administration": convention.programme.administration,
@@ -176,7 +176,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     context.update(adresse)
 
     doc.render(context, _get_jinja_env())
-    if convention.is_outre_mer:
+    if convention.programme.is_outre_mer:
         # Remove doc cerfa header for outre mer
         doc.sections[0].first_page_header.is_linked_to_previous = True
 

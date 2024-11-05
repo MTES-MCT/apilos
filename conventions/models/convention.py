@@ -468,13 +468,6 @@ class Convention(models.Model):
         return self.parent_id is not None
 
     @cached_property
-    def is_outre_mer(self) -> bool:
-        # Saint-Pierre-et-Miquelon (975) n'est pas dans cette liste
-        return self.programme.code_insee_departement and int(
-            self.programme.code_insee_departement
-        ) in [971, 972, 973, 974, 976]
-
-    @cached_property
     def is_denonciation(self):
         return (
             self.parent_id is not None
