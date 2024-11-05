@@ -298,8 +298,6 @@ Un token est nécessaire pour que la commande soit executée sans atteindre de l
             tag_stats_by_month, release_stats_by_month
         )
 
-        print(stats_by_month)
-
         exporter_dict_en_csv(stats_by_month, options["output"])
 
         self.stdout.write(
