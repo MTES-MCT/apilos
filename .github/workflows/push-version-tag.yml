@@ -1,8 +1,6 @@
 name: "Test and deploy to staging"
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  - pull_request
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
