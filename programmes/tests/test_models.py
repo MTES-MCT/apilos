@@ -520,7 +520,7 @@ def test_create_programme_outre_mer():
 
     programme = Programme.objects.create(
         bailleur=bailleur,
-        code_insee_departement=971,
+        code_insee_departement="971",
         code_insee_region=1,
         zone_abc="DROM",
         code_postal="97114",
@@ -528,7 +528,7 @@ def test_create_programme_outre_mer():
         nature_logement=NatureLogement.RESISDENCESOCIALE,
     )
 
-    assert programme.code_insee_departement == 971
+    assert programme.code_insee_departement == "971"
     assert programme.code_insee_region == 1
     assert programme.zone_abc == "DROM"
     assert programme.code_postal == "97114"
@@ -541,9 +541,25 @@ def test_create_programme_outre_mer_logements_ordinaires():
     bailleur = BailleurFactory()
     programme = Programme.objects.create(
         bailleur=bailleur,
-        code_insee_departement=971,
+        code_insee_departement="971",
         nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
     )
 
     with pytest.raises(OutreMerNatureLogementError):
         programme.full_clean()
+
+
+@pytest.mark.django_db
+def test_is_outre_mer():
+    bailleur = BailleurFactory()
+    programme = Programme.objects.create(
+        bailleur=bailleur,
+        code_insee_departement="971",
+    )
+    assert programme.is_outre_mer
+
+    programme = Programme.objects.create(
+        bailleur=bailleur,
+        code_insee_departement="2B",
+    )
+    assert not programme.is_outre_mer

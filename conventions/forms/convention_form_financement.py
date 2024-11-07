@@ -61,7 +61,7 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if self.convention.is_outre_mer:
+            if self.convention.programme.is_outre_mer:
                 self._outre_mer_end_date_validation(annee_fin_conventionnement)
             elif self.convention.financement == Financement.PLS:
                 self._pls_end_date_validation(annee_fin_conventionnement)

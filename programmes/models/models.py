@@ -5,6 +5,7 @@ from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVectorField
 from django.db import models
 from django.forms import model_to_dict
+from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 
 from conventions.models.choices import ConventionStatut
@@ -213,12 +214,13 @@ class Programme(models.Model):
     def __str__(self):
         return self.nom
 
+    @cached_property
     def is_outre_mer(self) -> bool:
         # Saint-Pierre-et-Miquelon (975) n'est pas dans cette liste
-        return int(self.code_insee_departement) in [971, 972, 973, 974, 976]
+        return self.code_insee_departement in ["971", "972", "973", "974", "976"]
 
     def clean(self):
-        if not self.is_outre_mer():
+        if not self.is_outre_mer:
             return
 
         if not (self.is_residence() or self.is_foyer()):
