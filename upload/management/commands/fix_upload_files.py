@@ -75,24 +75,43 @@ class Command(BaseCommand):
             return
 
         self.stdout.write(
-            f"Processing convention {convention_uuid} and upload {upload_file_uuid}"
+            f"Processing upload {upload_file_uuid} on convention {convention_uuid}."
         )
 
         for field_name in self._get_conv_upload_fields():
             if not (field_value := getattr(convention, field_name)):
                 continue
+
+            # check if the field content is a valid JSON content
             try:
                 json_field_value = json.loads(field_value)
             except json.JSONDecodeError:
                 continue
+
+            # check if the upload file is correctly referenced in the JSON field content,
+            # and if a filename is present
             if upload_file_uuid not in json_field_value["files"]:
                 continue
+            if "filename" not in json_field_value["files"][upload_file_uuid]:
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Upload {upload_file_uuid} on convention {convention_uuid} has no filename"
+                    )
+                )
+                continue
 
-            # get the current upload data
-            upload_filepath = uploaded_file.filepath(convention_uuid)
-            upload_content = default_storage.open(
-                uploaded_file.filepath(convention_uuid), "rb"
-            )
+            # check the current file exists on S3
+            previous_upload_filepath = uploaded_file.filepath(convention_uuid)
+            if not default_storage.exists(previous_upload_filepath):
+                self.stdout.write(
+                    self.style.ERROR(
+                        f"Upload {upload_file_uuid} on convention {convention_uuid} not found on S3"
+                    )
+                )
+                continue
+
+            # fetch the current upload data
+            upload_content = default_storage.open(previous_upload_filepath, "rb")
 
             # compute the new file name
             name, extension = splitext(
@@ -118,4 +137,4 @@ class Command(BaseCommand):
             default_storage.save(name=new_upload_filepath, content=upload_content)
 
             # delete the previous file on S3
-            default_storage.delete(upload_filepath)
+            default_storage.delete(previous_upload_filepath)
