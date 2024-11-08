@@ -10,8 +10,13 @@ class UploadedFile(models.Model):
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
 
-    filename = models.CharField(max_length=255)
-    realname = models.CharField(max_length=255)
+    filename = models.CharField(
+        max_length=255, help_text="le nom du fichier utilisé pour le stockage"
+    )
+    realname = models.CharField(
+        max_length=255,
+        help_text="Nom réel du fichier lors de l'Upload, il est ré-utilisé lors du download et à l'affichage",
+    )
 
     dirpath = models.CharField(max_length=255, null=True)
     size = models.CharField(max_length=255, null=True)
