@@ -1,6 +1,7 @@
 import enum
 import logging
 import mimetypes
+import re
 from pathlib import Path
 
 from django.conf import settings
@@ -73,36 +74,55 @@ class EmailService:
 
         if not self.to_emails:
             logger.warning("No recipient for email")
-        else:
-            message = EmailMultiAlternatives(
-                to=self.to_emails,
-                cc=self.cc_emails,
-            )
-            message.template_id = self.email_template_id.value
-            message.from_email = None  # to use the template's default sender
-            if email_data:
-                message.merge_global_data = email_data
-            if filepath:
-                with default_storage.open(filepath, "rb") as f:
-                    (content_type, _) = mimetypes.guess_type(filepath.name)
-                    message.attach(
-                        filepath.name,
-                        f.read(),
-                        content_type,
-                    )
-            if settings.DEBUG:
-                logger.warning(
-                    """
-                    Email message:
-                        to: %s
-                        cc: %s
-                        template_id: %s
-                        data: %s
-                    """,
-                    message.to,
-                    message.cc,
-                    message.template_id,
-                    message.merge_global_data,
-                )
+            return
 
-            message.send()
+        # Vérifier et filtrer les emails invalides
+        email_regex = re.compile(r"[^@]+@[^@]+\.[^@]+")
+        valid_to_emails = [
+            email for email in self.to_emails if email_regex.match(email)
+        ]
+        valid_cc_emails = []
+        if self.cc_emails:
+            valid_cc_emails = [
+                email for email in self.cc_emails if email_regex.match(email)
+            ]
+        invalid_emails = set(self.to_emails) - set(valid_to_emails)
+
+        if not valid_to_emails:
+            raise Exception("No valid recipient for email")
+
+        if invalid_emails:
+            logger.warning("Invalid email addresses: %s", ", ".join(invalid_emails))
+
+        message = EmailMultiAlternatives(
+            to=valid_to_emails,
+            cc=valid_cc_emails,
+        )
+        message.template_id = self.email_template_id.value
+        message.from_email = None  # to use the template's default sender
+        if email_data:
+            message.merge_global_data = email_data
+        if filepath:
+            with default_storage.open(filepath, "rb") as f:
+                (content_type, _) = mimetypes.guess_type(filepath.name)
+                message.attach(
+                    filepath.name,
+                    f.read(),
+                    content_type,
+                )
+        if settings.DEBUG:
+            logger.warning(
+                """
+                Email message:
+                    to: %s
+                    cc: %s
+                    template_id: %s
+                    data: %s
+                """,
+                message.to,
+                message.cc,
+                message.template_id,
+                message.merge_global_data,
+            )
+
+        message.send()
