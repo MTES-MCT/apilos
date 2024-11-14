@@ -235,7 +235,6 @@ class Programme(models.Model):
             exclude=[
                 "id",
                 "parent",
-                "parent_id",
                 "cree_le",
                 "mis_a_jour_le",
             ],
@@ -448,9 +447,24 @@ class Lot(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True, blank=True)
-    programme = models.ForeignKey(
-        "Programme", on_delete=models.CASCADE, null=False, related_name="lots"
+
+    # TODO: make this field required once all the data is migrated
+    convention = models.ForeignKey(
+        "conventions.Convention",
+        related_name="lots",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
+
+    # TODO: remove this field and use convention.programme instead
+    programme = models.ForeignKey(
+        "Programme",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="lots",
+    )
+
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
@@ -513,6 +527,20 @@ class Lot(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["convention_id", "financement"],
+                name="unique_convention_financement",
+            ),
+            # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
+            # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
+            models.UniqueConstraint(
+                fields=["convention_id"],
+                name="unique_convention",
+            ),
+        ]
+
     # Needed for admin
     @property
     def bailleur(self):
@@ -528,24 +556,21 @@ class Lot(models.Model):
 
     def clone(self, cloned_programme):
         parent_id = self.parent_id or self.id
+
         lot_fields = model_to_dict(
             self,
             exclude=[
                 "id",
                 "parent",
-                "parent_id",
                 "programme",
-                "programme_id",
+                "convention",
                 "cree_le",
                 "mis_a_jour_le",
             ],
-        )
-        lot_fields.update(
-            {
-                "programme": cloned_programme,
-                "parent_id": parent_id,
-            }
-        )
+        ) | {
+            "programme": cloned_programme,
+            "parent_id": parent_id,
+        }
         cloned_lot = Lot(**lot_fields)
         cloned_lot.save()
         return cloned_lot

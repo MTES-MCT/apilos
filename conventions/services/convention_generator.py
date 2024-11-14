@@ -460,6 +460,7 @@ def _get_adresse(convention):
 
 
 def _get_object_images(doc, convention):
+
     object_images = {}
     local_pathes = []
     vendeur_images, tmp_local_path = _build_files_for_docx(

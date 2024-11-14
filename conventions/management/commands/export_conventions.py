@@ -45,9 +45,9 @@ class Command(BaseCommand):
                 "programme",
                 "programme__bailleur",
                 "programme__administration",
-                "lot",
-                "lot__logements__annexes",
-                "lot__prets",
+                # "lot",
+                # "lot__logements__annexes",
+                # "lot__prets",
             )
             .order_by("numero", "-cree_le")
             .distinct("numero")

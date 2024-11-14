@@ -1,6 +1,10 @@
 from django.http import HttpRequest
 
-from conventions.forms import TypeStationnementFormSet, UploadForm
+from conventions.forms import (
+    BaseTypeStationnementFormSet,
+    TypeStationnementFormSet,
+    UploadForm,
+)
 from conventions.models import Convention
 from conventions.services.conventions import ConventionService
 from programmes.models import TypeStationnement
@@ -11,7 +15,7 @@ from . import upload_objects, utils
 class ConventionTypeStationnementService(ConventionService):
     convention: Convention
     request: HttpRequest
-    formset: TypeStationnementFormSet
+    formset: BaseTypeStationnementFormSet
     upform: UploadForm = UploadForm()
     editable_after_upload: bool
     redirect_recap: bool = False

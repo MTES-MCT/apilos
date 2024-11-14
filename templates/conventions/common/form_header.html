@@ -62,6 +62,7 @@
                                             </div>
                                         {% endif %}
                                         <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
+                                        {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                         <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
                                         <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
                                         <div class="fr-pl-2w fr-text--sm">{{ convention.lot.financement|default_if_none:'' }}</div>

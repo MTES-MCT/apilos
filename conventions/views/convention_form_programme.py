@@ -11,7 +11,8 @@ class ConventionProgrammeView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
-            Convention.objects.prefetch_related("programme").prefetch_related("lot"),
+            Convention.objects.prefetch_related("programme"),
+            # .prefetch_related("lot"),
             uuid=convention_uuid,
         )
 

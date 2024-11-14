@@ -10,8 +10,9 @@ class Command(BaseCommand):
 
         programme_uuid = input("Quel est l'identifiant UUID du programme à modifier ? ")
         programme = (
-            Programme.objects.prefetch_related("lots__logements__annexes")
-            .prefetch_related("lots__type_stationnements")
+            Programme.objects
+            # .prefetch_related("lots__logements__annexes")
+            # .prefetch_related("lots__type_stationnements")
             .prefetch_related("logementedds")
             .prefetch_related("conventions__prets")
             .prefetch_related("referencecadastrales")

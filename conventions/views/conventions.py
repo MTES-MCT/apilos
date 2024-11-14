@@ -70,9 +70,9 @@ class RecapitulatifView(BaseConventionView):
             Convention.objects.prefetch_related("programme").prefetch_related(
                 "programme__referencecadastrales",
                 "programme__logementedds",
-                "lot",
-                "lot__type_stationnements",
-                "lot__logements",
+                # "lot",
+                # "lot__type_stationnements",
+                # "lot__logements",
                 "programme__administration",
             ),
             uuid=convention_uuid,
@@ -311,9 +311,9 @@ def validate_convention(request, convention_uuid):
         Convention.objects.prefetch_related("programme__bailleur")
         .prefetch_related("programme__referencecadastrales")
         .prefetch_related("programme__logementedds")
-        .prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .prefetch_related("lot__logements")
+        # .prefetch_related("lot")
+        # .prefetch_related("lot__type_stationnements")
+        # .prefetch_related("lot__logements")
         .get(uuid=convention_uuid)
     )
     request.user.check_perm("convention.change_convention", convention)
@@ -393,10 +393,10 @@ def get_or_generate_cerfa(request, convention_uuid):
 def generate_convention(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("programme__bailleur")
-        .prefetch_related("lot")
-        .prefetch_related("lot__type_stationnements")
-        .prefetch_related("lot__logements")
-        .prefetch_related("lot__prets")
+        # .prefetch_related("lot")
+        # .prefetch_related("lot__type_stationnements")
+        # .prefetch_related("lot__logements")
+        # .prefetch_related("lot__prets")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
         .prefetch_related("programme__logementedds")
@@ -784,7 +784,7 @@ def journal(request, convention_uuid):
 def fiche_caf(request, convention_uuid):
     convention = (
         Convention.objects.prefetch_related("lot")
-        .prefetch_related("lot__logements")
+        # .prefetch_related("lot__logements")
         .prefetch_related("programme")
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)

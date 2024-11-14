@@ -201,6 +201,7 @@ class ConventionLogementsService(ConventionService):
         lot.save()
 
     def _save_logements(self):
+
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
         self.convention.lot.logements.exclude(uuid__in=lgt_uuids).delete()
@@ -388,6 +389,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_foyer_residence_lgts_details(self):
+
         self.convention.lot.surface_habitable_totale = self.form.cleaned_data[
             "surface_habitable_totale"
         ]
