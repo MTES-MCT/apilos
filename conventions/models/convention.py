@@ -82,18 +82,24 @@ class Convention(models.Model):
         on_delete=models.CASCADE,
         null=False,
     )
+
+    # DEPRECATED:
     lot = models.ForeignKey(
         "programmes.Lot",
         on_delete=models.CASCADE,
         null=False,
         related_name="conventions",
     )
+
     date_fin_conventionnement = models.DateField(null=True, blank=True)
+
+    # DEPRECATED: use lof.financeur instead
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     commentaires = models.TextField(null=True, blank=True)
@@ -292,6 +298,14 @@ class Convention(models.Model):
             f"{programme.ville} - {programme.nom} - "
             + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
         )
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Modif temporaire pour inverser la relation Convention-Lot
+        if self.lot:
+            self.lot.convention = self
+            self.lot.save()
 
     def is_bailleur_editable(self):
         return self.statut in (
@@ -625,6 +639,8 @@ class Convention(models.Model):
         )
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
+
+        # TODO: reverse relation convention lot
 
         for logement in self.lot.logements.all():
             logement.clone(lot=cloned_lot)

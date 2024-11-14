@@ -73,6 +73,7 @@ def _compute_total_logement(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
+    # TODO: reverse relation convention lot
     for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable or 0
         logements_totale["sa_totale"] += logement.surface_annexes or 0
