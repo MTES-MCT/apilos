@@ -107,6 +107,7 @@ class ConventionAnnexesService(ConventionService):
         lot.save()
 
     def _annexes_atomic_update(self):
+        # TODO: reverse relation convention lot
         self.form = LotAnnexeForm(
             {
                 "uuid": self.convention.lot.uuid,
