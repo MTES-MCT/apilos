@@ -23,6 +23,7 @@ class ConventionTypeStationnementService(ConventionService):
             self.request.POST.get("editable_after_upload", False)
         )
         initial = []
+        # TODO: reverse relation convention lot
         stationnements = self.convention.lot.type_stationnements.all()
         for stationnement in stationnements:
             initial.append(

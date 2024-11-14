@@ -13,6 +13,7 @@ class ConventionFinancementService(ConventionService):
 
     def get(self):
         initial = []
+        # TODO: reverse relation convention lot
         for pret in self.convention.lot.prets.all():
             initial.append(
                 {

@@ -10,6 +10,7 @@ from conventions.services.conventions import ConventionService
 from programmes.models import Logement
 
 
+# TODO: reverse relation convention lot
 class ConventionLogementsService(ConventionService):
     form: LotLgtsOptionForm
     formset: LogementFormSet
