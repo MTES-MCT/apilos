@@ -85,24 +85,23 @@ class Command(BaseCommand):
             )
             return
 
-        is_candidate: bool = False
+        needs_update: bool = False
         for v in json_content["files"].values():
-            if not is_candidate and "filename" in v:
-                is_candidate = True
-            v.update({"realname": v["filename"]})
+            if "filename" in v and "realname" not in v:
+                v.update({"realname": v["filename"]})
+                needs_update = True
 
-        if not is_candidate:
-            self.stdout.write("No change needed.")
+        if not needs_update:
+            self.stdout.write("No update needed.")
             return
 
         setattr(instance, field_name, json.dumps(json_content))
 
         if not dryrun:
             instance.save()
-            self.stdout.write(
-                self.style.SUCCESS("Done! Updated the instance with the new content.")
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"{"[DRYRUN] >> " if dryrun else ''}Done! Updated the instance with the new content."
             )
-        else:
-            self.stdout.write(
-                self.style.SUCCESS(f">> DRYRUN updated with content: {json_content}")
-            )
+        )
