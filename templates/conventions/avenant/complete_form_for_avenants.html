@@ -10,6 +10,7 @@
                 <div class="fr-col-12" {% if convention.parent.programme.ville %}hidden{% endif %}>
                     {% include "common/form/input_text.html" with form_input=complete_for_avenant_form.ville editable=True %}
                 </div>
+                {% comment %} TODO: reverse relation convention lot {% endcomment %}
                 <div class="fr-col-12" {% if convention.parent.lot.nb_logements %}hidden{% endif %}>
                     {% include "common/form/input_number.html" with form_input=complete_for_avenant_form.nb_logements editable=True %}
                 </div>

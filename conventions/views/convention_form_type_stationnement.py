@@ -11,8 +11,9 @@ class ConventionTypeStationnementView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
-            Convention.objects.prefetch_related("lot").prefetch_related(
-                "lot__type_stationnements"
-            ),
+            Convention,
+            # Convention.objects.prefetch_related("lot").prefetch_related(
+            #     "lot__type_stationnements"
+            # ),
             uuid=convention_uuid,
         )

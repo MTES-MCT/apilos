@@ -132,8 +132,9 @@ def send_survey_email(sender, instance, *args, **kwargs):
         )
 
 
+# FIXME: this signal should not work anymore
 @receiver(post_delete, sender=Convention)
 def remove_lot(sender, instance, *args, **kwargs):
-    lot = Lot.objects.get(id=instance.lot_id)
+    lot = Lot.objects.filter(id=instance.lot_id)
     if lot.conventions.count() == 0:
         lot.delete()
