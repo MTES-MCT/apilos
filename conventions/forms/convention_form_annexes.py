@@ -164,8 +164,8 @@ class BaseAnnexeFormSet(BaseFormSet):
         Validation du formulaire :
             - le logement doit exister dans le lot
         """
+        # TODO: reverse relation convention lot
         if self.convention:
-            # TODO: reverse relation convention lot
             lgts = self.convention.lot.logements.all()
             for form in self.forms:
                 try:

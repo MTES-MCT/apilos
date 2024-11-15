@@ -10,9 +10,9 @@ from conventions.models.choices import ConventionStatut
 from .models import AvenantType, Convention, Pret
 
 
-# TODO: reverse relation convention lot
 @admin.display(description="Programme")
 def view_programme(convention):
+    # TODO: reverse relation convention lot
     return (
         f"{convention.programme.ville} -  {convention.lot} - "
         + f"{convention.lot.nb_logements} lgts - "

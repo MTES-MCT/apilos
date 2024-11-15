@@ -69,6 +69,7 @@ def get_convention_template_path(convention):
 
 
 def _compute_total_logement(convention):
+    # TODO: reverse relation convention lot
     logements_totale = {
         "sh_totale": 0,
         "sa_totale": 0,
@@ -77,7 +78,6 @@ def _compute_total_logement(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    # TODO: reverse relation convention lot
     for logement in convention.lot.logements.order_by("typologie").all():
         logements_totale["sh_totale"] += logement.surface_habitable or 0
         logements_totale["sa_totale"] += logement.surface_annexes or 0
@@ -118,6 +118,8 @@ def get_or_generate_convention_doc(
 
 
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
+    # TODO: reverse relation convention lot
+
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot_id)
@@ -274,6 +276,8 @@ def _save_convention_donnees_validees(
     lot_num,
     logements_totale,
 ):
+    # TODO: reverse relation convention lot
+
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot_id)
@@ -461,6 +465,8 @@ def _get_adresse(convention):
 
 
 def _get_object_images(doc, convention):
+    # TODO: reverse relation convention lot
+
     object_images = {}
     local_pathes = []
     vendeur_images, tmp_local_path = _build_files_for_docx(
@@ -515,6 +521,7 @@ def _get_object_images(doc, convention):
 
 
 def _get_loyer_par_metre_carre(convention):
+    # TODO: reverse relation convention lot
     logement = convention.lot.logements.first()
     if logement:
         return convention.lot.logements.first().loyer_par_metre_carre
@@ -548,6 +555,7 @@ def _compute_liste_des_annexes(typestationnements, annexes):
 
 
 def compute_mixte(convention):
+    # TODO: reverse relation convention lot
     mixite = {
         "mixPLUSsup10_30pc": 0,
         "mixPLUSinf10_30pc": 0,
@@ -576,6 +584,8 @@ def compute_mixte(convention):
 
 
 def _prepare_logement_edds(convention):
+    # TODO: reverse relation convention lot
+
     logement_edds = convention.programme.logementedds.order_by(
         "financement", "designation"
     ).all()
@@ -628,6 +638,8 @@ def _get_foyer_attributions(convention: Convention) -> str:
 
 
 def fiche_caf_doc(convention):
+    # TODO: reverse relation convention lot
+
     filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
 
     doc = DocxTemplate(filepath)
