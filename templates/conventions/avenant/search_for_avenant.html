@@ -52,6 +52,7 @@
                                         <div class="fr-mb-1w fr-text--bold apilos-overflow-hidden">
                                             {{convention.programme.nom}}
                                         </div>
+                                        {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                         {{convention.programme.ville}} - <strong>{{ convention.lot.financement|default_if_none:'' }}</strong>
                                     </div>
                                     <div class="fr-col-4 apilos-text--italic">

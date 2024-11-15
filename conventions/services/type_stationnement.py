@@ -1,6 +1,10 @@
 from django.http import HttpRequest
 
-from conventions.forms import TypeStationnementFormSet, UploadForm
+from conventions.forms import (
+    BaseTypeStationnementFormSet,
+    TypeStationnementFormSet,
+    UploadForm,
+)
 from conventions.models import Convention
 from conventions.services.conventions import ConventionService
 from programmes.models import TypeStationnement
@@ -11,7 +15,7 @@ from . import upload_objects, utils
 class ConventionTypeStationnementService(ConventionService):
     convention: Convention
     request: HttpRequest
-    formset: TypeStationnementFormSet
+    formset: BaseTypeStationnementFormSet
     upform: UploadForm = UploadForm()
     editable_after_upload: bool
     redirect_recap: bool = False
@@ -19,11 +23,12 @@ class ConventionTypeStationnementService(ConventionService):
     import_warnings: None | list = None
 
     def get(self):
+        # TODO: reverse relation convention lot
+
         self.editable_after_upload = bool(
             self.request.POST.get("editable_after_upload", False)
         )
         initial = []
-        # TODO: reverse relation convention lot
         stationnements = self.convention.lot.type_stationnements.all()
         for stationnement in stationnements:
             initial.append(
@@ -132,6 +137,8 @@ class ConventionTypeStationnementService(ConventionService):
             self.return_status = utils.ReturnStatus.ERROR
 
     def _save_stationnements(self):
+        # TODO: reverse relation convention lot
+
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
         TypeStationnement.objects.filter(lot_id=self.convention.lot.id).exclude(

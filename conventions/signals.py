@@ -132,9 +132,9 @@ def send_survey_email(sender, instance, *args, **kwargs):
         )
 
 
-# TODO: reverse relation convention lot
 @receiver(post_delete, sender=Convention)
 def remove_lot(sender, instance, *args, **kwargs):
+    # TODO: reverse relation convention lot
     lot = Lot.objects.get(id=instance.lot_id)
     if lot.conventions.count() == 0:
         lot.delete()
