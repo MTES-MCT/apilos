@@ -10,6 +10,7 @@
     <script nonce="{{request.csp_nonce}}">Turbo.session.drive = false</script>
 {% endblock %}
 {% block content %}
+    {% comment %} TODO: reverse relation convention lot {% endcomment %}
     {% with programme_uuid=convention.programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=convention.lot.uuid|slugify ecolo_ref=convention.ecolo_reference %}
         <input type="hidden" id="convention_uuid" value="{{ convention.uuid }}">
         <div class="fr-container-fluid ds_banner recapitulatif">

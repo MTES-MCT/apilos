@@ -8,6 +8,7 @@ from django.test import TestCase
 from conventions.models import Convention, ConventionHistory, ConventionStatut
 from conventions.tests.factories import ConventionFactory
 from programmes.models import Financement
+from programmes.tests.factories import LotFactory
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole
 
@@ -199,6 +200,13 @@ class ConventionModelsTest(TestCase):
     def test_convention_bailleur(self):
         convention = Convention.objects.order_by("uuid").first()
         self.assertEqual(convention.bailleur, convention.programme.bailleur)
+
+    def test_save_lot_convention_fk(self):
+        lot = LotFactory()
+        assert lot.convention is None
+        convention = ConventionFactory(lot=lot)
+        convention.refresh_from_db()
+        assert lot.convention == convention
 
 
 class ConventionPrefixTest(TestCase):

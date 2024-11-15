@@ -30,6 +30,8 @@ class Command(BaseCommand):
         )
 
     def financement_update(self, numero, new_financement):
+        # TODO: reverse relation convention lot
+
         qs = Convention.objects.filter(numero=numero)
         if qs.count() == 0:
             self.stdout.write(self.style.WARNING(f"Convention {numero} not found."))

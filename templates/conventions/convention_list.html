@@ -159,6 +159,7 @@
                                                             {{convention.programme.code_postal|highlight_if_match:search_lieu}}
                                                         </em>
                                                     </td>
+                                                    {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                                     <td>{{convention.lot.nb_logements}}</td>
                                                     <td>{{convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
                                                     <td>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>

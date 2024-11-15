@@ -83,7 +83,7 @@ class Convention(models.Model):
         null=False,
     )
 
-    # DEPRECATED:
+    # TODO: reverse relation convention lot
     lot = models.ForeignKey(
         "programmes.Lot",
         on_delete=models.CASCADE,
@@ -303,7 +303,7 @@ class Convention(models.Model):
         super().save(*args, **kwargs)
 
         # Modif temporaire pour inverser la relation Convention-Lot
-        if self.lot:
+        if self.lot and not self.lot.convention:
             self.lot.convention = self
             self.lot.save()
 
@@ -488,6 +488,7 @@ class Convention(models.Model):
         return date.today() > self.date_resiliation
 
     def is_incompleted_avenant_parent(self):
+        # TODO: reverse relation convention lot
         if self.is_avenant() and (
             not self.parent.programme.ville
             or not self.parent.lot.nb_logements
@@ -581,6 +582,8 @@ class Convention(models.Model):
         return ""
 
     def clone(self, user, *, convention_origin):
+        # TODO: reverse relation convention lot
+
         cloned_programme = self.programme.clone()
 
         lot_fields = model_to_dict(
@@ -593,6 +596,7 @@ class Convention(models.Model):
                 "programme_id",
                 "cree_le",
                 "mis_a_jour_le",
+                "convention",
             ],
         )
         lot_fields.update(
@@ -639,8 +643,6 @@ class Convention(models.Model):
         )
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
-
-        # TODO: reverse relation convention lot
 
         for logement in self.lot.logements.all():
             logement.clone(lot=cloned_lot)

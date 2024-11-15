@@ -176,6 +176,7 @@ class AddConventionService:
         )
 
     def _create_convention(self, lot: Lot) -> Convention:
+        # TODO: reverse relation convention lot
         return Convention.objects.create(
             lot=lot,
             programme_id=lot.programme_id,
@@ -226,6 +227,8 @@ class AddAvenantsService:
     form: AddAvenantForm
 
     def __init__(self, request: HttpRequest, convention: Convention) -> None:
+        # TODO: reverse relation convention lot
+
         self.request = request
         self.convention = convention
 
@@ -249,6 +252,8 @@ class AddAvenantsService:
             )
 
     def save(self) -> ReturnStatus:
+        # TODO: reverse relation convention lot
+
         if not self.form.is_valid():
             return ReturnStatus.ERROR
 

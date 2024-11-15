@@ -67,6 +67,7 @@
                                                         </div>
                                                     </td>
                                                     <td>{{ convention.numero|default_if_none:"-" }}</td>
+                                                    {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                                     <td>{{ convention.lot.financement }}</td>
                                                     <td>{{ convention.lot.nb_logements }}</td>
                                                     <td>

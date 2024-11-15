@@ -114,6 +114,8 @@
                             </div>
                         </div>
                         <hr>
+                        {% comment %} TODO: reverse relation convention lot {% endcomment %}
+
                         {% include "common/form/input_upload.html" with form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
 
                         {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
