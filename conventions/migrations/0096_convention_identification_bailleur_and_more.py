@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0094_convention_convention_cree_le_idx"),
+        ("conventions", "0095_alter_convention_financement"),
     ]
 
     operations = [
