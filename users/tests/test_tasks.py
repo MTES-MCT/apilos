@@ -41,6 +41,7 @@ class SendMonthlyEmailsTaskTest(ParametrizedTestCase, TestCase):
 
     @time_machine.travel("2023-04-03")
     @override_settings(CRON_ENABLED=True)
+    @override_settings(APPLICATION_DOMAIN_URL="")
     @patch("users.tasks.UserService.email_mensuel")
     def test_application_domain_url_is_not_set(self, mock_email_mensuel):
         send_monthly_emails.delay()

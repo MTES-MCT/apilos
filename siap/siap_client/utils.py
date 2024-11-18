@@ -242,12 +242,14 @@ def get_or_create_programme(
         ]
         == []
     ):
-        aides = [
-            aide["aide"]["code"] for aide in programme_from_siap["detailsOperation"]
-        ]
+        aides = (
+            [aide["aide"]["code"] for aide in programme_from_siap["detailsOperation"]]
+            if "detailsOperation" in programme_from_siap
+            else []
+        )
         raise NoConventionForOperationSIAPException(
             "Les aides définies coté financement ne sont pas prises en charge par le"
-            f" conventionnement : {aides}"
+            f" conventionnement : {aides if aides else 'Pas de détails de l\'op'}"
         )
 
     try:
