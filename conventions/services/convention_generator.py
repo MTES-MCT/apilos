@@ -419,7 +419,10 @@ def get_files_attached(convention):
 
     files = UploadedFile.objects.filter(uuid__in=attached_files)
     for object_file in files:
-        file = UploadService().get_file(object_file.filepath(convention.uuid))
+        file = default_storage.open(
+            name=object_file.filepath(convention.uuid),
+            mode="rb",
+        )
         local_path = (
             settings.MEDIA_ROOT
             / "conventions"

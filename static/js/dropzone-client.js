@@ -54,8 +54,9 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
                     file.thumbnail = document.querySelector('img[alt="'+filename+'"]').src;
                 }
                 for (var i = 0; i < response.uploaded_file.length; i++) {
-                    if (filename == encodeURI(response.uploaded_file[i].filename)) {
+                    if (filename == encodeURI(response.uploaded_file[i].realname)) {
                         file.uuid = response.uploaded_file[i].uuid
+                        file.realname = response.uploaded_file[i].realname
                     }
                 }
 
@@ -66,8 +67,10 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
                     'uuid':file.uuid,
                     'thumbnail' : file.thumbnail,
                     'size': file.size,
-                    'filename': file.name
+                    'filename': file.name,
+                    'realname': file.realname,
                 };
+
                 document.getElementById(form_id).value = JSON.stringify(files);
             })
             if (singleFile) {
@@ -111,6 +114,6 @@ function init_dropzone_list(myDropzone,form_id) {
     if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
     Object.keys(files).forEach(file_uuid => {
         var file = files[file_uuid]
-        init_dropzone_thumbnail(myDropzone, file.filename, file.size, file.uuid, file.thumbnail)
+        init_dropzone_thumbnail(myDropzone, file.realname, file.size, file.uuid, file.thumbnail)
     });
 }

@@ -56,13 +56,6 @@ class UploadService:
         destination.write(file_io.getbuffer())
         destination.close()
 
-    def get_file(self, filepath=None) -> File:
-        filepath = filepath or self.path
-        return default_storage.open(
-            filepath,
-            "rb",
-        )
-
     @property
     def path(self):
         return f"{self.convention_dirpath}/{self.filename}"

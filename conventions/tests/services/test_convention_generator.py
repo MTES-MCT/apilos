@@ -574,7 +574,7 @@ class TestGetOrGenerateConventionDoc(ParametrizedTestCase, TestCase):
             "conventions",
             str(convention.uuid),
             "media",
-            f"{upload_uuid}_{upload_filename}",
+            "faea29cc-3595-4ab9-b2f7-3860bcb2ff54_cerfa.docx",
         )
         os.makedirs(expected_filepath.parent, exist_ok=True)
         with open(expected_filepath, "wb") as f:
