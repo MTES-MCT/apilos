@@ -63,26 +63,15 @@ class Command(BaseCommand):
         if not field:
             return
 
-        self.stdout.write(
-            f"Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}'."
-        )
-
         try:
             json_content = json.loads(field)
         except json.JSONDecodeError:
-            self.stdout.write(self.style.ERROR("Failed to decode JSON content"))
             return
 
         if "files" not in json_content:
-            self.stdout.write(
-                self.style.ERROR("JSON content does not have a 'files' key")
-            )
             return
 
         if not isinstance(json_content["files"], dict):
-            self.stdout.write(
-                self.style.ERROR("JSON content 'files' key is not a dict")
-            )
             return
 
         needs_update: bool = False
@@ -92,16 +81,12 @@ class Command(BaseCommand):
                 needs_update = True
 
         if not needs_update:
-            self.stdout.write("No update needed.")
             return
 
         setattr(instance, field_name, json.dumps(json_content))
 
+        self.stdout.write(
+            f"{'[DRYRUN] >> ' if dryrun else ''}Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}'."  # noqa: E501
+        )
         if not dryrun:
             instance.save()
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"{"[DRYRUN] >> " if dryrun else ''}Done! Updated the instance with the new content."
-            )
-        )
