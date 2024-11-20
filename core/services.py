@@ -89,7 +89,7 @@ class EmailService:
         invalid_emails = set(self.to_emails) - set(valid_to_emails)
 
         if not valid_to_emails:
-            raise Exception("No valid recipient for email")
+            raise ValueError("No valid recipient for email")
 
         if invalid_emails:
             logger.warning("Invalid email addresses: %s", ", ".join(invalid_emails))
