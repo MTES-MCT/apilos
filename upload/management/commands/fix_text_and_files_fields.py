@@ -17,9 +17,19 @@ class Command(BaseCommand):
             action="store_true",
             help="Run the command in dry run mode without making any changes",
         )
+        parser.add_argument(
+            "--year",
+            type=int,
+            required=True,
+        )
 
     def handle(self, *args, **options):
-        for programme in Programme.objects.all():
+        year = options["year"]
+        self.stdout.write(f" >> Fixing text and files fields for year {year}")
+
+        queryset = Programme.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} programmes")
+        for programme in queryset:
             for field in (
                 "acquereur",
                 "acte_de_propriete",
@@ -35,7 +45,9 @@ class Command(BaseCommand):
                     instance=programme, field_name=field, dryrun=options["dryrun"]
                 )
 
-        for convention in Convention.objects.all():
+        queryset = Convention.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} conventions")
+        for convention in queryset:
             for field in (
                 "attached",
                 "commentaires",
@@ -47,7 +59,9 @@ class Command(BaseCommand):
                     instance=convention, field_name=field, dryrun=options["dryrun"]
                 )
 
-        for lot in Lot.objects.all():
+        queryset = Lot.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} lots")
+        for lot in queryset:
             for field in (
                 "edd_classique",
                 "edd_volumetrique",
