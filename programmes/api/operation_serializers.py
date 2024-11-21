@@ -76,9 +76,24 @@ class TypeStationnementSerializer(serializers.HyperlinkedModelSerializer):
         ref_name = "TypeStationnement"
 
 
+class PretSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Pret
+        fields = (
+            "preteur",
+            "autre",
+            "date_octroi",
+            "numero",
+            "duree",
+            "montant",
+        )
+        ref_name = "Pret"
+
+
 class LotSerializer(serializers.HyperlinkedModelSerializer):
     logements = LogementSerializer(many=True)
     type_stationnements = TypeStationnementSerializer(many=True)
+    prets = PretSerializer(many=True)
 
     class Meta:
         model = Lot
@@ -86,6 +101,7 @@ class LotSerializer(serializers.HyperlinkedModelSerializer):
             "nb_logements",
             "financement",
             "type_habitat",
+            "prets",
             "logements",
             "type_stationnements",
         )
@@ -199,24 +215,9 @@ class OperationInfoSIAPSerializer(serializers.ModelSerializer):
         ref_name = "OperationInfoSIAP"
 
 
-class PretSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Pret
-        fields = (
-            "preteur",
-            "autre",
-            "date_octroi",
-            "numero",
-            "duree",
-            "montant",
-        )
-        ref_name = "Pret"
-
-
 class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     lot = LotSerializer(read_only=True)
     operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
-    prets = PretSerializer(many=True)
     numero_avenant = serializers.SerializerMethodField()
     numero_convention = serializers.SerializerMethodField()
     convention_date_signature = serializers.SerializerMethodField()
@@ -245,7 +246,6 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
             "financement",
             "fond_propre",
             "lot",
-            "prets",
             "operation",
             "numero_convention",
             "numero_avenant",
