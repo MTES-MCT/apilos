@@ -51,6 +51,10 @@
                 {% include "common/form/required_field.html" with form_input=form_input %}
             </label>
         {% endif %}
+    {% elif helptext_visible %}
+        <label class="fr-label fr-mb-1w" for="{{form_input.id_for_label}}">
+            {% include "common/help_field.html" with form_input=form_input %}
+        </label>
     {% endif %}
     <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
         <textarea

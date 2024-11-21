@@ -243,6 +243,9 @@ class Convention(models.Model):
 
     fichier_override_cerfa = models.TextField(null=True, blank=True)
 
+    identification_bailleur = models.BooleanField(default=False)
+    identification_bailleur_detail = models.TextField(null=True, blank=True)
+
     @property
     def attribution_type(self):
         if not self.programme.is_foyer():

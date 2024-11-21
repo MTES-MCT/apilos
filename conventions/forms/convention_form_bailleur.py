@@ -34,6 +34,7 @@ class ConventionBailleurForm(forms.Form):
             "max_length": "Le nom du signataire de la convention "
             + "ne doit pas excéder 255 caractères",
         },
+        required=False,
     )
     signataire_fonction = forms.CharField(
         label="Fonction du signataire de la convention",
@@ -68,6 +69,18 @@ class ConventionBailleurForm(forms.Form):
         error_messages={
             "max_length": "Le bloc signature ne doit pas excéder 5000 caractères",
         },
+    )
+
+    identification_bailleur = forms.BooleanField(
+        required=False,
+        label="Personaliser l'identification du bailleur qui apparait sur la première page de la convention",
+    )
+
+    identification_bailleur_detail = forms.CharField(
+        label="Identification du bailleur personnalisée",
+        help_text='Apparaît uniquement sur la première page de la convention, en dessous de "d\'une part". '
+        'Doit contenir la mention "représenté par".',
+        required=False,
     )
 
     nature_bailleur = forms.TypedChoiceField(
@@ -172,4 +185,18 @@ class ConventionBailleurForm(forms.Form):
                     "Lorsque l'entreprise gestionnaire est renseignée, La date de"
                     + " délibération du signataire du gestionnaire de la convention"
                     + " doit être renseignée",
+                )
+
+        if not self.cleaned_data.get("identification_bailleur"):
+            if not self.cleaned_data.get("signataire_nom"):
+                self.add_error(
+                    "signataire_nom",
+                    "Le nom du signataire de la convention est obligatoire",
+                )
+        else:
+            if not self.cleaned_data.get("identification_bailleur_detail"):
+                self.add_error(
+                    "identification_bailleur_detail",
+                    "Le détail de l'identification du bailleur est obligatoire "
+                    "lorsque vous avez choisi l'identification du bailleur personnalisée",
                 )
