@@ -328,6 +328,7 @@ class Programme(models.Model):
             NatureLogement.RESIDENCEDACCUEIL,
         ]
 
+    @property
     def is_logements_ordinaires(self):
         return self.nature_logement == NatureLogement.LOGEMENTSORDINAIRES
 
