@@ -1,9 +1,6 @@
 select
     ch.id as id,
     chp.id as parent_id,
-    -- Les avenants sont initialisés avec un type 'commentaires' dont la valeur est un résumé des altérations
-    -- déclarées depuis Ecoloweb
-    '{"files": {}, "text": {"description_avenant": "'||replace(a.description, '"', E'\\"')||'"} }' as commentaires,
     ch.conventionapl_id||':'||ch.numero as programme_id,
     -- Les lots d'un programme sont tous les logements partageant le même financement
     ch.id as lot_id,
