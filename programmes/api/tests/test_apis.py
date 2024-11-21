@@ -55,6 +55,7 @@ operation_response = {
                 "type_habitat": "COLLECTIF",
                 "logements": [],
                 "type_stationnements": [],
+                "prets": [],
             },
             "numero": None,
             "statut": "1. Projet",
@@ -353,6 +354,7 @@ class OperationClosedAPITest(APITestCase):
                         }
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",
@@ -431,6 +433,7 @@ class OperationClosedAPITest(APITestCase):
                         },
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",
@@ -522,6 +525,7 @@ class OperationClosedAPITest(APITestCase):
                         }
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",
@@ -600,6 +604,7 @@ class OperationClosedAPITest(APITestCase):
                         },
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",
@@ -678,6 +683,7 @@ class OperationClosedAPITest(APITestCase):
                         }
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",
@@ -756,6 +762,7 @@ class OperationClosedAPITest(APITestCase):
                         },
                     ],
                     "type_stationnements": [],
+                    "prets": [],
                 },
                 "operation_version": {
                     "nom": "Programme 1",

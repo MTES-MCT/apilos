@@ -62,6 +62,7 @@ lot1 = {
     "type_habitat": "COLLECTIF",
     "logements": logts1,
     "type_stationnements": [],
+    "prets": [],
 }
 convention1 = {
     "date_fin_conventionnement": None,
@@ -139,6 +140,7 @@ lot2 = {
     "type_habitat": "MIXTE",
     "logements": logts2,
     "type_stationnements": [],
+    "prets": [],
 }
 convention2 = {
     "date_fin_conventionnement": None,
