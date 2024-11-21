@@ -25,6 +25,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(
+            # attach_prets_to_lot,
             migrations.RunPython.noop,
             migrations.RunPython.noop,
         ),
