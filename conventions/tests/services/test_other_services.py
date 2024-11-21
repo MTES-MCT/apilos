@@ -1,5 +1,6 @@
 from unittest import mock
 
+import pytest
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.core import mail
 from django.test import RequestFactory, TestCase
@@ -24,6 +25,25 @@ class EmailServiceTests(TestCase):
             mail.outbox[0].anymail_test_params["merge_global_data"]["email_param_key"],
             "email_param_value",
         )
+
+    def test_send_transactional_email_no_emails_valid(self):
+        with pytest.raises(ValueError, match="recipient for email"):
+            EmailService(
+                to_emails=["wrong.to.email"],
+                email_template_id=EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
+            ).send_transactional_email(
+                email_data={"email_param_key": "email_param_value"}
+            )
+
+    def test_send_transactional_email_filter_wrong_emails(self):
+        EmailService(
+            to_emails=["to@apilos.fr", "wrong.to.email"],
+            cc_emails=["cc@apilos.fr", "wrong.cc.email"],
+            email_template_id=EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,
+        ).send_transactional_email(email_data={"email_param_key": "email_param_value"})
+        assert len(mail.outbox) == 1
+        assert mail.outbox[0].to == ["to@apilos.fr"]
+        assert mail.outbox[0].cc == ["cc@apilos.fr"]
 
     def test_email_template_id_not_configured(self):
         with self.assertRaises(Exception):  # noqa: B017
