@@ -26,6 +26,8 @@ class Financement(models.TextChoices):
     PLS = "PLS", "PLS"
     PSH = "PSH", "PSH"
     PALULOS = "PALULOS", "PALULOS"
+    # PALULOS
+    PALU_AV_21 = "PALU_AV_21", "PALULOS"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
     # Financements spécifiques outre-mer
     LLS = "LLS", "LLS"

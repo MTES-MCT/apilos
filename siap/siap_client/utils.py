@@ -242,9 +242,14 @@ def get_or_create_programme(
         ]
         == []
     ):
+        aides = (
+            [aide["aide"]["code"] for aide in programme_from_siap["detailsOperation"]]
+            if "detailsOperation" in programme_from_siap
+            else []
+        )
         raise NoConventionForOperationSIAPException(
             "Les aides définies coté financement ne sont pas prises en charge par le"
-            " conventionnement"
+            f" conventionnement : {aides if aides else 'Pas de détails de l\'op'}"
         )
 
     try:
@@ -416,6 +421,8 @@ def _financement(code):
         return Financement.PLS
     if code in ["PLAI_ADP", Financement.PLAI_ADP]:
         return Financement.PLAI_ADP
+    if code in ["PALU_AV_21", Financement.PALU_AV_21]:
+        return Financement.PALU_AV_21
     return code
 
 
@@ -434,14 +441,23 @@ def _get_nature_bailleur(bailleur_from_siap):
 
 
 def _type_habitat(aide: dict) -> TypeHabitat:
-    if aide["logement"]["nbLogementsIndividuels"] is None:
-        return TypeHabitat.COLLECTIF
-    if aide["logement"]["nbLogementsCollectifs"] is None:
-        return TypeHabitat.INDIVIDUEL
+    if "logement" in aide and aide["logement"]:
+        if (
+            "nbLogementsIndividuels" in aide["logement"]
+            and aide["logement"]["nbLogementsIndividuels"] is None
+        ):
+            return TypeHabitat.COLLECTIF
+        if (
+            "nbLogementsCollectifs" in aide["logement"]
+            and aide["logement"]["nbLogementsCollectifs"] is None
+        ):
+            return TypeHabitat.INDIVIDUEL
     return TypeHabitat.MIXTE
 
 
 def _nb_logements(aide):
-    return (aide["logement"]["nbLogementsIndividuels"] or 0) + (
-        aide["logement"]["nbLogementsCollectifs"] or 0
-    )
+    if "logement" in aide and aide["logement"]:
+        return (aide["logement"]["nbLogementsIndividuels"] or 0) + (
+            aide["logement"]["nbLogementsCollectifs"] or 0
+        )
+    return 0

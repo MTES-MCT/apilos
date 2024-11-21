@@ -29,7 +29,7 @@ class ProgrammeMinimalForm(forms.Form):
         },
     )
     adresse = forms.CharField(
-        label="Adresses du ou des bâtiments concernés par le programme (PLUS, PLS et PLAI)",
+        label="Adresses du ou des bâtiments concernés par l'operation",
         help_text=(
             "Si le programme comporte plusieurs adresses (exemple : plusieurs bâtiments),"
             + " renseignez chaque adresse en allant à la ligne entre chaque nouvelle adresse"
