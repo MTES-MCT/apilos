@@ -27,7 +27,7 @@ class Financement(models.TextChoices):
     PSH = "PSH", "PSH"
     PALULOS = "PALULOS", "PALULOS"
     # PALULOS
-    PALU_AV_21 = "PALU_AV_21", "PALULOS"
+    PALU_AV_21 = "PALU_AV_21", "PALULOS avant 2021"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
     # Financements spécifiques outre-mer
     LLS = "LLS", "LLS"
