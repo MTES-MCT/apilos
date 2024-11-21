@@ -17,9 +17,19 @@ class Command(BaseCommand):
             action="store_true",
             help="Run the command in dry run mode without making any changes",
         )
+        parser.add_argument(
+            "--year",
+            type=int,
+            required=True,
+        )
 
     def handle(self, *args, **options):
-        for programme in Programme.objects.all():
+        year = options["year"]
+        self.stdout.write(f" >> Fixing text and files fields for year {year}")
+
+        queryset = Programme.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} programmes")
+        for programme in queryset:
             for field in (
                 "acquereur",
                 "acte_de_propriete",
@@ -35,7 +45,9 @@ class Command(BaseCommand):
                     instance=programme, field_name=field, dryrun=options["dryrun"]
                 )
 
-        for convention in Convention.objects.all():
+        queryset = Convention.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} conventions")
+        for convention in queryset:
             for field in (
                 "attached",
                 "commentaires",
@@ -47,7 +59,9 @@ class Command(BaseCommand):
                     instance=convention, field_name=field, dryrun=options["dryrun"]
                 )
 
-        for lot in Lot.objects.all():
+        queryset = Lot.objects.filter(cree_le__year=year)
+        self.stdout.write(f" >> Processing {queryset.count()} lots")
+        for lot in queryset:
             for field in (
                 "edd_classique",
                 "edd_volumetrique",
@@ -63,26 +77,15 @@ class Command(BaseCommand):
         if not field:
             return
 
-        self.stdout.write(
-            f"Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}'."
-        )
-
         try:
             json_content = json.loads(field)
         except json.JSONDecodeError:
-            self.stdout.write(self.style.ERROR("Failed to decode JSON content"))
             return
 
         if "files" not in json_content:
-            self.stdout.write(
-                self.style.ERROR("JSON content does not have a 'files' key")
-            )
             return
 
         if not isinstance(json_content["files"], dict):
-            self.stdout.write(
-                self.style.ERROR("JSON content 'files' key is not a dict")
-            )
             return
 
         needs_update: bool = False
@@ -92,16 +95,12 @@ class Command(BaseCommand):
                 needs_update = True
 
         if not needs_update:
-            self.stdout.write("No update needed.")
             return
 
         setattr(instance, field_name, json.dumps(json_content))
 
+        self.stdout.write(
+            f"{'[DRYRUN] >> ' if dryrun else ''}Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}'."  # noqa: E501
+        )
         if not dryrun:
             instance.save()
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"{"[DRYRUN] >> " if dryrun else ''}Done! Updated the instance with the new content."
-            )
-        )
