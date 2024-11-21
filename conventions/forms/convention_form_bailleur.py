@@ -78,7 +78,8 @@ class ConventionBailleurForm(forms.Form):
 
     identification_bailleur_detail = forms.CharField(
         label="Identification du bailleur personnalisée",
-        help_text='Apparaît uniquement sur la première page de la convention, en dessous de "d\'une part"',
+        help_text='Apparaît uniquement sur la première page de la convention, en dessous de "d\'une part". '
+        'Doit contenir la mention "représenté par".',
         required=False,
     )
 
