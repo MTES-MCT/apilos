@@ -1,5 +1,7 @@
+import argparse
 import json
 import logging
+from datetime import date, datetime
 from typing import Any
 
 from django.core.management.base import BaseCommand
@@ -10,6 +12,13 @@ from programmes.models import Lot, Programme
 logger = logging.getLogger(__name__)
 
 
+def validate_date_param(str_date: str) -> date:
+    try:
+        return datetime.strptime(str_date, "%Y-%m-%d").date()
+    except ValueError as err:
+        raise argparse.ArgumentTypeError(f"not a valid date: {str_date!r}") from err
+
+
 class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
@@ -18,16 +27,32 @@ class Command(BaseCommand):
             help="Run the command in dry run mode without making any changes",
         )
         parser.add_argument(
-            "--year",
-            type=int,
+            "--from-date",
+            help="The start date (format YYYY-MM-DD)",
             required=True,
+            type=validate_date_param,
+        )
+        parser.add_argument(
+            "--to-date",
+            help="The end date (format YYYY-MM-DD)",
+            required=True,
+            type=validate_date_param,
         )
 
     def handle(self, *args, **options):
-        year = options["year"]
-        self.stdout.write(f" >> Fixing text and files fields for year {year}")
 
-        queryset = Programme.objects.filter(cree_le__year=year)
+        from_date = options["from_date"]
+        to_date = options["to_date"]
+        if from_date > to_date:
+            raise ValueError("The start date must be before the end date")
+
+        self.stdout.write(
+            f" >> Fixing text and files fields for {from_date} to {to_date}"
+        )
+
+        queryset = Programme.objects.filter(
+            cree_le__date__gte=from_date, cree_le__date__lt=to_date
+        )
         self.stdout.write(f" >> Processing {queryset.count()} programmes")
         for programme in queryset:
             for field in (
@@ -45,7 +70,9 @@ class Command(BaseCommand):
                     instance=programme, field_name=field, dryrun=options["dryrun"]
                 )
 
-        queryset = Convention.objects.filter(cree_le__year=year)
+        queryset = Convention.objects.filter(
+            cree_le__date__gte=from_date, cree_le__date__lt=to_date
+        )
         self.stdout.write(f" >> Processing {queryset.count()} conventions")
         for convention in queryset:
             for field in (
@@ -59,7 +86,9 @@ class Command(BaseCommand):
                     instance=convention, field_name=field, dryrun=options["dryrun"]
                 )
 
-        queryset = Lot.objects.filter(cree_le__year=year)
+        queryset = Lot.objects.filter(
+            cree_le__date__gte=from_date, cree_le__date__lt=to_date
+        )
         self.stdout.write(f" >> Processing {queryset.count()} lots")
         for lot in queryset:
             for field in (
