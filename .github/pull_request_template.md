@@ -9,8 +9,7 @@ Description plus détaillée de l'intention, l'approche ou de l'implémentation 
 
 - [ ] Bug fix
 - [ ] Nouvelle fonctionnalité
-- [ ] Mise à jour de données / DAG
-- [ ] Les changements nécessitent une mise à jour de documentation
+- [ ] Mise à jour de la documentation
 - [ ] Refactoring de code (explication à retrouver dans la description)
 
 ## Auto-review
