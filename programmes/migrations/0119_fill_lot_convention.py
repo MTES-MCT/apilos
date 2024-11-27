@@ -29,7 +29,7 @@ def undo_fill_lot_convention(apps, schema_editor):
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("programmes", "0116_lot_convention"),
+        ("programmes", "0118_lot_convention"),
     ]
     operations = [
         migrations.RunPython(
