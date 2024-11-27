@@ -286,15 +286,21 @@ Si cette variable est définie, alors l'utilisateur est directement considéré 
 
 ## Statistiques de développement
 
-Pour suivre le travail et les performances de développement de l'équipe APiLos, On extrait régulièremet des statistiques en inspectant les releases et PR github.
-Les indicateurs sont extraits et agréger par mois :
+Pour suivre le travail et les performances de développement de l'équipe APiLos, On extrait régulièrement des statistiques en inspectant les releases et PR github.
+Les indicateurs sont extraits et agrégés par mois :
 
 * nb version majeur
 * nb version mineur
 * nb version de patch
-* nb PR d'évolution
+* nb d'évolutions livrées
+* nb de corrections livrées
+* nb de mises à jour de dépendances
+* nb de mises à jour technique
+* nb de mises à jour de documentation
+* nb d'escalades (demande de correction faite par l'équipe support suite à des retours des utilisateurs)
+* nb de régressions (ça arrive :) )
 
-Pour extraire ces statistique on se base sur l'interprétation des numéros de release qui utilise la convention `semantic versionning` (vx.y.z, x majeur, y mineur, z patch) et sur l'inspection des tags des PR de chaque release : cela est possible car on utilise la fonction `squash and merge` de github lors de l'intégration de la PR sur la branche principale `main`, ainsi, on a 1 commit par PR sur la branche main.
+Ces statistiques sont basées sur l'interprétation des numéros de release qui utilise la convention `semantic versionning` (vx.y.z, x majeur, y mineur, z patch) et sur l'inspection des tags des PR de chaque release : cela est possible car on utilise la fonction `squash and merge` de github lors de l'intégration de la PR sur la branche principale `main`, on a un commit par PR sur la branche main.
 
 ### Catégoriser les PR
 
