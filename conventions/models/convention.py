@@ -439,13 +439,14 @@ class Convention(models.Model):
             )
             .values("numero")
         )
+
         max_number = 0
         for convention_number in convention_numbers_in_year:
             number = convention_number["numero"].split(".")[-1]
             if number.isdigit() and int(number) > max_number:
                 max_number = int(number)
-        max_number = "%04d" % (max_number + 1)
-        return f"{dept_code}.{admin_code}.{year%100}.{max_number}"
+
+        return f"{dept_code}.{admin_code}.{year%100}.{max_number + 1:04d}"
 
     def is_avenant(self):
         return self.parent_id is not None
