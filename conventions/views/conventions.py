@@ -676,7 +676,6 @@ def display_pdf(request, convention_uuid):
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,
-            ConventionStatut.A_SIGNER.label,
         ]
         and convention.nom_fichier_signe
         and default_storage.exists(f"{convention_path}/{convention.nom_fichier_signe}")
