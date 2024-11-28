@@ -24,6 +24,13 @@ def compute_date_achevement_compile(sender, instance, *args, **kwargs):
     instance.date_achevement_compile = (
         instance.date_achevement or instance.date_achevement_previsible
     )
+
+
+@receiver(pre_save, sender=Programme)
+def set_insee_code(sender, instance, *args, **kwargs):
+    if instance.code_insee_departement and instance.code_insee_region:
+        return
+
     if instance.code_postal and len(instance.code_postal) == 5:
         if instance.code_postal.isnumeric() and int(instance.code_postal) >= 97000:
             code_departement = instance.code_postal[0:3]
