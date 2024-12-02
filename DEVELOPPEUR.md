@@ -273,7 +273,7 @@ DUMP_FILE=</path/to/dump/file>
 pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
 ```
 
-## MOCK
+## MOCK CERBERE
 
 En cas de non disponibilité de CERBERE en recette, il est possible de bouchonner l'authentification via CERBERE en définisant en variable d'environnement l'id de l'utilisateur à authentifier (à récupérer en base de données directement):
 
@@ -284,19 +284,59 @@ MOCK_CERBERE_USER_ID=
 
 Si cette variable est définie, alors l'utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.
 
-## Catégoriser les PR
+## Statistiques de développement
 
-On catégorise chaque PR en utilisant les labels suivants :
+Pour suivre le travail et les performances de développement de l'équipe APiLos, On extrait régulièrement des statistiques en inspectant les releases et PR github.
+Les indicateurs sont extraits et agrégés par mois :
 
-- bug
-- enhancement
-- documentation
-- technical
-- dependencies
+* nb version majeur
+* nb version mineur
+* nb version de patch
+* nb d'évolutions livrées
+* nb de corrections livrées
+* nb de mises à jour de dépendances
+* nb de mises à jour technique
+* nb de mises à jour de documentation
+* nb d'escalades (demande de correction faite par l'équipe support suite à des retours des utilisateurs)
+* nb de régressions (ça arrive :) )
 
-Inspiré des labels proposés par défaut par Github
+Ces statistiques sont basées sur l'interprétation des numéros de release qui utilise la convention `semantic versionning` (vx.y.z, x majeur, y mineur, z patch) et sur l'inspection des tags des PR de chaque release : cela est possible car on utilise la fonction `squash and merge` de github lors de l'intégration de la PR sur la branche principale `main`, on a un commit par PR sur la branche main.
 
-On ajoute 2 labels en plus de cette catégorisation :
+### Catégoriser les PR
 
-- escalation : quand la PR vient de notre processus d'escalade avec l'équipe Support
-- regression : Pour le suivi des regressions
+Pour que le script d'extraction marche correctement, il est nécessaire de catégoriser les PR en les taguant avec les labels comme suit:
+
+* bug
+* enhancement
+* documentation
+* technical
+* dependencies (tags déposé automatiquement par dépendadot lorsqu'il ouvre une PR)
+
+Cette catégorisation est inspirée des labels proposés par défaut par Github
+
+On ajoute aussi 2 labels en plus de cette catégorisation lorsque c'est approprié :
+
+* escalation : quand la PR vient de notre processus d'escalade avec l'équipe Support
+* regression : Pour le suivi des regressions
+
+### Processus d'extraction des statistiques de developpement
+
+Créer un token GitHub :
+
+* Accéder à https://github.com
+* Accéder au menu de votre profile
+* Cliquer sur le menu `Settings`
+* Cliquer sur le menu `Developper settings`
+* Cliquer sur le menu `Personal access token` > `Tokens (classic)`
+* Cliquer sur le bouton `Generate new token` > `Generate new token (classic)`
+* Selectionner les options `public_repo`, `read:project`, `repo:status`, `repo_deployment`
+* Créer le token et copier le
+
+Lancer le script d'extraction des statistiques:
+
+```sh
+export GITHUB_TOKEN=<GITHUB_TOKEN>
+python manage.py get_delivery_statistics --token $GITHUB_TOKEN --output DEV_STATISTICS.csv
+```
+
+Les statistiques de développement par mois sont disponibles dans le fichier `DEV_STATISTICS.csv`
