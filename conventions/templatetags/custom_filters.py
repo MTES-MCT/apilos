@@ -236,6 +236,7 @@ def without_missing_files(files):
 
 @register.filter
 def with_financement(convention):
+    # TODO: reverse relation convention lot
     return convention.lot.financement != Financement.SANS_FINANCEMENT
 
 

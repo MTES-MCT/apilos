@@ -448,9 +448,24 @@ class Lot(models.Model):
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True, blank=True)
-    programme = models.ForeignKey(
-        "Programme", on_delete=models.CASCADE, null=False, related_name="lots"
+
+    # TODO: make this field required once all the data is migrated
+    convention = models.ForeignKey(
+        "conventions.Convention",
+        related_name="lots",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
+
+    # TODO: remove this field and use convention.programme instead
+    programme = models.ForeignKey(
+        "Programme",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="lots",
+    )
+
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,

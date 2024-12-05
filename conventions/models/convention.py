@@ -82,18 +82,24 @@ class Convention(models.Model):
         on_delete=models.CASCADE,
         null=False,
     )
+
+    # TODO: reverse relation convention lot
     lot = models.ForeignKey(
         "programmes.Lot",
         on_delete=models.CASCADE,
         null=False,
         related_name="conventions",
     )
+
     date_fin_conventionnement = models.DateField(null=True, blank=True)
+
+    # DEPRECATED: use lof.financeur instead
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     commentaires = models.TextField(null=True, blank=True)
@@ -293,6 +299,14 @@ class Convention(models.Model):
             + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
         )
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        # Modif temporaire pour inverser la relation Convention-Lot
+        if self.lot and not self.lot.convention:
+            self.lot.convention = self
+            self.lot.save()
+
     def is_bailleur_editable(self):
         return self.statut in (
             ConventionStatut.PROJET.label,
@@ -474,6 +488,7 @@ class Convention(models.Model):
         return date.today() > self.date_resiliation
 
     def is_incompleted_avenant_parent(self):
+        # TODO: reverse relation convention lot
         if self.is_avenant() and (
             not self.parent.programme.ville
             or not self.parent.lot.nb_logements
@@ -567,6 +582,8 @@ class Convention(models.Model):
         return ""
 
     def clone(self, user, *, convention_origin):
+        # TODO: reverse relation convention lot
+
         cloned_programme = self.programme.clone()
 
         lot_fields = model_to_dict(
@@ -579,6 +596,7 @@ class Convention(models.Model):
                 "programme_id",
                 "cree_le",
                 "mis_a_jour_le",
+                "convention",
             ],
         )
         lot_fields.update(

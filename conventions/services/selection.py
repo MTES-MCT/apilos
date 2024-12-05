@@ -67,9 +67,11 @@ class ConventionSelectionService:
         )
         if self.form.is_valid():
             bailleur = self.form.cleaned_data["bailleur"]
+
             administration = Administration.objects.get(
                 uuid=self.form.cleaned_data["administration"]
             )
+
             programme = Programme.objects.create(
                 nom=self.form.cleaned_data["nom"],
                 code_postal=self.form.cleaned_data["code_postal"],
@@ -88,6 +90,7 @@ class ConventionSelectionService:
                 anru=bool(settings.CERBERE_AUTH),
             )
             programme.save()
+
             lot = Lot.objects.create(
                 nb_logements=self.form.cleaned_data["nb_logements"],
                 financement=self.form.cleaned_data["financement"],
@@ -95,6 +98,7 @@ class ConventionSelectionService:
                 programme=programme,
             )
             lot.save()
+
             self.convention = Convention.objects.create(
                 lot=lot,
                 programme_id=lot.programme_id,
@@ -102,9 +106,11 @@ class ConventionSelectionService:
                 cree_par=self.request.user,
             )
             self.convention.save()
+
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
                 ConventionFileService.upload_convention_file(self.convention, file)
+
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def post_for_avenant(self):
@@ -135,12 +141,14 @@ class ConventionSelectionService:
                     ),
                 )
                 programme.save()
+
                 lot = Lot.objects.create(
                     nb_logements=self.form.cleaned_data["nb_logements"],
                     financement=self.form.cleaned_data["financement"],
                     programme=programme,
                 )
                 lot.save()
+
                 self.convention = Convention.objects.create(
                     lot=lot,
                     programme_id=lot.programme_id,
@@ -150,11 +158,13 @@ class ConventionSelectionService:
                     numero=(self.form.cleaned_data["numero"]),
                 )
                 self.convention.save()
+
                 conventionfile = self.request.FILES.get("nom_fichier_signe", False)
                 if conventionfile:
                     ConventionFileService.upload_convention_file(
                         self.convention, conventionfile
                     )
+
                 self.return_status = utils.ReturnStatus.SUCCESS
 
                 parent_convention = (
