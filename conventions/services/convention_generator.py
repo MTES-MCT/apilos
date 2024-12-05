@@ -23,7 +23,7 @@ from conventions.templatetags.custom_filters import (
     inline_text_multiline,
 )
 from core.utils import get_key_from_json_field, round_half_up
-from programmes.models import Annexe, TypologieLogement
+from programmes.models import Annexe, Logement, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -74,7 +74,10 @@ def _compute_total_logement(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logements.order_by("typologie").all():
+
+    for logement in Logement.objects.filter(lot=convention.lot.id).order_by(
+        "typologie"
+    ):
         logements_totale["sh_totale"] += logement.surface_habitable or 0
         logements_totale["sa_totale"] += logement.surface_annexes or 0
         logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
@@ -83,6 +86,7 @@ def _compute_total_logement(convention):
         if logement.get_typologie_display() not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
         nb_logements_par_type[logement.get_typologie_display()] += 1
+
     return (logements_totale, nb_logements_par_type)
 
 
