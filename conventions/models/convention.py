@@ -84,12 +84,12 @@ class Convention(models.Model):
     )
 
     # TODO: reverse relation convention lot
-    lot = models.ForeignKey(
-        "programmes.Lot",
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="conventions",
-    )
+    # lot = models.ForeignKey(
+    #     "programmes.Lot",
+    #     on_delete=models.CASCADE,
+    #     null=False,
+    #     related_name="conventions",
+    # )
 
     date_fin_conventionnement = models.DateField(null=True, blank=True)
 

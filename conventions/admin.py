@@ -141,7 +141,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "cree_par",
         "cree_le",
     )
-    autocomplete_fields = ("programme", "lot", "parent")
+    autocomplete_fields = ("programme", "parent")
     list_filter = (
         IsAvenantFilter,
         ("statut", StatutFilter),
