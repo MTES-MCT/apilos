@@ -176,18 +176,20 @@ class AddConventionService:
         )
 
     def _create_convention(self, lot: Lot) -> Convention:
-        # TODO: reverse relation convention lot
-        return Convention.objects.create(
-            lot=lot,
-            programme_id=lot.programme_id,
-            financement=lot.financement,
-            cree_par=self.request.user,
-            numero=self.form.cleaned_data["numero"],
-            televersement_convention_signee_le=datetime.date(
-                int(self.form.cleaned_data["annee_signature"]), 1, 1
-            ),
-            statut=ConventionStatut.SIGNEE.label,
-        )
+        with transaction.atomic():
+            convention = Convention.objects.create(
+                programme_id=lot.programme_id,
+                financement=lot.financement,
+                cree_par=self.request.user,
+                numero=self.form.cleaned_data["numero"],
+                televersement_convention_signee_le=datetime.date(
+                    int(self.form.cleaned_data["annee_signature"]), 1, 1
+                ),
+                statut=ConventionStatut.SIGNEE.label,
+            )
+            lot.convention = convention
+            lot.save()
+        return convention
 
     def save(self) -> ReturnStatus:
         if not self.form.is_valid():
