@@ -1,7 +1,7 @@
 from typing import Any
 
 from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.signals import m2m_changed, post_delete, post_save, pre_save
+from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
 
 from conventions.models import Convention, Lot
@@ -130,11 +130,3 @@ def send_survey_email(sender, instance, *args, **kwargs):
                 "lastname": instance.user.last_name,
             }
         )
-
-
-@receiver(post_delete, sender=Convention)
-def remove_lot(sender, instance, *args, **kwargs):
-    # TODO: reverse relation convention lot
-    lot = Lot.objects.get(id=instance.lot_id)
-    if lot.conventions.count() == 0:
-        lot.delete()
