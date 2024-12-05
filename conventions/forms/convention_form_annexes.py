@@ -164,16 +164,17 @@ class BaseAnnexeFormSet(BaseFormSet):
         Validation du formulaire :
             - le logement doit exister dans le lot
         """
-        # TODO: reverse relation convention lot
-        if self.convention:
-            lgts = self.convention.lot.logements.all()
-            for form in self.forms:
-                try:
-                    lgts.get(designation=form.cleaned_data.get("logement_designation"))
-                except Logement.DoesNotExist:
-                    form.add_error(
-                        "logement_designation", "Ce logement n'existe pas dans ce lot"
-                    )
+        if not self.convention:
+            return
+
+        for form in self.forms:
+            logt_count = Logement.objects.filter(
+                lot__in=self.convention.lots.all()
+            ).count()
+            if logt_count == 0:
+                form.add_error(
+                    "logement_designation", "Ce logement n'existe pas dans ce lot"
+                )
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)

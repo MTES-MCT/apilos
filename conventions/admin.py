@@ -12,12 +12,7 @@ from .models import AvenantType, Convention, Pret
 
 @admin.display(description="Programme")
 def view_programme(convention):
-    # TODO: reverse relation convention lot
-    return (
-        f"{convention.programme.ville} -  {convention.lot} - "
-        + f"{convention.lot.nb_logements} lgts - "
-        + f"{convention.lot.get_type_habitat_display()}"
-    )
+    return convention.programme.ville
 
 
 class IsAvenantFilter(IsCloneFilter):
