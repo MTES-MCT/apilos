@@ -97,6 +97,7 @@ class Convention(models.Model):
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     commentaires = models.TextField(null=True, blank=True)
+    test_field = models.CharField(null=True, blank=True)
     attached = models.TextField(null=True, blank=True)
     statut = models.CharField(
         max_length=25,
