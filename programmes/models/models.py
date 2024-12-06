@@ -449,13 +449,10 @@ class Lot(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True, blank=True)
 
-    # TODO: make this field required once all the data is migrated
     convention = models.ForeignKey(
         "conventions.Convention",
         related_name="lots",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
     )
 
     # TODO: remove this field and use convention.programme instead

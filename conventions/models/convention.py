@@ -6,7 +6,7 @@ from datetime import date
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
@@ -48,22 +48,22 @@ class Convention(models.Model):
             ),
             models.Index(fields=["cree_le"], name="convention_cree_le_idx"),
         ]
-        constraints = [
-            # https://github.com/betagouv/SPPNautInterface/issues/227
-            models.UniqueConstraint(
-                fields=["programme_id", "lot_id", "financement"],
-                condition=models.Q(
-                    statut__in=[
-                        ConventionStatut.PROJET.label,
-                        ConventionStatut.INSTRUCTION.label,
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ]
-                ),
-                name="unique_display_name",
-            )
-        ]
+        # constraints = [
+        #     # https://github.com/betagouv/SPPNautInterface/issues/227
+        #     models.UniqueConstraint(
+        #         fields=["programme_id", "lot_id", "financement"],
+        #         condition=models.Q(
+        #             statut__in=[
+        #                 ConventionStatut.PROJET.label,
+        #                 ConventionStatut.INSTRUCTION.label,
+        #                 ConventionStatut.CORRECTION.label,
+        #                 ConventionStatut.A_SIGNER.label,
+        #                 ConventionStatut.SIGNEE.label,
+        #             ]
+        #         ),
+        #         name="unique_display_name",
+        #     )
+        # ]
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -293,19 +293,10 @@ class Convention(models.Model):
 
     def __str__(self):
         programme = self.programme
-        lot = self.lot
-        return (
-            f"{programme.ville} - {programme.nom} - "
-            + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
-        )
+        return f"{programme.ville} - {programme.nom}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-
-        # Modif temporaire pour inverser la relation Convention-Lot
-        if self.lot and not self.lot.convention:
-            self.lot.convention = self
-            self.lot.save()
 
     def is_bailleur_editable(self):
         return self.statut in (
@@ -487,11 +478,19 @@ class Convention(models.Model):
     def is_resiliation_due(self):
         return date.today() > self.date_resiliation
 
+    @property
+    def has_logements(self) -> bool:
+        return Lot.objects.filter(convention_id=self.id, nb_logements__gt=0).exists()
+
+    def nb_logements(self):
+        return Lot.objects.filter(convention_id=self.id).aggregate(Sum("nb_logements"))[
+            "nb_logements__sum"
+        ]
+
     def is_incompleted_avenant_parent(self):
-        # TODO: reverse relation convention lot
         if self.is_avenant() and (
             not self.parent.programme.ville
-            or not self.parent.lot.nb_logements
+            or not self.parent.has_logements
             or not self.parent.nom_fichier_signe
         ):
             return self

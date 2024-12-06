@@ -1,12 +1,11 @@
 from django.core.management.base import BaseCommand
 
 from conventions.models.convention import Convention
+from programmes.models import Lot
 
 # Exemple d'utilisation :
 # python manage.py update_financement --numeros "1" "2" "3" --financement PLAI
 #
-
-# TODO: reverse relation convention lot
 
 
 class Command(BaseCommand):
@@ -45,24 +44,30 @@ class Command(BaseCommand):
             )
 
         for convention in qs:
-            if (
-                convention.financement == new_financement
-                and convention.lot.financement == new_financement
-            ):
+            if Lot.objects.filter(
+                convention_id=convention.id, financement=new_financement
+            ).exists():
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Convention {numero} already in financement {new_financement}"
+                        f"Convention {numero} already has a lot in financement {new_financement}"
                     )
                 )
                 return
+
+            # TODO: le type de financement doit etre attaché au lot et plus à la convention
             convention.financement = new_financement
-            convention.lot.financement = new_financement
             convention.save()
-            convention.lot.save()
+
+            # TODO: créer un lot pour la convention avec le nouveau financement ?
+            # convention.lot.financement = new_financement
+            # convention.lot.save()
+
             for avenant in convention.avenants.all():
                 avenant.financement = new_financement
-                avenant.lot.financement = new_financement
                 avenant.save()
+
+                # TODO: créer un lot pour l'avenant avec le nouveau financement ?
+                avenant.lot.financement = new_financement
                 avenant.lot.save()
 
         self.counter_success += 1

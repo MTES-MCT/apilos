@@ -1,5 +1,7 @@
 import datetime
 
+from django.db.models import QuerySet
+
 from conventions.forms import ConventionFinancementForm, PretFormSet
 from conventions.forms.upload import UploadForm
 from conventions.models.pret import Pret
@@ -11,10 +13,13 @@ class ConventionFinancementService(ConventionService):
     form: ConventionFinancementForm
     upform: UploadForm = UploadForm()
 
+    @property
+    def prets(self) -> QuerySet[Pret]:
+        return Pret.objects.filter(lot__in=self.convention.lots.values("id"))
+
     def get(self):
-        # TODO: reverse relation convention lot
         initial = []
-        for pret in self.convention.lot.prets.all():
+        for pret in self.prets:
             initial.append(
                 {
                     "uuid": pret.uuid,
@@ -53,9 +58,8 @@ class ConventionFinancementService(ConventionService):
             self._convention_financement_atomic_update()
 
     def _add_uuid_to_prets(self, result):
-        # TODO: reverse relation convention lot
         prets_by_numero = {}
-        for pret in self.convention.lot.prets.all():
+        for pret in self.prets:
             prets_by_numero[pret.numero] = pret.uuid
         for obj in result["objects"]:
             if "numero" in obj and obj["numero"] in prets_by_numero:
@@ -181,7 +185,8 @@ class ConventionFinancementService(ConventionService):
         # TODO: reverse relation convention lot
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        self.convention.lot.prets.exclude(uuid__in=obj_uuids).delete()
+
+        self.prets.exclude(uuid__in=obj_uuids).delete()
         for form_pret in self.formset:
             if form_pret.cleaned_data["uuid"]:
                 pret = Pret.objects.get(uuid=form_pret.cleaned_data["uuid"])

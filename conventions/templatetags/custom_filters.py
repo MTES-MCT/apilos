@@ -13,7 +13,7 @@ from bailleurs.models import Bailleur
 from conventions.models import ConventionStatut, PieceJointe
 from core.utils import get_key_from_json_field, is_valid_uuid
 from instructeurs.models import Administration
-from programmes.models import Financement
+from programmes.models import Financement, Lot
 from siap.siap_client.client import SIAPClient
 from upload.models import UploadedFile
 from users.models import GroupProfile
@@ -236,8 +236,12 @@ def without_missing_files(files):
 
 @register.filter
 def with_financement(convention):
-    # TODO: reverse relation convention lot
-    return convention.lot.financement != Financement.SANS_FINANCEMENT
+    return (
+        Lot.objects.filter(
+            convention_id=convention.id, financement=Financement.SANS_FINANCEMENT
+        ).count()
+        == 0
+    )
 
 
 @register.filter
