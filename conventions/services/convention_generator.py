@@ -75,6 +75,7 @@ def _compute_total_logement(convention):
     }
     nb_logements_par_type = {}
 
+    # Logement.objects.filter(lot__in)
     for logement in Logement.objects.filter(lot=convention.lot.id).order_by(
         "typologie"
     ):
