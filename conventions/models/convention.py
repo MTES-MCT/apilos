@@ -83,6 +83,14 @@ class Convention(models.Model):
         null=False,
     )
 
+    # TODO: reverse relation convention lot
+    lot = models.ForeignKey(
+        "programmes.Lot",
+        on_delete=models.CASCADE,
+        null=False,
+        related_name="conventions",
+    )
+
     date_fin_conventionnement = models.DateField(null=True, blank=True)
 
     # DEPRECATED: use lof.financeur instead
@@ -470,11 +478,14 @@ class Convention(models.Model):
     def is_resiliation_due(self):
         return date.today() > self.date_resiliation
 
+    @property
+    def has_logements(self) -> bool:
+        return Lot.objects.filter(convention_id=self.id, nb_logements__gt=0).exists()
+
     def is_incompleted_avenant_parent(self):
-        # TODO: reverse relation convention lot
         if self.is_avenant() and (
             not self.parent.programme.ville
-            or not self.parent.lot.nb_logements
+            or not self.parent.has_logements
             or not self.parent.nom_fichier_signe
         ):
             return self
