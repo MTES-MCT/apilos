@@ -23,14 +23,13 @@ class ConventionTypeStationnementService(ConventionService):
     import_warnings: None | list = None
 
     def get(self):
-        # TODO: reverse relation convention lot
-
         self.editable_after_upload = bool(
             self.request.POST.get("editable_after_upload", False)
         )
         initial = []
-        stationnements = self.convention.lot.type_stationnements.all()
-        for stationnement in stationnements:
+        for stationnement in TypeStationnement.objects.filter(
+            lot__in=self.convention.lots.values("id")
+        ):
             initial.append(
                 {
                     "uuid": stationnement.uuid,
@@ -137,13 +136,13 @@ class ConventionTypeStationnementService(ConventionService):
             self.return_status = utils.ReturnStatus.ERROR
 
     def _save_stationnements(self):
-        # TODO: reverse relation convention lot
-
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        TypeStationnement.objects.filter(lot_id=self.convention.lot.id).exclude(
-            uuid__in=obj_uuids
-        ).delete()
+
+        TypeStationnement.objects.filter(
+            lot__in=self.convention.lots.values("id")
+        ).exclude(uuid__in=obj_uuids).delete()
+
         for form_stationnement in self.formset:
             if form_stationnement.cleaned_data["uuid"]:
                 stationnement = TypeStationnement.objects.get(

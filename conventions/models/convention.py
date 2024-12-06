@@ -6,7 +6,7 @@ from datetime import date
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
@@ -481,6 +481,11 @@ class Convention(models.Model):
     @property
     def has_logements(self) -> bool:
         return Lot.objects.filter(convention_id=self.id, nb_logements__gt=0).exists()
+
+    def nb_logements(self):
+        return Lot.objects.filter(convention_id=self.id).aggregate(Sum("nb_logements"))[
+            "nb_logements__sum"
+        ]
 
     def is_incompleted_avenant_parent(self):
         if self.is_avenant() and (
