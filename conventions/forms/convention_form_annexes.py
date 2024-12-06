@@ -168,10 +168,12 @@ class BaseAnnexeFormSet(BaseFormSet):
             return
 
         for form in self.forms:
-            logt_count = Logement.objects.filter(
-                lot__in=self.convention.lots.all()
-            ).count()
-            if logt_count == 0:
+            if (
+                Logement.objects.filter(
+                    lot__in=self.convention.lots.values("id")
+                ).count()
+                == 0
+            ):
                 form.add_error(
                     "logement_designation", "Ce logement n'existe pas dans ce lot"
                 )

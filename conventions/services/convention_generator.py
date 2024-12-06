@@ -23,7 +23,7 @@ from conventions.templatetags.custom_filters import (
     inline_text_multiline,
 )
 from core.utils import get_key_from_json_field, round_half_up
-from programmes.models import Annexe, Logement, TypologieLogement
+from programmes.models import Annexe, LocauxCollectifs, Logement, TypologieLogement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -69,7 +69,6 @@ def get_convention_template_path(convention):
 
 
 def _compute_total_logement(convention):
-    # TODO: reverse relation convention lot
     logements_totale = {
         "sh_totale": 0,
         "sa_totale": 0,
@@ -79,10 +78,9 @@ def _compute_total_logement(convention):
     }
     nb_logements_par_type = {}
 
-    # Logement.objects.filter(lot__in)
-    for logement in Logement.objects.filter(lot=convention.lot.id).order_by(
-        "typologie"
-    ):
+    for logement in Logement.objects.filter(
+        lot__in=convention.lots.values("id")
+    ).order_by("typologie"):
         logements_totale["sh_totale"] += logement.surface_habitable or 0
         logements_totale["sa_totale"] += logement.surface_annexes or 0
         logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
@@ -98,7 +96,9 @@ def _compute_total_logement(convention):
 def _compute_total_locaux_collectifs(convention):
     return sum(
         locaux_collectif.surface_habitable * locaux_collectif.nombre
-        for locaux_collectif in convention.lot.locaux_collectifs.all()
+        for locaux_collectif in LocauxCollectifs.objects.filter(
+            lot__in=convention.lots.values("id")
+        ).all()
     )
 
 

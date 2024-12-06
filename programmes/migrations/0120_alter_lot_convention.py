@@ -7,7 +7,6 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0099_remove_convention_lot"),
         ("programmes", "0119_fill_lot_convention"),
     ]
 
