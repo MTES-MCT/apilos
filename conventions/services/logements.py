@@ -10,18 +10,16 @@ from conventions.services.conventions import ConventionService
 from programmes.models import Logement
 
 
-# TODO: reverse relation convention lot
 class ConventionLogementsService(ConventionService):
     form: LotLgtsOptionForm
     formset: LogementFormSet
     upform: UploadForm = UploadForm()
 
     def get(self):
-        # TODO: reverse relation convention lot
-
         initial = []
-        logements = self.convention.lot.logements.order_by("import_order")
-        for logement in logements:
+        for logement in Logement.objects.filter(
+            lot__in=self.convention.values("id")
+        ).order_by("import_order"):
             initial.append(
                 {
                     "uuid": logement.uuid,
@@ -39,6 +37,7 @@ class ConventionLogementsService(ConventionService):
         self.formset = LogementFormSet(initial=initial)
         self.form = LotLgtsOptionForm(
             initial={
+                # TODO: reverse relation convention lot
                 "uuid": self.convention.lot.uuid,
                 "lgts_mixite_sociale_negocies": self.convention.lot.lgts_mixite_sociale_negocies,
                 "loyer_derogatoire": self.convention.lot.loyer_derogatoire,

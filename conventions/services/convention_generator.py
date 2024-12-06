@@ -17,13 +17,19 @@ from docxtpl import DocxTemplate, InlineImage
 from conventions.forms.convention_form_attribution import (
     ConventionResidenceAttributionForm,
 )
-from conventions.models import Convention, ConventionType1and2
+from conventions.models import Convention, ConventionType1and2, Pret
 from conventions.templatetags.custom_filters import (
     get_text_as_list,
     inline_text_multiline,
 )
 from core.utils import get_key_from_json_field, round_half_up
-from programmes.models import Annexe, LocauxCollectifs, Logement, TypologieLogement
+from programmes.models import (
+    Annexe,
+    LocauxCollectifs,
+    Logement,
+    TypeStationnement,
+    TypologieLogement,
+)
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -119,8 +125,6 @@ def get_or_generate_convention_doc(
 
 
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
-    # TODO: reverse relation convention lot
-
     annexes = (
         Annexe.objects.prefetch_related("logement")
         .filter(logement__lot_id=convention.lot_id)
@@ -144,8 +148,12 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
 
     adresse = _get_adresse(convention)
 
+    convention_lots_ids = convention.lots.values("id")
+
     # Logements should keep the importation order
-    logements = convention.lot.logements.order_by("import_order")
+    logements = Logement.objects.filter(lot__in=convention_lots_ids).order_by(
+        "import_order"
+    )
 
     context = {
         **avenant_data,
@@ -153,21 +161,29 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "bailleur": convention.programme.bailleur,
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
-        "lot": convention.lot,
+        # "lot": convention.lot, # TODO: reverse relation convention lot
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
         "logements": logements,
-        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
+        "locaux_collectifs": LocauxCollectifs.objects.filter(
+            lot__in=convention_lots_ids
+        ),
         "annexes": annexes,
-        "stationnements": convention.lot.type_stationnements.all(),
-        "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+        "stationnements": TypeStationnement.objects.filter(
+            lot__in=convention.lots.values("id")
+        ),
+        "prets_cdc": Pret.objects.filter(lot__in=convention_lots_ids).filter(
+            preteur__in=["CDCF", "CDCL"]
+        ),
+        "autres_prets": Pret.objects.filter(lot__in=convention_lots_ids).exclude(
+            preteur__in=["CDCF", "CDCL"]
+        ),
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.type_stationnements.all(), annexes
+            TypeStationnement.objects.filter(lot__in=convention_lots_ids).all(), annexes
         ),
         "lc_sh_totale": _compute_total_locaux_collectifs(convention),
         "nombre_annees_conventionnement": (
@@ -268,11 +284,11 @@ def _save_convention_donnees_validees(
     lot_num,
     logements_totale,
 ):
-    # TODO: reverse relation convention lot
+    convention_lots_ids = convention.lots.values("id")
 
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot_id)
+        .filter(logement__lot__in=convention_lots_ids)
         .all()
     )
 
@@ -283,14 +299,22 @@ def _save_convention_donnees_validees(
         "lot": model_to_dict(convention.lot),
         "administration": model_to_dict(convention.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
-        "logements": _list_to_dict(convention.lot.logements.all()),
+        "logements": _list_to_dict(
+            Logement.objects.filter(lot__in=convention_lots_ids)
+        ),
         "annexes": _list_to_dict(annexes),
-        "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
+        "stationnements": _list_to_dict(
+            TypeStationnement.objects.filter(lot__in=convention_lots_ids)
+        ),
         "prets_cdc": _list_to_dict(
-            convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"])
+            Pret.objects.filter(lot__in=convention_lots_ids).filter(
+                preteur__in=["CDCF", "CDCL"]
+            )
         ),
         "autres_prets": _list_to_dict(
-            convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"])
+            Pret.objects.filter(lot__in=convention_lots_ids).exclude(
+                preteur__in=["CDCF", "CDCL"]
+            )
         ),
         "references_cadastrales": _list_to_dict(
             convention.programme.referencecadastrales.all()
@@ -299,7 +323,7 @@ def _save_convention_donnees_validees(
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.type_stationnements.all(), annexes
+            TypeStationnement.objects.filter(lot__in=convention_lots_ids), annexes
         ),
     }
     context_to_save.update(compute_mixte(convention))
@@ -317,6 +341,7 @@ def _save_convention_donnees_validees(
         convention.programme.reference_cadastrale_files()
     )
     object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
+    # TODO: reverse relation convention lot
     object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
     object_files["edd_classique_files"] = convention.lot.edd_classique_files()
     convention.donnees_validees = json.dumps(
@@ -512,11 +537,11 @@ def _get_object_images(doc, convention):
     return object_images, local_pathes
 
 
-def _get_loyer_par_metre_carre(convention):
-    # TODO: reverse relation convention lot
-    logement = convention.lot.logements.first()
-    if logement:
-        return convention.lot.logements.first().loyer_par_metre_carre
+def _get_loyer_par_metre_carre(convention: Convention):
+    if logement := Logement.objects.filter(
+        lot__in=convention.lots.values("id").order_by("-loyer_par_metre_carre")
+    ).first():
+        return logement.loyer_par_metre_carre
     return 0
 
 
@@ -546,8 +571,7 @@ def _compute_liste_des_annexes(typestationnements, annexes):
     return ", ".join(annexes_list)
 
 
-def compute_mixte(convention):
-    # TODO: reverse relation convention lot
+def compute_mixte(convention: Convention):
     mixite = {
         "mixPLUSsup10_30pc": 0,
         "mixPLUSinf10_30pc": 0,
@@ -555,10 +579,9 @@ def compute_mixte(convention):
         "mixPLUS_30pc": 0,
         "mixPLUS_10pc": 0,
     }
-    nb_logements = convention.lot.nb_logements or 0
     if convention.mixity_option():
         # cf. convention : 30 % au moins des logements
-        if nb_logements < 10:
+        if nb_logements := convention.nb_logements < 10:
             # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant
             # à l'unité la plus proche le résultat de l'application du pourcentage)
             mixite["mixPLUS_10pc"] = round_half_up(nb_logements * 0.1)
@@ -577,7 +600,6 @@ def compute_mixte(convention):
 
 def _prepare_logement_edds(convention):
     # TODO: reverse relation convention lot
-
     logement_edds = convention.programme.logementedds.order_by(
         "financement", "designation"
     ).all()
@@ -630,11 +652,9 @@ def _get_foyer_attributions(convention: Convention) -> str:
 
 
 def fiche_caf_doc(convention):
-    # TODO: reverse relation convention lot
-
-    filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
-
-    doc = DocxTemplate(filepath)
+    doc = DocxTemplate(
+        template_file=f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
+    )
 
     logements_totale = {
         "sh_totale": 0,
@@ -644,7 +664,12 @@ def fiche_caf_doc(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logements.order_by("typologie").all():
+
+    convention_lots_ids = convention.lots.values("id")
+
+    for logement in Logement.objects.filter(lot__in=convention_lots_ids).order_by(
+        "typologie"
+    ):
         logements_totale["sh_totale"] += logement.surface_habitable or 0
         logements_totale["sa_totale"] += logement.surface_annexes or 0
         logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
@@ -664,9 +689,11 @@ def fiche_caf_doc(convention):
         "convention": convention,
         "bailleur": convention.programme.bailleur,
         "programme": convention.programme,
-        "lot": convention.lot,
+        # "lot": convention.lot,
         "administration": convention.programme.administration,
-        "logements": convention.lot.logements.order_by("import_order"),
+        "logements": Logement.objects.filter(lot__in=convention_lots_ids).order_by(
+            "import_order"
+        ),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),

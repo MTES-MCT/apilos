@@ -229,8 +229,6 @@ class AddAvenantsService:
     form: AddAvenantForm
 
     def __init__(self, request: HttpRequest, convention: Convention) -> None:
-        # TODO: reverse relation convention lot
-
         self.request = request
         self.convention = convention
 
@@ -249,7 +247,7 @@ class AddAvenantsService:
                 bailleur_query=bailleur_query,
                 initial={
                     "bailleur": self.convention.programme.bailleur,
-                    "nb_logements": self.convention.lot.nb_logements,
+                    "nb_logements": self.convention.nb_logements,
                 },
             )
 
