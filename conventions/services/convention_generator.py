@@ -338,6 +338,10 @@ class PDFConversionError(Exception):
     pass
 
 
+class DocxGenerationError(Exception):
+    pass
+
+
 def run_pdf_convert_cmd(
     src_docx_path: Path, dst_pdf_path: Path
 ) -> subprocess.CompletedProcess:

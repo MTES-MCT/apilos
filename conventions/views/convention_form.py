@@ -381,6 +381,9 @@ class ConventionView(ABC, BaseConventionView):
                 **({"form": service.form} if service.form else {}),
                 **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
+                **({"formset_sans_loyer": service.formset_sans_loyer} if service.formset_sans_loyer else {}),
+                **({"formset_corrigee": service.formset_corrigee} if service.formset_corrigee else {}),
+                **({"formset_corrigee_sans_loyer": service.formset_corrigee_sans_loyer} if service.formset_corrigee_sans_loyer else {}),
                 # TODO: obsolète, pourra être supprimé après rédaction de tests unitaires sur extra_forms
                 "upform": service.upform,
                 "form_step": self.steps.get_form_step(),
@@ -432,6 +435,9 @@ class ConventionView(ABC, BaseConventionView):
                     else {}
                 ),
                 **({"formset": self.service.formset} if self.service.formset else {}),
+                **({"formset_sans_loyer": self.service.formset_sans_loyer} if self.service.formset_sans_loyer else {}),
+                **({"formset_corrigee": self.service.formset_corrigee} if self.service.formset_corrigee else {}),
+                **({"formset_corrigee_sans_loyer": self.service.formset_corrigee_sans_loyer} if self.service.formset_corrigee_sans_loyer else {}),
                 "form_step": self.steps.get_form_step(),
                 **(
                     {"import_warnings": self.service.import_warnings}

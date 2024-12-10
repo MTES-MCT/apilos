@@ -81,6 +81,18 @@ class LotLgtsOptionForm(forms.Form):
             "required": "Le nombre de logements est obligatoire",
         },
     )
+    formset_sans_loyer_disabled = forms.BooleanField(
+        required=False,
+    )
+    formset_disabled = forms.BooleanField(
+        required=False,
+    )
+    formset_corrigee_disabled = forms.BooleanField(
+        required=False,
+    )
+    formset_corrigee_sans_loyer_disabled = forms.BooleanField(
+        required=False,
+    )
 
 
 class LotFoyerResidenceLgtsDetailsForm(forms.Form):
@@ -129,12 +141,7 @@ class LotFoyerResidenceLgtsDetailsForm(forms.Form):
         return surface_habitable_totale
 
 
-class LogementForm(forms.Form):
-    """
-    Formulaire Logement formant la liste des logements d'une convention de type HLM,
-    SEM, type I & 2 : une ligne du tableau des logements
-    """
-
+class BaseLogementForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
         label="Logement",
@@ -166,6 +173,88 @@ class LogementForm(forms.Form):
             "max_digits": "La surface habitable doit-être inférieur à 10000 m²",
         },
     )
+    import_order = forms.IntegerField(
+        label="",
+        required=False,
+    )
+
+
+class LogementCorrigeeSansLoyerForm(BaseLogementForm):
+    surface_corrigee = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "La surface corrigée est obligatoire",
+            "max_digits": "La surface corrigée doit-être inférieur à 10000 m²",
+        },
+    )
+
+
+class LogementCorrigeeForm(LogementCorrigeeSansLoyerForm):
+    loyer_par_metre_carre = forms.DecimalField(
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "Le loyer par m² est obligatoire",
+            "max_digits": "La loyer par m² doit-être inférieur à 10000 €",
+        },
+    )
+    coeficient = forms.DecimalField(
+        required=True,
+        label="",
+        max_digits=6,
+        decimal_places=4,
+        error_messages={
+            "required": "Le coefficient est obligatoire",
+            "max_digits": "La coefficient doit-être inférieur à 1000",
+        },
+    )
+    loyer = forms.DecimalField(
+        required=True,
+        label="",
+        max_digits=6,
+        decimal_places=2,
+        error_messages={
+            "required": "Le loyer est obligatoire",
+            "max_digits": "La loyer doit-être inférieur à 10000 €",
+        },
+    )
+
+    def clean_loyer(self):
+        """
+        Vérifcations:
+        - le loyer doit-être le produit de la surface utile, du loyer par mètre carré et
+          du coefficient (tolérance de 1 €)
+        """
+        surface_corrigee = self.cleaned_data.get("surface_corrigee", 0)
+        loyer_par_metre_carre = self.cleaned_data.get("loyer_par_metre_carre", 0)
+        coeficient = self.cleaned_data.get("coeficient", 0)
+        loyer = self.cleaned_data.get("loyer", 0)
+
+        if (
+            abs(
+                round_half_up(loyer, 2)
+                - round_half_up(surface_corrigee * loyer_par_metre_carre * coeficient, 2)
+            )
+            > 1
+        ):
+            raise ValidationError(
+                "Le loyer doit-être le produit de la surface corrigée,"
+                + " du loyer par mètre carré et du coefficient. valeur attendue :"
+                + f" {round_half_up(surface_corrigee*loyer_par_metre_carre*coeficient,2)} €"
+                + " (tolérance de 1 €)"
+            )
+
+        return loyer
+
+
+class LogementSansLoyerForm(BaseLogementForm):
+    """
+    Formulaire Logement formant la liste des logements d'une convention de type HLM,
+    SEM, type I & 2 : une ligne du tableau des logements par surface réelle sans loyers
+    """
     surface_annexes = forms.DecimalField(
         label="",
         max_digits=6,
@@ -193,6 +282,14 @@ class LogementForm(forms.Form):
             "max_digits": "La surface utile doit-être inférieur à 10000 m²",
         },
     )
+
+
+class LogementForm(LogementSansLoyerForm):
+    """
+    Formulaire Logement formant la liste des logements d'une convention de type HLM,
+    SEM, type I & 2 : une ligne du tableau des logements
+    """
+
     loyer_par_metre_carre = forms.DecimalField(
         label="",
         max_digits=6,
@@ -203,6 +300,7 @@ class LogementForm(forms.Form):
         },
     )
     coeficient = forms.DecimalField(
+        required=True,
         label="",
         max_digits=6,
         decimal_places=4,
@@ -212,6 +310,7 @@ class LogementForm(forms.Form):
         },
     )
     loyer = forms.DecimalField(
+        required=True,
         label="",
         max_digits=6,
         decimal_places=2,
@@ -219,10 +318,6 @@ class LogementForm(forms.Form):
             "required": "Le loyer est obligatoire",
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
-    )
-    import_order = forms.IntegerField(
-        label="",
-        required=False,
     )
 
     def clean_loyer(self):
@@ -413,6 +508,9 @@ class BaseLogementFormSet(BaseFormSet):
 
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
+LogementSansLoyerFormSet = formset_factory(LogementSansLoyerForm, formset=BaseLogementFormSet, extra=0)
+LogementCorrigeeFormSet = formset_factory(LogementCorrigeeForm, formset=BaseLogementFormSet, extra=0)
+LogementCorrigeeSansLoyerFormSet = formset_factory(LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0)
 
 
 class FoyerResidenceLogementForm(forms.Form):

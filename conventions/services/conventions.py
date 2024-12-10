@@ -23,6 +23,9 @@ class ConventionService(ABC):
     editable_after_upload: bool = False
     form: Form | None = None
     formset = None
+    formset_sans_loyer = None
+    formset_corrigee = None
+    formset_corrigee_sans_loyer = None
     upform: Form | None = None
     extra_forms: dict[str, Form | None] | None = None
 

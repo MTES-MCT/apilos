@@ -171,12 +171,12 @@ def _get_object_from_worksheet(
         if hasattr(my_class, class_field_needed_mapping):
             if not empty_line and getattr(my_class, class_field_needed_mapping):
                 for needed_field in getattr(my_class, class_field_needed_mapping):
-                    if needed_field.name not in my_row:
+                    if needed_field not in my_row:
                         empty_line = True
                         new_warnings.append(
                             Exception(
                                 f"La ligne {row[0].row} a été ignorée car la"
-                                + f" valeur '{needed_field.verbose_name}'"
+                                + f" valeur '{needed_field}'"
                                 + " n'est pas renseignée"
                             )
                         )
