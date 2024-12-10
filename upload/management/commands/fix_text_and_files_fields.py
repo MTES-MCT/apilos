@@ -38,9 +38,18 @@ class Command(BaseCommand):
             required=True,
             type=validate_date_param,
         )
+        parser.add_argument(
+            "--fix-realname",
+            action="store_true",
+            help="Fix the realname field in the text and files fields",
+        )
+        parser.add_argument(
+            "--fix-special-characters",
+            action="store_true",
+            help="Fix special characters in the text and files fields",
+        )
 
     def handle(self, *args, **options):
-
         from_date = options["from_date"]
         to_date = options["to_date"]
         if from_date > to_date:
@@ -55,7 +64,7 @@ class Command(BaseCommand):
         )
         self.stdout.write(f" >> Processing {queryset.count()} programmes")
         for programme in queryset:
-            for field in (
+            for field_name in (
                 "acquereur",
                 "acte_de_propriete",
                 "certificat_adressage",
@@ -66,40 +75,44 @@ class Command(BaseCommand):
                 "reference_publication_acte",
                 "vendeur",
             ):
-                self._update_instance_field(
-                    instance=programme, field_name=field, dryrun=options["dryrun"]
-                )
+                self._do_work(instance=programme, field_name=field_name, **options)
 
         queryset = Convention.objects.filter(
             cree_le__date__gte=from_date, cree_le__date__lt=to_date
         )
         self.stdout.write(f" >> Processing {queryset.count()} conventions")
         for convention in queryset:
-            for field in (
+            for field_name in (
                 "attached",
                 "commentaires",
                 "fichier_instruction_denonciation",
                 "fichier_instruction_resiliation",
                 "fichier_override_cerfa",
             ):
-                self._update_instance_field(
-                    instance=convention, field_name=field, dryrun=options["dryrun"]
-                )
+                self._do_work(instance=convention, field_name=field_name, **options)
 
         queryset = Lot.objects.filter(
             cree_le__date__gte=from_date, cree_le__date__lt=to_date
         )
         self.stdout.write(f" >> Processing {queryset.count()} lots")
         for lot in queryset:
-            for field in (
+            for field_name in (
                 "edd_classique",
                 "edd_volumetrique",
             ):
-                self._update_instance_field(
-                    instance=lot, field_name=field, dryrun=options["dryrun"]
-                )
+                self._do_work(instance=lot, field_name=field_name, **options)
 
-    def _update_instance_field(
+    def _do_work(self, instance: Any, field_name: str, **options):
+        if options["fix_realname"]:
+            self._update_realname_field(
+                instance=instance, field_name=field_name, dryrun=options["dryrun"]
+            )
+        if options["fix_special_characters"]:
+            self._fix_special_characters(
+                instance=instance, field_name=field_name, dryrun=options["dryrun"]
+            )
+
+    def _update_realname_field(
         self, instance: Any, field_name: str, dryrun: bool = False
     ):
         field = getattr(instance, field_name)
@@ -129,7 +142,43 @@ class Command(BaseCommand):
         setattr(instance, field_name, json.dumps(json_content))
 
         self.stdout.write(
-            f"{'[DRYRUN] >> ' if dryrun else ''}Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}'."  # noqa: E501
+            f"{'[DRYRUN] >> ' if dryrun else ''}Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}': updating files realname."  # noqa: E501
+        )
+        if not dryrun:
+            instance.save()
+
+    def _fix_special_characters(
+        self, instance: Any, field_name: str, dryrun: bool = False
+    ):
+        content = getattr(instance, field_name)
+        if not content:
+            return
+
+        try:
+            json.loads(content)
+        except json.JSONDecodeError:
+            pass
+        else:
+            return
+
+        content = (
+            content.encode("utf-8")
+            .replace(b"\r", b"")
+            .replace(b"\n", b"")
+            .replace(b"\t", b"")
+            .decode("utf-8")
+        )
+        try:
+            json_content = json.loads(content)
+        except json.JSONDecodeError:
+            self.stdout.write(
+                "Unable to fix special characters for {instance._meta.object_name} (#{instance.pk}), on field '{field_name}."  # noqa: E501
+            )
+
+        setattr(instance, field_name, json.dumps(json_content))
+
+        self.stdout.write(
+            f"{'[DRYRUN] >> ' if dryrun else ''}Processing {instance._meta.object_name} (#{instance.pk}), on field '{field_name}': fix special characters."  # noqa: E501
         )
         if not dryrun:
             instance.save()
