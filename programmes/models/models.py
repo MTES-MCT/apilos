@@ -439,6 +439,21 @@ class RepartitionSurface(models.Model):
 
 
 class Lot(models.Model):
+
+    class Meta:
+        constraints = [
+            # TODO : contrainte `unique_convention_id` à supprimer quand on prendra en
+            # compte les conventions mixtes et seconde vie
+            models.UniqueConstraint(
+                fields=["convention_id"],
+                name="unique_convention_id",
+            ),
+            models.UniqueConstraint(
+                fields=["convention_id", "financement"],
+                name="unique_convention_id_financement",
+            ),
+        ]
+
     id = models.AutoField(primary_key=True)
     parent = models.ForeignKey(
         "self",
@@ -456,14 +471,6 @@ class Lot(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-    )
-
-    # TODO: remove this field and use convention.programme instead
-    programme = models.ForeignKey(
-        "Programme",
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="lots",
     )
 
     financement = models.CharField(
