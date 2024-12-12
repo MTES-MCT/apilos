@@ -252,6 +252,17 @@ class Convention(models.Model):
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
     @property
+    def lot(self):
+        # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
+        # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
+        lots = self.lots.all()
+        if lots.count() > 1:
+            raise Exception("Convention has multiple lots")
+        return self.lots.first()
+
+    # TODO : migration pour cloer les lots quand ils ont plusieurs conventions
+
+    @property
     def attribution_type(self):
         if not self.programme.is_foyer():
             return None
