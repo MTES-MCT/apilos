@@ -235,7 +235,6 @@ class Programme(models.Model):
             exclude=[
                 "id",
                 "parent",
-                "parent_id",
                 "cree_le",
                 "mis_a_jour_le",
             ],
@@ -557,24 +556,21 @@ class Lot(models.Model):
 
     def clone(self, cloned_programme):
         parent_id = self.parent_id or self.id
+
         lot_fields = model_to_dict(
             self,
             exclude=[
                 "id",
                 "parent",
-                "parent_id",
                 "programme",
-                "programme_id",
+                "convention",
                 "cree_le",
                 "mis_a_jour_le",
             ],
-        )
-        lot_fields.update(
-            {
-                "programme": cloned_programme,
-                "parent_id": parent_id,
-            }
-        )
+        ) | {
+            "programme": cloned_programme,
+            "parent_id": parent_id,
+        }
         cloned_lot = Lot(**lot_fields)
         cloned_lot.save()
         return cloned_lot
