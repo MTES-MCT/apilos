@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import ChoicesFieldListFilter
-from django.core.exceptions import ValidationError
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
@@ -53,21 +52,21 @@ class ConventionModelForm(forms.ModelForm):
 
         self.instance.statut = ConventionStatut[self.instance.statut].label
 
-        try:
-            self.instance.validate_constraints()
-        except ValidationError as err:
-            if "unique_display_name" in str(err):
-                self.add_error(
-                    None,
-                    (
-                        "Problème d'unicité, une convention existe déjà pour ces critères. "
-                        f"Vérifiez les conventions existantes sur le programme {self.instance.programme.id}, "
-                        "le lot {self.instance.lot.id}, "
-                        f"avec un financement {self.instance.financement}."
-                    ),
-                )
-            else:
-                self.add_error(None, err)
+        # try:
+        #     self.instance.validate_constraints()
+        # except ValidationError as err:
+        #     if "unique_display_name" in str(err):
+        #         self.add_error(
+        #             None,
+        #             (
+        #                 "Problème d'unicité, une convention existe déjà pour ces critères. "
+        #                 f"Vérifiez les conventions existantes sur le programme {self.instance.programme.id}, "
+        #                 "le lot {self.instance.lot.id}, "
+        #                 f"avec un financement {self.instance.financement}."
+        #             ),
+        #         )
+        #     else:
+        #         self.add_error(None, err)
 
     class Meta:
         model = Convention
@@ -103,7 +102,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "administration",
         "bailleur",
         "programme",
-        # "lot",
+        "lot",
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
@@ -131,7 +130,6 @@ class ConventionAdmin(ApilosModelAdmin):
     list_select_related = (
         "programme__bailleur",
         "programme__administration",
-        # "lot__programme",
     )
     readonly_fields = (
         "uuid",
@@ -140,10 +138,10 @@ class ConventionAdmin(ApilosModelAdmin):
         "numero_pour_recherche",
         "cree_par",
         "cree_le",
+        "lot",
     )
     autocomplete_fields = (
         "programme",
-        # "lot",
         "parent",
     )
     list_filter = (
@@ -153,6 +151,10 @@ class ConventionAdmin(ApilosModelAdmin):
     )
 
     form = ConventionModelForm
+
+    @admin.display(description="Lot")
+    def lot(self, obj):
+        return obj.lot
 
 
 @admin.register(Pret)

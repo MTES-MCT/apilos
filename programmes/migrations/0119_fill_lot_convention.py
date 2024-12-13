@@ -1,3 +1,4 @@
+from django.core.exceptions import FieldDoesNotExist
 from django.db import migrations
 from django.db.models import F, IntegerField, OuterRef, Subquery
 
@@ -6,15 +7,20 @@ def fill_lot_convention(apps, schema_editor):
     Convention = apps.get_model("conventions", "Convention")
     Lot = apps.get_model("programmes", "Lot")
 
-    queryset = Lot.objects.exclude(convention__isnull=False).annotate(
-        mirrored_convention_id=Subquery(
-            Convention.objects.filter(lot_id=OuterRef("pk")).values("pk")[:1],
-            output_field=IntegerField(),
+    try:
+        Convention._meta.get_field("lot")
+    except FieldDoesNotExist:
+        pass
+    else:
+        queryset = Lot.objects.exclude(convention__isnull=False).annotate(
+            mirrored_convention_id=Subquery(
+                Convention.objects.filter(lot_id=OuterRef("pk")).values("pk")[:1],
+                output_field=IntegerField(),
+            )
         )
-    )
-    print(f" >> {queryset.count()} lots to update.")  # noqa: T201
+        print(f" >> {queryset.count()} lots to update.")  # noqa: T201
 
-    queryset.update(convention_id=F("mirrored_convention_id"))
+        queryset.update(convention_id=F("mirrored_convention_id"))
 
     _count_null = Lot.objects.filter(convention__isnull=True).count()
     assert (

@@ -528,6 +528,20 @@ class Lot(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["convention_id", "financement"],
+                name="unique_convention_financement",
+            ),
+            # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
+            # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
+            models.UniqueConstraint(
+                fields=["convention_id"],
+                name="unique_convention",
+            ),
+        ]
+
     # Needed for admin
     @property
     def bailleur(self):

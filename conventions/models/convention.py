@@ -266,15 +266,7 @@ class Convention(models.Model):
 
     @property
     def lot(self) -> Lot:
-        # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
-        # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
-        # if self.lots.count() > 1:
-        #     raise Exception("Convention has multiple lots")
-
         return self.lots.first()
-        # return self.lots.all()[:1][0]
-
-    # TODO : migration pour cloner les lots quand ils ont plusieurs conventions
 
     @property
     def attribution_type(self):
