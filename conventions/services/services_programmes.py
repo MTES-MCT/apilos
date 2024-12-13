@@ -15,7 +15,6 @@ class ConventionProgrammeService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
-
         programme = self.convention.programme
         lot = self.convention.lot
         self.form = ProgrammeForm(
@@ -49,7 +48,6 @@ class ConventionProgrammeService(ConventionService):
         self._programme_atomic_update()
 
     def _programme_atomic_update(self):
-
         self.form = ProgrammeForm(
             {
                 "uuid": self.convention.programme.uuid,

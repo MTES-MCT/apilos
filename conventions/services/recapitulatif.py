@@ -96,7 +96,6 @@ class ConventionRecapitulatifService(ConventionService):
         programme_number_form=None,
         convention_number_form=None,
     ):
-
         if convention_number_form is None:
             convention_number_form = ConventionNumberForm(
                 initial={
@@ -453,7 +452,6 @@ def send_email_correction(
 
 
 def convention_validate(request: HttpRequest, convention: Convention):
-
     convention_number_form = ConventionNumberForm(request.POST)
     complete_for_avenant_form = CompleteforavenantForm(request.POST, request.FILES)
     is_completeform = request.POST.get("completeform", False)

@@ -497,7 +497,6 @@ class Convention(models.Model):
         return date.today() > self.date_resiliation
 
     def is_incompleted_avenant_parent(self):
-
         if self.is_avenant() and (
             not self.parent.programme.ville
             or not self.parent.lot.nb_logements
@@ -591,7 +590,6 @@ class Convention(models.Model):
         return ""
 
     def clone(self, user, *, convention_origin):
-
         cloned_programme = self.programme.clone()
 
         lot_fields = model_to_dict(

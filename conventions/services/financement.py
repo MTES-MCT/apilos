@@ -12,7 +12,6 @@ class ConventionFinancementService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-
         initial = []
         for pret in self.convention.lot.prets.all():
             initial.append(
@@ -53,7 +52,6 @@ class ConventionFinancementService(ConventionService):
             self._convention_financement_atomic_update()
 
     def _add_uuid_to_prets(self, result):
-
         prets_by_numero = {}
         for pret in self.convention.lot.prets.all():
             prets_by_numero[pret.numero] = pret.uuid
@@ -178,7 +176,6 @@ class ConventionFinancementService(ConventionService):
         self.convention.save()
 
     def _save_convention_financement_prets(self):
-
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
         self.convention.lot.prets.exclude(uuid__in=obj_uuids).delete()

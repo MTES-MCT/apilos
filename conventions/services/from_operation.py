@@ -176,7 +176,6 @@ class AddConventionService:
         )
 
     def _create_convention(self, lot: Lot) -> Convention:
-
         return Convention.objects.create(
             lot=lot,
             programme_id=lot.programme_id,
@@ -227,7 +226,6 @@ class AddAvenantsService:
     form: AddAvenantForm
 
     def __init__(self, request: HttpRequest, convention: Convention) -> None:
-
         self.request = request
         self.convention = convention
 
@@ -251,7 +249,6 @@ class AddAvenantsService:
             )
 
     def save(self) -> ReturnStatus:
-
         if not self.form.is_valid():
             return ReturnStatus.ERROR
 
