@@ -96,7 +96,6 @@ class ConventionRecapitulatifService(ConventionService):
         programme_number_form=None,
         convention_number_form=None,
     ):
-        # TODO: reverse relation convention lot
 
         if convention_number_form is None:
             convention_number_form = ConventionNumberForm(
@@ -454,7 +453,6 @@ def send_email_correction(
 
 
 def convention_validate(request: HttpRequest, convention: Convention):
-    # TODO: reverse relation convention lot
 
     convention_number_form = ConventionNumberForm(request.POST)
     complete_for_avenant_form = CompleteforavenantForm(request.POST, request.FILES)

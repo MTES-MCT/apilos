@@ -23,7 +23,6 @@ class ConventionTypeStationnementService(ConventionService):
     import_warnings: None | list = None
 
     def get(self):
-        # TODO: reverse relation convention lot
 
         self.editable_after_upload = bool(
             self.request.POST.get("editable_after_upload", False)
@@ -137,7 +136,6 @@ class ConventionTypeStationnementService(ConventionService):
             self.return_status = utils.ReturnStatus.ERROR
 
     def _save_stationnements(self):
-        # TODO: reverse relation convention lot
 
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))

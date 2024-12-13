@@ -10,14 +10,12 @@ from conventions.services.conventions import ConventionService
 from programmes.models import Logement
 
 
-# TODO: reverse relation convention lot
 class ConventionLogementsService(ConventionService):
     form: LotLgtsOptionForm
     formset: LogementFormSet
     upform: UploadForm = UploadForm()
 
     def get(self):
-        # TODO: reverse relation convention lot
 
         initial = []
         logements = self.convention.lot.logements.order_by("import_order")
@@ -88,7 +86,6 @@ class ConventionLogementsService(ConventionService):
                 self.editable_after_upload = True
 
     def _logements_atomic_update(self):
-        # TODO: reverse relation convention lot
 
         self.form = LotLgtsOptionForm(
             {
@@ -191,7 +188,6 @@ class ConventionLogementsService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_lgts_option(self):
-        # TODO: reverse relation convention lot
 
         lot = self.convention.lot
         lot.lgts_mixite_sociale_negocies = (
@@ -208,7 +204,6 @@ class ConventionLogementsService(ConventionService):
         lot.save()
 
     def _save_logements(self):
-        # TODO: reverse relation convention lot
 
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
@@ -259,7 +254,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def get(self):
-        # TODO: reverse relation convention lot
 
         initial = []
         logements = self.convention.lot.logements.order_by("import_order")
@@ -321,7 +315,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 self.editable_after_upload = True
 
     def _foyer_residence_logements_atomic_update(self):
-        # TODO: reverse relation convention lot
 
         self.formset = FoyerResidenceLogementFormSet(self.request.POST)
         initformset = {
@@ -401,7 +394,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_foyer_residence_lgts_details(self):
-        # TODO: reverse relation convention lot
 
         self.convention.lot.surface_habitable_totale = self.form.cleaned_data[
             "surface_habitable_totale"
@@ -410,7 +402,6 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
         self.convention.lot.save()
 
     def _save_foyer_residence_logements(self):
-        # TODO: reverse relation convention lot
 
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))

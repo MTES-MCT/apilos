@@ -18,7 +18,6 @@ class ConventionEDDService(ConventionService):
     editable_after_upload: bool = False
 
     def get(self):
-        # TODO: reverse relation convention lot
 
         initial = []
         for logementedd in self.convention.programme.logementedds.all():
@@ -172,7 +171,6 @@ class ConventionEDDService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_edd(self):
-        # TODO: reverse relation convention lot
 
         self.convention.lot.edd_volumetrique = utils.set_files_and_text_field(
             self.form.cleaned_data["edd_volumetrique_files"],

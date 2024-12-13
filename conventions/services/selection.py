@@ -169,9 +169,8 @@ class ConventionSelectionService:
 
                 parent_convention = (
                     Convention.objects.prefetch_related("programme")
-                    .prefetch_related("lot")
-                    .prefetch_related("avenants")
-                    .get(uuid=self.convention.uuid)
+                    # .prefetch_related("lot")
+                    .prefetch_related("avenants").get(uuid=self.convention.uuid)
                 )
                 self.avenant = parent_convention.clone(
                     self.request.user, convention_origin=parent_convention

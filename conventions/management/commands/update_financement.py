@@ -6,8 +6,6 @@ from conventions.models.convention import Convention
 # python manage.py update_financement --numeros "1" "2" "3" --financement PLAI
 #
 
-# TODO: reverse relation convention lot
-
 
 class Command(BaseCommand):
     counter_success = 0
@@ -30,7 +28,6 @@ class Command(BaseCommand):
         )
 
     def financement_update(self, numero, new_financement):
-        # TODO: reverse relation convention lot
 
         qs = Convention.objects.filter(numero=numero)
         if qs.count() == 0:

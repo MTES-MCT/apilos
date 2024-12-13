@@ -22,7 +22,21 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
+class ConventionQuerySet(models.QuerySet):
+    pass
+
+
+# .prefetch_related("lot__type_stationnements")
+# .prefetch_related("lot__logements")
+# .prefetch_related("lot__prets")
+
+
 class ConventionManager(models.Manager):
+    # def get_queryset(self):
+    #     return (
+    #         super().get_queryset().annotate(lot=Lot.objects.filter(id=OuterRef("pk")))
+    #     )
+
     def avenants(self):
         return self.exclude(parent=None)
 
@@ -31,7 +45,7 @@ class ConventionManager(models.Manager):
 
 
 class Convention(models.Model):
-    objects = ConventionManager()
+    objects = ConventionManager.from_queryset(ConventionQuerySet)()
 
     class Meta:
         indexes = [
@@ -48,22 +62,22 @@ class Convention(models.Model):
             ),
             models.Index(fields=["cree_le"], name="convention_cree_le_idx"),
         ]
-        constraints = [
-            # https://github.com/betagouv/SPPNautInterface/issues/227
-            models.UniqueConstraint(
-                fields=["programme_id", "lot_id", "financement"],
-                condition=models.Q(
-                    statut__in=[
-                        ConventionStatut.PROJET.label,
-                        ConventionStatut.INSTRUCTION.label,
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ]
-                ),
-                name="unique_display_name",
-            )
-        ]
+        # constraints = [
+        #     # https://github.com/betagouv/SPPNautInterface/issues/227
+        #     models.UniqueConstraint(
+        #         fields=["programme_id", "lot_id", "financement"],
+        #         condition=models.Q(
+        #             statut__in=[
+        #                 ConventionStatut.PROJET.label,
+        #                 ConventionStatut.INSTRUCTION.label,
+        #                 ConventionStatut.CORRECTION.label,
+        #                 ConventionStatut.A_SIGNER.label,
+        #                 ConventionStatut.SIGNEE.label,
+        #             ]
+        #         ),
+        #         name="unique_display_name",
+        #     )
+        # ]
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -81,14 +95,6 @@ class Convention(models.Model):
         related_name="conventions",
         on_delete=models.CASCADE,
         null=False,
-    )
-
-    # TODO: reverse relation convention lot
-    lot = models.ForeignKey(
-        "programmes.Lot",
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="conventions",
     )
 
     date_fin_conventionnement = models.DateField(null=True, blank=True)
@@ -251,16 +257,16 @@ class Convention(models.Model):
     identification_bailleur = models.BooleanField(default=False)
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
-    @property
-    def lot(self):
-        # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
-        # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
-        lots = self.lots.all()
-        if lots.count() > 1:
-            raise Exception("Convention has multiple lots")
-        return self.lots.first()
+    # @property
+    # def lot(self):
+    #     # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
+    #     # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
+    #     lots = self.lots.all()
+    #     if lots.count() > 1:
+    #         raise Exception("Convention has multiple lots")
+    #     return self.lots.first()
 
-    # TODO : migration pour cloer les lots quand ils ont plusieurs conventions
+    # # TODO : migration pour cloer les lots quand ils ont plusieurs conventions
 
     @property
     def attribution_type(self):
@@ -309,14 +315,6 @@ class Convention(models.Model):
             f"{programme.ville} - {programme.nom} - "
             + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
         )
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-
-        # Modif temporaire pour inverser la relation Convention-Lot
-        if self.lot and not self.lot.convention:
-            self.lot.convention = self
-            self.lot.save()
 
     def is_bailleur_editable(self):
         return self.statut in (
@@ -499,7 +497,7 @@ class Convention(models.Model):
         return date.today() > self.date_resiliation
 
     def is_incompleted_avenant_parent(self):
-        # TODO: reverse relation convention lot
+
         if self.is_avenant() and (
             not self.parent.programme.ville
             or not self.parent.lot.nb_logements
@@ -593,7 +591,6 @@ class Convention(models.Model):
         return ""
 
     def clone(self, user, *, convention_origin):
-        # TODO: reverse relation convention lot
 
         cloned_programme = self.programme.clone()
 

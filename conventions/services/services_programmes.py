@@ -15,7 +15,6 @@ class ConventionProgrammeService(ConventionService):
     redirect_recap: bool = False
 
     def get(self):
-        # TODO: reverse relation convention lot
 
         programme = self.convention.programme
         lot = self.convention.lot
@@ -50,7 +49,6 @@ class ConventionProgrammeService(ConventionService):
         self._programme_atomic_update()
 
     def _programme_atomic_update(self):
-        # TODO: reverse relation convention lot
 
         self.form = ProgrammeForm(
             {

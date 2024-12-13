@@ -12,7 +12,7 @@ class ConventionEDDView(ConventionView):
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
             Convention.objects.prefetch_related("programme")
-            .prefetch_related("lot")
+            # .prefetch_related("lot")
             .prefetch_related("programme__logementedds"),
             uuid=convention_uuid,
         )

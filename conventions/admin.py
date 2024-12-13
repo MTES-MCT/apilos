@@ -12,7 +12,7 @@ from .models import AvenantType, Convention, Pret
 
 @admin.display(description="Programme")
 def view_programme(convention):
-    # TODO: reverse relation convention lot
+
     return (
         f"{convention.programme.ville} -  {convention.lot} - "
         + f"{convention.lot.nb_logements} lgts - "
@@ -103,7 +103,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "administration",
         "bailleur",
         "programme",
-        "lot",
+        # "lot",
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
@@ -131,7 +131,7 @@ class ConventionAdmin(ApilosModelAdmin):
     list_select_related = (
         "programme__bailleur",
         "programme__administration",
-        "lot__programme",
+        # "lot__programme",
     )
     readonly_fields = (
         "uuid",
@@ -141,7 +141,11 @@ class ConventionAdmin(ApilosModelAdmin):
         "cree_par",
         "cree_le",
     )
-    autocomplete_fields = ("programme", "lot", "parent")
+    autocomplete_fields = (
+        "programme",
+        # "lot",
+        "parent",
+    )
     list_filter = (
         IsAvenantFilter,
         ("statut", StatutFilter),
