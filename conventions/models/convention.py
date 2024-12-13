@@ -23,7 +23,14 @@ logger = logging.getLogger(__name__)
 
 
 class ConventionQuerySet(models.QuerySet):
-    pass
+    def avenants(self):
+        return self.exclude(parent=None)
+
+    def without_denonciation_and_resiliation(self):
+        return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
+
+    # def with_logements(self):
+    #     return self.prefetch_related(...)
 
 
 # .prefetch_related("lot__type_stationnements")
@@ -32,16 +39,8 @@ class ConventionQuerySet(models.QuerySet):
 
 
 class ConventionManager(models.Manager):
-    # def get_queryset(self):
-    #     return (
-    #         super().get_queryset().annotate(lot=Lot.objects.filter(id=OuterRef("pk")))
-    #     )
-
-    def avenants(self):
-        return self.exclude(parent=None)
-
-    def without_denonciation_and_resiliation(self):
-        return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("lots")
 
 
 class Convention(models.Model):
@@ -257,16 +256,17 @@ class Convention(models.Model):
     identification_bailleur = models.BooleanField(default=False)
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
-    # @property
-    # def lot(self):
-    #     # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
-    #     # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
-    #     lots = self.lots.all()
-    #     if lots.count() > 1:
-    #         raise Exception("Convention has multiple lots")
-    #     return self.lots.first()
+    @cached_property
+    def lot(self):
+        # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
+        # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
+        # lots = self.lots.all()
+        # if lots.count() > 1:
+        #     raise Exception("Convention has multiple lots")
+        # return self.lots.first()
+        return self.lots.all()[:1]
 
-    # # TODO : migration pour cloer les lots quand ils ont plusieurs conventions
+    # TODO : migration pour cloner les lots quand ils ont plusieurs conventions
 
     @property
     def attribution_type(self):
