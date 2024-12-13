@@ -6,7 +6,7 @@ from datetime import date
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
@@ -29,18 +29,26 @@ class ConventionQuerySet(models.QuerySet):
     def without_denonciation_and_resiliation(self):
         return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
 
-    # def with_logements(self):
-    #     return self.prefetch_related(...)
+    def with_logements(self):
+        return self.all()
+        # TODO: prefetch lot__logements
 
+    def with_type_stationnements(self):
+        return self.all()
+        # TODO: prefetch lot__type_stationnements
 
-# .prefetch_related("lot__type_stationnements")
-# .prefetch_related("lot__logements")
-# .prefetch_related("lot__prets")
+    def with_prets(self):
+        return self.all()
+        # TODO: prefetch lot__prets
 
 
 class ConventionManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().prefetch_related("lots")
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("lots", queryset=Lot.objects.order_by("pk")))
+        )
 
 
 class Convention(models.Model):
@@ -256,15 +264,15 @@ class Convention(models.Model):
     identification_bailleur = models.BooleanField(default=False)
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
-    @cached_property
-    def lot(self):
+    @property
+    def lot(self) -> Lot:
         # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
         # il ne faudra plus levé d'exceptio et gérer plusieurs lots par conventions
-        # lots = self.lots.all()
-        # if lots.count() > 1:
+        # if self.lots.count() > 1:
         #     raise Exception("Convention has multiple lots")
-        # return self.lots.first()
-        return self.lots.all()[:1]
+
+        return self.lots.first()
+        # return self.lots.all()[:1][0]
 
     # TODO : migration pour cloner les lots quand ils ont plusieurs conventions
 
