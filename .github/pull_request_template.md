@@ -4,13 +4,7 @@ Carte Airtable / Lien Mattermost : [Titre](https://…)
 
 Description plus détaillée de l'intention, l'approche ou de l'implémentation (ce qui n’est pas visible directement en lisant le code)
 
-<!-- Cocher la/les case.s appropriée.s -->
-**Type de changement** :
-
-- [ ] Bug fix
-- [ ] Nouvelle fonctionnalité
-- [ ] Mise à jour de la documentation
-- [ ] Refactoring de code (explication à retrouver dans la description)
+**N'oublier pas de taguer** : `bug`, `enhancement`, `documentation`, `technical`, `dependencies` (+ `escalation`, `regression` si besion)
 
 ## Auto-review
 
