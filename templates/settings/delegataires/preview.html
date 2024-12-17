@@ -41,6 +41,7 @@
                                 <tr id="convention_redirect_{{convention.uuid}}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
                                     <td>{{ convention.programme.ville }}</td>
                                     <td>{{ convention.programme.nom }}</td>
+                                    {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                     <td>{{ convention.lot.nb_logements }}</td>
                                     <td>{{ convention.financement }}</td>
                                     <script type="text/javascript" nonce="{{request.csp_nonce}}">
