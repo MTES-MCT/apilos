@@ -82,10 +82,11 @@ LOGGING = {
             "handlers": ["console"],
             "level": LOGLEVEL,
         },
-        "django.db.backends": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-        },
+        # Utile pour afficher les requête SQL dans la console
+        # "django.db.backends": {
+        #     "handlers": ["console"],
+        #     "level": "DEBUG",
+        # },
     },
     "formatters": {
         "default": {
