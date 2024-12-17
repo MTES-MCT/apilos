@@ -38,6 +38,10 @@ class ConventionTypeConfigurationError(Exception):
     pass
 
 
+class DocxGenerationError(Exception):
+    pass
+
+
 def get_convention_template_path(convention):
     # pylint: disable=R0911
     if convention.is_avenant():
@@ -175,7 +179,16 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     context.update(object_images)
     context.update(adresse)
 
-    doc.render(context, _get_jinja_env())
+    try:
+        doc.render(context, _get_jinja_env())
+    except UnicodeDecodeError as e:
+        if e.reason == "invalid continuation byte":
+            raise DocxGenerationError(
+                "An error occured while generating the docx document. "
+                "This is probably related to an incomplete png file."
+            ) from e
+        else:
+            raise e
     if convention.programme.is_outre_mer:
         # Remove doc cerfa header for outre mer
         doc.sections[0].first_page_header.is_linked_to_previous = True
