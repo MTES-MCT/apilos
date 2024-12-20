@@ -161,12 +161,14 @@ class AddConventionService:
     def _get_financements(
         self, conventions: QuerySet[Convention]
     ) -> list[tuple[str, str]]:
-        financements = []
-        existing_financements = conventions.values_list("lot__financement", flat=True)
-        for financement in FinancementEDD.choices:
-            if financement[0] not in existing_financements:
-                financements.append(financement)
-        return financements
+        existing_financements = Lot.objects.filter(
+            convention_id__in=conventions.values_list("id", flat=True)
+        ).values_list("financement", flat=True)
+        return [
+            financement
+            for financement in FinancementEDD.choices
+            if financement[0] not in existing_financements
+        ]
 
     def _create_lot(self, programme: Programme) -> Lot:
         return Lot.objects.create(

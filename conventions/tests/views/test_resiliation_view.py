@@ -39,7 +39,7 @@ class ConventionResiliationTests(TestCase):
         )
 
     def test_resiliation_start_inspecteur_departemental(self):
-        convention = ConventionFactory()
+        convention = ConventionFactory(create_lot=True)
         self.client.post(reverse("login"), {"username": "nicolas", "password": "12345"})
 
         response = self.client.post(
@@ -51,7 +51,7 @@ class ConventionResiliationTests(TestCase):
         assert "/conventions/resiliation/" in response["Location"]
 
     def test_resiliation_start_bailleur(self):
-        convention = ConventionFactory()
+        convention = ConventionFactory(create_lot=True)
         response = self.client.post(
             reverse("login"), {"username": "raph", "password": "12345"}
         )
@@ -65,7 +65,7 @@ class ConventionResiliationTests(TestCase):
         assert "/conventions/resiliation_creation/" in response["Location"]
 
     def test_resiliation_start_instructeur(self):
-        convention = ConventionFactory()
+        convention = ConventionFactory(create_lot=True)
 
         response = self.client.post(
             reverse("login"), {"username": "sabine", "password": "12345"}

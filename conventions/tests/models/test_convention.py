@@ -7,23 +7,9 @@ from django.test import TestCase
 
 from conventions.models import Convention, ConventionHistory, ConventionStatut
 from conventions.tests.factories import ConventionFactory
-from programmes.models import Financement, Lot
+from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole
-
-
-class ConventionLotTest(TestCase):
-    def test_convention_lot_prefetch(self):
-        convention = ConventionFactory()
-
-        with self.assertNumQueries(2):
-            convention = Convention.objects.get(pk=convention.id)
-            lot = convention.lot
-            assert isinstance(lot, Lot)
-
-        Lot.objects.filter(pk=lot.id).delete()
-        convention.refresh_from_db()
-        assert convention.lot is None
 
 
 class ConventionModelsTest(TestCase):
