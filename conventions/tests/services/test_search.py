@@ -23,7 +23,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             statut=ConventionStatut.SIGNEE.label,
             financement=Financement.PLUS,
             televersement_convention_signee_le="2024-01-01",
-            lot__programme=ProgrammeFactory(
+            programme=ProgrammeFactory(
                 anru=True,
                 numero_operation="2017DD01100057",
                 nom="Le Clos de l'Ille - Rue de l'Occitanie - Séniors",
@@ -44,7 +44,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             numero="51/2015/2006-569/049R",
             statut=ConventionStatut.PROJET.label,
             financement=Financement.PLAI,
-            lot__programme=ProgrammeFactory(
+            programme=ProgrammeFactory(
                 anru=False,
                 numero_operation="20230600400040",
                 nom="ANTIBES 31 avenue de Nice",
@@ -64,7 +64,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             numero="32O665408Y777889",
             statut=ConventionStatut.INSTRUCTION.label,
             financement=Financement.PLS,
-            lot__programme=ProgrammeFactory(
+            programme=ProgrammeFactory(
                 anru=True,
                 numero_operation="2017490070049",
                 nom="ANGERS - Les Eclateries - ilot D ",
@@ -84,7 +84,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             parent=convention,
             statut=ConventionStatut.ANNULEE.label,
             financement=Financement.PLS,
-            lot__programme=convention.programme,
+            programme=convention.programme,
         )
 
         programme = ProgrammeFactory(
@@ -109,7 +109,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() + timedelta(days=1),
-            lot__programme=programme,
+            programme=programme,
         )
 
         ConventionFactory(
@@ -119,7 +119,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() - timedelta(days=1),
-            lot__programme=programme,
+            programme=programme,
         )
 
         ConventionFactory(
@@ -129,7 +129,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() + timedelta(days=1),
-            lot__programme=programme,
+            programme=programme,
         )
 
         ConventionFactory(
@@ -139,7 +139,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() - timedelta(days=1),
-            lot__programme=programme,
+            programme=programme,
         )
 
     @parametrize(
