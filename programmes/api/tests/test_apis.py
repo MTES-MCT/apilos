@@ -111,7 +111,6 @@ def create_all_for_siap():
     )
 
     convention_plai = ConventionFactory(
-        create_lot=False,
         programme=programme_75,
         financement=Financement.PLAI,
         numero="0002",
@@ -127,7 +126,6 @@ def create_all_for_siap():
     )
 
     convention_plus = ConventionFactory(
-        create_lot=False,
         programme=programme_75,
         financement=Financement.PLUS,
         numero="0001",
