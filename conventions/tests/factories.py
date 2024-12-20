@@ -11,8 +11,10 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
         model = Convention
         skip_postgeneration_save = True
 
-    numero = factory.Sequence(lambda n: f"Convention {n}")
+    class Params:
+        create_lot = False
 
+    numero = factory.Sequence(lambda n: f"Convention {n}")
     programme = factory.SubFactory(ProgrammeFactory)
 
     # lot = factory.SubFactory("programmes.tests.factories.LotFactory")
@@ -20,12 +22,13 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
     # financement = factory.SelfAttribute("lot.financement")
 
     @factory.post_generation
-    def mbox(obj, create, extracted, **kwargs):  # noqa: N805
+    def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
         if not create:
             return
-        lot = LotFactory.create(convention=obj, programme=obj.programme)
-        obj.financement = lot.financement
-        obj.save()
+        if obj.create_lot:
+            lot = LotFactory.create(convention=obj, programme=obj.programme)
+            obj.financement = lot.financement
+            obj.save()
 
 
 class AvenantFactory(ConventionFactory):

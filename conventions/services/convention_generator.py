@@ -119,7 +119,7 @@ def get_or_generate_convention_doc(
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot_id)
+        .filter(logement__lot_id=convention.lot.id)
         .all()
     )
 
@@ -275,7 +275,7 @@ def _save_convention_donnees_validees(
 ):
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot_id)
+        .filter(logement__lot_id=convention.lot.id)
         .all()
     )
 

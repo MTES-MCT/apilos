@@ -10,7 +10,7 @@ from conventions.tests.factories import ConventionFactory
 from conventions.views import save_convention
 from conventions.views.conventions import validate_convention
 from instructeurs.tests.factories import AdministrationFactory
-from programmes.tests.factories import ProgrammeFactory
+from programmes.tests.factories import LotFactory, ProgrammeFactory
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
 from users.type_models import TypeRole
 
@@ -28,8 +28,9 @@ def test_get_contributors():
     administration = AdministrationFactory()
     programme = ProgrammeFactory(bailleur=bailleur, administration=administration)
     convention = ConventionFactory(
-        statut=ConventionStatut.PROJET.label, lot__programme=programme
+        statut=ConventionStatut.PROJET.label, create_lot=False
     )
+    LotFactory(programme=programme, convention=convention)
 
     # Create a user bailleur and a user instructeur
     user_bailleur = UserFactory()
