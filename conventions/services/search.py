@@ -62,7 +62,10 @@ class ConventionSearchServiceBase:
 
 
 class AvenantListSearchService(ConventionSearchServiceBase):
-    prefetch = ["programme", "lot"]
+    prefetch = [
+        "programme",
+        # "lot",
+    ]
 
     def __init__(self, convention: Convention, order_by: str | None = None):
         self.convention: Convention = (
@@ -79,7 +82,7 @@ class AvenantListSearchService(ConventionSearchServiceBase):
 class ProgrammeConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__administration",
-        "lot",
+        # "lot",
     ]
 
     def __init__(self, programme: Programme, order_by: str | None = None):
@@ -96,7 +99,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",
-        "lot",
+        # "lot",
     ]
 
     user: User

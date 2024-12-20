@@ -17,7 +17,7 @@ from conventions.services.utils import ReturnStatus
 from conventions.tests.factories import AvenantTypeFactory, ConventionFactory
 from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models import Financement, NatureLogement
-from programmes.tests.factories import LotFactory, ProgrammeFactory
+from programmes.tests.factories import ProgrammeFactory
 from siap.siap_client.mock_data import operation_mock
 from users.tests.factories import UserFactory
 
@@ -137,10 +137,9 @@ class TestAddAvenantsService(TestCase):
             statut=ConventionStatut.SIGNEE.label,
             financement=Financement.PLUS,
             televersement_convention_signee_le="2024-01-01",
-            lot=LotFactory(
-                nb_logements=100,
-                programme=ProgrammeFactory(bailleur=self.bailleur),
-            ),
+            programme=ProgrammeFactory(bailleur=self.bailleur),
+            create_lot=True,
+            create_lot__nb_logements=100,
         )
         assert self.convention.lot.nb_logements == 100
 

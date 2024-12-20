@@ -28,7 +28,9 @@ def test_get_contributors():
     administration = AdministrationFactory()
     programme = ProgrammeFactory(bailleur=bailleur, administration=administration)
     convention = ConventionFactory(
-        statut=ConventionStatut.PROJET.label, lot__programme=programme
+        statut=ConventionStatut.PROJET.label,
+        programme=programme,
+        create_lot=True,
     )
 
     # Create a user bailleur and a user instructeur

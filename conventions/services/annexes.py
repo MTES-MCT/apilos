@@ -11,7 +11,7 @@ class ConventionAnnexesService(ConventionService):
 
     def get(self):
         initial = []
-        annexes = Annexe.objects.filter(logement__lot_id=self.convention.lot_id)
+        annexes = Annexe.objects.filter(logement__lot_id=self.convention.lot.id)
         for annexe in annexes:
             initial.append(
                 {
@@ -70,7 +70,7 @@ class ConventionAnnexesService(ConventionService):
 
                 annexes_by_designation = {}
                 for annexe in Annexe.objects.prefetch_related("logement").filter(
-                    logement__lot_id=self.convention.lot_id
+                    logement__lot_id=self.convention.lot.id
                 ):
                     annexes_by_designation[
                         f"{annexe.logement.designation}_{annexe.typologie}"
@@ -199,7 +199,7 @@ class ConventionAnnexesService(ConventionService):
     def _save_annexes(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        Annexe.objects.filter(logement__lot_id=self.convention.lot_id).exclude(
+        Annexe.objects.filter(logement__lot_id=self.convention.lot.id).exclude(
             uuid__in=obj_uuids
         ).delete()
         for form_annexe in self.formset:
