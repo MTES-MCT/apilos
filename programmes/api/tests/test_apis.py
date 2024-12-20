@@ -110,30 +110,36 @@ def create_all_for_siap():
         ],
     )
 
+    convention_plai = ConventionFactory(
+        create_lot=False,
+        programme=programme_75,
+        financement=Financement.PLAI,
+        numero="0002",
+        make_upload_on_fields=["commentaires"],
+    )
     lot_plai = LotFactory(
+        convention=convention_plai,
         programme=programme_75,
         financement=Financement.PLAI,
         type_habitat=TypeHabitat.MIXTE,
         nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
     )
+
+    convention_plus = ConventionFactory(
+        create_lot=False,
+        programme=programme_75,
+        financement=Financement.PLUS,
+        numero="0001",
+        make_upload_on_fields=["commentaires"],
+    )
     lot_plus = LotFactory(
+        convention=convention_plus,
         programme=programme_75,
         financement=Financement.PLUS,
         type_habitat=TypeHabitat.COLLECTIF,
         nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
-    )
-
-    ConventionFactory(
-        lot=lot_plus,
-        numero="0001",
-        make_upload_on_fields=["commentaires"],
-    )
-    ConventionFactory(
-        lot=lot_plai,
-        numero="0002",
-        make_upload_on_fields=["commentaires"],
     )
 
     log1 = LogementFactory(
