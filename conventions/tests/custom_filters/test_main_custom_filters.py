@@ -711,7 +711,6 @@ class CustomFiltersTest(TestCase):
         av = Convention.objects.create(
             statut=ConventionStatut.RESILIEE.label,
             parent=self.convention,
-            lot=cloned_lot,
             programme=cloned_programme,
         )
         av.save()

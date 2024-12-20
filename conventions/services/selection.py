@@ -100,12 +100,14 @@ class ConventionSelectionService:
             lot.save()
 
             self.convention = Convention.objects.create(
-                lot=lot,
                 programme_id=lot.programme_id,
                 financement=lot.financement,
                 cree_par=self.request.user,
             )
             self.convention.save()
+
+            lot.convention = self.convention
+            lot.save()
 
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
@@ -150,7 +152,6 @@ class ConventionSelectionService:
                 lot.save()
 
                 self.convention = Convention.objects.create(
-                    lot=lot,
                     programme_id=lot.programme_id,
                     financement=lot.financement,
                     cree_par=self.request.user,
@@ -158,6 +159,9 @@ class ConventionSelectionService:
                     numero=(self.form.cleaned_data["numero"]),
                 )
                 self.convention.save()
+
+                lot.convention = self.convention
+                lot.save()
 
                 conventionfile = self.request.FILES.get("nom_fichier_signe", False)
                 if conventionfile:

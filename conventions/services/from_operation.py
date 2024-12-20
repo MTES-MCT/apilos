@@ -176,8 +176,7 @@ class AddConventionService:
         )
 
     def _create_convention(self, lot: Lot) -> Convention:
-        return Convention.objects.create(
-            lot=lot,
+        convention = Convention.objects.create(
             programme_id=lot.programme_id,
             financement=lot.financement,
             cree_par=self.request.user,
@@ -187,6 +186,11 @@ class AddConventionService:
             ),
             statut=ConventionStatut.SIGNEE.label,
         )
+
+        lot.convention = convention
+        lot.save()
+
+        return Convention
 
     def save(self) -> ReturnStatus:
         if not self.form.is_valid():
