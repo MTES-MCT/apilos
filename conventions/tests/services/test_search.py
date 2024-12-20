@@ -37,6 +37,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                     siret="34322777300011",
                 ),
             ),
+            create_lot=True,
+            create_lot__financement=Financement.PLUS,
         )
 
         ConventionFactory(
@@ -57,6 +59,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                     siret="475 680 815 00051",
                 ),
             ),
+            create_lot=True,
+            create_lot__financement=Financement.PLAI,
         )
 
         convention = ConventionFactory(
@@ -77,6 +81,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                     siret="05720113900029",
                 ),
             ),
+            create_lot=True,
+            create_lot__financement=Financement.PLS,
         )
 
         AvenantFactory(
@@ -110,6 +116,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() + timedelta(days=1),
             programme=programme,
+            create_lot=True,
+            create_lot__financement=Financement.PALULOS,
         )
 
         ConventionFactory(
@@ -120,6 +128,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() - timedelta(days=1),
             programme=programme,
+            create_lot=True,
+            create_lot__financement=Financement.PALULOS,
         )
 
         ConventionFactory(
@@ -130,6 +140,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() + timedelta(days=1),
             programme=programme,
+            create_lot=True,
+            create_lot__financement=Financement.PALULOS,
         )
 
         ConventionFactory(
@@ -140,6 +152,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() - timedelta(days=1),
             programme=programme,
+            create_lot=True,
+            create_lot__financement=Financement.PALULOS,
         )
 
     @parametrize(
