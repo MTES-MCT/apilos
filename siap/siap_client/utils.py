@@ -308,26 +308,28 @@ def get_or_create_lots_and_conventions(
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
     ):
-        (lot, _) = Lot.objects.get_or_create(
-            programme=programme,
-            financement=Financement.SANS_FINANCEMENT,
-            defaults={
-                "type_habitat": TypeHabitat.MIXTE,
-                "nb_logements": 0,
-            },
-        )
-        lots.append(lot)
         (convention, _) = Convention.objects.exclude(
             statut=ConventionStatut.ANNULEE.label,
         ).get_or_create(
             programme=programme,
-            lot=lot,
             financement=Financement.SANS_FINANCEMENT,
             # When comes from SIAP through API, the user doesn't exist in DB
             defaults={
                 "cree_par": (user if user.id else None),
             },
         )
+
+        (lot, _) = Lot.objects.get_or_create(
+            programme=programme,
+            financement=Financement.SANS_FINANCEMENT,
+            convention=convention,
+            defaults={
+                "type_habitat": TypeHabitat.MIXTE,
+                "nb_logements": 0,
+            },
+        )
+        lots.append(lot)
+
         # When convention was created by SIAP through API and the user doesn't exist
         # the first user how access it will be the creator
         if convention.cree_par is None and user.id is not None:
@@ -361,7 +363,6 @@ def _create_convention_from_lot(lot: Lot, user: User):
         statut=ConventionStatut.ANNULEE.label,
     ).get_or_create(
         programme=lot.programme,
-        lot=lot,
         financement=lot.financement,
         # When comes from SIAP through API, the user doesn't exist in DB
         defaults={
@@ -373,6 +374,10 @@ def _create_convention_from_lot(lot: Lot, user: User):
     if convention.cree_par is None and user.id is not None:
         convention.cree_par = user
         convention.save()
+
+    lot.convention = convention
+    lot.save()
+
     return convention
 
 

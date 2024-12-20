@@ -11,9 +11,6 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
         model = Convention
         skip_postgeneration_save = True
 
-    class Params:
-        create_lot = False
-
     numero = factory.Sequence(lambda n: f"Convention {n}")
     programme = factory.SubFactory(ProgrammeFactory)
 
@@ -23,10 +20,8 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
 
     @factory.post_generation
     def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
-        if not create:
-            return
-        if obj.create_lot:
-            lot = LotFactory.create(convention=obj, programme=obj.programme)
+        if extracted and create:
+            lot = LotFactory.create(convention=obj, programme=obj.programme, **kwargs)
             obj.financement = lot.financement
             obj.save()
 
