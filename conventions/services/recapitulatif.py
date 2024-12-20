@@ -139,7 +139,7 @@ class ConventionRecapitulatifService(ConventionService):
         return {
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(
-                logement__lot_id=self.convention.lot_id
+                logement__lot_id=self.convention.lot.id
             ).all(),
             "notificationForm": NotificationForm(),
             "conventionNumberForm": convention_number_form,

@@ -68,7 +68,7 @@ class ConventionTypeStationnementService(ConventionService):
             if result["success"] != utils.ReturnStatus.ERROR:
                 stationnement_by_designation = {}
                 for stationnement in TypeStationnement.objects.filter(
-                    lot_id=self.convention.lot_id
+                    lot_id=self.convention.lot.id
                 ):
                     stationnement_by_designation[
                         f"{stationnement.nb_stationnements}_{stationnement.typologie}"
