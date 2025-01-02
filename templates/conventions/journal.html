@@ -33,7 +33,7 @@
                                 </div>
                                 <div class="fr-col-12 fr-mb-4w">
                                     <label class="fr-label">Ajouter un fichier (optionnel)</label>
-                                    {% include "common/form/input_upload.html" with no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
+                                    {% include "common/form/input_upload.html" with single_file=False no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
                                 </div>
                                 <div class="fr-grid-row fr-grid-row--right">
                                     <div class="fr-mr-4w fr-mt-1w">
@@ -80,7 +80,7 @@
                                         </div>
                                         <div class="fr-col-12 fr-mb-4w">
                                             <label class="fr-label">Ajouter des fichiers (optionnel)</label>
-                                            {% include "common/form/input_upload.html" with no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
+                                            {% include "common/form/input_upload.html" with single_file=False no_title=True form_input=form.pieces_jointes form_input_files=form.pieces_jointes_files object_name='convention' object_uuid=convention.uuid file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:form.uuid.value %}
                                         </div>
                                     </div>
                                     <div class="fr-grid-row fr-grid-row--right">
