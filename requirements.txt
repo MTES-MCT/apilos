@@ -259,9 +259,9 @@ djangorestframework-simplejwt==5.3.1 \
 docxcompose==1.3.6 \
     --hash=sha256:224f62525bdd3ed6587274e35d2f1baf8901e5b235efc0b5620c0c78cd795214
     # via docxtpl
-docxtpl==0.19.0 \
-    --hash=sha256:0daa8d587262a8de993aec5cef1e9a9f32a55d3dd4bd27333d8b7ad72884d536 \
-    --hash=sha256:9cbacfe58ecf9eb481f28f60043c200f3e02205c0f41d710328e2558acbefba9
+docxtpl==0.19.1 \
+    --hash=sha256:12dbf93069d3d08897e3a44a4a043cb60d0320b88228ec2a6c6cf0e103c732dd \
+    --hash=sha256:5836aab5583a82e2e81b086fae130ce94dc080f6b7fe0e43f83f4e3e3e5daecf
     # via -r requirements.in
 drf-spectacular==0.28.0 \
     --hash=sha256:2c778a47a40ab2f5078a7c42e82baba07397bb35b074ae4680721b2805943061 \
