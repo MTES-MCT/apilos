@@ -215,13 +215,15 @@ class ConventionPrefixTest(TestCase):
         programme.uuid = uuid.uuid4()
         programme.save()
         lot = convention.lot
+        convention.pk = None
+        convention.uuid = uuid.uuid4()
+        convention.programme = programme
+        convention.save()
         lot.pk = None
         lot.uuid = uuid.uuid4()
+        lot.convention = convention
         lot.save()
-        return Convention(
-            programme=programme,
-            lot=lot,
-        )
+        return convention
 
     def test_get_convention_prefix_same_admin(self):
         current_year = datetime.date.today().year % 100

@@ -41,9 +41,10 @@ class Command(BaseCommand):
             )
 
         for convention in qs:
+            lot_convention = convention.lot
             if (
                 convention.financement == new_financement
-                and convention.lot.financement == new_financement
+                and lot_convention.financement == new_financement
             ):
                 self.stdout.write(
                     self.style.WARNING(
@@ -52,14 +53,15 @@ class Command(BaseCommand):
                 )
                 return
             convention.financement = new_financement
-            convention.lot.financement = new_financement
+            lot_convention.financement = new_financement
             convention.save()
-            convention.lot.save()
+            lot_convention.save()
             for avenant in convention.avenants.all():
                 avenant.financement = new_financement
-                avenant.lot.financement = new_financement
+                lot_avenant = avenant.lot
+                lot_avenant.financement = new_financement
                 avenant.save()
-                avenant.lot.save()
+                lot_avenant.save()
 
         self.counter_success += 1
         self.stdout.write(

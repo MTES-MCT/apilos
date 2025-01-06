@@ -24,7 +24,7 @@ def _update_nested_convention_field(
 
     if "." in field_name:
         field_as_list = field_name.split(".")  # [programme, bailleur, nom]
-        instance = getattr(instance, field_as_list[0])  # <Programme>
+        instance = getattr(instance, field_as_list[0])  # <Programme>, <Lot>
         field_name = ".".join(field_as_list[1:])  # "bailleur.nom"
         previous_instance = getattr(previous_instance, field_as_list[0])
         _update_nested_convention_field(field_name, instance, previous_instance)

@@ -389,12 +389,12 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_foyer_residence_lgts_details(self):
-
-        self.convention.lot.surface_habitable_totale = self.form.cleaned_data[
+        lot_convention = self.convention.lot
+        lot_convention.surface_habitable_totale = self.form.cleaned_data[
             "surface_habitable_totale"
         ]
-        self.convention.lot.nb_logements = self.form.cleaned_data["nb_logements"]
-        self.convention.lot.save()
+        lot_convention.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot_convention.save()
 
     def _save_foyer_residence_logements(self):
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))

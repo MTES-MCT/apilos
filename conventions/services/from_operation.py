@@ -295,8 +295,9 @@ class AddAvenantsService:
                 # Avenant type Logements
                 nb_logements = self.form.cleaned_data["nb_logements"]
                 if nb_logements and nb_logements != self.convention.lot.nb_logements:
-                    self.convention.lot.nb_logements = nb_logements
-                    self.convention.lot.save()
+                    lot_convention = self.convention.lot
+                    lot_convention.nb_logements = nb_logements
+                    lot_convention.save()
                     avenant.avenant_types.add(AvenantType.objects.get(nom="logements"))
 
                 return ReturnStatus.SUCCESS

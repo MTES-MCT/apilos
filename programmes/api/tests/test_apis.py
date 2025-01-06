@@ -792,8 +792,9 @@ class OperationClosedAPITest(APITestCase):
             expected_last_conventions_state,
         )
 
-        avenant1.lot.nb_logements = 10
-        avenant1.lot.save()
+        lot_avenant1 = avenant1.lot
+        lot_avenant1.nb_logements = 10
+        lot_avenant1.save()
         avenant1.statut = ConventionStatut.SIGNEE.label
         avenant1.save()
 

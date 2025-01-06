@@ -170,14 +170,15 @@ class ConventionEDDService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_edd(self):
-        self.convention.lot.edd_volumetrique = utils.set_files_and_text_field(
+        lot_convention = self.convention.lot
+        lot_convention.edd_volumetrique = utils.set_files_and_text_field(
             self.form.cleaned_data["edd_volumetrique_files"],
             self.form.cleaned_data["edd_volumetrique"],
         )
         self.convention.programme.mention_publication_edd_volumetrique = (
             self.form.cleaned_data["mention_publication_edd_volumetrique"]
         )
-        self.convention.lot.edd_classique = utils.set_files_and_text_field(
+        lot_convention.edd_classique = utils.set_files_and_text_field(
             self.form.cleaned_data["edd_classique_files"],
             self.form.cleaned_data["edd_classique"],
         )
@@ -188,7 +189,7 @@ class ConventionEDDService(ConventionService):
             self.form.cleaned_data["edd_stationnements_files"],
             self.form.cleaned_data["edd_stationnements"],
         )
-        self.convention.lot.save()
+        lot_convention.save()
         self.convention.programme.save()
 
     def _save_programme_logement_edd(self):

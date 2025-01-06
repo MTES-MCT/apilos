@@ -201,31 +201,35 @@ class RemoveFromAvenantViewTest(RemoveFromAvenantViewBaseTest):
         self._login_as_superuser()
 
         avenant_type_logements = AvenantType.objects.get(nom="logements")
-
-        self.convention_75.lot.surface_locaux_collectifs_residentiels = 12.0
-        self.convention_75.lot.surface_habitable_totale = 50.0
-        self.convention_75.lot.save()
+        lot_convention = self.convention_75.lot
+        lot_convention.surface_locaux_collectifs_residentiels = 12.0
+        lot_convention.surface_habitable_totale = 50.0
+        lot_convention.save()
 
         avenant_1 = self.convention_75.clone(
             user=self.user, convention_origin=self.convention_75
         )
-        avenant_1.lot.surface_locaux_collectifs_residentiels = 15.0
-        avenant_1.lot.save()
+        lot_avenant_1 = avenant_1.lot
+        lot_avenant_1.surface_locaux_collectifs_residentiels = 15.0
+        lot_avenant_1.save()
         avenant_1.avenant_types.add(avenant_type_logements)
 
         avenant_2 = avenant_1.clone(
             user=self.user, convention_origin=self.convention_75
         )
-        avenant_2.lot.surface_habitable_totale = 60.0
-        avenant_2.lot.save()
+        lot_avenant_2 = avenant_2.lot
+        lot_avenant_2.surface_habitable_totale = 60.0
+        lot_avenant_2.save()
+
         avenant_2.avenant_types.add(avenant_type_logements)
 
         avenant_3 = avenant_2.clone(
             user=self.user, convention_origin=self.convention_75
         )
-        avenant_3.lot.surface_locaux_collectifs_residentiels = 30.0
-        avenant_3.lot.surface_habitable_totale = 70.0
-        avenant_3.lot.save()
+        lot_avenant_3 = avenant_3.lot
+        lot_avenant_3.surface_locaux_collectifs_residentiels = 30.0
+        lot_avenant_3.surface_habitable_totale = 70.0
+        lot_avenant_3.save()
         avenant_3.avenant_types.add(avenant_type_logements)
 
         response = self.client.post(

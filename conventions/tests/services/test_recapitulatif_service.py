@@ -69,6 +69,7 @@ class ConventionRecapitulatifServiceTests(TestCase):
         dummy_lot = Lot.objects.get(pk=1)
         dummy_lot.pk = None
         dummy_lot.nb_logements = 69
+        dummy_lot.convention = None
         dummy_lot.save()
 
         with patch.object(

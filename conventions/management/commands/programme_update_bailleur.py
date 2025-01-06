@@ -9,15 +9,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         programme_uuid = input("Quel est l'identifiant UUID du programme à modifier ? ")
-        programme = (
-            Programme.objects
-            # .prefetch_related("lots__logements__annexes")
-            # .prefetch_related("lots__type_stationnements")
-            .prefetch_related("logementedds")
-            .prefetch_related("conventions__prets")
-            .prefetch_related("referencecadastrales")
-            .get(uuid=programme_uuid)
-        )
+        programme = Programme.objects.get(uuid=programme_uuid)
         self.stdout.write(
             f"le programme `{programme_uuid}` : `{programme}` va être modifié"
         )

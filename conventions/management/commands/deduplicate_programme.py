@@ -140,6 +140,7 @@ class Command(BaseCommand):
                 programmes[0].anru = bool(programmes[0].anru)
                 programmes[0].save()
                 for p in programmes[1:]:
+                    # FIXME : A supprimer quand lots n'a plus programme_id
                     for lot in p.lots.all():
                         lot.programme = programmes[0]
                         lot.save()

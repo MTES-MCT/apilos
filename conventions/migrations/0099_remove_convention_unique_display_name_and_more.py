@@ -7,6 +7,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ("conventions", "0098_alter_convention_financement"),
+        ("programmes", "0119_fill_lot_convention"),
     ]
 
     operations = [

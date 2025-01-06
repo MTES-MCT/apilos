@@ -533,8 +533,9 @@ class Lot(models.Model):
                 fields=["convention_id", "financement"],
                 name="unique_convention_financement",
             ),
-            # TODO : quand on intégrera les convention mixte ou les conventions seconde vie
-            # il faudra supprimer cette contrainte et gérer plusieurs lots par convention
+            # TODO : quand on intégrera les convention mixte ou les conventions seconde
+            # vie il faudra supprimer cette contrainte et gérer plusieurs lots par
+            # convention
             models.UniqueConstraint(
                 fields=["convention_id"],
                 name="unique_convention",
