@@ -99,8 +99,12 @@ def get_form_date_value(form_instance, object_instance, field_name):
     )  # format_date_for_form(
 
 
-def build_partial_form(request, convention_object, field_list, non_attribute_field_list=[]):
+def build_partial_form(
+    request, convention_object, field_list, non_attribute_field_list=None
+):
     fields_dict = {}
+    if non_attribute_field_list is None:
+        non_attribute_field_list = []
     for field in field_list:
         fields_dict[field] = request.POST.get(field, getattr(convention_object, field))
     for non_attribute_field in non_attribute_field_list:

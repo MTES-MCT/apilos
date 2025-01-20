@@ -553,19 +553,27 @@ class Lot(models.Model):
 
     @property
     def logements_import_ordered(self):
-        return self.logements.filter(surface_corrigee__isnull=True, loyer__isnull=False).order_by("import_order")
-    
+        return self.logements.filter(
+            surface_corrigee__isnull=True, loyer__isnull=False
+        ).order_by("import_order")
+
     @property
     def logements_sans_loyer_import_ordered(self):
-        return self.logements.filter(surface_corrigee__isnull=True, loyer__isnull=True).order_by("import_order")
-    
+        return self.logements.filter(
+            surface_corrigee__isnull=True, loyer__isnull=True
+        ).order_by("import_order")
+
     @property
     def logements_corrigee_import_ordered(self):
-        return self.logements.filter(surface_corrigee__isnull=False, loyer__isnull=False).order_by("import_order")
-    
+        return self.logements.filter(
+            surface_corrigee__isnull=False, loyer__isnull=False
+        ).order_by("import_order")
+
     @property
     def logements_corrigee_sans_loyer_import_ordered(self):
-        return self.logements.filter(surface_corrigee__isnull=False, loyer__isnull=True).order_by("import_order")
+        return self.logements.filter(
+            surface_corrigee__isnull=False, loyer__isnull=True
+        ).order_by("import_order")
 
     def clone(self, cloned_programme):
         parent_id = self.parent_id or self.id
@@ -860,7 +868,7 @@ class LogementCorrigee(Logement):
         "Loyer maximum en € par m² de surface corrigée": "loyer_par_metre_carre",
         "Coefficient propre au logement": "coeficient",
         "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": "loyer",
-    }   
+    }
 
     needed_in_mapping = [
         "designation",
@@ -888,6 +896,7 @@ class LogementCorrigeeSansLoyer(Logement):
         "surface_habitable",
         "surface_corrigee",
     ]
+
 
 class Annexe(models.Model):
     id = models.AutoField(primary_key=True)

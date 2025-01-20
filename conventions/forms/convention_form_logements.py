@@ -236,7 +236,9 @@ class LogementCorrigeeForm(LogementCorrigeeSansLoyerForm):
         if (
             abs(
                 round_half_up(loyer, 2)
-                - round_half_up(surface_corrigee * loyer_par_metre_carre * coeficient, 2)
+                - round_half_up(
+                    surface_corrigee * loyer_par_metre_carre * coeficient, 2
+                )
             )
             > 1
         ):
@@ -255,6 +257,7 @@ class LogementSansLoyerForm(BaseLogementForm):
     Formulaire Logement formant la liste des logements d'une convention de type HLM,
     SEM, type I & 2 : une ligne du tableau des logements par surface réelle sans loyers
     """
+
     surface_annexes = forms.DecimalField(
         label="",
         max_digits=6,
@@ -508,9 +511,15 @@ class BaseLogementFormSet(BaseFormSet):
 
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
-LogementSansLoyerFormSet = formset_factory(LogementSansLoyerForm, formset=BaseLogementFormSet, extra=0)
-LogementCorrigeeFormSet = formset_factory(LogementCorrigeeForm, formset=BaseLogementFormSet, extra=0)
-LogementCorrigeeSansLoyerFormSet = formset_factory(LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0)
+LogementSansLoyerFormSet = formset_factory(
+    LogementSansLoyerForm, formset=BaseLogementFormSet, extra=0
+)
+LogementCorrigeeFormSet = formset_factory(
+    LogementCorrigeeForm, formset=BaseLogementFormSet, extra=0
+)
+LogementCorrigeeSansLoyerFormSet = formset_factory(
+    LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0
+)
 
 
 class FoyerResidenceLogementForm(forms.Form):
