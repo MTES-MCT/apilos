@@ -83,6 +83,7 @@ class Migration(migrations.Migration):
             [
                 migrations.RunSQL(
                     # copy de la table programmes_lot pour la sauvegarde
+                    "DROP TABLE IF EXISTS programmes_lot_backup;"
                     "CREATE TABLE programmes_lot_backup AS "
                     "SELECT * FROM programmes_lot;",
                     "DROP TABLE programmes_lot_backup;",
