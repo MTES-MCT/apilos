@@ -41,7 +41,7 @@ class GenerateAndSendTest(TestCase):
                 nb_convention_exemplaires=12,
             ),
         )
-        self.convention = ConventionFactory(lot__programme=self.programme)
+        self.convention = ConventionFactory(programme=self.programme, create_lot=True)
         self._create_pdf_file_in_storage(convention_uuid=str(self.convention.uuid))
 
     def test_generate_and_send_logement_ordinaire(

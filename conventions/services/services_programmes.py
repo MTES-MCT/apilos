@@ -4,6 +4,7 @@ from conventions.forms import ProgrammeForm, ProgrammeMinimalForm
 from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.conventions import ConventionService
+from programmes.models import Lot, Programme
 
 
 class ConventionProgrammeService(ConventionService):
@@ -78,7 +79,7 @@ class ConventionProgrammeService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
 
-def _save_programme_and_lot(programme, lot, form):
+def _save_programme_and_lot(programme: Programme, lot: Lot, form: ProgrammeForm):
     programme.nom = form.cleaned_data["nom"]
     programme.code_postal = form.cleaned_data["code_postal"]
     programme.ville = form.cleaned_data["ville"]
@@ -95,6 +96,6 @@ def _save_programme_and_lot(programme, lot, form):
     lot.save()
 
 
-def _save_convention_adresse(convention, form):
+def _save_convention_adresse(convention: Convention, form: ProgrammeForm):
     convention.adresse = form.cleaned_data["adresse"]
     convention.save()

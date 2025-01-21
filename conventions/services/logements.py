@@ -72,7 +72,7 @@ class ConventionLogementsService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot_id):
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -173,7 +173,7 @@ class ConventionLogementsService(ConventionService):
                 }
         self.formset = LogementFormSet(initformset)
         self.formset.programme_id = self.convention.programme_id
-        self.formset.lot_id = self.convention.lot_id
+        self.formset.lot_id = self.convention.lot.id
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
@@ -201,6 +201,7 @@ class ConventionLogementsService(ConventionService):
         lot.save()
 
     def _save_logements(self):
+
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
         self.convention.lot.logements.exclude(uuid__in=lgt_uuids).delete()
@@ -297,7 +298,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot_id):
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -359,7 +360,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     f"form-{idx}-import_order": form_logement["import_order"].value(),
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
-        self.formset.lot_id = self.convention.lot_id
+        self.formset.lot_id = self.convention.lot.id
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
@@ -388,11 +389,12 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_foyer_residence_lgts_details(self):
-        self.convention.lot.surface_habitable_totale = self.form.cleaned_data[
+        lot_convention = self.convention.lot
+        lot_convention.surface_habitable_totale = self.form.cleaned_data[
             "surface_habitable_totale"
         ]
-        self.convention.lot.nb_logements = self.form.cleaned_data["nb_logements"]
-        self.convention.lot.save()
+        lot_convention.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot_convention.save()
 
     def _save_foyer_residence_logements(self):
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))

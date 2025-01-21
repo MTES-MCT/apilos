@@ -103,8 +103,9 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
 
     def test_compute_mixite_lt_10(self):
         convention = Convention.objects.get(numero="0001")
-        convention.lot.nb_logements = 9
-        convention.lot.save()
+        lot_convention = convention.lot
+        lot_convention.nb_logements = 9
+        lot_convention.save()
         self.assertEqual(
             compute_mixte(convention),
             {
@@ -115,8 +116,8 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUSsup10_30pc": 0,
             },
         )
-        convention.lot.nb_logements = 5
-        convention.lot.save()
+        lot_convention.nb_logements = 5
+        lot_convention.save()
         self.assertEqual(
             compute_mixte(convention),
             {
@@ -127,8 +128,8 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUSsup10_30pc": 0,
             },
         )
-        convention.lot.nb_logements = 4
-        convention.lot.save()
+        lot_convention.nb_logements = 4
+        lot_convention.save()
         self.assertEqual(
             compute_mixte(convention),
             {
@@ -142,8 +143,9 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
 
     def test_compute_mixite_gt_10(self):
         convention = Convention.objects.get(numero="0001")
-        convention.lot.nb_logements = 10
-        convention.lot.save()
+        lot_convention = convention.lot
+        lot_convention.nb_logements = 10
+        lot_convention.save()
         self.assertEqual(
             compute_mixte(convention),
             {
@@ -154,8 +156,8 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUSsup10_30pc": 3,
             },
         )
-        convention.lot.nb_logements = 11
-        convention.lot.save()
+        lot_convention.nb_logements = 11
+        lot_convention.save()
         self.assertEqual(
             compute_mixte(convention),
             {

@@ -179,8 +179,9 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         convention = Convention.objects.get(numero="0001")
         convention.programme.nature_logement = NatureLogement.AUTRE
         convention.programme.save()
-        convention.lot.nb_logements = 2
-        convention.lot.save()
+        lot_convention = convention.lot
+        lot_convention.nb_logements = 2
+        lot_convention.save()
 
         request.user = User.objects.get(username="fix")
         self.service = ConventionFoyerResidenceLogementsService(

@@ -2,6 +2,7 @@ import factory
 
 from conventions.models import AvenantType, Convention
 from core.tests.factories import BaseFactory
+from programmes.tests.factories import LotFactory, ProgrammeFactory
 from upload.tests.factories import UploadFactoryMixin
 
 
@@ -11,10 +12,18 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
         skip_postgeneration_save = True
 
     numero = factory.Sequence(lambda n: f"Convention {n}")
+    programme = factory.SubFactory(ProgrammeFactory)
 
-    lot = factory.SubFactory("programmes.tests.factories.LotFactory")
-    programme = factory.SelfAttribute("lot.programme")
-    financement = factory.SelfAttribute("lot.financement")
+    # lot = factory.SubFactory("programmes.tests.factories.LotFactory")
+    # programme = factory.SelfAttribute("lot.programme")
+    # financement = factory.SelfAttribute("lot.financement")
+
+    @factory.post_generation
+    def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
+        if extracted and create:
+            lot = LotFactory.create(convention=obj, programme=obj.programme, **kwargs)
+            obj.financement = lot.financement
+            obj.save()
 
 
 class AvenantFactory(ConventionFactory):

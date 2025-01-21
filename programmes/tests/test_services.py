@@ -73,7 +73,7 @@ class TestOperationService:
         operation_service.programme = ProgrammeFactory()
         assert not operation_service.has_conventions()
 
-        ConventionFactory.create_batch(2, lot__programme=operation_service.programme)
+        ConventionFactory.create_batch(2, programme=operation_service.programme)
         assert operation_service.has_conventions()
 
 

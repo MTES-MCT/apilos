@@ -110,30 +110,34 @@ def create_all_for_siap():
         ],
     )
 
+    convention_plai = ConventionFactory(
+        programme=programme_75,
+        financement=Financement.PLAI,
+        numero="0002",
+        make_upload_on_fields=["commentaires"],
+    )
     lot_plai = LotFactory(
+        convention=convention_plai,
         programme=programme_75,
         financement=Financement.PLAI,
         type_habitat=TypeHabitat.MIXTE,
         nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
     )
+
+    convention_plus = ConventionFactory(
+        programme=programme_75,
+        financement=Financement.PLUS,
+        numero="0001",
+        make_upload_on_fields=["commentaires"],
+    )
     lot_plus = LotFactory(
+        convention=convention_plus,
         programme=programme_75,
         financement=Financement.PLUS,
         type_habitat=TypeHabitat.COLLECTIF,
         nb_logements=None,
         make_upload_on_fields=["edd_volumetrique", "edd_classique"],
-    )
-
-    ConventionFactory(
-        lot=lot_plus,
-        numero="0001",
-        make_upload_on_fields=["commentaires"],
-    )
-    ConventionFactory(
-        lot=lot_plai,
-        numero="0002",
-        make_upload_on_fields=["commentaires"],
     )
 
     log1 = LogementFactory(
@@ -788,8 +792,9 @@ class OperationClosedAPITest(APITestCase):
             expected_last_conventions_state,
         )
 
-        avenant1.lot.nb_logements = 10
-        avenant1.lot.save()
+        lot_avenant1 = avenant1.lot
+        lot_avenant1.nb_logements = 10
+        lot_avenant1.save()
         avenant1.statut = ConventionStatut.SIGNEE.label
         avenant1.save()
 

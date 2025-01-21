@@ -439,10 +439,11 @@ def test_conventions_visibility_bailleur_avenant(db, load_avenant_types):
     bailleur3, user3 = _create_bailleur_and_user(group)
 
     # Create two conventions for the first bailleur
-    convention1 = ConventionFactory()
+    convention1 = ConventionFactory(create_lot=True)
     convention1.programme.bailleur = bailleur1
     convention1.programme.save()
-    convention2 = ConventionFactory()
+
+    convention2 = ConventionFactory(create_lot=True)
     convention2.programme.bailleur = bailleur1
     convention2.programme.save()
 

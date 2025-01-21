@@ -6,7 +6,7 @@ from datetime import date
 from django.apps import apps
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models import Q
+from django.db.models import Prefetch, Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
@@ -22,16 +22,37 @@ from users.type_models import EmailPreferences, TypeRole
 logger = logging.getLogger(__name__)
 
 
-class ConventionManager(models.Manager):
+class ConventionQuerySet(models.QuerySet):
     def avenants(self):
         return self.exclude(parent=None)
 
     def without_denonciation_and_resiliation(self):
         return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
 
+    def with_logements(self):
+        return self.all()
+        # TODO: prefetch lot__logements
+
+    def with_type_stationnements(self):
+        return self.all()
+        # TODO: prefetch lot__type_stationnements
+
+    def with_prets(self):
+        return self.all()
+        # TODO: prefetch lot__prets
+
+
+class ConventionManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(Prefetch("lots", queryset=Lot.objects.order_by("pk")))
+        )
+
 
 class Convention(models.Model):
-    objects = ConventionManager()
+    objects = ConventionManager.from_queryset(ConventionQuerySet)()
 
     class Meta:
         indexes = [
@@ -48,22 +69,22 @@ class Convention(models.Model):
             ),
             models.Index(fields=["cree_le"], name="convention_cree_le_idx"),
         ]
-        constraints = [
-            # https://github.com/betagouv/SPPNautInterface/issues/227
-            models.UniqueConstraint(
-                fields=["programme_id", "lot_id", "financement"],
-                condition=models.Q(
-                    statut__in=[
-                        ConventionStatut.PROJET.label,
-                        ConventionStatut.INSTRUCTION.label,
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ]
-                ),
-                name="unique_display_name",
-            )
-        ]
+        # constraints = [
+        #     # https://github.com/betagouv/SPPNautInterface/issues/227
+        #     models.UniqueConstraint(
+        #         fields=["programme_id", "lot_id", "financement"],
+        #         condition=models.Q(
+        #             statut__in=[
+        #                 ConventionStatut.PROJET.label,
+        #                 ConventionStatut.INSTRUCTION.label,
+        #                 ConventionStatut.CORRECTION.label,
+        #                 ConventionStatut.A_SIGNER.label,
+        #                 ConventionStatut.SIGNEE.label,
+        #             ]
+        #         ),
+        #         name="unique_display_name",
+        #     )
+        # ]
 
     id = models.AutoField(primary_key=True)
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -82,18 +103,16 @@ class Convention(models.Model):
         on_delete=models.CASCADE,
         null=False,
     )
-    lot = models.ForeignKey(
-        "programmes.Lot",
-        on_delete=models.CASCADE,
-        null=False,
-        related_name="conventions",
-    )
+
     date_fin_conventionnement = models.DateField(null=True, blank=True)
+
+    # DEPRECATED: use lof.financeur instead
     financement = models.CharField(
         max_length=25,
         choices=Financement.choices,
         default=Financement.PLUS,
     )
+
     # fix me: weird to keep fond_propre here
     fond_propre = models.FloatField(null=True, blank=True)
     commentaires = models.TextField(null=True, blank=True)
@@ -244,6 +263,10 @@ class Convention(models.Model):
 
     identification_bailleur = models.BooleanField(default=False)
     identification_bailleur_detail = models.TextField(null=True, blank=True)
+
+    @property
+    def lot(self) -> Lot:
+        return self.lots.first()
 
     @property
     def attribution_type(self):
@@ -569,27 +592,6 @@ class Convention(models.Model):
     def clone(self, user, *, convention_origin):
         cloned_programme = self.programme.clone()
 
-        lot_fields = model_to_dict(
-            self.lot,
-            exclude=[
-                "id",
-                "parent",
-                "parent_id",
-                "programme",
-                "programme_id",
-                "cree_le",
-                "mis_a_jour_le",
-            ],
-        )
-        lot_fields.update(
-            {
-                "programme": cloned_programme,
-                "parent_id": convention_origin.lot_id,
-            }
-        )
-        cloned_lot = Lot(**lot_fields)
-        cloned_lot.save()
-
         convention_fields = model_to_dict(
             self,
             exclude=[
@@ -599,32 +601,42 @@ class Convention(models.Model):
                 "date_resiliation",
                 "donnees_validees",
                 "id",
-                "lot_id",
-                "lot",
                 "mis_a_jour_le",
                 "nom_fichier_signe",
                 "numero",
-                "parent_id",
                 "parent",
                 "premiere_soumission_le",
-                "programme_id",
                 "programme",
                 "soumis_le",
                 "televersement_convention_signee_le",
                 "valide_le",
             ],
-        )
-        convention_fields.update(
-            {
-                "programme": cloned_programme,
-                "lot": cloned_lot,
-                "parent_id": convention_origin.id,
-                "statut": ConventionStatut.PROJET.label,
-                "cree_par": user,
-            }
-        )
+        ) | {
+            "programme": cloned_programme,
+            "parent_id": convention_origin.id,
+            "statut": ConventionStatut.PROJET.label,
+            "cree_par": user,
+        }
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
+
+        lot_fields = model_to_dict(
+            self.lot,
+            exclude=[
+                "id",
+                "parent",
+                "programme",
+                "convention",
+                "cree_le",
+                "mis_a_jour_le",
+            ],
+        ) | {
+            "programme": cloned_programme,
+            "parent_id": convention_origin.lot.id,
+            "convention": cloned_convention,
+        }
+        cloned_lot = Lot(**lot_fields)
+        cloned_lot.save()
 
         for logement in self.lot.logements.all():
             logement.clone(lot=cloned_lot)
@@ -641,14 +653,12 @@ class Convention(models.Model):
                     "cree_le",
                     "mis_a_jour_le",
                 ],
-            )
-            type_stationnement_fields.update(
-                {
-                    "lot": cloned_lot,
-                }
-            )
+            ) | {
+                "lot": cloned_lot,
+            }
             cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
             cloned_type_stationnement.save()
+
         for locaux_collectif in self.lot.locaux_collectifs.all():
             locaux_collectif_fields = model_to_dict(
                 locaux_collectif,
@@ -658,14 +668,12 @@ class Convention(models.Model):
                     "cree_le",
                     "mis_a_jour_le",
                 ],
-            )
-            locaux_collectif_fields.update(
-                {
-                    "lot": cloned_lot,
-                }
-            )
+            ) | {
+                "lot": cloned_lot,
+            }
             cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
             cloned_locaux_collectif.save()
+
         return cloned_convention
 
     def get_default_convention_number(self):

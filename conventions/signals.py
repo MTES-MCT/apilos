@@ -1,7 +1,7 @@
 from typing import Any
 
 from django.db.models.fields.reverse_related import ManyToOneRel
-from django.db.models.signals import m2m_changed, post_delete, post_save, pre_save
+from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
 
 from conventions.models import Convention, Lot
@@ -24,7 +24,7 @@ def _update_nested_convention_field(
 
     if "." in field_name:
         field_as_list = field_name.split(".")  # [programme, bailleur, nom]
-        instance = getattr(instance, field_as_list[0])  # <Programme>
+        instance = getattr(instance, field_as_list[0])  # <Programme>, <Lot>
         field_name = ".".join(field_as_list[1:])  # "bailleur.nom"
         previous_instance = getattr(previous_instance, field_as_list[0])
         _update_nested_convention_field(field_name, instance, previous_instance)
@@ -130,10 +130,3 @@ def send_survey_email(sender, instance, *args, **kwargs):
                 "lastname": instance.user.last_name,
             }
         )
-
-
-@receiver(post_delete, sender=Convention)
-def remove_lot(sender, instance, *args, **kwargs):
-    lot = Lot.objects.get(id=instance.lot_id)
-    if lot.conventions.count() == 0:
-        lot.delete()

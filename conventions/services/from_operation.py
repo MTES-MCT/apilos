@@ -161,12 +161,14 @@ class AddConventionService:
     def _get_financements(
         self, conventions: QuerySet[Convention]
     ) -> list[tuple[str, str]]:
-        financements = []
-        existing_financements = conventions.values_list("lot__financement", flat=True)
-        for financement in FinancementEDD.choices:
-            if financement[0] not in existing_financements:
-                financements.append(financement)
-        return financements
+        existing_financements = Lot.objects.filter(
+            convention_id__in=conventions.values_list("id", flat=True)
+        ).values_list("financement", flat=True)
+        return [
+            financement
+            for financement in FinancementEDD.choices
+            if financement[0] not in existing_financements
+        ]
 
     def _create_lot(self, programme: Programme) -> Lot:
         return Lot.objects.create(
@@ -176,8 +178,7 @@ class AddConventionService:
         )
 
     def _create_convention(self, lot: Lot) -> Convention:
-        return Convention.objects.create(
-            lot=lot,
+        convention = Convention.objects.create(
             programme_id=lot.programme_id,
             financement=lot.financement,
             cree_par=self.request.user,
@@ -187,6 +188,11 @@ class AddConventionService:
             ),
             statut=ConventionStatut.SIGNEE.label,
         )
+
+        lot.convention = convention
+        lot.save()
+
+        return Convention
 
     def save(self) -> ReturnStatus:
         if not self.form.is_valid():
@@ -289,8 +295,9 @@ class AddAvenantsService:
                 # Avenant type Logements
                 nb_logements = self.form.cleaned_data["nb_logements"]
                 if nb_logements and nb_logements != self.convention.lot.nb_logements:
-                    self.convention.lot.nb_logements = nb_logements
-                    self.convention.lot.save()
+                    lot_convention = self.convention.lot
+                    lot_convention.nb_logements = nb_logements
+                    lot_convention.save()
                     avenant.avenant_types.add(AvenantType.objects.get(nom="logements"))
 
                 return ReturnStatus.SUCCESS

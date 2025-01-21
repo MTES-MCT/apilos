@@ -79,6 +79,7 @@
     "fields": {
       "uuid": "09b07c04-a46a-4d41-a463-71b00c2d38ac",
       "programme": 1,
+      "convention": 2,
       "financement": "PLAI",
       "type_habitat": "INDIVIDUEL",
       "edd_classique": "{\"text\": \"this is a test\", \"files\": {\"fbb9890f-171b-402d-a35e-71e1bd791b70\": {\"uuid\": \"fbb9890f-171b-402d-a35e-71e1bd791b70\", \"thumbnail\": \"data:image/png;base64,BLAHBLAH==\", \"size\": \"31185\", \"filename\": \"acquereur1.png\", \"realname\": \"acquereur1.png\", \"content_type\": \"image/png\"}, \"dccd310d-2e50-45d8-a477-db7b08ae1d71\": {\"uuid\": \"dccd310d-2e50-45d8-a477-db7b08ae1d71\", \"thumbnail\": \"data:image/png;base64,BLIHBLIH==\", \"size\": \"69076\", \"filename\": \"acquereur2.png\", \"realname\": \"acquereur2.png\", \"content_type\": \"image/png\"}}}",
@@ -94,6 +95,7 @@
     "fields": {
       "uuid": "3918d6f7-fcee-42c2-aa81-c56b97e802fb",
       "programme": 1,
+      "convention": 1,
       "financement": "PLUS",
       "type_habitat": "INDIVIDUEL",
       "edd_classique": "n'importe quoi",
@@ -110,6 +112,7 @@
     "fields": {
       "uuid": "3cabcbcd-9cf0-4cb8-8170-27be8e9e159c",
       "programme": 2,
+      "convention": 4,
       "financement": "PLAI",
       "type_habitat": "INDIVIDUEL",
       "lgts_mixite_sociale_negocies": 0,
@@ -124,6 +127,7 @@
     "fields": {
       "uuid": "3be91b08-5bb7-4c03-95a8-168e6602ac91",
       "programme": 2,
+      "convention": 3,
       "financement": "PLUS",
       "type_habitat": "COLLECTIF",
       "edd_volumetrique": "n'importe quoi",

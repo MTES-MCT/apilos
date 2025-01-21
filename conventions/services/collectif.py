@@ -13,7 +13,7 @@ class ConventionCollectifService(ConventionService):
     def get(self):
         initial = []
         locaux_collectifs = LocauxCollectifs.objects.filter(
-            lot_id=self.convention.lot_id
+            lot_id=self.convention.lot.id
         )
         for type_locaux_collectifs in locaux_collectifs:
             initial.append(
@@ -137,7 +137,7 @@ class ConventionCollectifService(ConventionService):
             for form in self.formset
             if form.cleaned_data["uuid"] is not None
         ]
-        LocauxCollectifs.objects.filter(lot_id=self.convention.lot_id).exclude(
+        LocauxCollectifs.objects.filter(lot_id=self.convention.lot.id).exclude(
             uuid__in=obj_uuids
         ).delete()
         for form_locaux_collectifs in self.formset:

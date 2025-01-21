@@ -15,9 +15,10 @@ class ConventionAnnexesView(ConventionView):
 
     def _get_convention(self, convention_uuid):
         return get_object_or_404(
-            Convention.objects.prefetch_related("lot").prefetch_related(
-                "lot__logements__annexes"
-            ),
+            Convention,
+            # Convention.objects.prefetch_related("lot").prefetch_related(
+            #     "lot__logements__annexes"
+            # ),
             uuid=convention_uuid,
         )
 

@@ -23,8 +23,9 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
 
         self.convention_75.programme.nature_logement = NatureLogement.AUTRE
         self.convention_75.programme.save()
-        self.convention_75.lot.nb_logements = 2
-        self.convention_75.lot.save()
+        lot_convention_75 = self.convention_75.lot
+        lot_convention_75.nb_logements = 2
+        lot_convention_75.save()
 
         self.target_path = reverse(
             "conventions:foyer_residence_logements", args=[self.convention_75.uuid]

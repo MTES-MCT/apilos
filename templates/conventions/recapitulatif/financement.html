@@ -15,6 +15,7 @@
                         {% include "conventions/actions/goto.html" %}
                     </div>
                     <p class="fr-my-1w">Prêts et Subventions : </p>
+                    {% comment %} TODO: reverse relation convention lot {% endcomment %}
                     {% if convention.lot.prets.all %}
                         <div class="fr-table fr-table--bordered table--layout-fixed table--limited-height">
                             <div class="fr-table__wrapper">
