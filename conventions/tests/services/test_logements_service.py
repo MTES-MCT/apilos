@@ -124,7 +124,7 @@ class ConventionLogementsServiceTests(TestCase):
             "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
-            "form-1-loyer": "750.00",
+            "avec_loyer-1-loyer": "750.00",
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)

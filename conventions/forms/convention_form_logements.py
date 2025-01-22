@@ -362,6 +362,7 @@ class BaseLogementFormSet(BaseFormSet):
     programme_id: int = None
     lot_id: int = None
     nb_logements: int = None
+    total_nb_logements: int = None
     optional_errors: list = []
     ignore_optional_errors = False
 
@@ -377,16 +378,7 @@ class BaseLogementFormSet(BaseFormSet):
         if self.ignore_optional_errors:
             return
         self.optional_errors = []
-        self.manage_non_empty_validation()
         self.manage_nb_logement_consistency()
-
-    def manage_non_empty_validation(self):
-        """
-        Validation: la liste des logements ne peut pas être vide
-        """
-        if len(self.forms) == 0:
-            error = ValidationError("La liste des logements ne peut pas être vide")
-            self.optional_errors.append(error)
 
     def manage_designation_validation(self):
         """
@@ -474,10 +466,10 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements != self.total_form_count():
+        if self.nb_logements != self.total_nb_logements:
             error = ValidationError(
                 f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
+                + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
             )
             self.optional_errors.append(error)
 

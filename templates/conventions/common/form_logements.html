@@ -179,6 +179,7 @@
             </div>
         </div>
         {% if convention.is_avenant %}
+            <!-- C'est dommage d'ignorer les optional errors ici, mais sinon ça pose problème lorsqu'on décoche une section avec des logements et qu'on trigger une optionnal error : il faudrait garder l'info que la case est décochée (gestion de l'état) -->
             <input type="hidden" id="id_ignore_optional_errors" name="ignore_optional_errors" value="1"/>
             <div class="fr-toggle fr-mb-2w">
                 <input type="checkbox" {% if formset_sans_loyer.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-4633-messages" id="toggle-utile-sans-loyer">

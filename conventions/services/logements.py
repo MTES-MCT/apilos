@@ -145,7 +145,7 @@ class ConventionLogementsService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot_id):
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -176,7 +176,7 @@ class ConventionLogementsService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot_id):
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -207,7 +207,7 @@ class ConventionLogementsService(ConventionService):
             )
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot_id):
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -425,6 +425,12 @@ class ConventionLogementsService(ConventionService):
             "corrigee_sans_loyer-TOTAL_FORMS": nb_logements_corrigee_sans_loyer,
             "corrigee_sans_loyer-INITIAL_FORMS": nb_logements_corrigee_sans_loyer,
         }
+        total_nb_logements = (
+            nb_logements
+            + nb_logements_sans_loyer
+            + nb_logements_corrigee
+            + nb_logements_corrigee_sans_loyer
+        )
         self.formset = LogementFormSet(initformset, prefix="avec_loyer")
         self.formset.programme_id = self.convention.programme_id
         self.formset.lot_id = self.convention.lot.id
@@ -432,40 +438,43 @@ class ConventionLogementsService(ConventionService):
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
+        self.formset.total_nb_logements = total_nb_logements
         self.formset_sans_loyer = LogementSansLoyerFormSet(
             initformset_sans_loyer, prefix="sans_loyer"
         )
         self.formset_sans_loyer.programme_id = self.convention.programme_id
-        self.formset_sans_loyer.lot_id = self.convention.lot_id
+        self.formset_sans_loyer.lot_id = self.convention.lot.id
         self.formset_sans_loyer.nb_logements = int(
             self.request.POST.get("nb_logements") or 0
         )
         self.formset_sans_loyer.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
+        self.formset_sans_loyer.total_nb_logements = total_nb_logements
         self.formset_corrigee = LogementCorrigeeFormSet(
             initformset_corrigee, prefix="corrigee_avec_loyer"
         )
         self.formset_corrigee.programme_id = self.convention.programme_id
-        self.formset_corrigee.lot_id = self.convention.lot_id
+        self.formset_corrigee.lot_id = self.convention.lot.id
         self.formset_corrigee.nb_logements = int(
             self.request.POST.get("nb_logements") or 0
         )
         self.formset_corrigee.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
-
+        self.formset_corrigee.total_nb_logements = total_nb_logements
         self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
             initformset_corrigee_sans_loyer, prefix="corrigee_sans_loyer"
         )
         self.formset_corrigee_sans_loyer.programme_id = self.convention.programme_id
-        self.formset_corrigee_sans_loyer.lot_id = self.convention.lot_id
+        self.formset_corrigee_sans_loyer.lot_id = self.convention.lot.id
         self.formset_corrigee_sans_loyer.nb_logements = int(
             self.request.POST.get("nb_logements") or 0
         )
         self.formset_corrigee_sans_loyer.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False
         )
+        self.formset_corrigee_sans_loyer.total_nb_logements = total_nb_logements
 
         formset_is_valid = self.formset.is_valid()
         formset_sans_loyer_is_valid = self.formset_sans_loyer.is_valid()
