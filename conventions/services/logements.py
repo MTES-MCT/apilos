@@ -118,29 +118,53 @@ class ConventionLogementsService(ConventionService):
         if self.request.POST.get("Upload", False):
             self.form = LotLgtsOptionForm(self.request.POST)
             if self.request.POST["Upload"] == "file_sans_loyer":
-                self._upload_logements_sans_loyer()
+                self._upload_logements(
+                    prefix="sans_loyer",
+                    formset="formset_sans_loyer",
+                    formset_class=LogementSansLoyerFormSet,
+                    logement_class=LogementSansLoyer,
+                    xlsx_file_name="logements_sans_loyer.xlsx",
+                )
             elif self.request.POST["Upload"] == "file_corrigee":
-                self._upload_logements_corrigee()
+                self._upload_logements(
+                    prefix="corrigee_avec_loyer",
+                    formset="formset_corrigee_avec_loyer",
+                    formset_class=LogementCorrigeeFormSet,
+                    logement_class=LogementCorrigee,
+                    xlsx_file_name="logements_corrigee.xlsx",
+                )
             elif self.request.POST["Upload"] == "file_corrigee_sans_loyer":
-                self._upload_logements_corrigee_sans_loyer()
+                self._upload_logements(
+                    prefix="corrigee_sans_loyer",
+                    formset="formset_corrigee_sans_loyer",
+                    formset_class=LogementCorrigeeSansLoyerFormSet,
+                    logement_class=LogementCorrigeeSansLoyer,
+                    xlsx_file_name="logements_corrigee_sans_loyer.xlsx",
+                )
             else:
-                self._upload_logements()
+                self._upload_logements(
+                    prefix="avec_loyer",
+                    formset="formset",
+                    formset_class=LogementFormSet,
+                    logement_class=Logement,
+                    xlsx_file_name="logements.xlsx",
+                )
         # When the user cliked on "Enregistrer et Suivant"
         else:
             self._logements_atomic_update()
 
-    def _upload_logements_corrigee(self):
-        self.formset_corrigee = LogementCorrigeeFormSet(
-            self.request.POST, prefix="corrigee_avec_loyer"
-        )
+    def _upload_logements(
+        self, prefix, formset, formset_class, logement_class, xlsx_file_name
+    ):
+        setattr(self, formset, formset_class(self.request.POST, prefix=prefix))
         self.upform = UploadForm(self.request.POST, self.request.FILES)
         if self.upform.is_valid():
             result = upload_objects.handle_uploaded_xlsx(
                 self.upform,
                 self.request.FILES["file"],
-                LogementCorrigee,
+                logement_class,
                 self.convention,
-                "logements_corrigee.xlsx",
+                xlsx_file_name,
                 import_order=True,
             )
             if result["success"] != utils.ReturnStatus.ERROR:
@@ -154,100 +178,10 @@ class ConventionLogementsService(ConventionService):
                     ):
                         obj["uuid"] = lgts_by_designation[obj["designation"]]
                 self.initialize_formsets()
-                self.formset_corrigee = LogementCorrigeeFormSet(
-                    initial=result["objects"], prefix="corrigee_avec_loyer"
-                )
-                self.import_warnings = result["import_warnings"]
-                self.editable_after_upload = True
-
-    def _upload_logements_corrigee_sans_loyer(self):
-        self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
-            self.request.POST, prefix="corrigee_sans_loyer"
-        )
-        self.upform = UploadForm(self.request.POST, self.request.FILES)
-        if self.upform.is_valid():
-            result = upload_objects.handle_uploaded_xlsx(
-                self.upform,
-                self.request.FILES["file"],
-                LogementCorrigeeSansLoyer,
-                self.convention,
-                "logements_corrigee_sans_loyer.xlsx",
-                import_order=True,
-            )
-            if result["success"] != utils.ReturnStatus.ERROR:
-                lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
-                    lgts_by_designation[lgt.designation] = lgt.uuid
-                for obj in result["objects"]:
-                    if (
-                        "designation" in obj
-                        and obj["designation"] in lgts_by_designation
-                    ):
-                        obj["uuid"] = lgts_by_designation[obj["designation"]]
-                self.initialize_formsets()
-                self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
-                    initial=result["objects"], prefix="corrigee_sans_loyer"
-                )
-                self.import_warnings = result["import_warnings"]
-                self.editable_after_upload = True
-
-    def _upload_logements_sans_loyer(self):
-        self.formset_sans_loyer = LogementSansLoyerFormSet(
-            self.request.POST, prefix="sans_loyer"
-        )
-        self.upform = UploadForm(self.request.POST, self.request.FILES)
-        if self.upform.is_valid():
-            result = upload_objects.handle_uploaded_xlsx(
-                self.upform,
-                self.request.FILES["file"],
-                LogementSansLoyer,
-                self.convention,
-                "logements_sans_loyer.xlsx",
-                import_order=True,
-            )
-            if result["success"] != utils.ReturnStatus.ERROR:
-                lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
-                    lgts_by_designation[lgt.designation] = lgt.uuid
-                for obj in result["objects"]:
-                    if (
-                        "designation" in obj
-                        and obj["designation"] in lgts_by_designation
-                    ):
-                        obj["uuid"] = lgts_by_designation[obj["designation"]]
-                self.initialize_formsets()
-                self.formset_sans_loyer = LogementSansLoyerFormSet(
-                    initial=result["objects"], prefix="sans_loyer"
-                )
-                self.import_warnings = result["import_warnings"]
-                self.editable_after_upload = True
-
-    # TODO refacto ici
-    def _upload_logements(self):
-        self.formset = LogementFormSet(self.request.POST, prefix="avec_loyer")
-        self.upform = UploadForm(self.request.POST, self.request.FILES)
-        if self.upform.is_valid():
-            result = upload_objects.handle_uploaded_xlsx(
-                self.upform,
-                self.request.FILES["file"],
-                Logement,
-                self.convention,
-                "logements.xlsx",
-                import_order=True,
-            )
-            if result["success"] != utils.ReturnStatus.ERROR:
-                lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
-                    lgts_by_designation[lgt.designation] = lgt.uuid
-                for obj in result["objects"]:
-                    if (
-                        "designation" in obj
-                        and obj["designation"] in lgts_by_designation
-                    ):
-                        obj["uuid"] = lgts_by_designation[obj["designation"]]
-                self.initialize_formsets()
-                self.formset = LogementFormSet(
-                    initial=result["objects"], prefix="avec_loyer"
+                setattr(
+                    self,
+                    formset,
+                    formset_class(initial=result["objects"], prefix=prefix),
                 )
                 self.import_warnings = result["import_warnings"]
                 self.editable_after_upload = True
