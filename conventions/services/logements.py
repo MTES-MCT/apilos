@@ -128,7 +128,7 @@ class ConventionLogementsService(ConventionService):
             elif self.request.POST["Upload"] == "file_corrigee":
                 self._upload_logements(
                     prefix="corrigee_avec_loyer",
-                    formset_name="formset_corrigee_avec_loyer",
+                    formset_name="formset_corrigee",
                     formset_class=LogementCorrigeeFormSet,
                     logement_class=LogementCorrigee,
                     xlsx_file_name="logements_corrigee.xlsx",
@@ -273,19 +273,13 @@ class ConventionLogementsService(ConventionService):
             f"{prefix}-INITIAL_FORMS": nb_logements,
         }
         setattr(self, formset_name, formset_class(initformset, prefix=prefix))
-        setattr(
-            getattr(self, formset_name), "programme_id", self.convention.programme_id
+        getattr(self, formset_name).programme_id = self.convention.programme_id
+        getattr(self, formset_name).lot_id = self.convention.lot.id
+        getattr(self, formset_name).nb_logements = int(
+            self.request.POST.get("nb_logements") or 0
         )
-        setattr(getattr(self, formset_name), "lot_id", self.convention.lot.id)
-        setattr(
-            getattr(self, formset_name),
-            "nb_logements",
-            int(self.request.POST.get("nb_logements") or 0),
-        )
-        setattr(
-            getattr(self, formset_name),
-            "ignore_optional_errors",
-            self.request.POST.get("ignore_optional_errors", False),
+        getattr(self, formset_name).ignore_optional_errors = self.request.POST.get(
+            "ignore_optional_errors", False
         )
         return nb_logements
 
