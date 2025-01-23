@@ -120,7 +120,7 @@ class ConventionLogementsService(ConventionService):
             if self.request.POST["Upload"] == "file_sans_loyer":
                 self._upload_logements(
                     prefix="sans_loyer",
-                    formset="formset_sans_loyer",
+                    formset_name="formset_sans_loyer",
                     formset_class=LogementSansLoyerFormSet,
                     logement_class=LogementSansLoyer,
                     xlsx_file_name="logements_sans_loyer.xlsx",
@@ -128,7 +128,7 @@ class ConventionLogementsService(ConventionService):
             elif self.request.POST["Upload"] == "file_corrigee":
                 self._upload_logements(
                     prefix="corrigee_avec_loyer",
-                    formset="formset_corrigee_avec_loyer",
+                    formset_name="formset_corrigee_avec_loyer",
                     formset_class=LogementCorrigeeFormSet,
                     logement_class=LogementCorrigee,
                     xlsx_file_name="logements_corrigee.xlsx",
@@ -136,7 +136,7 @@ class ConventionLogementsService(ConventionService):
             elif self.request.POST["Upload"] == "file_corrigee_sans_loyer":
                 self._upload_logements(
                     prefix="corrigee_sans_loyer",
-                    formset="formset_corrigee_sans_loyer",
+                    formset_name="formset_corrigee_sans_loyer",
                     formset_class=LogementCorrigeeSansLoyerFormSet,
                     logement_class=LogementCorrigeeSansLoyer,
                     xlsx_file_name="logements_corrigee_sans_loyer.xlsx",
@@ -144,7 +144,7 @@ class ConventionLogementsService(ConventionService):
             else:
                 self._upload_logements(
                     prefix="avec_loyer",
-                    formset="formset",
+                    formset_name="formset",
                     formset_class=LogementFormSet,
                     logement_class=Logement,
                     xlsx_file_name="logements.xlsx",
@@ -154,9 +154,9 @@ class ConventionLogementsService(ConventionService):
             self._logements_atomic_update()
 
     def _upload_logements(
-        self, prefix, formset, formset_class, logement_class, xlsx_file_name
+        self, prefix, formset_name, formset_class, logement_class, xlsx_file_name
     ):
-        setattr(self, formset, formset_class(self.request.POST, prefix=prefix))
+        setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
         self.upform = UploadForm(self.request.POST, self.request.FILES)
         if self.upform.is_valid():
             result = upload_objects.handle_uploaded_xlsx(
@@ -180,7 +180,7 @@ class ConventionLogementsService(ConventionService):
                 self.initialize_formsets()
                 setattr(
                     self,
-                    formset,
+                    formset_name,
                     formset_class(initial=result["objects"], prefix=prefix),
                 )
                 self.import_warnings = result["import_warnings"]
@@ -255,6 +255,40 @@ class ConventionLogementsService(ConventionService):
         nb_logement = nb_logement + 1
         return initformset, nb_logement
 
+    def _logements_update(self, prefix, formset_name, formset_class, logement_class):
+        setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
+        initformset = {}
+        nb_logements = 0
+
+        for idx, form_logement in enumerate(getattr(self, formset_name)):
+            result = self._add_logement_to_initformset(
+                form_logement, idx, initformset, nb_logements, prefix=prefix
+            )
+            initformset = result[0]
+            nb_logements = result[1]
+
+        initformset = {
+            **initformset,
+            f"{prefix}-TOTAL_FORMS": nb_logements,
+            f"{prefix}-INITIAL_FORMS": nb_logements,
+        }
+        setattr(self, formset_name, formset_class(initformset, prefix=prefix))
+        setattr(
+            getattr(self, formset_name), "programme_id", self.convention.programme_id
+        )
+        setattr(getattr(self, formset_name), "lot_id", self.convention.lot.id)
+        setattr(
+            getattr(self, formset_name),
+            "nb_logements",
+            int(self.request.POST.get("nb_logements") or 0),
+        )
+        setattr(
+            getattr(self, formset_name),
+            "ignore_optional_errors",
+            self.request.POST.get("ignore_optional_errors", False),
+        )
+        return nb_logements
+
     def _logements_atomic_update(self):
         self.form = LotLgtsOptionForm(
             {
@@ -279,135 +313,40 @@ class ConventionLogementsService(ConventionService):
             }
         )
         form_is_valid = self.form.is_valid()
-        # TODO refacto
-        self.formset = LogementFormSet(self.request.POST, prefix="avec_loyer")
-        self.formset_sans_loyer = LogementSansLoyerFormSet(
-            self.request.POST, prefix="sans_loyer"
+
+        nb_logements = self._logements_update(
+            prefix="avec_loyer",
+            formset_name="formset",
+            formset_class=LogementFormSet,
+            logement_class=Logement,
         )
-        self.formset_corrigee = LogementCorrigeeFormSet(
-            self.request.POST, prefix="corrigee_avec_loyer"
+        nb_logements_sans_loyer = self._logements_update(
+            prefix="sans_loyer",
+            formset_name="formset_sans_loyer",
+            formset_class=LogementSansLoyerFormSet,
+            logement_class=LogementSansLoyer,
         )
-        self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
-            self.request.POST, prefix="corrigee_sans_loyer"
+        nb_logements_corrigee = self._logements_update(
+            prefix="corrigee_avec_loyer",
+            formset_name="formset_corrigee",
+            formset_class=LogementCorrigeeFormSet,
+            logement_class=LogementCorrigee,
         )
-        initformset = {}
-        initformset_sans_loyer = {}
-        initformset_corrigee = {}
-        initformset_corrigee_sans_loyer = {}
-        nb_logements = 0
-        nb_logements_sans_loyer = 0
-        nb_logements_corrigee = 0
-        nb_logements_corrigee_sans_loyer = 0
-
-        for idx, form_logement in enumerate(self.formset):
-            result = self._add_logement_to_initformset(
-                form_logement, idx, initformset, nb_logements, prefix="avec_loyer"
-            )
-            initformset = result[0]
-            nb_logements = result[1]
-
-        for idx, form_logement in enumerate(self.formset_sans_loyer):
-            result = self._add_logement_to_initformset(
-                form_logement,
-                idx,
-                initformset_sans_loyer,
-                nb_logements_sans_loyer,
-                prefix="sans_loyer",
-            )
-            initformset_sans_loyer = result[0]
-            nb_logements_sans_loyer = result[1]
-
-        for idx, form_logement in enumerate(self.formset_corrigee):
-            result = self._add_logement_to_initformset(
-                form_logement,
-                idx,
-                initformset_corrigee,
-                nb_logements_corrigee,
-                prefix="corrigee_avec_loyer",
-            )
-            initformset_corrigee = result[0]
-            nb_logements_corrigee = result[1]
-
-        for idx, form_logement in enumerate(self.formset_corrigee_sans_loyer):
-            result = self._add_logement_to_initformset(
-                form_logement,
-                idx,
-                initformset_corrigee_sans_loyer,
-                nb_logements_corrigee_sans_loyer,
-                prefix="corrigee_sans_loyer",
-            )
-            initformset_corrigee_sans_loyer = result[0]
-            nb_logements_corrigee_sans_loyer = result[1]
-
-        initformset = {
-            **initformset,
-            "avec_loyer-TOTAL_FORMS": nb_logements,
-            "avec_loyer-INITIAL_FORMS": nb_logements,
-        }
-        initformset_sans_loyer = {
-            **initformset_sans_loyer,
-            "sans_loyer-TOTAL_FORMS": nb_logements_sans_loyer,
-            "sans_loyer-INITIAL_FORMS": nb_logements_sans_loyer,
-        }
-        initformset_corrigee = {
-            **initformset_corrigee,
-            "corrigee_avec_loyer-TOTAL_FORMS": nb_logements_corrigee,
-            "corrigee_avec_loyer-INITIAL_FORMS": nb_logements_corrigee,
-        }
-        initformset_corrigee_sans_loyer = {
-            **initformset_corrigee_sans_loyer,
-            "corrigee_sans_loyer-TOTAL_FORMS": nb_logements_corrigee_sans_loyer,
-            "corrigee_sans_loyer-INITIAL_FORMS": nb_logements_corrigee_sans_loyer,
-        }
+        nb_logements_corrigee_sans_loyer = self._logements_update(
+            prefix="corrigee_sans_loyer",
+            formset_name="formset_corrigee_sans_loyer",
+            formset_class=LogementCorrigeeSansLoyerFormSet,
+            logement_class=LogementCorrigeeSansLoyer,
+        )
         total_nb_logements = (
             nb_logements
             + nb_logements_sans_loyer
             + nb_logements_corrigee
             + nb_logements_corrigee_sans_loyer
         )
-        self.formset = LogementFormSet(initformset, prefix="avec_loyer")
-        self.formset.programme_id = self.convention.programme_id
-        self.formset.lot_id = self.convention.lot.id
-        self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
-        self.formset.ignore_optional_errors = self.request.POST.get(
-            "ignore_optional_errors", False
-        )
         self.formset.total_nb_logements = total_nb_logements
-        self.formset_sans_loyer = LogementSansLoyerFormSet(
-            initformset_sans_loyer, prefix="sans_loyer"
-        )
-        self.formset_sans_loyer.programme_id = self.convention.programme_id
-        self.formset_sans_loyer.lot_id = self.convention.lot.id
-        self.formset_sans_loyer.nb_logements = int(
-            self.request.POST.get("nb_logements") or 0
-        )
-        self.formset_sans_loyer.ignore_optional_errors = self.request.POST.get(
-            "ignore_optional_errors", False
-        )
         self.formset_sans_loyer.total_nb_logements = total_nb_logements
-        self.formset_corrigee = LogementCorrigeeFormSet(
-            initformset_corrigee, prefix="corrigee_avec_loyer"
-        )
-        self.formset_corrigee.programme_id = self.convention.programme_id
-        self.formset_corrigee.lot_id = self.convention.lot.id
-        self.formset_corrigee.nb_logements = int(
-            self.request.POST.get("nb_logements") or 0
-        )
-        self.formset_corrigee.ignore_optional_errors = self.request.POST.get(
-            "ignore_optional_errors", False
-        )
         self.formset_corrigee.total_nb_logements = total_nb_logements
-        self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
-            initformset_corrigee_sans_loyer, prefix="corrigee_sans_loyer"
-        )
-        self.formset_corrigee_sans_loyer.programme_id = self.convention.programme_id
-        self.formset_corrigee_sans_loyer.lot_id = self.convention.lot.id
-        self.formset_corrigee_sans_loyer.nb_logements = int(
-            self.request.POST.get("nb_logements") or 0
-        )
-        self.formset_corrigee_sans_loyer.ignore_optional_errors = self.request.POST.get(
-            "ignore_optional_errors", False
-        )
         self.formset_corrigee_sans_loyer.total_nb_logements = total_nb_logements
 
         formset_is_valid = self.formset.is_valid()
