@@ -22,21 +22,28 @@ class Financement(models.TextChoices):
     PLUS_CD = "PLUS_CD", "PLUS_CD"
     PLAI = "PLAI", "PLAI"
     PLAI_ADP = "PLAI_ADP", "PLAI_ADP"
+    PLAI_FTM = "PLAI_FTM", "PLAI Foyer de travailleurs migrants"
+    PLAI_RE = "PLAI_RE", "PLAI Réhabiliation"
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
     PSH = "PSH", "PSH"
-    PALULOS = "PALULOS", "PALULOS"
     # PALULOS
+    PALULOS = "PALULOS", "PALULOS"
     PALU_AV_21 = "PALU_AV_21", "PALULOS avant 2021"
+    PALUCOM = "PALUCOM", "PALULOS communal"
+    PALU_COM = "PALU_COM", "PALULOS communal"
+    PALU_RE = "PALU_RE", "PALULOS Réhabiliation"
     SANS_FINANCEMENT = "SANS_FINANCEMENT", "Sans Financement"
     # Financements spécifiques outre-mer
     LLS = "LLS", "LLS"
     LLTS = "LLTS", "LLTS"
     LLTSA = "LLTSA", "LLTSA"
-    PLS_DOM = "PLS_DOM", "PLS_DOM"
+    PLS_DOM = "PLS_DOM", "PLS outre-mer"
     SALLS_R = "SALLS_R", "SALLS Réhabiliation"
+    SALLS_P = "SALLS_P", "SALLS Parasismique"
     # Financement spécifique Seconde vie
-    SECD_VIE = "SECD_VIE", "SECD_VIE"
+    SECD_VIE = "SECD_VIE", "Seconde vie"
+    RENO = "RENO", "Renovation"
 
 
 class FinancementEDD(models.TextChoices):
