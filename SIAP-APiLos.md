@@ -225,6 +225,7 @@ On notera : `champ_siap` (`champ_apilos` details)
 * RHVS -> RHVS
 * LOO -> LOGEMENTSORDINAIRES
 
+Par défaut la valeur LOGEMENTSORDINAIRES est appliquée
 
 ## Pour tester le Client de l'API du SIAP dans un shell (Appel de l'application SIAP à partir du backend de l'application APiLos)
 
