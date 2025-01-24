@@ -49,7 +49,7 @@ class ConventionType1and2Form(forms.Form):
         ),
         help_text=(
             "Logements financés en PLS pour leur acquisition ou leur"
-            + " acquisition-amélioration",
+            " acquisition-amélioration"
         ),
     )
     type2_lgts_concernes_option4 = forms.BooleanField(
