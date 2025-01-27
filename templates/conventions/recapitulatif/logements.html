@@ -116,7 +116,7 @@
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
                                     <div class="fr-table__content">
-                                        <table aria-label="Logements sans loyer">
+                                        <table aria-label="Logements en surface utile sans loyer">
                                             <thead>
                                                 <tr>
                                                     {% if convention|display_comments %}
@@ -124,10 +124,10 @@
                                                     {% endif %}
                                                     <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Surface habitable / corrigée {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Surface Utile {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface utile {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -146,17 +146,16 @@
                                                                 <td>
                                                                     {{ logement.typologie }}
                                                                 </td>
-                                                                <td id="lgt_sh">
+                                                                <td id="lgt_sh_sl">
                                                                     {{ logement.surface_habitable|floatformat:2 }}
-                                                                    {{ logement.surface_corrigee|floatformat:2 }}
                                                                 </td>
-                                                                <td id="lgt_sa">
+                                                                <td id="lgt_sa_sl">
                                                                     {{ logement.surface_annexes|floatformat:2 }}
                                                                 </td>
-                                                                <td id="lgt_sar">
+                                                                <td id="lgt_sar_sl">
                                                                     {{ logement.surface_annexes_retenue|floatformat:2 }}
                                                                 </td>
-                                                                <td id="lgt_su">
+                                                                <td id="lgt_su_sl">
                                                                     {{ logement.surface_utile|floatformat:2 }}
                                                                 </td>
                                                             </tr>
@@ -167,27 +166,20 @@
                                                     <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                         Total
                                                     </td>
-                                                    <td id="total_sh" class="fr-text--lg">
+                                                    <td id="total_sa_sl" class="fr-text--lg">
                                                     </td>
-                                                    <td id="total_sa" class="fr-text--lg">
-                                                    </td>
-                                                    <td id="total_sar" class="fr-text--lg">
-                                                    </td>
-                                                    <td id="total_su" class="fr-text--lg">
-                                                    </td>
-                                                    <td>
-                                                    </td>
-                                                    <td>
-                                                    </td>
-                                                    <td id="total_loyer" class="fr-text--lg">
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                                    <td id="total_sar_sl" class="fr-text--lg">
+                                                        <td id="total_sh_sl" class="fr-text--lg">
+                                                        </td>
+                                                        <td id="total_su_sl" class="fr-text--lg">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     {% endif %}
                     {% if convention.is_avenant and logements_corrigee %}
                         <label class="fr-mt-2w">Logements en surface corrigée, avec loyers</label>
@@ -281,7 +273,7 @@
                                                     {% endif %}
                                                     <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Surface habitable / corrigée {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--120">Surface corrigée {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
                                             </thead>
