@@ -52,22 +52,6 @@ class ConventionModelForm(forms.ModelForm):
 
         self.instance.statut = ConventionStatut[self.instance.statut].label
 
-        # try:
-        #     self.instance.validate_constraints()
-        # except ValidationError as err:
-        #     if "unique_display_name" in str(err):
-        #         self.add_error(
-        #             None,
-        #             (
-        #                 "Problème d'unicité, une convention existe déjà pour ces critères. "
-        #                 f"Vérifiez les conventions existantes sur le programme {self.instance.programme.id}, "
-        #                 "le lot {self.instance.lot.id}, "
-        #                 f"avec un financement {self.instance.financement}."
-        #             ),
-        #         )
-        #     else:
-        #         self.add_error(None, err)
-
     class Meta:
         model = Convention
         exclude = []
