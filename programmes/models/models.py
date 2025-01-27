@@ -816,6 +816,11 @@ class Logement(models.Model):
 
     su = property(_get_surface_utile)
 
+    def _get_surface_corrigee(self):
+        return self.surface_corrigee
+
+    sc = property(_get_surface_corrigee)
+
     def _get_loyer_par_metre_carre(self):
         return self.loyer_par_metre_carre
 

@@ -74,6 +74,7 @@ def _compute_total_logement(convention):
         "sa_totale": 0,
         "sar_totale": 0,
         "su_totale": 0,
+        "sc_totale": 0,
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
@@ -82,6 +83,7 @@ def _compute_total_logement(convention):
         logements_totale["sa_totale"] += logement.surface_annexes or 0
         logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
         logements_totale["su_totale"] += logement.surface_utile or 0
+        logements_totale["sc_totale"] += logement.surface_corrigee or 0
         logements_totale["loyer_total"] += logement.loyer or 0
         if logement.get_typologie_display() not in nb_logements_par_type:
             nb_logements_par_type[logement.get_typologie_display()] = 0
@@ -140,9 +142,6 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
 
     adresse = _get_adresse(convention)
 
-    # Logements should keep the importation order
-    logements = convention.lot.logements.order_by("import_order")
-
     context = {
         **avenant_data,
         "convention": convention,
@@ -152,7 +151,10 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "lot": convention.lot,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": logements,
+        "logements": convention.lot.logements_import_ordered,
+        "logements_sans_loyer": convention.lot.logements_sans_loyer_import_ordered,
+        "logements_corrigee": convention.lot.logements_corrigee_import_ordered,
+        "logements_corrigee_sans_loyer": convention.lot.logements_corrigee_sans_loyer_import_ordered,
         "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
         "stationnements": convention.lot.type_stationnements.all(),
