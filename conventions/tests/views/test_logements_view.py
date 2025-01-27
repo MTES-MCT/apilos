@@ -32,7 +32,7 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
             "nb_logements": "2",
             "uuid": str(self.convention_75.lot.uuid),
             **logement_success_payload,
-            "form-1-loyer": "750.00",
+            "avec_loyer-1-loyer": "750.00",
         }
         self.success_payload = {
             "nb_logements": "2",
