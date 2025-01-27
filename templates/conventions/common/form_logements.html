@@ -139,8 +139,11 @@
                                                 <td>
                                                     {% include "common/form/input_number.html" with form_input=form.coeficient step="0.0001" parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
+                                                FORM IMPORT ORDER = {{form.import_order.value}}
                                                 <td id="lgt_loyer">
                                                     {% include "common/form/input_number.html" with form_input=form.loyer step="0.01" onchange="compute_total_value('loyer')" parent_object_field=main_object_field editable=editable_after_upload %}
+                                                </td>
+                                                <td>
                                                     <input
                                                         type="hidden"
                                                         id="{{form.import_order.id_for_label}}"

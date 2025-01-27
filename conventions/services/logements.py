@@ -34,6 +34,7 @@ class ConventionLogementsService(ConventionService):
                 "designation": logement.designation,
                 "typologie": logement.typologie,
                 "surface_habitable": logement.surface_habitable,
+                "import_order": logement.import_order,
             }
             surface_annexes_params = {
                 "surface_annexes": logement.surface_annexes,
