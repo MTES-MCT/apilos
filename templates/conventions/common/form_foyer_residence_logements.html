@@ -9,7 +9,7 @@
     <div class="fr-col-12">
         <h4>Logements associés à la convention</h4>
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='foyer_residence_logements' upform=upform what='logements'%}
+            {% include "common/form/download_upload_form.html" with file_type='foyer_residence_logements' upform=upform what='logements' file_field_label='foyer_residence_logements' %}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 

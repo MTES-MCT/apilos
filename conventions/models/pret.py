@@ -29,12 +29,12 @@ class Pret(models.Model):
 
     # Needed to import xlsx files
     import_mapping = {
-        "Numéro\n(caractères alphanuméric)": numero,
-        "Date d'octroi\n(format dd/mm/yyyy)": date_octroi,
-        "Durée\n(en années)": duree,
-        "Montant\n(en €)": montant,
-        "Prêteur\n(choisir dans la liste déroulante)": preteur,
-        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": autre,
+        "Numéro\n(caractères alphanuméric)": "numero",
+        "Date d'octroi\n(format dd/mm/yyyy)": "date_octroi",
+        "Durée\n(en années)": "duree",
+        "Montant\n(en €)": "montant",
+        "Prêteur\n(choisir dans la liste déroulante)": "preteur",
+        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": "autre",
     }
     sheet_name = "Financements"
 

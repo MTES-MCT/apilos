@@ -433,6 +433,9 @@ def load_xlsx_model(request, file_type):
         "foyer_residence_logements",
         "logements_edd",
         "logements",
+        "logements_sans_loyer",
+        "logements_corrigee",
+        "logements_corrigee_sans_loyer",
         "stationnements",
         "communes",
     ]:
@@ -450,6 +453,9 @@ def load_xlsx_model(request, file_type):
                 "financement",
                 "logements_edd",
                 "logements",
+                "logements_sans_loyer",
+                "logements_corrigee",
+                "logements_corrigee_sans_loyer",
                 "stationnements",
             ]:
                 zip_obj.write(

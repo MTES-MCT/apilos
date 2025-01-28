@@ -29,8 +29,8 @@ class Commune(models.Model):
     commune = models.CharField(max_length=255, blank=True)
     # Needed to import xlsx files
     import_mapping = {
-        "Code postal": code_postal,
-        "Commune": commune,
+        "Code postal": "code_postal",
+        "Commune": "commune",
     }
     sheet_name: str = "Communes"
 

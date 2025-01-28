@@ -350,9 +350,9 @@ class LogementEDD(models.Model):
     lot_num = 0
 
     import_mapping = {
-        "Désignation des logements": designation,
-        "Financement": financement,
-        "Numéro de lot des logements": numero_lot,
+        "Désignation des logements": "designation",
+        "Financement": "financement",
+        "Numéro de lot des logements": "numero_lot",
     }
     sheet_name = "EDD Simplifié"
 
@@ -382,10 +382,10 @@ class ReferenceCadastrale(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Section": section,
-        "Numéro": numero,
-        "Lieudit": lieudit,
-        "Surface": surface,
+        "Section": "section",
+        "Numéro": "numero",
+        "Lieudit": "lieudit",
+        "Surface": "surface",
     }
     sheet_name = "Références Cadastrales"
 
@@ -553,7 +553,27 @@ class Lot(models.Model):
 
     @property
     def logements_import_ordered(self):
-        return self.logements.order_by("import_order")
+        return self.logements.filter(
+            surface_corrigee__isnull=True, loyer__isnull=False
+        ).order_by("import_order")
+
+    @property
+    def logements_sans_loyer_import_ordered(self):
+        return self.logements.filter(
+            surface_corrigee__isnull=True, loyer__isnull=True
+        ).order_by("import_order")
+
+    @property
+    def logements_corrigee_import_ordered(self):
+        return self.logements.filter(
+            surface_corrigee__isnull=False, loyer__isnull=False
+        ).order_by("import_order")
+
+    @property
+    def logements_corrigee_sans_loyer_import_ordered(self):
+        return self.logements.filter(
+            surface_corrigee__isnull=False, loyer__isnull=True
+        ).order_by("import_order")
 
     def clone(self, cloned_programme):
         parent_id = self.parent_id or self.id
@@ -702,39 +722,39 @@ class Logement(models.Model):
     import_order = models.IntegerField(null=True, blank=True)
 
     import_mapping = {
-        "Désignation des logements": designation,
-        "Type": typologie,
-        "Surface habitable\n(article": surface_habitable,
-        "Surface des annexes\nRéelle": surface_annexes,
-        "Surface des annexes\nRetenue dans la SU": surface_annexes_retenue,
+        "Désignation des logements": "designation",
+        "Type": "typologie",
+        "Surface habitable\n(article": "surface_habitable",
+        "Surface des annexes\nRéelle": "surface_annexes",
+        "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
         "Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)": (
-            surface_utile
+            "surface_utile"
         ),
-        "Loyer maximum en € par m² de surface utile": loyer_par_metre_carre,
-        "Coefficient propre au logement": coeficient,
-        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": loyer,
+        "Loyer maximum en € par m² de surface utile": "loyer_par_metre_carre",
+        "Coefficient propre au logement": "coeficient",
+        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": "loyer",
     }
 
     foyer_residence_import_mapping = {
-        "Numéro du logement": designation,
-        "Type": typologie,
-        "Surface habitable": surface_habitable,
-        "Redevance maximale": loyer,
+        "Numéro du logement": "designation",
+        "Type": "typologie",
+        "Surface habitable": "surface_habitable",
+        "Redevance maximale": "loyer",
     }
 
     sheet_name = "Logements"
     needed_in_mapping = [
-        designation,
-        surface_habitable,
-        surface_utile,
-        loyer_par_metre_carre,
-        coeficient,
+        "designation",
+        "surface_habitable",
+        "surface_utile",
+        "loyer_par_metre_carre",
+        "coeficient",
     ]
     foyer_residence_needed_in_mapping = [
-        designation,
-        typologie,
-        surface_habitable,
-        loyer,
+        "designation",
+        "typologie",
+        "surface_habitable",
+        "loyer",
     ]
 
     # Needed for admin
@@ -796,6 +816,11 @@ class Logement(models.Model):
 
     su = property(_get_surface_utile)
 
+    def _get_surface_corrigee(self):
+        return self.surface_corrigee
+
+    sc = property(_get_surface_corrigee)
+
     def _get_loyer_par_metre_carre(self):
         return self.loyer_par_metre_carre
 
@@ -810,6 +835,72 @@ class Logement(models.Model):
         return self.loyer
 
     l = property(_get_loyer)  # noqa: E741
+
+
+class LogementSansLoyer(Logement):
+
+    class Meta:
+        proxy = True
+
+    import_mapping = {
+        "Désignation des logements": "designation",
+        "Type": "typologie",
+        "Surface habitable\n(article": "surface_habitable",
+        "Surface des annexes\nRéelle": "surface_annexes",
+        "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
+        "Surface utile\n(surface habitable augmentée de 50% de la surface des annexes)": (
+            "surface_utile"
+        ),
+    }
+
+    needed_in_mapping = [
+        "designation",
+        "surface_habitable",
+        "surface_utile",
+    ]
+
+
+class LogementCorrigee(Logement):
+
+    class Meta:
+        proxy = True
+
+    import_mapping = {
+        "Désignation des logements": "designation",
+        "Type": "typologie",
+        "Surface habitable\n(article": "surface_habitable",
+        "Surface corrigée": "surface_corrigee",
+        "Loyer maximum en € par m² de surface corrigée": "loyer_par_metre_carre",
+        "Coefficient propre au logement": "coeficient",
+        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": "loyer",
+    }
+
+    needed_in_mapping = [
+        "designation",
+        "surface_habitable",
+        "surface_corrigee",
+        "loyer_par_metre_carre",
+        "coeficient",
+    ]
+
+
+class LogementCorrigeeSansLoyer(Logement):
+
+    class Meta:
+        proxy = True
+
+    import_mapping = {
+        "Désignation des logements": "designation",
+        "Type": "typologie",
+        "Surface habitable\n(article": "surface_habitable",
+        "Surface corrigée": "surface_corrigee",
+    }
+
+    needed_in_mapping = [
+        "designation",
+        "surface_habitable",
+        "surface_corrigee",
+    ]
 
 
 class Annexe(models.Model):
@@ -833,12 +924,12 @@ class Annexe(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Type d'annexe": typologie,
+        "Type d'annexe": "typologie",
         "Désignation des logements": "logement_designation",
         "Typologie des logements": "logement_typologie",
-        "Surface de l'annexe": surface_hors_surface_retenue,
-        "Loyer unitaire en €": loyer_par_metre_carre,
-        "Loyer maximum en €": loyer,
+        "Surface de l'annexe": "surface_hors_surface_retenue",
+        "Loyer unitaire en €": "loyer_par_metre_carre",
+        "Loyer maximum en €": "loyer",
     }
     sheet_name = "Annexes"
 
@@ -913,9 +1004,9 @@ class LocauxCollectifs(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Type de local": type_local,
-        "Surface habitable": surface_habitable,
-        "Nombre": nombre,
+        "Type de local": "type_local",
+        "Surface habitable": "surface_habitable",
+        "Nombre": "nombre",
     }
     sheet_name = "Locaux Collectifs"
 
@@ -940,9 +1031,9 @@ class TypeStationnement(models.Model):
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
     import_mapping = {
-        "Type de stationnement": typologie,
-        "Nombre de stationnements": nb_stationnements,
-        "Loyer maximum en €": loyer,
+        "Type de stationnement": "typologie",
+        "Nombre de stationnements": "nb_stationnements",
+        "Loyer maximum en €": "loyer",
     }
     sheet_name = "Stationnements"
 

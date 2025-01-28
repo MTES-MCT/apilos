@@ -22,3 +22,15 @@ compute_total_value('sa')
 compute_total_value('sar')
 compute_total_value('su')
 compute_total_value('loyer')
+
+compute_total_value('sh_sl')
+compute_total_value('sa_sl')
+compute_total_value('sar_sl')
+compute_total_value('su_sl')
+
+compute_total_value('sh_sc')
+compute_total_value('su_sc')
+compute_total_value('loyer_sc')
+
+compute_total_value('sh_scsl')
+compute_total_value('su_scsl')
