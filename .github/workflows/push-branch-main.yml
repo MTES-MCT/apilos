@@ -17,19 +17,6 @@ jobs:
   test:
     uses: ./.github/workflows/run_tests.yml
 
-  deploy_to_staging:
-    name: "Deploy to Staging"
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - uses: kolok/deploy-to-scalingo@v1
-        with:
-          ssh-private-key: ${{ secrets.SCALINGO_SSH_PRIVATE_KEY }}
-          app-name: apilos-staging
-          known-host: ssh.osc-fr1.scalingo.com
-
   deploy_to_siap_integration:
     name: "Deploy to Siap Integration"
     runs-on: ubuntu-latest
