@@ -11,7 +11,7 @@
     <div class="fr-col-md-12">
         <h4>Surfaces à usage collectif</h4>
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='locaux_collectifs' upform=upform  what='surfaces à usage collectif'%}
+            {% include "common/form/download_upload_form.html" with file_type='locaux_collectifs' upform=upform  what='surfaces à usage collectif' file_field_label='locaux' %}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 

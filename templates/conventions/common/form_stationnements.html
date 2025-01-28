@@ -8,7 +8,7 @@
         <h4>Liste des stationnements associés au lot conventionné</h4>
 
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='stationnements' upform=upform  what='stationnements'%}
+            {% include "common/form/download_upload_form.html" with file_type='stationnements' upform=upform  what='stationnements' file_field_label='stationnements'%}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 

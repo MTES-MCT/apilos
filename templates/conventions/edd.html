@@ -41,7 +41,7 @@
                         </p>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                            {% include "common/form/download_upload_form.html" with file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié"%}
+                            {% include "common/form/download_upload_form.html" with file_type='logements_edd' upform=upform  what="logements pour l'EDD simplifié" file_field_label='edd'%}
                             <hr class="fr-col-12 fr-my-3w">
                         </div>
 
