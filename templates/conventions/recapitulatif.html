@@ -116,7 +116,7 @@
                         {% include "conventions/recapitulatif/edd.html"  with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
-                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.lot.logements_import_ordered %}
+                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.lot.logements_import_ordered logements_sans_loyer=convention.lot.logements_sans_loyer_import_ordered logements_corrigee=convention.lot.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.lot.logements_corrigee_sans_loyer_import_ordered %}
                     {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=convention.lot.logements_import_ordered %}
                     {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' lot=convention.lot locaux_collectifs=convention.lot.locaux_collectifs.all %}
                     {% if not ecolo_ref %}

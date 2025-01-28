@@ -110,7 +110,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if convention.is_avenant and logements_sans_loyer %}
+                    {% if logements_sans_loyer %}
                         <label class="fr-mt-2w">Logements en surface utile, sans loyers</label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
@@ -181,7 +181,7 @@
                                 </div>
                             </div>
                     {% endif %}
-                    {% if convention.is_avenant and logements_corrigee %}
+                    {% if logements_corrigee %}
                         <label class="fr-mt-2w">Logements en surface corrigée, avec loyers</label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
@@ -259,7 +259,7 @@
                             </div>
                         </div>
                     {% endif %}
-                    {% if convention.is_avenant and logements_corrigee_sans_loyer %}
+                    {% if logements_corrigee_sans_loyer %}
                         <label class="fr-mt-2w">Logements en surface corrigée, sans loyers</label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
