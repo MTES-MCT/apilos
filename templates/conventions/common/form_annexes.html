@@ -14,7 +14,7 @@
             <p class="fr-mb-1w">Attention, les annexes concernées sont ici les jardins, les cours et les surfaces de terrasse au-delà de 9 m² (ex : Pour une terrasse d’une surface totale de 10 m², renseignez ici uniquement 1 m², les 9m² sont intégrés dans le calcul de la surface utile)</p>
         </div>
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='annexes' upform=upform  what='annexes'%}
+            {% include "common/form/download_upload_form.html" with file_type='annexes' upform=upform  what='annexes' file_field_label='annexe'%}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 
