@@ -59,6 +59,9 @@ def convention_context_keys():
         "liste_des_annexes",
         "mixPLUSinf10_10pc",
         "logements",
+        "logements_corrigee",
+        "logements_corrigee_sans_loyer",
+        "logements_sans_loyer",
         "mixPLUSinf10_30pc",
         "nombre_annees_conventionnement",
         "outre_mer",
@@ -70,6 +73,7 @@ def convention_context_keys():
         "convention",
         "sh_totale",
         "sa_totale",
+        "sc_totale",
         "nb_logements_par_type",
         "locaux_collectifs",
         "loyer_m2",
@@ -194,6 +198,7 @@ class ConventionServiceGeneratorTest(TestCase):
             "loyer_total": Decimal("1500.00"),
             "sa_totale": 0,
             "sar_totale": 0,
+            "sc_totale": 0,
             "sh_totale": 0,
             "su_totale": 0,
         }
@@ -220,30 +225,35 @@ class ConventionServiceGeneratorTest(TestCase):
             lot=convention.lot,
             typologie=TypologieLogement.T2,
             designation="Logement 2",
+            loyer="0",
             import_order=3,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T2,
             designation="Logement 1",
+            loyer="0",
             import_order=1,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T1,
             designation="Logement 3",
+            loyer="0",
             import_order=2,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T1BIS,
             designation="Logement 4",
+            loyer="0",
             import_order=4,
         )
         Logement.objects.create(
             lot=convention.lot,
             typologie=TypologieLogement.T1BIS,
             designation="Logement 34",
+            loyer="0",
             import_order=0,
         )
         convention.programme.nature_logement = NatureLogement.RESISDENCESOCIALE
