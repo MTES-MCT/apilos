@@ -304,6 +304,7 @@ def get_or_create_lots_and_conventions(
 ):
     lots = []
     conventions = []
+
     if (
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
@@ -336,47 +337,53 @@ def get_or_create_lots_and_conventions(
             convention.user = user
             convention.save()
         conventions.append(convention)
+
     else:
         for aide in operation["detailsOperation"]:
             financement = _financement(aide["aide"]["code"])
+
             if (
                 financement == Financement.PLAI_ADP
                 or financement not in Financement.values
             ):
                 continue
+
+            convention = _create_convention(
+                programme=programme, financement=financement, user=user
+            )
+
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
                 financement=financement,
+                convention=convention,
                 defaults={
                     "type_habitat": _type_habitat(aide),
                     "nb_logements": _nb_logements(aide),
                 },
             )
 
-            convention = _create_convention_from_lot(lot, user)
             lots.append(lot)
+
     return (lots, conventions)
 
 
-def _create_convention_from_lot(lot: Lot, user: User):
+def _create_convention(programme: Programme, financement: str, user: User):
     (convention, _) = Convention.objects.exclude(
         statut=ConventionStatut.ANNULEE.label,
     ).get_or_create(
-        programme=lot.programme,
-        financement=lot.financement,
+        programme=programme,
+        financement=financement,
         # When comes from SIAP through API, the user doesn't exist in DB
         defaults={
             "cree_par": (user if user.id else None),
         },
     )
+
     # When convention was created by SIAP through API and the user doesn't exist
     # the forst user how access it will be the creator
     if convention.cree_par is None and user.id is not None:
         convention.cree_par = user
         convention.save()
-
-    lot.convention = convention
-    lot.save()
 
     return convention
 
