@@ -789,9 +789,7 @@ def journal(request, convention_uuid):
 @currentrole_campaign_permission_required_view_function("convention.view_convention")
 def fiche_caf(request, convention_uuid):
     convention = (
-        Convention.objects.prefetch_related("lot")
-        # .prefetch_related("lot__logements")
-        .prefetch_related("programme")
+        Convention.objects.prefetch_related("programme")
         .prefetch_related("programme__administration")
         .get(uuid=convention_uuid)
     )
