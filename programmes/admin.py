@@ -23,7 +23,11 @@ from .models import (
 
 class ConventionInline(admin.StackedInline):
     model = Convention
-    fields = ("uuid", "get_statut", "financement", "lot")
+    fields = (
+        "uuid",
+        "get_statut",
+        "financement",
+    )
     readonly_fields = (
         "uuid",
         "get_statut",
