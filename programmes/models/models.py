@@ -192,11 +192,11 @@ class Programme(models.Model):
         ]
         for convention in conventions:
             if (
-                convention.financement not in conventions_by_financement
-                or conventions_by_financement[convention.financement].cree_le
+                convention.lot.financement not in conventions_by_financement
+                or conventions_by_financement[convention.lot.financement].cree_le
                 < convention.cree_le
             ):
-                conventions_by_financement[convention.financement] = convention
+                conventions_by_financement[convention.lot.financement] = convention
 
         # filter last signed one by fianncement
         return [convention for _, convention in conventions_by_financement.items()]

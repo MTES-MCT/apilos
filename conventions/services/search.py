@@ -176,7 +176,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
             queryset = queryset.filter(parent_id__isnull=False)
 
         if self.financement:
-            queryset = queryset.filter(financement=self.financement)
+            queryset = queryset.filter(lots__financement=self.financement)
 
         if self.nature_logement:
             queryset = queryset.filter(programme__nature_logement=self.nature_logement)
