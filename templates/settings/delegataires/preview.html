@@ -43,7 +43,7 @@
                                     <td>{{ convention.programme.nom }}</td>
                                     {% comment %} TODO: reverse relation convention lot {% endcomment %}
                                     <td>{{ convention.lot.nb_logements }}</td>
-                                    <td>{{ convention.financement }}</td>
+                                    <td>{{ convention.lot.financement }}</td>
                                     <script type="text/javascript" nonce="{{request.csp_nonce}}">
                                         document.addEventListener('DOMContentLoaded', function () {
                                             document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){

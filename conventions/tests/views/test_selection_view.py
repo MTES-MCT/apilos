@@ -56,7 +56,7 @@ class NewConventionAnruViewTests(AbstractCreateViewTestCase, TestCase):
     def _test_data_integrity(self):
         self.assertTrue(
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test", lots__financement=Financement.PLUS
             ),
             msg=f"{self.msg_prefix}",
         )
@@ -112,7 +112,7 @@ class ConventionPostForAvenantViewTests(AbstractCreateViewTestCase, TestCase):
         self.assertTrue(
             Convention.objects.get(
                 programme__nom="Programme de test",
-                financement=Financement.PLUS,
+                lots__financement=Financement.PLUS,
                 parent_id__isnull=True,
             ),
             msg=f"{self.msg_prefix}",
