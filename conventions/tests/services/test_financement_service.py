@@ -204,17 +204,29 @@ class ConventionFinancementServiceTests(TestCase):
         assert form.errors == {}
 
     def test_pls_avenant_date_fin_conventionnement(self):
-        self.service_avenant.convention.financement = Financement.PLS
-        self.service_avenant.convention.save()
+        for financement in [
+            Financement.PLS,
+            Financement.PLS_DOM,
+            Financement.PALUCOM,
+            Financement.PALULOS,
+            Financement.PALU_AV_21,
+            Financement.PALU_COM,
+            Financement.PALU_RE,
+        ]:
+            self.service_avenant.convention.financement = financement
+            self.service_avenant.convention.save()
+            lot = self.service_avenant.convention.lot
+            lot.financement = financement
+            lot.save()
 
-        self.service_avenant.request.POST = {
-            **financement_form,
-            "annee_fin_conventionnement": 2065,
-        }
-        self.service_avenant.save()
+            self.service_avenant.request.POST = {
+                **financement_form,
+                "annee_fin_conventionnement": 2065,
+            }
+            self.service_avenant.save()
 
-        form = self.service_avenant.form
-        assert form.errors == {}
+            form = self.service_avenant.form
+            assert form.errors == {}
 
 
 def test_formset_validate_numero_unicity_fail():
