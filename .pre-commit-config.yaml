@@ -11,16 +11,17 @@ repos:
 -   repo: https://github.com/ambv/black
     rev: 24.10.0
     hooks:
-    - id: black
-      language_version: python3.12
+    -   id: black
+        language_version: python3.12
 
--   repo: https://github.com/rtts/djhtml
-    rev: 3.0.7
+-   repo: https://github.com/adamchainz/djade-pre-commit
+    rev: "1.0.0"
     hooks:
-    -   id: djhtml
+    -   id: djade
+        args: [--target-version, "5.1"]
 
 -   repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.3
     hooks:
-    - id: ruff
-      args: [--fix, --exit-non-zero-on-fix]
+    -   id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
