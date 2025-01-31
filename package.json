@@ -6,6 +6,6 @@
   "dependencies": {
     "@gouvfr/dsfr": "^1.13.0",
     "@hotwired/turbo": "^8.0.12",
-    "virtual-select-plugin": "^1.0.46"
+    "virtual-select-plugin": "^1.0.47"
   }
 }
