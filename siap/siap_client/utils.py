@@ -380,9 +380,7 @@ def get_or_create_lots_and_conventions(
             ):
                 continue
 
-            convention = _create_convention(
-                programme=programme, financement=financement, user=user
-            )
+            convention = _create_convention(programme=programme, user=user)
 
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
@@ -399,12 +397,11 @@ def get_or_create_lots_and_conventions(
     return (lots, conventions)
 
 
-def _create_convention(programme: Programme, financement: str, user: User):
+def _create_convention(programme: Programme, user: User):
     (convention, _) = Convention.objects.exclude(
         statut=ConventionStatut.ANNULEE.label,
     ).get_or_create(
         programme=programme,
-        financement=financement,
         # When comes from SIAP through API, the user doesn't exist in DB
         defaults={
             "cree_par": (user if user.id else None),

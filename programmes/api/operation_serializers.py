@@ -136,7 +136,6 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
         model = Convention
         fields = (
             "date_fin_conventionnement",
-            "financement",
             "fond_propre",
             "lot",
             "operation_version",
@@ -243,7 +242,6 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
         model = Convention
         fields = (
             "date_fin_conventionnement",
-            "financement",
             "fond_propre",
             "lot",
             "operation",
