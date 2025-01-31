@@ -23,13 +23,13 @@ billiard==4.2.0 \
     --hash=sha256:07aa978b308f334ff8282bd4a746e681b3513db5c9a514cbdd810cbbdc19714d \
     --hash=sha256:9a3c3184cb275aa17a732f93f65b20c525d3d9f253722d26a82194803ade5a2c
     # via celery
-boto3==1.35.90 \
-    --hash=sha256:b0874233057995a8f0c813f5b45a36c09630e74c43d7a7c64db2feef2915d493 \
-    --hash=sha256:dc56caaaab2157a4bfc109c88b50cd032f3ac66c06d17f8ee335b798eaf53e5c
+boto3==1.36.8 \
+    --hash=sha256:7f61c9d0ea64f484a17c1e3115fdf90fd7b17ab6771e07cb4549f42b9fd28fb9 \
+    --hash=sha256:ac47215d320b0c2534340db58d6d5284cb1860b7bff172b4dd6eee2dee1d5779
     # via -r requirements.in
-botocore==1.35.90 \
-    --hash=sha256:51dcbe1b32e2ac43dac17091f401a00ce5939f76afe999081802009cce1e92e4 \
-    --hash=sha256:f007f58e8e3c1ad0412a6ddfae40ed92a7bca571c068cb959902bcf107f2ae48
+botocore==1.36.8 \
+    --hash=sha256:59d3fdfbae6d916b046e973bebcbeb70a102f9e570ca86d5ba512f1854b78fc2 \
+    --hash=sha256:81c88e5566cf018e1411a68304dc1fb9e4156ca2b50a3a0f0befc274299e67fa
     # via
     #   boto3
     #   s3transfer
@@ -665,9 +665,9 @@ requests==2.32.3 \
     #   django-anymail
     #   django-sql-explorer
     #   python-cas
-s3transfer==0.10.0 \
-    --hash=sha256:3cdb40f5cfa6966e812209d0994f2a4709b561c88e90cf00c2696d2df4e56b2e \
-    --hash=sha256:d0c8bbf672d5eebbe4e57945e23b972d963f07d82f661cabf678a5c88831595b
+s3transfer==0.11.2 \
+    --hash=sha256:3b39185cb72f5acc77db1a58b6e25b977f28d20496b6e58d6813d75f464d632f \
+    --hash=sha256:be6ecb39fadd986ef1701097771f87e4d2f821f27f6071c872143884d2950fbc
     # via boto3
 sentry-sdk==2.19.2 \
     --hash=sha256:467df6e126ba242d39952375dd816fbee0f217d119bf454a8ce74cf1e7909e8d \
