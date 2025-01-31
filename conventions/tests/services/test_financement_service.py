@@ -137,7 +137,7 @@ class ConventionFinancementServiceTests(TestCase):
         self.assertTrue(form.has_error("annee_fin_conventionnement"))
 
     def test_year_max_limit_disabled(self):
-        self.service.convention.financement = Financement.PLS
+        self.service.convention.lot.financement = Financement.PLS
         self.service.convention.save()
         programme = self.service.convention.programme
         programme.type_operation = TypeOperation.NEUF
@@ -178,7 +178,7 @@ class ConventionFinancementServiceTests(TestCase):
         assert form.errors == {}
 
     def test_outre_mer_lls_date_fin_conventionnement(self):
-        self.service.convention.financement = Financement.LLS
+        self.service.convention.lot.financement = Financement.LLS
         self.service.convention.save()
         programme = self.service.convention.programme
         programme.type_operation = TypeOperation.REHABILITATION

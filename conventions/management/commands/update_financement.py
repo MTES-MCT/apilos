@@ -28,7 +28,7 @@ class Command(BaseCommand):
         )
 
     def financement_update(self, numero, new_financement):
-        qs = Convention.objects.filter(numero=numero)
+        qs = Convention.objects.prefetch_related("lots").filter(numero=numero)
         if qs.count() == 0:
             self.stdout.write(self.style.WARNING(f"Convention {numero} not found."))
             self.numeros_not_found.append(numero)
@@ -42,25 +42,18 @@ class Command(BaseCommand):
 
         for convention in qs:
             lot_convention = convention.lot
-            if (
-                convention.financement == new_financement
-                and lot_convention.financement == new_financement
-            ):
+            if lot_convention.financement == new_financement:
                 self.stdout.write(
                     self.style.WARNING(
                         f"Convention {numero} already in financement {new_financement}"
                     )
                 )
                 return
-            convention.financement = new_financement
             lot_convention.financement = new_financement
-            convention.save()
             lot_convention.save()
             for avenant in convention.avenants.all():
-                avenant.financement = new_financement
                 lot_avenant = avenant.lot
                 lot_avenant.financement = new_financement
-                avenant.save()
                 lot_avenant.save()
 
         self.counter_success += 1
