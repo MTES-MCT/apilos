@@ -26,14 +26,14 @@ class OngoingAvenantError(Exception):
 def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any]:
     parent_convention = (
         Convention.objects.prefetch_related("programme")
-        # .prefetch_related("lot")
-        .prefetch_related("avenants").get(uuid=convention_uuid)
+        .prefetch_related("avenants")
+        .get(uuid=convention_uuid)
     )
     if parent_convention.is_avenant():
         parent_convention = (
             Convention.objects.prefetch_related("programme")
-            # .prefetch_related("lot")
-            .prefetch_related("avenants").get(id=parent_convention.parent_id)
+            .prefetch_related("avenants")
+            .get(id=parent_convention.parent_id)
         )
 
     if request.method == "POST":
