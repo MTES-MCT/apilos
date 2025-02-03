@@ -380,8 +380,10 @@ def get_or_create_lots_and_conventions(
             ):
                 continue
 
+            # FIXME : Ici On a un soucis car On n'a plus de financement pour discriminer
+            # les conventions, on a besoin de l'identifiant de l'aide pour le faire
             convention = _create_convention(programme=programme, user=user)
-
+            logging.warning(f"Convention {convention} created")
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
                 financement=financement,
