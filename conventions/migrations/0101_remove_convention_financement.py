@@ -2,6 +2,8 @@
 
 from django.db import migrations
 
+# FIXME : supprimer cette migration vide ?
+
 
 class Migration(migrations.Migration):
 
