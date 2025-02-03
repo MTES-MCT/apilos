@@ -399,19 +399,26 @@ def get_or_create_lots_and_conventions(
     return (lots, conventions)
 
 
-def _create_convention(programme: Programme, user: User):
-    (convention, _) = Convention.objects.exclude(
-        statut=ConventionStatut.ANNULEE.label,
-    ).get_or_create(
-        programme=programme,
-        # When comes from SIAP through API, the user doesn't exist in DB
-        defaults={
-            "cree_par": (user if user.id else None),
-        },
+def _create_convention(programme: Programme, financement: str, user: User):
+
+    conventions = Convention.objects.filter(
+        programme=programme, lots__financement=financement
     )
+    convention = None
+    if conventions.count() == 0:
+        convention = Convention.objects.create(
+            programme=programme,
+            financement=financement,
+        )
+    elif conventions.count() == 1:
+        convention = conventions.first()
+    else:
+        raise Exception(
+            "More than one convention found for the same programme/financement"
+        )
 
     # When convention was created by SIAP through API and the user doesn't exist
-    # the forst user how access it will be the creator
+    # the first user how access it will be the creator
     if convention.cree_par is None and user.id is not None:
         convention.cree_par = user
         convention.save()
