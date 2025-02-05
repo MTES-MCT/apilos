@@ -130,8 +130,8 @@ class ConventionFinancementForm(forms.Form):
             )
         # No control on max date for foyer, residence and avenants
         if (
-            self.convention.programme.is_foyer()
-            or self.convention.programme.is_residence()
+            self.convention.programme.is_foyer
+            or self.convention.programme.is_residence
             or self.convention.is_avenant()
         ):
             return
@@ -192,8 +192,8 @@ class ConventionFinancementForm(forms.Form):
                 cdc_end_year = cdc_pret.cleaned_data["date_octroi"].year + 9
             # don't add a year for FOYER because end of convention is the 31/12
             if (
-                not self.convention.programme.is_foyer()
-                and not self.convention.programme.is_residence()
+                not self.convention.programme.is_foyer
+                and not self.convention.programme.is_residence
                 and end_conv
                 and end_conv.month > 6
             ):

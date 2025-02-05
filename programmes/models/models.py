@@ -223,7 +223,7 @@ class Programme(models.Model):
         if not self.is_outre_mer:
             return
 
-        if not (self.is_residence() or self.is_foyer()):
+        if not (self.is_residence or self.is_foyer):
             raise OutreMerNatureLogementError(
                 "Un programme situé en outre-mer ne peut être que de nature foyer ou résidence."
             )
@@ -316,9 +316,11 @@ class Programme(models.Model):
     def edd_stationnements_files(self):
         return get_key_from_json_field(self.edd_stationnements, "files", default={})
 
+    @property
     def is_foyer(self):
         return self.nature_logement in [NatureLogement.AUTRE]
 
+    @property
     def is_residence(self):
         return self.nature_logement in [
             NatureLogement.HEBERGEMENT,

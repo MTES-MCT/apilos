@@ -126,14 +126,17 @@ class ActiveNatureLogement(models.TextChoices):
 
 
 class NatureLogement(models.TextChoices):
-    LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"
-    AUTRE = "AUTRE", "Autres logements foyers"
-    HEBERGEMENT = "HEBERGEMENT", "Hébergement"
-    RESISDENCESOCIALE = "RESISDENCESOCIALE", "Résidence sociale"
-    PENSIONSDEFAMILLE = "PENSIONSDEFAMILLE", "Pensions de famille (Maisons relais)"
-    RESIDENCEDACCUEIL = "RESIDENCEDACCUEIL", "Résidence d'accueil"
-    RESIDENCEUNIVERSITAIRE = "RESIDENCEUNIVERSITAIRE", "Résidence universitaire"
-    RHVS = "RHVS", "RHVS"
+    LOGEMENTSORDINAIRES = "LOGEMENTSORDINAIRES", "Logements ordinaires"  # LOO
+    AUTRE = "AUTRE", "Autres logements foyers"  # ALF
+    HEBERGEMENT = "HEBERGEMENT", "Hébergement"  # HEB
+    RESISDENCESOCIALE = "RESISDENCESOCIALE", "Résidence sociale"  # RES
+    PENSIONSDEFAMILLE = (
+        "PENSIONSDEFAMILLE",
+        "Pensions de famille (Maisons relais)",
+    )  # PEF
+    RESIDENCEDACCUEIL = "RESIDENCEDACCUEIL", "Résidence d'accueil"  # REA
+    RESIDENCEUNIVERSITAIRE = "RESIDENCEUNIVERSITAIRE", "Résidence universitaire"  # REU
+    RHVS = "RHVS", "RHVS"  # RHVS
 
     @classmethod
     def eligible_for_update(cls):

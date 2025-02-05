@@ -86,7 +86,7 @@ class ConventionFormStepsTests(TestCase):
     def test_avenant_foyer_steps(self):
         self.avenant.programme.nature_logement = NatureLogement.AUTRE
         self.avenant.programme.save()
-        self.assertTrue(self.avenant.programme.is_foyer())
+        self.assertTrue(self.avenant.programme.is_foyer)
 
         form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
         self.assertEqual(
@@ -105,7 +105,7 @@ class ConventionFormStepsTests(TestCase):
     def test_avenant_residence_steps(self):
         self.avenant.programme.nature_logement = NatureLogement.HEBERGEMENT
         self.avenant.programme.save()
-        self.assertTrue(self.avenant.programme.is_residence())
+        self.assertTrue(self.avenant.programme.is_residence)
 
         form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
         self.assertEqual(
@@ -160,7 +160,7 @@ class ConventionFormStepsTests(TestCase):
     def test_programme_foyer_steps(self):
         self.convention.programme.nature_logement = NatureLogement.AUTRE
         self.convention.programme.save()
-        self.assertTrue(self.convention.programme.is_foyer())
+        self.assertTrue(self.convention.programme.is_foyer)
 
         form_steps = ConventionFormSteps(
             convention=self.convention, request=self.request
@@ -185,7 +185,7 @@ class ConventionFormStepsTests(TestCase):
     def test_programme_residence_steps(self):
         self.convention.programme.nature_logement = NatureLogement.HEBERGEMENT
         self.convention.programme.save()
-        self.assertTrue(self.convention.programme.is_residence())
+        self.assertTrue(self.convention.programme.is_residence)
 
         form_steps = ConventionFormSteps(
             convention=self.convention, request=self.request

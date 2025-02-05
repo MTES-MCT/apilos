@@ -45,12 +45,12 @@ class DocxGenerationError(Exception):
 def get_convention_template_path(convention):
     # pylint: disable=R0911
     if convention.is_avenant():
-        if convention.programme.is_foyer() or convention.programme.is_residence():
+        if convention.programme.is_foyer or convention.programme.is_residence:
             return f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx"
         return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
-    if convention.programme.is_foyer():
+    if convention.programme.is_foyer:
         return f"{settings.BASE_DIR}/documents/Foyer-template.docx"
-    if convention.programme.is_residence():
+    if convention.programme.is_residence:
         return f"{settings.BASE_DIR}/documents/Residence-template.docx"
     if convention.programme.bailleur.is_hlm():
         return f"{settings.BASE_DIR}/documents/HLM-template.docx"
@@ -599,7 +599,7 @@ def _list_to_dict(object_list):
 
 
 def _get_residence_attributions(convention: Convention) -> str:
-    if not convention.programme.is_residence():
+    if not convention.programme.is_residence:
         return ""
 
     result = []
@@ -623,7 +623,7 @@ def _get_residence_attributions(convention: Convention) -> str:
 
 
 def _get_foyer_attributions(convention: Convention) -> str:
-    if not convention.programme.is_foyer():
+    if not convention.programme.is_foyer:
         return ""
 
     return foyer_attributions_mapping.get(convention.attribution_type, "")

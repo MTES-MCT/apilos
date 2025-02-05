@@ -379,8 +379,8 @@ def display_type1and2(convention):
     return (
         convention.programme.bailleur.is_type1and2()
         and not convention.is_avenant()
-        and not convention.programme.is_foyer()
-        and not convention.programme.is_residence()
+        and not convention.programme.is_foyer
+        and not convention.programme.is_residence
     )
 
 
