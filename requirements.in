@@ -23,7 +23,7 @@ gunicorn
 Jinja2
 lxml>=5.0
 openpyxl
-psycopg2
+psycopg[binary]
 pyjwt
 python-box
 python-decouple
