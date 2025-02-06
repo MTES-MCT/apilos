@@ -8,11 +8,14 @@
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
-                                Opération
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération" checked=checked id="operation" avenant_type="programme" %}
                             </h4>
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if checked %}
                     <div class="table--limited-height">
 
                         {% if request.user.is_instructeur %}
@@ -45,8 +48,6 @@
                         {% include "common/display_field_if_exists.html" with label="Nombre de bureaux (non-conventionnés)" value=programme.nb_bureaux object_field="programme__nb_bureaux__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Autres logements non-conventionnés" value=programme.autres_locaux_hors_convention object_field="programme__autres_locaux_hors_convention__"|add:programme_uuid %}
                     </div>
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="programme" %}
                     {% endif %}
                 </div>
             </div>
