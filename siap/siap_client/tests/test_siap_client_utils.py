@@ -178,6 +178,8 @@ class GetOrCreateProgrammeTest(TestCase):
     def test_get_or_create_sans_travaux(self):
         data_from_siap = {**self.data_from_siap}
         data_from_siap["donneesOperation"]["sansTravaux"] = True
+        data_from_siap["donneesOperation"]["natureLogement"] = None
+        data_from_siap["donneesOperation"]["natureOperation"] = "FOYEROCC"
         del data_from_siap["detailsOperation"]
         programme = utils.get_or_create_programme(
             data_from_siap,
@@ -185,6 +187,7 @@ class GetOrCreateProgrammeTest(TestCase):
             Administration.objects.first(),
         )
         self.assertTrue(programme.uuid)
+        self.assertEqual(programme.nature_logement, NatureLogement.AUTRE)
         self.assertEqual(programme.type_operation, TypeOperation.SANSTRAVAUX)
 
     def test_get_or_create_no_nature_failed(self):
