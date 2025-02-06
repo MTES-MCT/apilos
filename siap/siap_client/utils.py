@@ -2,7 +2,7 @@ import logging
 import re
 
 from bailleurs.models import Bailleur, NatureBailleur
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -94,7 +94,7 @@ def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
     return programme
 
 
-def get_or_create_conventions(operation: dict, user: User):
+def get_or_create_conventions_from_siap(operation: dict, user: User):
     if operation["detailsOperation"]:
         op_aides = [
             aide["aide"]["code"]
@@ -341,17 +341,11 @@ def get_or_create_lots_and_conventions(
         operation["detailsOperation"] is None
         and programme.type_operation == TypeOperation.SANSTRAVAUX
     ):
-        (convention, _) = Convention.objects.exclude(
-            statut=ConventionStatut.ANNULEE.label,
-        ).get_or_create(
+        convention = _get_or_create_convention(
             programme=programme,
             financement=Financement.SANS_FINANCEMENT,
-            # When comes from SIAP through API, the user doesn't exist in DB
-            defaults={
-                "cree_par": (user if user.id else None),
-            },
+            user=user,
         )
-
         (lot, _) = Lot.objects.get_or_create(
             programme=programme,
             financement=Financement.SANS_FINANCEMENT,
@@ -361,6 +355,7 @@ def get_or_create_lots_and_conventions(
                 "nb_logements": 0,
             },
         )
+
         lots.append(lot)
 
         # When convention was created by SIAP through API and the user doesn't exist
@@ -382,8 +377,11 @@ def get_or_create_lots_and_conventions(
 
             # FIXME : Ici On a un soucis car On n'a plus de financement pour discriminer
             # les conventions, on a besoin de l'identifiant de l'aide pour le faire
-            convention = _create_convention(programme=programme, user=user)
-            logging.warning(f"Convention {convention} created")
+            convention = _get_or_create_convention(
+                programme=programme,
+                financement=financement,
+                user=user,
+            )
             (lot, _) = Lot.objects.get_or_create(
                 programme=programme,
                 financement=financement,
@@ -399,7 +397,7 @@ def get_or_create_lots_and_conventions(
     return (lots, conventions)
 
 
-def _create_convention(programme: Programme, financement: str, user: User):
+def _get_or_create_convention(programme: Programme, financement: str, user: User):
 
     conventions = Convention.objects.filter(
         programme=programme, lots__financement=financement
@@ -408,7 +406,6 @@ def _create_convention(programme: Programme, financement: str, user: User):
     if conventions.count() == 0:
         convention = Convention.objects.create(
             programme=programme,
-            financement=financement,
         )
     elif conventions.count() == 1:
         convention = conventions.first()

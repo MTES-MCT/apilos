@@ -14,7 +14,7 @@ from programmes.models.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import (
-    get_or_create_conventions,
+    get_or_create_conventions_from_siap,
     get_or_create_programme_from_siap_operation,
 )
 
@@ -65,7 +65,7 @@ class OperationService:
         if self.siap_error:
             # impossible to get operation from SIAP
             return (None, None, None)
-        return get_or_create_conventions(self.operation, self.request.user)
+        return get_or_create_conventions_from_siap(self.operation, self.request.user)
 
     def get_context_list_conventions(self, paginator) -> dict:
         return {
