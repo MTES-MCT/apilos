@@ -9,11 +9,14 @@
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
-                                Logements
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Logements" checked=checked id="logements" avenant_type="logements" %}
                             </h4>
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if checked %}
                     <div class="block--row-strech">
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                     </div>
@@ -366,11 +369,7 @@
                     {% include "common/display_field_if_exists.html" with label="Surface des locaux collectifs résidentiels" value=lot.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:lot_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Loyer pour les associations foncières" value=lot.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:lot_uuid %}
-
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
                     {% endif %}
-
                 </div>
             </div>
         </div>

@@ -11,12 +11,14 @@
                             {% endblock title %}
                         </h4>
                     </div>
-                    {% if target_url %}
+                    {% if target_url and checked %}
                         {% include "conventions/actions/goto.html" %}
                     {% endif %}
                 </div>
+                 {% if checked %}
                 {% block body %}
                 {% endblock body %}
+                {% endif %}
             </div>
         </div>
     </div>
