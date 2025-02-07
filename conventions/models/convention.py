@@ -274,9 +274,11 @@ class Convention(models.Model):
             return lot.financement in [
                 Financement.PLS,
                 Financement.PLS_DOM,
-                Financement.PLS_AV_21,
-                Financement.PLS_CD,
-                Financement.PLS_AV_21_CD,
+                Financement.PALULOS,
+                Financement.PALU_AV_21,
+                Financement.PALUCOM,
+                Financement.PALU_COM,
+                Financement.PALU_RE,
             ]
         return False
 
