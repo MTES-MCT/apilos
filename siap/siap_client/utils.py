@@ -471,19 +471,11 @@ def _nature_logement(nature_logement_from_siap: str) -> NatureLogement:
 
 
 def _financement(code):
-    if code in ["PLUS_CD", Financement.PLUS_CD]:
-        return Financement.PLUS_CD
-    if code in ["PLUS", Financement.PLUS]:
-        return Financement.PLUS
-    if code in ["PLAI", Financement.PLAI]:
-        return Financement.PLAI
-    if code in ["PLS", Financement.PLS]:
-        return Financement.PLS
-    if code in ["PLAI_ADP", Financement.PLAI_ADP]:
-        return Financement.PLAI_ADP
-    if code in ["PALU_AV_21", Financement.PALU_AV_21]:
-        return Financement.PALU_AV_21
-    return code
+    if code in Financement.values:
+        return code
+    raise InconsistentDataSIAPException(
+        f"Financement code {code} is not handled by the APILOS"
+    )
 
 
 def _get_nature_bailleur(bailleur_from_siap):

@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
 from conventions.models import Preteur
-from programmes.models import Financement, TypeOperation
+from programmes.models import TypeOperation
 
 
 class ConventionFinancementForm(forms.Form):
@@ -63,7 +63,7 @@ class ConventionFinancementForm(forms.Form):
         ):
             if self.convention.programme.is_outre_mer:
                 self._outre_mer_end_date_validation(annee_fin_conventionnement)
-            elif self.convention.financement == Financement.PLS:
+            elif self.convention.is_pls_financement_type:
                 self._pls_end_date_validation(annee_fin_conventionnement)
             elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
                 self._sans_travaux_end_date_validation(annee_fin_conventionnement)
@@ -316,7 +316,7 @@ class BasePretFormSet(BaseFormSet):
         """
         if (
             self.convention is not None
-            and self.convention.financement != Financement.PLS
+            and not self.convention.is_pls_financement_type
             and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
         ):
             for form in self.forms:
