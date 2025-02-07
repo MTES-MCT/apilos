@@ -1,5 +1,4 @@
-{% load custom_filters %}
-{% load display_filters %}
+{% load custom_filters display_filters %}
 
 {% if convention|display_notification_bailleur_to_instructeur:request %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
@@ -9,10 +8,10 @@
                 <p>Denière notification de l'instructeur : {{ convention.get_last_bailleur_notification.cree_le }}</p>
             {% endif %}
             {% if convention|display_demande_instruction %}
-                <h4>Vous avez modifié {{convention|display_kind_with_pronom}}<br>
-                    Renvoyez {{convention|display_pronom}} à l'instruction</h4>
+                <h4>Vous avez modifié {{ convention|display_kind_with_pronom }}<br>
+                    Renvoyez {{ convention|display_pronom }} à l'instruction</h4>
             {% else %}
-                <h4>Vous avez modifié {{convention|display_kind_with_pronom}}<br>
+                <h4>Vous avez modifié {{ convention|display_kind_with_pronom }}<br>
                     Faites part de vos commentaires à l'instructeur </h4>
             {% endif %}
             <div>
@@ -22,19 +21,19 @@
                     <div class="fr-checkbox-group fr-mb-1w">
                         <input
                             type="hidden"
-                            id="{{notificationForm.from_instructeur.id_for_label}}"
-                            name="{{notificationForm.from_instructeur.html_name}}">
+                            id="{{ notificationForm.from_instructeur.id_for_label }}"
+                            name="{{ notificationForm.from_instructeur.html_name }}">
                         <input
                             type="checkbox"
-                            id="{{notificationForm.send_copy.id_for_label}}"
-                            name="{{notificationForm.send_copy.html_name}}"
+                            id="{{ notificationForm.send_copy.id_for_label }}"
+                            name="{{ notificationForm.send_copy.html_name }}"
                             checked>
-                        <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
+                        <label class="fr-label" for="{{ notificationForm.send_copy.id_for_label }}">Envoyez-moi une copie du message envoyé
                         </label>
                     </div>
                     {% if convention|display_demande_instruction %}
                         <button class="fr-btn">
-                            Renvoyer {{convention|display_kind_with_pronom}} à l'instruction
+                            Renvoyer {{ convention|display_kind_with_pronom }} à l'instruction
                         </button>
                     {% else %}
                         <button class="fr-btn">

@@ -2,22 +2,22 @@
 
 {% load static %}
 
-{% block page_title %}Ajout de convention simplifié - APiLos{% endblock%}
+{% block page_title %}Ajout de convention simplifié - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
 
     <div class="fr-container fr-my-5w">
         <h1>Ajouter une convention</h1>
 
-        {% include "../common/stepper.html"%}
+        {% include "../common/stepper.html" %}
 
         {% if avenants %}
             <div class="fr-table apilos-text--black fr-mt-2w">
@@ -36,7 +36,7 @@
                                 </thead>
                                 <tbody>
                                     {% for avenant in avenants %}
-                                        <tr class="clickable" id="convention_redirect_{{avenant.uuid}}">
+                                        <tr class="clickable" id="convention_redirect_{{ avenant.uuid }}">
                                             <td>
                                                 <div class="fr-pr-2w">
                                                     {% include "conventions/home/statut_tag.html" with convention=avenant %}
@@ -50,9 +50,9 @@
                                                 </div>
                                             </td>
                                         </tr>
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                             document.addEventListener('DOMContentLoaded', function () {
-                                                document.getElementById('convention_redirect_{{avenant.uuid}}').addEventListener('click', function(){
+                                                document.getElementById('convention_redirect_{{ avenant.uuid }}').addEventListener('click', function(){
                                                     const url = "{% url 'conventions:post_action' convention_uuid=avenant.uuid %}";
                                                     window.open(url, "_blank");
                                                 })
@@ -102,7 +102,7 @@
                     {% include "common/form/input_textarea.html" with form_input=form.champ_libre_avenant editable=True %}
                 </div>
                 <div class="fr-col-6">
-                    <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
+                    <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{ form.nom_fichier_signe.id_for_label }}_group">
                         <label class="fr-label" for="file-upload">Déposer l'avenant (en PDF)
                             {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
                             <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
@@ -111,7 +111,7 @@
                             class="fr-upload {% if form.nom_fichier_signe.errors %}fr-input--error{% endif %}"
                             type="file"
                             id="file-upload"
-                            name="{{form.nom_fichier_signe.html_name}}"
+                            name="{{ form.nom_fichier_signe.html_name }}"
                             accept="application/pdf"
                         >
                     </div>
@@ -140,4 +140,4 @@
         </div>
     </div>
 
-{% endblock%}
+{% endblock content %}

@@ -5,10 +5,10 @@
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
         {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
             document.addEventListener('DOMContentLoaded', function () {
                 VirtualSelect.init({
-                    ele: '#{{form.administration.id_for_label}}',
+                    ele: '#{{ form.administration.id_for_label }}',
                     multiple: false,
                     hideClearButton: true,
                     search: true,
@@ -17,9 +17,9 @@
                 });
             });
         </script>
-        {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False%}
+        {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False %}
         <div id='download_upload_block'>
-            {% include "common/form/download_upload_form.html" with file_type='communes' upform=form  what='communes' file_field_label='commune'%}
+            {% include "common/form/download_upload_form.html" with file_type='communes' upform=form what='communes' file_field_label='commune' %}
         </div>
         {% for error in import_warnings %}
             <p id="text-input-error-desc-error" class="fr-error-text">
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="communes" id="communes" value='{{communes_str}}'>
+            <input type="hidden" name="communes" id="communes" value='{{ communes_str }}'>
         {% endif %}
         <input type="hidden" name="no_dry_run" id="no_dry_run" value=false>
         <div class="form-button-footer fr-col-md-12 fr-py-5w">
@@ -73,4 +73,4 @@
             </button>
         </div>
     </form>
-{% endblock %}
+{% endblock inner_content %}

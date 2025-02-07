@@ -9,7 +9,7 @@
                 {% if convention.numero is not None %}
                     <ul>
                         <li>
-                            Avenant {{convention.numero}} : {% for avenant_type in convention.avenant_types.all %} <span class="apilos-avenant_type">{{avenant_type}}</span> {% endfor %}
+                            Avenant {{ convention.numero }} : {% for avenant_type in convention.avenant_types.all %} <span class="apilos-avenant_type">{{ avenant_type }}</span> {% endfor %}
                         </li>
                     </ul>
                 {% endif %}
@@ -18,6 +18,3 @@
     </section>
     <hr>
 {% endif %}
-
-
-

@@ -1,6 +1,4 @@
-{% load static %}
-
-{% load custom_filters %}
+{% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-mb-2w">
@@ -61,17 +59,17 @@
                             <tbody>
                                 {% for form in formset %}
                                     {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
-                                        <tr id="{{form.uuid.id_for_label}}_group">
+                                        <tr id="{{ form.uuid.id_for_label }}_group">
                                             {% if convention|display_comments %}
-                                                <td id="{{form.uuid.id_for_label}}_div">
+                                                <td id="{{ form.uuid.id_for_label }}_div">
                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
                                                 </td>
                                             {% endif %}
                                             <td>
                                                 <input
                                                     type="hidden"
-                                                    id="{{form.uuid.id_for_label}}"
-                                                    name="{{form.uuid.html_name}}"
+                                                    id="{{ form.uuid.id_for_label }}"
+                                                    name="{{ form.uuid.html_name }}"
                                                     value="{{ form.uuid.value|default_if_none:'' }}">
                                                 {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                             </td>
@@ -108,8 +106,8 @@
 
 <input
     type="hidden"
-    id="{{form.uuid.id_for_label}}"
-    name="{{form.uuid.html_name}}"
+    id="{{ form.uuid.id_for_label }}"
+    name="{{ form.uuid.html_name }}"
     value="{{ form.uuid.value|default_if_none:'' }}">
 
 <div class="fr-grid-row fr-grid-row--gutters">
@@ -118,6 +116,6 @@
     </div>
 </div>
 
-<script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
 
 {% include "common/required_fields_info.html" %}

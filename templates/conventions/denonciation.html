@@ -1,23 +1,23 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Dénonciation - APiLos {% endblock%}
+{% block page_title %} Dénonciation - APiLos{% endblock %}
 
 {% load static %}
 
 {% block javascript_extras %}
     {% include "conventions/common/dropzone_js.html" %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     {% include "conventions/common/dropzone_css.html" %}
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
 
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
     </div>
     <div class="fr-container fr-py-5w">
         <form method="post" action="">
@@ -38,4 +38,4 @@
             </div>
         </form>
     </div>
-{% endblock %}
+{% endblock content %}

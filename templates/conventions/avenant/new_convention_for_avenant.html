@@ -1,13 +1,12 @@
-{% load static %}
-{% load custom_filters %}
+{% load custom_filters static %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 <div class="fr-col-12">
     <h2>Informations générales</h2>
     <p>Nous n'avons pas trouvé de convention correspondant à votre recherche.</p>
@@ -19,10 +18,10 @@
         <div class="fr-mb-3w">
             {% url 'users:search_bailleur' as search_bailleur_url %}
             {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                 document.addEventListener('DOMContentLoaded', function () {
                     VirtualSelect.init({
-                        ele: '#{{form.bailleur.id_for_label}}',
+                        ele: '#{{ form.bailleur.id_for_label }}',
                         multiple: false,
                         hideClearButton: true,
                         search: true,
@@ -39,10 +38,10 @@
             </script>
         </div>
         {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 mandatory_input=True %}
-        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
             document.addEventListener('DOMContentLoaded', function () {
                 VirtualSelect.init({
-                    ele: '#{{form.administration.id_for_label}}',
+                    ele: '#{{ form.administration.id_for_label }}',
                     multiple: false,
                     hideClearButton: true,
                     search: true,
@@ -51,7 +50,7 @@
                 });
             });
         </script>
-        {% include "common/form/input_text.html" with form_input=form.nom  mandatory_input=True %}
+        {% include "common/form/input_text.html" with form_input=form.nom mandatory_input=True %}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-lg-6 fr-mb-2w">
                 {% include "common/form/input_text.html" with form_input=form.code_postal mandatory_input=True %}

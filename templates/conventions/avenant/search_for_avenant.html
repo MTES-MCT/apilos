@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Recherche de convention - APiLos {% endblock%}
+{% block page_title %} Recherche de convention - APiLos{% endblock %}
 
 {% load static %}
 
@@ -50,13 +50,13 @@
                                     <div class="fr-col-1 fr-my-auto"><span class="fr-icon-success-line apilos-icon-success fr-icon--lg" aria-hidden="true"></span></div>
                                     <div class="fr-col-7 fr-pr-1w">
                                         <div class="fr-mb-1w fr-text--bold apilos-overflow-hidden">
-                                            {{convention.programme.nom}}
+                                            {{ convention.programme.nom }}
                                         </div>
                                         {% comment %} TODO: reverse relation convention lot {% endcomment %}
-                                        {{convention.programme.ville}} - <strong>{{ convention.lot.financement|default_if_none:'' }}</strong>
+                                        {{ convention.programme.ville }} - <strong>{{ convention.lot.financement|default_if_none:'' }}</strong>
                                     </div>
                                     <div class="fr-col-4 apilos-text--italic">
-                                        {{convention.numero}}
+                                        {{ convention.numero }}
                                     </div>
                                 </div>
                             </div>
@@ -70,7 +70,7 @@
                                     <div class="fr-col-12 fr-col-lg-6">
                                         <button class="fr-btn" disabled> Un avenant est déjà en cours.</button>
                                         <div>
-                                            <a class="fr-link fr-text--sm fr-mb-5w fr-mt-1w" href="{% url 'conventions:post_action' convention_uuid=convention.uuid  %}">Aller à la convention et ses avenants</a>
+                                            <a class="fr-link fr-text--sm fr-mb-5w fr-mt-1w" href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}">Aller à la convention et ses avenants</a>
                                         </div>
                                     </div>
                                 {% endif %}
@@ -85,4 +85,4 @@
 
         {% endif %}
     </div>
-{% endblock %}
+{% endblock content %}

@@ -11,7 +11,7 @@
             <div class="fr-col-11">
                 <div class="fr-grid-row">
                     <p class="fr-m-0">
-                        Avenant {{convention.numero|default_if_none:'x' }} {% if convention.televersement_convention_signee_le %}du <span class="fr-ml-1v"><strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong></span>{% endif %}
+                        Avenant {{ convention.numero|default_if_none:'x' }} {% if convention.televersement_convention_signee_le %}du <span class="fr-ml-1v"><strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong></span>{% endif %}
                     </p>
                 </div>
 
@@ -23,10 +23,10 @@
         {% else %}
             <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
                 <div>
-                    Avenant {{convention.numero|default_if_none:'x'}}
+                    Avenant {{ convention.numero|default_if_none:'x' }}
                     {% if convention.televersement_convention_signee_le %}
                         du <span class="fr-ml-1v">
-                            <strong>{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
+                            <strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
                         </span>
                     {% endif %}
                     <div>
@@ -34,7 +34,7 @@
                     </div>
                 </div>
 
-                <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html"  %}</strong></div>
+                <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html" %}</strong></div>
             </div>
         {% endif %}
     </div>

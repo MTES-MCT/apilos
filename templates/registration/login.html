@@ -2,7 +2,7 @@
 
 {% block header %}
     {% include "layout/header.html" with without_action_button=True %}
-{% endblock %}
+{% endblock header %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
         <div class="fr-container fr-pb-2w">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-lg-6 fr-col-offset-lg-1">
-                    {% if request.GET.instructeur  %}
+                    {% if request.GET.instructeur %}
                         {% include "layout/teasers/instructeur_presentation.html" %}
                     {% else %}
                         {% include "layout/teasers/bailleur_presentation.html" %}
@@ -50,4 +50,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

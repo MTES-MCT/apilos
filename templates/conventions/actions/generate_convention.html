@@ -1,10 +1,9 @@
-{% load custom_filters %}
-{% load display_filters %}
+{% load custom_filters display_filters %}
 
 {% if convention|display_convention_form_progressbar %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
         <p class="fr-alert__title">
-            Télécharger le projet {{convention|display_kind_with_preposition}} (en docx)
+            Télécharger le projet {{ convention|display_kind_with_preposition }} (en docx)
         </p>
         <div class="block--row-strech">
             {% if convention|display_deactivated_because_type1and2_config_is_needed %}
@@ -19,7 +18,7 @@
             {% else %}
                 <div class="block--row-strech-1 fr-mr-6w">
                     <p class="fr-mb-0">
-                        Attention, {{convention|display_kind_with_pronom}} n’est pas encore validé{{convention|display_gender_terminaison}}, ce document est fourni à titre indicatif.
+                        Attention, {{ convention|display_kind_with_pronom }} n’est pas encore validé{{ convention|display_gender_terminaison }}, ce document est fourni à titre indicatif.
                         <a class="fr-link" href="https://docs.apilos.beta.gouv.fr/bailleurs-guide/comment-remplir-les-champs/recapitulatif" target="_blank" rel="noopener">En savoir plus</a>
                     </p>
                 </div>

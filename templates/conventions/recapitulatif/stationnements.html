@@ -5,7 +5,7 @@
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">
                 <div class="fr-card__body fr-my-2w">
-                    <div class="block--row-strech" id="{{object_field}}_div">
+                    <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
                                 Stationnements
@@ -33,9 +33,9 @@
                                                 {% for stationnement in stationnements %}
                                                     {% with stationnement_uuid=stationnement.uuid|slugify %}
                                                         {% with main_object_field="type_stationnement__uuid__"|add:stationnement_uuid %}
-                                                            <tr id="{{main_object_field}}_group">
+                                                            <tr id="{{ main_object_field }}_group">
                                                                 {% if convention|display_comments %}
-                                                                    <td id="{{main_object_field}}_div">
+                                                                    <td id="{{ main_object_field }}_div">
                                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
                                                                     </td>
                                                                 {% endif %}

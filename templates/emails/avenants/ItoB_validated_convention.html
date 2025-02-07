@@ -1,6 +1,6 @@
 <h4>Bonjour</h4>
 
-<p><a href="{{convention_url}}">L'avenant à la convention {{convention}}</a> a été validé.</p>
+<p><a href="{{ convention_url }}">L'avenant à la convention {{ convention }}</a> a été validé.</p>
 
 <p>Vous pouvez dès maintenant : </p>
 
@@ -14,7 +14,7 @@
     <p>Vous pourrez ensuite transmettre les exemplaires signés à votre service instructeur à l‘adresse suivante :</p>
     <p style="margin-left:40px">
         {% autoescape on %}
-            {{ administration.adresse | linebreaksbr }}
+            {{ administration.adresse|linebreaksbr }}
         {% endautoescape %}<br>
         {{ administration.code_postal }} {{ administration.ville }}
     </p>

@@ -1,20 +1,18 @@
-{% load static %}
-
-{% load custom_filters %}
+{% load custom_filters static %}
 
 {% if object_field and convention|display_comments %}
-    <div id="{{object_field}}_comment_factory"></div>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        var [object_name, object_field, object_uuid] = '{{object_field}}'.split('__');
+    <div id="{{ object_field }}_comment_factory"></div>
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+        var [object_name, object_field, object_uuid] = '{{ object_field }}'.split('__');
         new CommentFactory({
-            container_id : '{{object_field}}_comment_factory',
-            convention_uuid : '{{convention.uuid}}',
+            container_id : '{{ object_field }}_comment_factory',
+            convention_uuid : '{{ convention.uuid }}',
             load_initial_status : {% if object_field in comments %}true{% else %}false{% endif %},
             object_name : object_name,
             object_field : object_field,
             object_uuid : object_uuid,
-            dialog_title : "{% if form_input.label %}{{form_input.label|safe}}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
-            empty_toggle_on : "{% if form_input.label %}{{form_input.id_for_label}}{% else %}{{ object_field }}{% endif %}_group",
+            dialog_title : "{% if form_input.label %}{{ form_input.label|safe }}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
+            empty_toggle_on : "{% if form_input.label %}{{ form_input.id_for_label }}{% else %}{{ object_field }}{% endif %}_group",
             {% if callback_click %}callback_click: "{{ callback_click }}", {% endif %}
             loading_img : '{% static "icons/loading.gif" %}'
         })

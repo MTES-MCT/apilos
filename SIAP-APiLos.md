@@ -1,6 +1,3 @@
-
-
-
 # Documentation des interactions SIAP APiLos
 
 [Tableau de bord des développements communs entre SIAP et APiLos](https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866)
@@ -281,4 +278,3 @@ Il est possible aussi de générer de token via un site tel que https://jwt.io/ 
 
 - [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
 - [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
-

@@ -1,32 +1,29 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Cadastre - APiLos{% endblock%}
+{% block page_title %}Cadastre - APiLos{% endblock %}
 
-{% load static %}
-
-{% load custom_filters %}
+{% load custom_filters static %}
 
 {% block javascript_extras %}
     {% include "conventions/common/dropzone_js.html" %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     {% include "conventions/common/dropzone_css.html" %}
-{% endblock %}
-
+{% endblock css_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input
                     type="hidden"
-                    id="{{form.uuid.id_for_label}}"
-                    name="{{form.uuid.html_name}}"
+                    id="{{ form.uuid.id_for_label }}"
+                    name="{{ form.uuid.html_name }}"
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
@@ -103,7 +100,7 @@
                                                 <label for="achevement_previsible">Mon bâtiment est en construction</label>
                                             </div>
                                         </div>
-                                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                             document.addEventListener('DOMContentLoaded', function () {
                                                 document.querySelectorAll(".achevement_choice_button").forEach(buttonChoice => {
                                                     var valueChoice = buttonChoice.value;
@@ -150,7 +147,7 @@
                             {% include "common/form/input_upload.html" with single_file=False form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid image_only=True file_list=convention.programme.reference_cadastrale|get_files_from_textfiles object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
                         </div>
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                            {% include "common/form/download_upload_form.html" with file_type='cadastre' upform=upform  what="références cadastrales" file_field_label='cadastre' %}
+                            {% include "common/form/download_upload_form.html" with file_type='cadastre' upform=upform what="références cadastrales" file_field_label='cadastre' %}
                             <hr class="fr-col-12 fr-my-3w">
                         </div>
 
@@ -187,17 +184,17 @@
                                             <tbody>
                                                 {% for form_cadastre in formset %}
                                                     {% with main_object_field="reference_cadastrale__uuid__"|add:form_cadastre.uuid.value %}
-                                                        <tr id="{{form_cadastre.uuid.id_for_label}}_group">
+                                                        <tr id="{{ form_cadastre.uuid.id_for_label }}_group">
                                                             {% if convention|display_comments %}
-                                                                <td id="{{form_cadastre.uuid.id_for_label}}_div">
+                                                                <td id="{{ form_cadastre.uuid.id_for_label }}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_cadastre.uuid %}
                                                                 </td>
                                                             {% endif %}
                                                             <td>
                                                                 <input
                                                                     type="hidden"
-                                                                    id="{{form_cadastre.uuid.id_for_label}}"
-                                                                    name="{{form_cadastre.uuid.html_name}}"
+                                                                    id="{{ form_cadastre.uuid.id_for_label }}"
+                                                                    name="{{ form_cadastre.uuid.html_name }}"
                                                                     value="{{ form_cadastre.uuid.value|default_if_none:'' }}">
                                                                 {% include "common/form/input_text.html" with form_input=form_cadastre.section parent_object_field=main_object_field editable=editable_after_upload %}
                                                             </td>
@@ -248,4 +245,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

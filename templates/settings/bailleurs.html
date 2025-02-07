@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Bailleur{{ paginated_items.paginator.count|pluralize }}  - APiLos{% endblock%}
+{% block page_title %}Bailleur{{ paginated_items.paginator.count|pluralize }}  - APiLos{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -14,26 +14,26 @@
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
 
                     <form class="fr-my-3w" method="get" action="" id="search_table">
-                        <input type="hidden" id="page" name="page" value="{{bailleurs.number}}">
-                        <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+                        <input type="hidden" id="page" name="page" value="{{ bailleurs.number }}">
+                        <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
 
                         {% if total_items > 3 %}
                             <div class="fr-search-bar" id="header-search" role="search">
                                 <label class="fr-label" for="search_input">
                                     Recherche
                                 </label>
-                                <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search_input}}">
+                                <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{ search_input }}">
                                 <button class="fr-btn" title="Rechercher">
                                     Rechercher
                                 </button>
                             </div>
                         {% endif %}
                     </form>
-                    {% include 'settings/bailleur_list_table.html' with count=paginated_items.paginator.count total_items=total_items items=paginated_items%}
+                    {% include 'settings/bailleur_list_table.html' with count=paginated_items.paginator.count total_items=total_items items=paginated_items %}
                     {% include 'common/table/pagination.html' with paginate_list=paginated_items %}
 
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

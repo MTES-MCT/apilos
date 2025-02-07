@@ -1,13 +1,11 @@
-{% load static %}
-
-{% load custom_filters %}
+{% load custom_filters static %}
 
 {% if convention|display_type1and2 %}
 
     {% with type1and2editable=convention|display_type1and2_editable %}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-pt-2w">
-                <div class="block--row-strech fr-my-2w" id="{{object_field}}_div">
+                <div class="block--row-strech fr-my-2w" id="{{ object_field }}_div">
                     <div class="block--row-strech-1">
                         <p class="fr-alert__title">
                             Convention de type I & II
@@ -24,7 +22,7 @@
                         <div class="fr-col-12 fr-col-lg-6">
                             {% include "common/form/input_select.html" with form_input=ConventionType1and2Form.type1and2 with_empty_option=True editable=type1and2editable %}
                         </div>
-                        <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2'%}hidden{% endif %}>
+                        <div class="fr-col-12" id="type2_options" {% if ConventionType1and2Form.type1and2.value != 'Type2' %}hidden{% endif %}>
                             <h4 class="fr-card__title">Options de la convention de type II</h4>
 
                             <p><em>Décochez pour rayer les mentions inutiles</em></p>
@@ -44,7 +42,7 @@
                         </button>
                     {% endif %}
                 </form>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">init_type_two_options()</script>
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">init_type_two_options()</script>
             </div>
         </div>
         <hr>

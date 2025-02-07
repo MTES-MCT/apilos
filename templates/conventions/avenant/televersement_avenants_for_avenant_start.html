@@ -1,4 +1,3 @@
-
 {% for ongoing_avenant in ongoing_avenants %}
     <div class="fr-col-12 block--row-strech">
         <div class="block--row-strech-1 fr-mr-6w">
@@ -15,7 +14,7 @@
         </div>
         <form method="post">
             {% csrf_token %}
-            <input type="hidden" value="{{avenant_uuid}}" name="uuid">
+            <input type="hidden" value="{{ avenant_uuid }}" name="uuid">
             <button class="fr-btn fr-btn--secondary fr-icon-upload-line fr-btn--icon-left">Déposer</button>
         </form>
     </div>

@@ -6,14 +6,14 @@
             {% if convention.is_denonciation %}
                 Déposer l'acte de dénonciation publié
             {% else %}
-                Déposer {{convention|display_kind_with_pronom}} signé{{convention|display_gender_terminaison}}
+                Déposer {{ convention|display_kind_with_pronom }} signé{{ convention|display_gender_terminaison }}
             {% endif %}
         </p>
         <p class="fr-mb-2w">
             {% if convention.is_denonciation %}
                 Ici, vous pouvez déposer l'acte de dénonciation de votre convention publié.
             {% else %}
-                votre {{convention|display_kind}} porte le numéro <strong>{{ convention.numero|default_if_none:'-' }}</strong><br/>
+                votre {{ convention|display_kind }} porte le numéro <strong>{{ convention.numero|default_if_none:'-' }}</strong><br/>
                 Dernière étape : déposez la version signée pour la validation finale.
             {% endif %}
         </p>

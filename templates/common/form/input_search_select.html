@@ -1,6 +1,6 @@
-<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     {% if form_input.label %}
-        <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
+        <label class="fr-label {{ label_class }}" for="{{ form_input.id_for_label }}">
             {{ form_input.label }}
             {% include "common/form/required_field.html" with form_input=form_input %}
             {% include "common/help_field.html" with form_input=form_input %}
@@ -23,9 +23,9 @@
         </select>
         {% include "common/utils/comments_field.html" %}
     </div>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         VirtualSelect.init({
-            ele: '#{{form_input.id_for_label}}',
+            ele: '#{{ form_input.id_for_label }}',
             search: true,
             onServerSearch: function (search, select) {
                 fetch('{{ url }}?q=' + search)
