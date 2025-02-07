@@ -1,7 +1,7 @@
 <button class="fr-nav__btn orange-background" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
     {% for habilitation in request.session.habilitations %}
         {% if habilitation.id == request.session.habilitation_id %}
-            {{ habilitation.groupe.libelleRole }}<br>
+            {% if habilitation.entete %}{{ habilitation.entete}}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}<br>
             {% if habilitation.sousTitre1 %}
                 {{ habilitation.sousTitre1 }}<br>
             {% endif %}
@@ -17,7 +17,7 @@
             {% for habilitation in request.session.habilitations %}
                 {% if habilitation.id != request.session.habilitation_id %}
                     <li>
-                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{{ habilitation.groupe.libelleRole }}</strong><br>
+                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{% if habilitation.entete %}{{ habilitation.entete}}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}</strong><br>
                             {% if habilitation.sousTitre1 %}
                                 {{ habilitation.sousTitre1 }}<br>
                             {% endif %}
