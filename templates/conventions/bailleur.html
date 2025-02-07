@@ -2,20 +2,20 @@
 
 {% load static %}
 
-{% block page_title %}Bailleur - APiLos{% endblock%}
+{% block page_title %}Bailleur - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
-    {% include "conventions/common/form_header.html"%}
-    {% include "common/step_progressbar.html"%}
+    {% include "conventions/common/form_header.html" %}
+    {% include "common/step_progressbar.html" %}
     <div class="fr-container">
         <form method="post" action="">
             {% csrf_token %}
@@ -25,4 +25,4 @@
             {% include "conventions/common/form_footer_button.html" %}
         </form>
     </div>
-{% endblock %}
+{% endblock content %}

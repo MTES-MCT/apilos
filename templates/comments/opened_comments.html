@@ -3,10 +3,10 @@
 {% if convention|display_comments_summary %}
     {% if opened_comments.count %}
         <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
-            <div class="block--row-strech" id="{{object_field}}_div">
+            <div class="block--row-strech" id="{{ object_field }}_div">
                 <div class="block--row-strech-1">
                     <p class="fr-alert__title">
-                        {{opened_comments.count}} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
+                        {{ opened_comments.count }} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
                     </p>
                 </div>
                 <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments">
@@ -31,10 +31,10 @@
                                     {% for opened_comment in opened_comments %}
                                         <tr>
                                             <td>
-                                                {{opened_comment.object_detail}}
+                                                {{ opened_comment.object_detail }}
                                             </td>
                                             <td>
-                                                {{opened_comment.message}}
+                                                {{ opened_comment.message }}
                                             </td>
                                             <td>
                                                 {{ opened_comment.cree_le|date:"d/m/Y" }} {{ opened_comment.cree_le|time:"H:i" }}

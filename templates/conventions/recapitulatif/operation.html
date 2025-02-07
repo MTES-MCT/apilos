@@ -2,10 +2,10 @@
 
 {% if convention_form_steps|is_a_step:'ConventionProgrammeView' or convention_form_steps|is_a_step:'AvenantProgrammeView' %}
     <div class="fr-grid-row fr-grid-row--gutters fr-mt-1w">
-        <div class="fr-col-12 {%  if not convention.is_avenant %}fr-col-lg-6{% endif %}">
+        <div class="fr-col-12 {% if not convention.is_avenant %}fr-col-lg-6{% endif %}">
             <div class="fr-card fr-card--no-arrow">
                 <div class="fr-card__body fr-my-2w">
-                    <div class="block--row-strech" id="{{object_field}}_div">
+                    <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
                                 Opération
@@ -18,7 +18,7 @@
                         {% if request.user.is_instructeur %}
                             <p class="fr-mt-1w fr-mb-0">
                                 {% if programme.numero_operation %}
-                                    <strong>Numero d'opération : {{programme.numero_operation}}</strong>
+                                    <strong>Numero d'opération : {{ programme.numero_operation }}</strong>
                                 {% else %}
                                     <em>Numero d'opération : non renseigné</em>
                                 {% endif %}
@@ -51,17 +51,17 @@
                 </div>
             </div>
         </div>
-        {%  if not convention.is_avenant %}
+        {% if not convention.is_avenant %}
             <div class="fr-col-12 fr-col-lg-6">
                 <div class="fr-card fr-card--no-arrow">
                     <div class="fr-card__body fr-my-2w">
-                        <div class="block--row-strech" id="{{object_field}}_div">
+                        <div class="block--row-strech" id="{{ object_field }}_div">
                             <div class="block--row-strech-1">
                                 <h4 class="fr-card__title">
                                     Opération - informations cadastrales
                                 </h4>
                             </div>
-                            {% if convention|display_convention_form_progressbar  or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
+                            {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
                                 <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
                                     <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
                                 </a>

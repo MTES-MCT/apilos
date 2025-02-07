@@ -1,12 +1,13 @@
 {% extends "layout/base.html" %}
 {% load display_filters %}
 {% block page_title %}Finalisation - APiLos{% endblock %}
-{% block content %}
-    {% include "conventions/common/form_header.html"%}
-    <div class="fr-container fr-my-5w">
-        <h1>Finaliser {{convention|display_kind_with_pronom}}</h1>
 
-        {% include "../common/stepper.html"%}
+{% block content %}
+    {% include "conventions/common/form_header.html" %}
+    <div class="fr-container fr-my-5w">
+        <h1>Finaliser {{ convention|display_kind_with_pronom }}</h1>
+
+        {% include "../common/stepper.html" %}
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12">
                 {% if convention.is_avenant %}
@@ -15,13 +16,13 @@
                         <div class="fr-col-md-12">
                             {% if convention.numero and convention.numero != numero_default %}
                                 <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
-                                <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{numero_default}}</p>
+                                <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{ numero_default }}</p>
                             {% else %}
                                 {% if convention.numero %}
                                     <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
                                     <p>Cette déclaration est cohérente avec l'historique connu dans APiLos.</p>
                                 {% else %}
-                                    <p>L'avenant aura le numéro {{numero_default}}.</p>
+                                    <p>L'avenant aura le numéro {{ numero_default }}.</p>
                                 {% endif %}
                             {% endif %}
                             <p class="fr-mb-0">Vous pouvez le valider avec ce numéro ou modifier le numéro ci-dessous avant de valider.</p>
@@ -30,9 +31,9 @@
                                    id="numero"
                                    name="numero"
                                    {% if convention.numero %}
-                                       value="{{convention.numero}}"
+                                       value="{{ convention.numero }}"
                                    {% else %}
-                                       value="{{numero_default}}"
+                                       value="{{ numero_default }}"
                                    {% endif %}
                             >
                         </div>
@@ -46,7 +47,7 @@
                     <form method="post" action="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}">
                         {% csrf_token %}
                         <div class="fr-col-6">
-                            {% include "common/form/input_text.html" with form_input=form.numero editable=True object_field="convention_numero__"|add:form.uuid.value%}
+                            {% include "common/form/input_text.html" with form_input=form.numero editable=True object_field="convention_numero__"|add:form.uuid.value %}
                         </div>
                         <div class="apilos-align-right fr-mt-3w">
                             <button class="fr-btn">
@@ -58,4 +59,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

@@ -6,8 +6,8 @@
                     {% for menu in request.session.menu %}
                         {% if menu.menuItems %}
                             <li class="fr-nav__item">
-                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{menu.url}}" {% if menu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %} >{{ menu.libelle }}</button>
-                                <div class="fr-collapse fr-menu" id="menu-{{menu.url}}">
+                                <button class="fr-nav__btn" aria-expanded="false" aria-controls="menu-{{ menu.url }}" {% if menu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %} >{{ menu.libelle }}</button>
+                                <div class="fr-collapse fr-menu" id="menu-{{ menu.url }}">
                                     <ul class="fr-menu__list">
                                         {% for submenu in menu.menuItems %}
                                             <li>
@@ -18,7 +18,7 @@
                                                     {% if submenu.openNewWindow %}target="_blank" rel="noreferrer"{% else %}target="_self"{% endif %}
                                                     {% if submenu.url|is_conventionnement_menu_url %}aria-current="page"{% endif %}
                                                 >
-                                                    {{submenu.libelle}}
+                                                    {{ submenu.libelle }}
                                                 </a>
                                             </li>
                                         {% endfor %}
@@ -27,7 +27,7 @@
                             </li>
                         {% else %}
                             <li class="fr-nav__item">
-                                <a class="fr-nav__link" href="{{ request|get_menu_url:menu.url }}" target="_self">{{menu.libelle}}</a>
+                                <a class="fr-nav__link" href="{{ request|get_menu_url:menu.url }}" target="_self">{{ menu.libelle }}</a>
                             </li>
                         {% endif %}
                     {% endfor %}

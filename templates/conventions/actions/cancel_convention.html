@@ -1,9 +1,8 @@
-{% load custom_filters %}
-{% load display_filters %}
+{% load custom_filters display_filters %}
 
 {% if convention|display_cancel_convention %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
-        <p class="fr-alert__title">Annuler {{convention|display_kind_with_pronom}}</p>
+        <p class="fr-alert__title">Annuler {{ convention|display_kind_with_pronom }}</p>
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
@@ -21,7 +20,7 @@
             <form method="post" data-turbo="false" action="#top">
                 {% csrf_token %}
                 <button class="fr-btn apilos-btn--secondary--red fr-my-1w fr-icon-close-circle-line fr-btn--icon-left" name='cancel_convention' value=1>
-                    Annuler {{convention|display_kind_with_pronom}}
+                    Annuler {{ convention|display_kind_with_pronom }}
                 </button>
             </form>
         </div>
@@ -30,25 +29,25 @@
 {% endif %}
 {% if convention|display_reactive_convention %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
-        <p class="fr-alert__title">Ré-activer {{convention|display_kind_with_pronom}}</p>
+        <p class="fr-alert__title">Ré-activer {{ convention|display_kind_with_pronom }}</p>
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
                 <p class="fr-mb-0">
-                    {{convention|display_kind_with_pronom|capfirst}} est annulé{{convention|display_gender_terminaison}} mais {{convention|display_personnal_pronom}} peut-être réactivé{{convention|display_gender_terminaison}}. Son statut passera à nouveau en {{convention|display_kind|capfirst}} en Projet.
+                    {{ convention|display_kind_with_pronom|capfirst }} est annulé{{ convention|display_gender_terminaison }} mais {{ convention|display_personnal_pronom }} peut-être réactivé{{ convention|display_gender_terminaison }}. Son statut passera à nouveau en {{ convention|display_kind|capfirst }} en Projet.
                 </p>
             </div>
             {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant %}
                 <form method="post" data-turbo="false" action="#top">
                     {% csrf_token %}
                     <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-close-circle-line fr-btn--icon-left" name='reactive_convention' value=1>
-                        Réactiver {{convention|display_kind_with_pronom}}
+                        Réactiver {{ convention|display_kind_with_pronom }}
                     </button>
                 </form>
             {% elif convention.is_avenant and not convention.parent|display_create_avenant %}
                 <button class="fr-btn fr-my-1w fr-icon-close-circle-line fr-btn--icon-left" disabled>
                     Un avenant est déjà en cours.
                 </button>
-            {% endif%}
+            {% endif %}
         </div>
     </div>
     <hr>

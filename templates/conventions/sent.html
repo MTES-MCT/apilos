@@ -1,16 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Envoi - APiLos {% endblock%}
+{% block page_title %} Envoi - APiLos{% endblock %}
 
 {% load static %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
+        {% include "conventions/common/form_header.html" %}
         {% include "common/nav_bar.html" with nav_bar_step="sent" %}
         <div class="fr-container fr-py-5w">
             {% include "conventions/actions/upload_signed_document.html" %}
             {% include "conventions/actions/back_to_instruction.html" %}
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

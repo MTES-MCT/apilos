@@ -1,15 +1,15 @@
 {% load static %}
 
 <th scope="col">
-    <div id="{{object_name}}_comment_factory"></div>
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+    <div id="{{ object_name }}_comment_factory"></div>
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         new CommentFactory({
-            container_id : '{{object_name}}_comment_factory',
-            convention_uuid : '{{convention.uuid}}',
+            container_id : '{{ object_name }}_comment_factory',
+            convention_uuid : '{{ convention.uuid }}',
             load_initial_status : true,
-            object_name : '{{object_name}}',
+            object_name : '{{ object_name }}',
             object_field : 'all',
-            dialog_title : "{% if form_input.label %}{{form_input.label|safe}}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
+            dialog_title : "{% if form_input.label %}{{ form_input.label|safe }}{% elif label %}{{ label }}{% else %}Commentaires{% endif %}",
             {% if callback_click %}callback_click: "{{ callback_click }}", {% endif %}
             loading_img : '{% static "icons/loading.gif" %}'
         })

@@ -1,28 +1,28 @@
 {% extends "conventions/_partial/step_section.html" %}
 
-{% block title %}Entreprise bailleur{% endblock title %}
+{% block title %}Entreprise bailleur{% endblock %}
 
 {% block content %}
     {% with bailleur=convention.bailleur %}
         {% with form=extra_forms.bailleur_form %}
             <div class="fr-col-12 fr-text--lg fr-mb-0">
                 <strong>
-                    {{bailleur.nom}}
+                    {{ bailleur.nom }}
                 </strong>
             </div>
             <div class="fr-col-12 fr-col-lg-6">
                 {% if bailleur.adresse %}
-                    <div>{{bailleur.adresse}}</div>
+                    <div>{{ bailleur.adresse }}</div>
                 {% endif %}
                 <div>
-                    {% if bailleur.code_postal %}{{bailleur.code_postal}}{% endif %}&nbsp;
-                    {% if bailleur.ville %}{{bailleur.ville}}{% endif %}
+                    {% if bailleur.code_postal %}{{ bailleur.code_postal }}{% endif %}&nbsp;
+                    {% if bailleur.ville %}{{ bailleur.ville }}{% endif %}
                 </div>
             </div>
             <div class="fr-col-12 fr-col-lg-6">
-                <div class="fr-col-12">{% if bailleur.nature_bailleur == NATURE_BAILLEUR.PRIVES %}Email{% else %}SIRET{% endif %} : {{bailleur.siret}}</div>
+                <div class="fr-col-12">{% if bailleur.nature_bailleur == NATURE_BAILLEUR.PRIVES %}Email{% else %}SIRET{% endif %} : {{ bailleur.siret }}</div>
                 {% if bailleur.capital_social %}
-                    <div class="fr-col-12">Capital social : {{bailleur.capital_social}}</div>
+                    <div class="fr-col-12">Capital social : {{ bailleur.capital_social }}</div>
                 {% endif %}
             </div>
             <hr class="fr-col-12 fr-mt-3w">
@@ -49,7 +49,7 @@
                 </div>
             {% endif %}
             <div class="fr-col-12 fr-mb-0 fr-text--sm">
-                <em>Vous pouvez{% if form.bailleur.field.choices%} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
+                <em>Vous pouvez{% if form.bailleur.field.choices %} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
                     <a
                         href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
                         target="_blank"
