@@ -62,8 +62,8 @@ def logged_in_user(client, convention):
         ),
         (
             ConventionStatut.A_SIGNER.label,
-            "00000000-0000-0000-0000-000000000000.pdf",
-            b"Test PDF en instruction",
+            "test-signed-file.pdf",
+            b"Test PDF signes",
         ),
     ],
 )
@@ -93,6 +93,32 @@ def test_display_pdf(
     assert content == expected_content
 
     default_storage.delete(f"{convention_path}/{convention.nom_fichier_signe}")
+    default_storage.delete(f"{convention_path}/00000000-0000-0000-000000000000.pdf")
+
+
+@pytest.mark.django_db
+def test_display_pdf_a_signer(client, convention, logged_in_user):
+    # Case where nom_fichier_signe is not defined
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.save()
+
+    convention_path = "conventions/00000000-0000-0000-0000-000000000000/convention_docs"
+    default_storage.save(
+        f"{convention_path}/00000000-0000-0000-0000-000000000000.pdf",
+        io.BytesIO(b"Test PDF en instruction"),
+    )
+
+    url = reverse("conventions:display_pdf", args=[convention.uuid])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    assert (
+        'inline; filename="00000000-0000-0000-0000-000000000000.pdf"'
+        in response["Content-Disposition"]
+    )
+    content = b"".join(response.streaming_content)
+    assert content == b"Test PDF en instruction"
+
     default_storage.delete(f"{convention_path}/00000000-0000-0000-000000000000.pdf")
 
 

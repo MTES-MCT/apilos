@@ -554,6 +554,18 @@ class ConventionPreviewUploadSignedView(ConventionBaseUploadSignedView):
     template_path: str = "conventions/upload_signed/preview_document.html"
 
 
+class ConventionCancelUploadSignedView(BaseConventionView):
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def post(self, request, convention_uuid):
+        fichier_signe_path = f"conventions/{self.convention.uuid}/convention_docs/{self.convention.nom_fichier_signe}"
+        if default_storage.exists(fichier_signe_path):
+            default_storage.delete(fichier_signe_path)
+        self.convention.nom_fichier_signe = None
+        self.convention.save()
+        return HttpResponseRedirect(reverse("conventions:sent", args=[convention_uuid]))
+
+
 class ConventionDateUploadSignedView(ConventionBaseUploadSignedView):
     step_number: int = 2
     template_path: str = "conventions/upload_signed/signature_date.html"
@@ -678,6 +690,7 @@ def display_pdf(request, convention_uuid):
     if (
         convention.statut
         in [
+            ConventionStatut.A_SIGNER.label,
             ConventionStatut.SIGNEE.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,

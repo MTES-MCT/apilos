@@ -24,9 +24,12 @@
 
             <ul class="fr-mb-7w fr-btns-group fr-btns-group--inline-md fr-btns-group--right">
                 <li>
-                    <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}">
-                        Annuler
-                    </a>
+                    <form action="{% url 'conventions:cancel_upload_signed' convention_uuid=convention.uuid %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="fr-btn fr-btn--secondary">
+                            Annuler
+                        </button>
+                    </form>
                 </li>
                 <li>
                     <a class="fr-btn" href="{% url 'conventions:date_upload_signed' convention_uuid=convention.uuid %}">

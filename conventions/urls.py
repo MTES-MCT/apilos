@@ -277,6 +277,11 @@ urlpatterns = [
         name="preview_upload_signed",
     ),
     path(
+        "upload_signed/cancel/<convention_uuid>",
+        views.ConventionCancelUploadSignedView.as_view(),
+        name="cancel_upload_signed",
+    ),
+    path(
         "upload_signed/date/<convention_uuid>",
         views.ConventionDateUploadSignedView.as_view(),
         name="date_upload_signed",

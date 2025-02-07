@@ -22,9 +22,9 @@
 
                 <ul class="fr-my-7w fr-btns-group fr-btns-group--inline-md fr-btns-group--right">
                     <li>
-                        <a class="fr-btn fr-btn--secondary" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}">
+                        <button type="submit" formaction="{% url 'conventions:cancel_upload_signed' convention_uuid=convention.uuid %}" class="fr-btn fr-btn--secondary">
                             Annuler
-                        </a>
+                        </button>
                     </li>
                     <li>
                         <button type="submit" class="fr-btn">
