@@ -247,8 +247,8 @@ class ConventionFormSteps:
             if convention.is_avenant():
                 varying_steps = (
                     [avenant_foyer_residence_logements_step, avenant_collectif_step]
-                    if convention.programme.is_foyer()
-                    or convention.programme.is_residence()
+                    if convention.programme.is_foyer
+                    or convention.programme.is_residence
                     else [
                         avenant_logements_step,
                         avenant_annexes_step,
@@ -263,9 +263,9 @@ class ConventionFormSteps:
                     avenant_commentaires_step,
                 ]
 
-            elif convention.programme.is_foyer():
+            elif convention.programme.is_foyer:
                 self.steps = foyer_steps
-            elif convention.programme.is_residence():
+            elif convention.programme.is_residence:
                 self.steps = residence_steps
             else:
                 self.steps = hlm_sem_type_steps

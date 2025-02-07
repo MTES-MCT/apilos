@@ -270,7 +270,7 @@ class Convention(models.Model):
 
     @property
     def attribution_type(self):
-        if not self.programme.is_foyer():
+        if not self.programme.is_foyer:
             return None
         if (
             self.attribution_agees_autonomie

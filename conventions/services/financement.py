@@ -158,10 +158,7 @@ class ConventionFinancementService(ConventionService):
                 self.redirect_recap = self.request.POST.get("redirect_to_recap", False)
 
     def _save_convention_financement(self):
-        if (
-            self.convention.programme.is_foyer()
-            or self.convention.programme.is_residence()
-        ):
+        if self.convention.programme.is_foyer or self.convention.programme.is_residence:
             self.convention.date_fin_conventionnement = datetime.date(
                 self.form.cleaned_data["annee_fin_conventionnement"], 12, 31
             )

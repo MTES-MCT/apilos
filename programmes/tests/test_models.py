@@ -259,7 +259,7 @@ class ProgrammeModelsTest(TestCase):
             NatureLogement.RESISDENCESOCIALE,
         ]:
             programme.nature_logement = nature_logement
-            self.assertTrue(programme.is_residence())
+            self.assertTrue(programme.is_residence)
         for nature_logement in [
             NatureLogement.LOGEMENTSORDINAIRES,
             NatureLogement.AUTRE,
@@ -267,7 +267,7 @@ class ProgrammeModelsTest(TestCase):
             NatureLogement.RHVS,
         ]:
             programme.nature_logement = nature_logement
-            self.assertFalse(programme.is_residence())
+            self.assertFalse(programme.is_residence)
 
     def test_code_insee(self):
         bailleur = Bailleur.objects.all().order_by("uuid").first()

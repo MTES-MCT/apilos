@@ -86,7 +86,7 @@ def task_send_email_to_bailleur(
 
     # Case 1 : need a zip with many files
     if not convention.is_avenant() and (
-        convention.programme.is_foyer() or convention.programme.is_residence()
+        convention.programme.is_foyer or convention.programme.is_residence
     ):
         local_pdf_path = local_path / f"convention_{convention.uuid}.pdf"
         local_zip_path = local_path / f"convention_{convention.uuid}.zip"

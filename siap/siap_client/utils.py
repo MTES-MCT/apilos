@@ -27,6 +27,40 @@ logger = logging.getLogger(__name__)
 ADDRESS_PC_CITY = "adresseLigne6"
 ADDRESS_LINE_RAW = "adresseLigne4"
 ADDRESS_CLEANED = "adresseLigne"
+MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT = {
+    # "PSLA": "PSLA",
+    # "DEMOLITION": "DEMOLITION",
+    "CADA": "HEB",
+    "CHRS": "HEB",
+    "CPH": "HEB",
+    "DEROG3": "LOO",
+    "DEROG3CCH": "LOO",
+    "DEROG3DEROG5": "LOO",
+    "EHPAD": "ALF",
+    "FJT": "RES",
+    "FOYERAM": "ALF",
+    "FOYERHEBER": "ALF",
+    "FOYEROCC": "ALF",
+    "FOYERPAPH": "ALF",
+    "FOYERVIE": "ALF",
+    "LITAM": "HEB",
+    "LITHSS": "HEB",
+    "LLSFAMDEROG3": "LOO",
+    "LLSFAMMIXTE": "LOO",
+    "LLSFAMORDIN": "LOO",
+    "MARPA": "ALF",
+    "PDF": "PEF",
+    "PUV": "ALF",
+    "RAC": "REA",
+    "RAU": "ALF",
+    "RENO_LF": "ALF",  # "PEF","REA","RES",
+    "RENO_LLS": "LOO",  # "REU",
+    "RESSOCJA": "RES",
+    "RHVSINTGEN": "RHVS",
+    "RHVSMOB": "RHVS",
+    "RSG": "RES",
+    "RU": "REU",
+}
 
 
 def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
@@ -216,7 +250,6 @@ def _get_address_from_locdata(loc_data: dict) -> tuple[str]:
 def get_or_create_programme(
     programme_from_siap: dict, bailleur: Bailleur, administration: Administration
 ) -> Programme:
-    nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     if (
         "sansTravaux" in programme_from_siap["donneesOperation"]
         and programme_from_siap["donneesOperation"]["sansTravaux"]
@@ -226,9 +259,8 @@ def get_or_create_programme(
         type_operation = _type_operation(
             programme_from_siap["donneesOperation"]["sousNatureOperation"]
         )
-        nature_logement = _nature_logement(
-            programme_from_siap["donneesOperation"]["natureLogement"]
-        )
+    nature_logement = _get_nature_logement(programme_from_siap["donneesOperation"])
+
     (adresse, code_postal, ville) = _get_address_from_locdata(
         programme_from_siap["donneesLocalisation"]
     )
@@ -398,7 +430,23 @@ def _type_operation(type_operation_from_siap: str) -> TypeOperation:
     return TypeOperation.SANSOBJET
 
 
-def _nature_logement(nature_logement_from_siap: str) -> TypeOperation:
+def _get_nature_logement(donnees_operation: dict) -> NatureLogement:
+    nature_logement = ""
+    if "natureLogement" in donnees_operation and donnees_operation["natureLogement"]:
+        nature_logement = donnees_operation["natureLogement"]
+    elif (
+        "natureOperation" in donnees_operation
+        and donnees_operation["natureOperation"]
+        in MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT.keys()
+    ):
+        nature_logement = MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT[
+            donnees_operation["natureOperation"]
+        ]
+
+    return _nature_logement(nature_logement)
+
+
+def _nature_logement(nature_logement_from_siap: str) -> NatureLogement:
     if nature_logement_from_siap in ["ALF", NatureLogement.AUTRE]:
         nature_logement = NatureLogement.AUTRE
     elif nature_logement_from_siap in ["HEB", NatureLogement.HEBERGEMENT]:
