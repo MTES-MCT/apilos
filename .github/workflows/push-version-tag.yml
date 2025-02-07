@@ -1,4 +1,4 @@
-name: "Test and deploy to staging"
+name: "Test and deploy to production environments"
 on:
   push:
     tags:
