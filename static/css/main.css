@@ -1120,3 +1120,7 @@ table .apilos-badge {
 .fr-toggle label.apilos-label-larger {
   font-size: 1.2rem;
 }
+
+.fr-toggle.apilos-toggle-block {
+  display: block;
+}

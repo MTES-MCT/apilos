@@ -8,7 +8,7 @@
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération" checked=checked id="operation" avenant_type="programme" %}
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération" title_unchecked="Mettre à jour les informations de l'opération" checked=checked id="operation" avenant_type="programme" %}
                             </h4>
                         </div>
                         {% if checked %}

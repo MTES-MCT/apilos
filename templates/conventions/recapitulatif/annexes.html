@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention_form_steps|is_a_step:'ConventionAnnexesView' or convention_form_steps|is_a_step:'AvenantAnnexesView' %}
-
+    {% if checked %}
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">
@@ -12,7 +12,7 @@
                                 Annexes
                             </h4>
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                            {% include "conventions/actions/goto.html" %}
                     </div>
                     {% if annexes %}
                         <div class="fr-table table--limited-height">
@@ -151,11 +151,9 @@
                             {% endif %}
                         </div>
                     </div>
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
-                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 {% endif %}
