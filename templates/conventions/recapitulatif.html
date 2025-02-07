@@ -85,7 +85,9 @@
                     {% endif %}
 
                     {% if 'duree' in avenant_list %}
-                        {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' %}
+                        {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=False %}
                     {% endif %}
                     {% if 'champ_libre' in avenant_list %}
                         {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' %}
@@ -95,22 +97,6 @@
                     {% endif %}
                     <hr class="fr-mt-3w">
                     {% if convention|display_convention_form_progressbar %}
-                        {% if 'bailleur' not in avenant_list %}
-                            {% include "conventions/avenant/bailleur_update_start.html" with avenant_uuid=convention.uuid %}
-                            <hr>
-                        {% endif %}
-                        {% if 'programme' not in avenant_list %}
-                            {% include "conventions/avenant/programme_update_start.html" with avenant_uuid=convention.uuid %}
-                            <hr>
-                        {% endif %}
-                        {% if 'logements' not in avenant_list %}
-                            {% include "conventions/avenant/logements_update_start.html" with avenant_uuid=convention.uuid %}
-                            <hr>
-                        {% endif %}
-                        {% if 'duree' not in avenant_list %}
-                            {% include "conventions/avenant/financement_update_start.html" with avenant_uuid=convention.uuid %}
-                            <hr>
-                        {% endif %}
                         {% if 'champ_libre' not in avenant_list %}
                             {% include "conventions/avenant/champ_libre_start.html" with avenant_uuid=convention.uuid %}
                             <hr>

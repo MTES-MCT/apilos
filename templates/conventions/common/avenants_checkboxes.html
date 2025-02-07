@@ -1,4 +1,4 @@
-<div class="fr-toggle">
+<div class="fr-toggle apilos-toggle-block">
     <form action="{% if checked %}{% url 'conventions:remove_from_avenant' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
         {% csrf_token %}
         <input
@@ -6,7 +6,7 @@
             value="{{avenant_type}}" hidden>
             <input type="hidden" value="{{convention.uuid}}" name="uuid">
         <input type="checkbox" class="fr-toggle__input" {% if checked %}checked="checked"{% endif %} aria-describedby="toggle-{{id}}-messages" id="toggle-{{id}}">
-    <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}">{{title}}</label>
+    <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}">{% if checked %}{{title}}{% else %}{{title_unchecked}}{% endif %}</label>
     </form>
     <div class="fr-messages-group" id="toggle-{{id}}-messages" aria-live="polite">
     </div>
