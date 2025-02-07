@@ -269,16 +269,16 @@ class Convention(models.Model):
         return self.lots.first()
 
     @property
-    def is_pls_financement_type(self):
-        return self.lot.financement in [
-            Financement.PLS,
-            Financement.PLS_DOM,
-            Financement.PALUCOM,
-            Financement.PALULOS,
-            Financement.PALU_AV_21,
-            Financement.PALU_COM,
-            Financement.PALU_RE,
-        ]
+    def is_pls_financement_type(self) -> bool:
+        if lot := self.lot:
+            return lot.financement in [
+                Financement.PLS,
+                Financement.PLS_DOM,
+                Financement.PLS_AV_21,
+                Financement.PLS_CD,
+                Financement.PLS_AV_21_CD,
+            ]
+        return False
 
     @property
     def attribution_type(self):
