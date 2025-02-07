@@ -34,6 +34,7 @@ class ConventionCadastreService(ConventionService):
                     "numero": referencecadastrale.numero,
                     "lieudit": referencecadastrale.lieudit,
                     "surface": referencecadastrale.surface,
+                    "autre": referencecadastrale.autre,
                 }
             )
         self.formset = ReferenceCadastraleFormSet(initial=initial)
@@ -211,6 +212,9 @@ class ConventionCadastreService(ConventionService):
                     f"form-{idx}-surface": utils.get_form_value(
                         form_reference_cadastrale, reference_cadastrale, "surface"
                     ),
+                    f"form-{idx}-autre": utils.get_form_value(
+                        form_reference_cadastrale, reference_cadastrale, "autre"
+                    ),
                 }
             else:
                 initformset = {
@@ -219,6 +223,7 @@ class ConventionCadastreService(ConventionService):
                     f"form-{idx}-numero": form_reference_cadastrale["numero"].value(),
                     f"form-{idx}-lieudit": form_reference_cadastrale["lieudit"].value(),
                     f"form-{idx}-surface": form_reference_cadastrale["surface"].value(),
+                    f"form-{idx}-autre": form_reference_cadastrale["autre"].value(),
                 }
         self.formset = ReferenceCadastraleFormSet(initformset)
         formset_is_valid = self.formset.is_valid()
@@ -280,21 +285,22 @@ class ConventionCadastreService(ConventionService):
         self.convention.programme.referencecadastrales.exclude(
             uuid__in=obj_uuids
         ).delete()
+
         for form in self.formset:
+            attrs = {
+                k: form.cleaned_data[k]
+                for k in ("section", "numero", "lieudit", "surface", "autre")
+            }
+
             if form.cleaned_data["uuid"]:
                 reference_cadastrale = ReferenceCadastrale.objects.get(
                     uuid=form.cleaned_data["uuid"]
                 )
-                reference_cadastrale.section = form.cleaned_data["section"]
-                reference_cadastrale.numero = form.cleaned_data["numero"]
-                reference_cadastrale.lieudit = form.cleaned_data["lieudit"]
-                reference_cadastrale.surface = form.cleaned_data["surface"]
+                for k, v in attrs.items():
+                    setattr(reference_cadastrale, k, v)
             else:
                 reference_cadastrale = ReferenceCadastrale.objects.create(
-                    programme=self.convention.programme,
-                    section=form.cleaned_data["section"],
-                    numero=form.cleaned_data["numero"],
-                    lieudit=form.cleaned_data["lieudit"],
-                    surface=form.cleaned_data["surface"],
+                    programme=self.convention.programme, **attrs
                 )
+
             reference_cadastrale.save()

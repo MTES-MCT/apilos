@@ -377,17 +377,19 @@ class ReferenceCadastrale(models.Model):
         related_name="referencecadastrales",
     )
     section = models.CharField(max_length=255, blank=True)
-    numero = models.IntegerField(null=True, blank=True)
+    numero = models.CharField(max_length=255, blank=True)
     lieudit = models.CharField(max_length=255, blank=True)
     surface = models.CharField(max_length=255, blank=True)
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
+    autre = models.CharField(max_length=255, blank=True)
 
     import_mapping = {
         "Section": "section",
         "Numéro": "numero",
         "Lieudit": "lieudit",
         "Surface": "surface",
+        "Autre": "autre",
     }
     sheet_name = "Références Cadastrales"
 
