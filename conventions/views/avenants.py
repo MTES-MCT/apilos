@@ -9,11 +9,14 @@ from django.views import View
 from django.views.decorators.http import require_http_methods
 
 from conventions.forms import AvenantSearchForm
+from conventions.models.choices import ConventionStatut
+from conventions.models.convention import Convention
 from conventions.permissions import (
     currentrole_permission_required,
     currentrole_permission_required_view_function,
 )
 from conventions.services.avenants import (
+    OngoingAvenantError,
     complete_avenants_for_avenant,
     create_avenant,
     remove_avenant_type_from_avenant,
@@ -26,7 +29,25 @@ from conventions.services.utils import ReturnStatus
 @login_required
 @currentrole_permission_required("convention.add_convention")
 def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
-    result = create_avenant(request, convention_uuid)
+    try:
+        result = create_avenant(request, convention_uuid)
+    except OngoingAvenantError:
+        convention = Convention.objects.get(uuid=convention_uuid)
+        last_avenant = (
+            convention.avenants.filter(
+                statut__in=[
+                    ConventionStatut.PROJET.label,
+                    ConventionStatut.INSTRUCTION.label,
+                    ConventionStatut.CORRECTION.label,
+                ]
+            )
+            .order_by("-cree_le")
+            .first()
+        )
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[last_avenant.uuid])
+        )
+
     if result["success"] == ReturnStatus.SUCCESS:
         convention = result["convention"]
         target_pathname = None
