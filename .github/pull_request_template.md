@@ -14,9 +14,9 @@ Description plus détaillée de l'intention, l'approche ou de l'implémentation 
 
 Décrire ici quels sont les elements que l'on souhaite comuniquer aux utilisateurs. Voir avec l'ensemble de l'équipe
 
-### Comment s'assurer que cette fonctionnalité est utilisé
+### Comment s'assurer que cette fonctionnalité est utilisée
 
-Décrire ici comment on collecter les informations de l'utilisation et des utilisateurs de la fonctionnalité
+Décrire ici comment on collectera les informations de l'utilisation et des utilisateurs de la fonctionnalité
 
 ### Comment collecte du Feedback
 
