@@ -164,8 +164,7 @@ Using default option: Users won't be truncated
 Un jeu de données minimales est disponible dans le fichier dataset_staging.json. Il se déploie en utilisant la commande `loaddata dataset_staging.json`
 ⚠️ Cette commande ne doit pas être exécutée en production car il n'est pas souhaitable de mélanger données de test et production
 
-
-# Déploiement de Metabase
+## Déploiement de Metabase
 
 Suivre les instructions de la doc de l'incubateur :
 

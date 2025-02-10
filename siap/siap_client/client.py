@@ -87,7 +87,13 @@ def _call_siap_api(
         raise UnavailableServiceSIAPException()
 
     if response.status_code >= 400:
-        logger.error("ERROR from SIAP API: %s", response.content)
+        logger.error(
+            "ERROR from SIAP API (route: %s, user_login: %s, habilitation_id: %s): %s",
+            route,
+            user_login,
+            habilitation_id,
+            response.content,
+        )
 
     if settings.SIAP_CLIENT_LOG_API_CALLS:
         logger.warning(
