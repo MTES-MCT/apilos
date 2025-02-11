@@ -1,6 +1,8 @@
 import io
 import json
 import mimetypes
+import os
+import time
 from datetime import date
 from typing import Any
 
@@ -560,6 +562,12 @@ class ConventionCancelUploadSignedView(BaseConventionView):
     def post(self, request, convention_uuid):
         fichier_signe_path = f"conventions/{self.convention.uuid}/convention_docs/{self.convention.nom_fichier_signe}"
         if default_storage.exists(fichier_signe_path):
+            with default_storage.open(fichier_signe_path) as fichier_signe:
+                timestamp = time.strftime("%Y%m%d-%H%M%S")
+                old_name = os.path.splitext(self.convention.nom_fichier_signe)
+                new_path = f"""conventions/{self.convention.uuid}/convention_docs/"
+                            {old_name[0]}_cancelled_on_{timestamp}{old_name[1]}"""
+                default_storage.save(new_path, fichier_signe)
             default_storage.delete(fichier_signe_path)
         self.convention.nom_fichier_signe = None
         self.convention.save()
