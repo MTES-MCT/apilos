@@ -29,18 +29,6 @@ class ConventionQuerySet(models.QuerySet):
     def without_denonciation_and_resiliation(self):
         return self.exclude(avenant_types__nom__in=["denonciation", "resiliation"])
 
-    def with_logements(self):
-        return self.all()
-        # TODO: prefetch lot__logements
-
-    def with_type_stationnements(self):
-        return self.all()
-        # TODO: prefetch lot__type_stationnements
-
-    def with_prets(self):
-        return self.all()
-        # TODO: prefetch lot__prets
-
 
 class ConventionManager(models.Manager):
     def get_queryset(self):
@@ -283,9 +271,10 @@ class Convention(models.Model):
         return False
 
     @property
-    def attribution_type(self):
+    def attribution_type(self) -> str | None:
         if not self.programme.is_foyer:
             return None
+
         if (
             self.attribution_agees_autonomie
             or self.attribution_agees_ephad
@@ -294,6 +283,7 @@ class Convention(models.Model):
             or self.attribution_agees_autre
         ):
             return "agees"
+
         if (
             self.attribution_handicapes_foyer
             or self.attribution_handicapes_foyer_de_vie
@@ -301,7 +291,7 @@ class Convention(models.Model):
             or self.attribution_handicapes_autre
         ):
             return "handicapes"
-        # TODO : test inclusif to let it closed for the first time ?
+
         return "inclusif"
 
     # Needed for admin
