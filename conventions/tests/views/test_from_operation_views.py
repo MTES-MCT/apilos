@@ -3,6 +3,7 @@ from unittest.mock import patch
 from django.conf import settings
 from django.test import RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
+from pytest_django.asserts import assertRedirects
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 from waffle.testutils import override_flag
 
@@ -119,13 +120,14 @@ class AddConventionViewTest(TestCase):
         session["habilitation_id"] = 5
         session.save()
 
-    def test_basic(self):
+    def test_redirect_if_numero_operaion_is_unknown(self):
         self._login()
 
         response = self.client.get(
             reverse("conventions:from_operation_add_convention", args=["123"])
         )
-        assert response.status_code == 200
+        assert response.status_code == 302
+        assertRedirects(response, reverse("conventions:from_operation_select"))
 
     # TODO: add tests
 
