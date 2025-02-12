@@ -184,9 +184,10 @@ class ReferenceCadastraleForm(forms.Form):
             "max_length": "Le message ne doit pas excéder 255 caractères",
         },
     )
-    numero = forms.IntegerField(
+    numero = forms.CharField(
         required=True,
         label="",
+        max_length=255,
         error_messages={
             "required": "Le numéro est obligatoire",
         },
@@ -207,6 +208,14 @@ class ReferenceCadastraleForm(forms.Form):
         error_messages={
             "required": "La surface est obligatoire",
             "max_length": "La surface ne doit pas excéder 255 caractères",
+        },
+    )
+    autre = forms.CharField(
+        required=False,
+        label="",
+        max_length=255,
+        error_messages={
+            "max_length": "Le message ne doit pas excéder 255 caractères",
         },
     )
 

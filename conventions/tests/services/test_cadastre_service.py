@@ -71,11 +71,13 @@ class ConventionCadastreServiceTests(TestCase):
             "form-0-numero": "13",
             "form-0-lieudit": "Marseille",
             "form-0-surface": "0 ha 1 a 27 ca",
+            "form-0-autre": "une première info",
             "form-1-uuid": "",
             "form-1-section": "AC",
             "form-1-numero": "15",
             "form-1-lieudit": "Marseille",
             "form-1-surface": "0 ha 1 a 2 ca",
+            "form-1-autre": "une seconde info",
             "effet_relatif_files": "{}",
             "acte_de_propriete_files": "{}",
             "certificat_adressage_files": "{}",
@@ -104,5 +106,9 @@ class ConventionCadastreServiceTests(TestCase):
         )
         self.assertEqual(
             {ref_cadastrale.numero for ref_cadastrale in ref_cadastrales},
-            {13, 15},
+            {"13", "15"},
+        )
+        self.assertEqual(
+            {ref_cadastrale.autre for ref_cadastrale in ref_cadastrales},
+            {"une première info", "une seconde info"},
         )
