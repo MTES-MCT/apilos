@@ -121,9 +121,8 @@
     <script type="text/javascript" nonce="{{request.csp_nonce}}">
         rows = document.querySelectorAll('tr.clickable')
         rows.forEach(row => {
-            numero = row.children[0].textContent
-            row.addEventListener("click", () => {
-                window.location = "from_operation/add_convention/" + encodeURIComponent(numero)
+            row.addEventListener("click", (e) => {
+                window.location = "from_operation/add_convention/" + encodeURIComponent(e.currentTarget.children[0].textContent)
             })
         });
     </script>
