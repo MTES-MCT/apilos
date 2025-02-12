@@ -43,7 +43,6 @@ def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any
                 avenant = Convention.objects.get(uuid=avenant_form.cleaned_data["uuid"])
             else:
                 convention_to_clone = _get_last_avenant(parent_convention)
-
                 with transaction.atomic():
                     avenant = convention_to_clone.clone(
                         request.user, convention_origin=parent_convention
@@ -53,7 +52,6 @@ def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any
                 nom=avenant_form.cleaned_data["avenant_type"]
             )
             avenant.avenant_types.add(avenant_type)
-            avenant.save()  # TODO: check if this is necessary
 
             return {
                 "success": utils.ReturnStatus.SUCCESS,
