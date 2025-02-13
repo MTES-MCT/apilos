@@ -2,23 +2,23 @@
 
 {% load static %}
 
-{% block page_title %}Logements - APiLos{% endblock%}
+{% block page_title %}Logements - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% include "conventions/common/form_logements.html"%}
+                {% include "conventions/common/form_logements.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
                 {% include "conventions/common/form_optional_errors_modal.html" %}
             </form>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

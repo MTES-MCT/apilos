@@ -1,18 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% load static %}
-
-{% load custom_filters %}
+{% load custom_filters static %}
 
 {% block page_title %}Conventions - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
     {% if user_has_conventions %}
@@ -28,7 +26,7 @@
             {% else %}
                 {% include "conventions/home/bailleur_no_convention.html" %}
             {% endif %}
-        {% elif  request|is_instructeur %}
+        {% elif request|is_instructeur %}
             {% if CERBERE_AUTH %}
                 {% include "conventions/home/instructeur_cerbere_no_convention.html" %}
             {% else %}
@@ -38,4 +36,4 @@
             {% include "conventions/home/bailleur_no_convention.html" %}
         {% endif %}
     {% endif %}
-{% endblock %}
+{% endblock content %}

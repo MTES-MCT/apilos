@@ -1,4 +1,4 @@
-<script type="text/javascript" nonce="{{request.csp_nonce}}">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
     function page_listener(link_id, page_number) {
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(link_id)
@@ -20,7 +20,7 @@
                 Première page
             </button>
             {% if paginate_list.has_previous %}
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     page_listener('first_page', 1)
                 </script>
             {% endif %}
@@ -33,7 +33,7 @@
                 Page précédente
             </button>
             {% if paginate_list.has_previous %}
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     page_listener('previous_page', {{ paginate_list.previous_page_number }})
                 </script>
             {% endif %}
@@ -48,7 +48,7 @@
                         title="Page {{ paginate_list.number|add:'-2' }}"
                         id="page_sub2">
                     {{ paginate_list.number|add:"-2" }}
-                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                         page_listener('page_sub2', {{ paginate_list.number|add:"-2" }})
                     </script>
                 </button>
@@ -63,7 +63,7 @@
                         title="Page {{ paginate_list.previous_page_number }}"
                         id="page_sub1">
                     {{ paginate_list.previous_page_number }}
-                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                         page_listener('page_sub1', {{ paginate_list.previous_page_number }})
                     </script>
                 </button>
@@ -83,7 +83,7 @@
                         id="page_add1">
                     {{ paginate_list.next_page_number }}
                 </button>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     page_listener('page_add1', {{ paginate_list.next_page_number }})
                 </script>
             </li>
@@ -97,7 +97,7 @@
                         id="page_add2">
                     {{ paginate_list.number|add:2 }}
                 </button>
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     page_listener('page_add2', {{ paginate_list.number|add:"2" }})
                 </script>
             </li>
@@ -113,7 +113,7 @@
                 Page suivante
             </button>
             {% if paginate_list.has_next %}
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     page_listener('next_page', {{ paginate_list.next_page_number }})
                 </script>
             {% endif %}
@@ -126,8 +126,8 @@
                 Dernière page
             </button>
             {% if paginate_list.has_next %}
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                    page_listener('last_page', {{ paginate_list.paginator.num_pages}})
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                    page_listener('last_page', {{ paginate_list.paginator.num_pages }})
                 </script>
             {% endif %}
         </li>

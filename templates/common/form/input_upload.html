@@ -1,14 +1,14 @@
-{% load static custom_filters %}
+{% load custom_filters static %}
 
-<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     <div class="fr-mb-2w">
         {% if textarea and not verticalDisplay %}
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
         {% endif %}
-        <div class="block--row-strech" id="{{form_input.id_for_label}}_div">
+        <div class="block--row-strech" id="{{ form_input.id_for_label }}_div">
             {% if not no_title %}
-                <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{form_input.id_for_label}}">
+                <label class="block--row-strech-1 fr-label fr-mt-1w fr-mb-2w fr-h4" for="{{ form_input.id_for_label }}">
                     {{ form_input.label }}
                     {% if additional_informations %}
                         <br>
@@ -26,9 +26,9 @@
                 class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
                 aria-describedby="text-input-error-desc-error"
                 type="text"
-                id="{{form_input.id_for_label}}"
-                name="{{form_input.html_name}}"
-                rows="{% if rows %}{{rows}}{% else %}8{% endif %}"
+                id="{{ form_input.id_for_label }}"
+                name="{{ form_input.html_name }}"
+                rows="{% if rows %}{{ rows }}{% else %}8{% endif %}"
                 {% include "common/form/disable_form_input.html" %}
             >{{ form_input.value }}</textarea>
         {% endif %}
@@ -49,7 +49,7 @@
                     <em class="fr-text--sm">et/ou </em>
                 {% endif %}
 
-                <button type="button" class="fr-btn {% if override_cerfa %}fr-btn--secondary{% endif %} fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{form_input_files.id_for_label}}_dz_button">
+                <button type="button" class="fr-btn {% if override_cerfa %}fr-btn--secondary{% endif %} fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{ form_input_files.id_for_label }}_dz_button">
                     {% if override_cerfa %}
                         Déposer un nouveau CERFA et remplacer la version actuelle
                     {% else %}
@@ -57,17 +57,17 @@
                     {% endif %}
                 </button>
 
-                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                     document.addEventListener('DOMContentLoaded', function () {
-                        document.getElementById('{{form_input_files.id_for_label}}_dz_button')
-                            .addEventListener('click', function(){ document.getElementById('{{form_input_files.id_for_label}}_dropzone').click() });
+                        document.getElementById('{{ form_input_files.id_for_label }}_dz_button')
+                            .addEventListener('click', function(){ document.getElementById('{{ form_input_files.id_for_label }}_dropzone').click() });
                     });
                 </script>
 
             </div>
             <div
                 class="fr-col-12 dropzone dz"
-                id="{{form_input_files.id_for_label}}_dropzone">
+                id="{{ form_input_files.id_for_label }}_dropzone">
                 <div class="fallback">
                     Votre navigateur ne permet pas de déposer des documents.
                     Nous vous conseillons de modifier vos paramètres concernant
@@ -77,24 +77,24 @@
             {% include "common/help_field.html" with form_input=form_input_files %}
             <input
                 type="hidden"
-                id="{{form_input_files.id_for_label}}"
-                name="{{form_input_files.html_name}}"
-                value="{{form_input_files.value|without_missing_files}}"
+                id="{{ form_input_files.id_for_label }}"
+                name="{{ form_input_files.html_name }}"
+                value="{{ form_input_files.value|without_missing_files }}"
             />
 
-            <div id="{{form_input_files.id_for_label}}_errors"></div>
+            <div id="{{ form_input_files.id_for_label }}_errors"></div>
             <input
                 type="hidden"
-                id="{{form_input_files.id_for_label}}_object_name"
+                id="{{ form_input_files.id_for_label }}_object_name"
                 value="{{ object_name }}">
             <input
                 type="hidden"
-                id="{{form_input_files.id_for_label}}_object_uuid"
+                id="{{ form_input_files.id_for_label }}_object_uuid"
                 value="{{ object_uuid }}">
 
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
-                let {{form_input.id_for_label}} = init_dropzone_from_file("{{form_input_files.id_for_label}}" {% if image_only %}, 'image/*'{% elif override_cerfa %}, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'{% else %}, undefined{% endif %}{% if single_file %}, true{% endif %});
-                init_dropzone_list({{form_input.id_for_label}},"{{form_input_files.id_for_label}}");
+            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                let {{ form_input.id_for_label }} = init_dropzone_from_file("{{ form_input_files.id_for_label }}" {% if image_only %}, 'image/*'{% elif override_cerfa %}, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'{% else %}, undefined{% endif %}{% if single_file %}, true{% endif %});
+                init_dropzone_list({{ form_input.id_for_label }},"{{ form_input_files.id_for_label }}");
             </script>
 
         {% endif %}
@@ -112,4 +112,3 @@
         </p>
     {% endfor %}
 </div>
-

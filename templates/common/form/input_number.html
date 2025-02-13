@@ -1,32 +1,31 @@
-
 {% load l10n %}
-<div class="fr-input-group{% if form_input.errors %} fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+<div class="fr-input-group{% if form_input.errors %} fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     <div {% if display_inline %} class="apilos-input-group--inline"{% endif %}>
         {% if form_input.label %}
-            <label class="fr-label" for="{{form_input.id_for_label}}">
+            <label class="fr-label" for="{{ form_input.id_for_label }}">
                 {{ form_input.label }}
                 {% include "common/form/required_field.html" with form_input=form_input %}
                 {% include "common/help_field.html" with form_input=form_input %}
             </label>
         {% endif %}
-        <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+        <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
             <input
                 class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
                 pattern="[0-9]*"
                 min=0
-                step="{% if step %}{{step}}{% else %}1{% endif %}"
+                step="{% if step %}{{ step }}{% else %}1{% endif %}"
                 inputmode="numeric"
                 {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                 type="number"
-                id="{{form_input.id_for_label}}"
-                name="{{form_input.html_name}}"
+                id="{{ form_input.id_for_label }}"
+                name="{{ form_input.html_name }}"
                 {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
                 {% include "common/form/disable_form_input.html" %}>
 
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                 document.addEventListener('DOMContentLoaded', function () {
-                    document.getElementById('{{form_input.id_for_label}}')
-                        .addEventListener('click', function(){ {{onchange}} });
+                    document.getElementById('{{ form_input.id_for_label }}')
+                        .addEventListener('click', function(){ {{ onchange }} });
                 });
             </script>
             {% include "common/utils/comments_field.html" %}

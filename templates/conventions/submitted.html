@@ -1,27 +1,27 @@
 {% extends "layout/base.html" %}
 
 {% load display_filters %}
-{% block page_title %}Soumission - APiLos{% endblock%}
+{% block page_title %}Soumission - APiLos{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
+        {% include "conventions/common/form_header.html" %}
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
 
                 {% if siap_operation_not_found %}
                     <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
                         <div role="alert" class="fr-alert fr-alert--warning">
-                            <p class="fr-alert__title">L'opération numéro « {{convention.programme.numero_operation}} » n'est pas disponible sur l'espace de financement du SIAP</p>
+                            <p class="fr-alert__title">L'opération numéro « {{ convention.programme.numero_operation }} » n'est pas disponible sur l'espace de financement du SIAP</p>
                         </div>
                     </div>
                 {% endif %}
 
                 <div class="fr-col-md-12  fr-my-5w">
                     <h2>Félicitations</h2>
-                    <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre {% if convention.is_denonciation %}dénonciation de {% elif convention.is_avenant %}avenant de {% endif %}convention à l'instruction en date du {{convention.soumis_le}}</h4>
-                    <p class="fr-mb-3w">{{convention|display_pronom|capfirst}} présent{{convention|display_gender_terminaison}} {{convention|display_kind}} ne peut plus être modifié{{convention|display_gender_terminaison}}. Le service instructeur a été notifié et instruira {{convention|display_kind_with_demonstratif}} dans les plus bref délais.
-                        Il reviendra ensuite vers vous pour finaliser {{convention|display_kind_with_demonstratif}}.
+                    <h4 class="fr-mb-3w">Bravo, vous venez de soumettre votre {% if convention.is_denonciation %}dénonciation de {% elif convention.is_avenant %}avenant de {% endif %}convention à l'instruction en date du {{ convention.soumis_le }}</h4>
+                    <p class="fr-mb-3w">{{ convention|display_pronom|capfirst }} présent{{ convention|display_gender_terminaison }} {{ convention|display_kind }} ne peut plus être modifié{{ convention|display_gender_terminaison }}. Le service instructeur a été notifié et instruira {{ convention|display_kind_with_demonstratif }} dans les plus bref délais.
+                        Il reviendra ensuite vers vous pour finaliser {{ convention|display_kind_with_demonstratif }}.
                     </p>
                     <p class="fr-mb-3w">Vous pouvez cependant consulter à tout moment les données saisies ainsi que le statut d'instruction sur la plateforme APiLos</p>
                     <p class="fr-mb-3w">Nous restons à votre disposition pour toute information et question.</p>
@@ -33,9 +33,9 @@
             <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% include "common/button/return_convention_index.html" %}
                 <a class="fr-btn fr-btn--icon-left fr-icon-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
-                    Retour à {{convention|display_kind_with_pronom}}
+                    Retour à {{ convention|display_kind_with_pronom }}
                 </a>
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

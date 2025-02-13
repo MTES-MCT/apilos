@@ -1,26 +1,24 @@
 {% extends "layout/base.html" %}
 
-{% load static %}
+{% load custom_filters static %}
 
-{% load custom_filters %}
-
-{% block page_title %}Financements - APiLos{% endblock%}
+{% block page_title %}Financements - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input
                     type="hidden"
-                    id="{{form.uuid.id_for_label}}"
-                    name="{{form.uuid.html_name}}"
+                    id="{{ form.uuid.id_for_label }}"
+                    name="{{ form.uuid.html_name }}"
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
@@ -28,7 +26,7 @@
                         <h4>Financement : Prêts et Subventions</h4>
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                            {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform  what='prêts et subventions' file_field_label='financement'%}
+                            {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform what='prêts et subventions' file_field_label='financement' %}
                             <hr class="fr-col-12 fr-my-3w">
                         </div>
 
@@ -66,17 +64,17 @@
                                             <tbody>
                                                 {% for form_pret in formset %}
                                                     {% with main_object_field="pret__uuid__"|add:form_pret.uuid.value %}
-                                                        <tr id="{{form_pret.uuid.id_for_label}}_group">
+                                                        <tr id="{{ form_pret.uuid.id_for_label }}_group">
                                                             {% if convention|display_comments %}
-                                                                <td id="{{form_pret.uuid.id_for_label}}_div">
+                                                                <td id="{{ form_pret.uuid.id_for_label }}_div">
                                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_pret.uuid %}
                                                                 </td>
                                                             {% endif %}
                                                             <td>
                                                                 <input
                                                                     type="hidden"
-                                                                    id="{{form_pret.uuid.id_for_label}}"
-                                                                    name="{{form_pret.uuid.html_name}}"
+                                                                    id="{{ form_pret.uuid.id_for_label }}"
+                                                                    name="{{ form_pret.uuid.html_name }}"
                                                                     value="{{ form_pret.uuid.value|default_if_none:'' }}">
                                                                 {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
                                                             </td>
@@ -111,7 +109,7 @@
                         <div class="fr-mb-2w">
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-3w">
-                                    {% if convention.programme.is_foyer  or convention.programme.is_residence %}
+                                    {% if convention.programme.is_foyer or convention.programme.is_residence %}
                                         {% include "common/form/input_textarea.html" with form_input=form.historique_financement_public helptext_visible=True object_field="convention__historique_financement_public__"|add:form.uuid.value %}
                                     {% else %}
                                         {% include "common/form/input_number.html" with form_input=form.fond_propre step="0.01" object_field="convention__fond_propre__"|add:form.uuid.value %}
@@ -121,7 +119,7 @@
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--bottom">
                                 <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
                                     <div class="fr-input-group {% if form.annee_fin_conventionnement.errors %}fr-select-group--error{% endif %}">
-                                        <label class="fr-label fr-mb-1w" for="{{form.annee_fin_conventionnement.id_for_label}}">
+                                        <label class="fr-label fr-mb-1w" for="{{ form.annee_fin_conventionnement.id_for_label }}">
                                             Date de fin de la convention
                                             {% include "common/form/required_field.html" with form_input=form.annee_fin_conventionnement %}
                                             <details>
@@ -170,4 +168,4 @@
                 </form>
             </div>
         </div>
-{% endblock %}
+{% endblock content %}

@@ -1,5 +1,4 @@
-{% load static %}
-{% load custom_filters %}
+{% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-mb-2w">
@@ -27,7 +26,7 @@
                         Les logements de cette section seront supprimés lors du passage à l'étape suivante.
                     </p>
                 {% endif %}
-                <input type="hidden" id="{{form.formset_disabled.id_for_label}}" name="{{form.formset_disabled.html_name}}"
+                <input type="hidden" id="{{ form.formset_disabled.id_for_label }}" name="{{ form.formset_disabled.html_name }}"
                        value="">
             </div>
         {% endif %}
@@ -93,7 +92,7 @@
                                         <th scope="col" class="col__width--120">
                                             Coefficient propre au logement
                                             {% if formset.total_form_count %}
-                                                {%include "common/form/required_field_star.html" %}
+                                                {% include "common/form/required_field_star.html" %}
                                             {% endif %}
                                         </th>
                                         <th scope="col" class="col__width--120">
@@ -107,14 +106,14 @@
                                 <tbody>
                                     {% for form in formset %}
                                         {% with main_object_field="logement__uuid__"|add:form.uuid.value %}
-                                            <tr id="{{form.uuid.id_for_label}}_group">
+                                            <tr id="{{ form.uuid.id_for_label }}_group">
                                                 {% if convention|display_comments %}
-                                                    <td id="{{form.uuid.id_for_label}}_div">
+                                                    <td id="{{ form.uuid.id_for_label }}_div">
                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form.uuid %}
                                                     </td>
                                                 {% endif %}
                                                 <td>
-                                                    <input type="hidden" id="{{form.uuid.id_for_label}}" name="{{form.uuid.html_name}}"
+                                                    <input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
                                                            value="{{ form.uuid.value|default_if_none:'' }}">
                                                     {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
@@ -145,8 +144,8 @@
                                                 <td>
                                                     <input
                                                         type="hidden"
-                                                        id="{{form.import_order.id_for_label}}"
-                                                        name="{{form.import_order.html_name}}"
+                                                        id="{{ form.import_order.id_for_label }}"
+                                                        name="{{ form.import_order.html_name }}"
                                                         {% if form.import_order.value is not None %}value="{{ form.import_order.value }}"{% endif %}
                                                     />
                                                 </td>
@@ -193,7 +192,7 @@
     </div>
 </div>
 
-<input type="hidden" id="{{form.uuid.id_for_label}}" name="{{form.uuid.html_name}}"
+<input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
        value="{{ form.uuid.value|default_if_none:'' }}">
 
 <div class="fr-grid-row fr-grid-row--gutters">
@@ -223,20 +222,20 @@
 
 {% include "common/required_fields_info.html" %}
 {% if convention.is_avenant %}
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         function toggleTable(name) {
             const table_div = document.getElementsByClassName(`table-${name}`)[0];
             const input_checkbox = document.getElementById(`toggle-${name}`);
             const error_div = document.getElementsByClassName(`toggle-${name}-error`)[0];
             let input_hidden;
             if (name === "utile") {
-                input_hidden = document.getElementById("{{form.formset_disabled.id_for_label}}");
+                input_hidden = document.getElementById("{{ form.formset_disabled.id_for_label }}");
             } else if (name === "utile-sans-loyer") {
-                input_hidden = document.getElementById("{{form.formset_sans_loyer_disabled.id_for_label}}");
+                input_hidden = document.getElementById("{{ form.formset_sans_loyer_disabled.id_for_label }}");
             } else if (name === "corrigee") {
-                input_hidden = document.getElementById("{{form.formset_corrigee_disabled.id_for_label}}");
+                input_hidden = document.getElementById("{{ form.formset_corrigee_disabled.id_for_label }}");
             } else if (name === "corrigee-sans-loyer") {
-                input_hidden = document.getElementById("{{form.formset_corrigee_sans_loyer_disabled.id_for_label}}");
+                input_hidden = document.getElementById("{{ form.formset_corrigee_sans_loyer_disabled.id_for_label }}");
             }
             // Initialize
             if (input_checkbox.checked) {
@@ -267,4 +266,4 @@
         toggleTable("corrigee-sans-loyer");
     </script>
 {% endif %}
-<script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>

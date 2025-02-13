@@ -6,7 +6,7 @@
         <div class="block--row-strech-1 fr-mr-6w">
 
             <p>
-                Votre {{convention|display_kind}} a été resilié{{convention|display_gender_terminaison}} le {{convention.date_resiliation|date:"d F Y"|default_if_none:'-'}}.<br/>
+                Votre {{ convention|display_kind }} a été resilié{{ convention|display_gender_terminaison }} le {{ convention.date_resiliation|date:"d F Y"|default_if_none:'-' }}.<br/>
                 Ce n'est pas la bonne date ?
             </p>
             {% include "common/form/input_date.html" with form_input=resiliation_date_form.date_resiliation editable=True %}

@@ -1,5 +1,4 @@
-{% load static %}
-{% load custom_filters %}
+{% load custom_filters static %}
 <div class="fr-header__body">
     <div class="fr-container">
         <div class="fr-header__body-row">
@@ -51,7 +50,7 @@
                                     </span>
                                 </div>
                                 <div class="fr-grid-row fr-grid-row--right">
-                                    {% include "common/FAQ_link.html"%}
+                                    {% include "common/FAQ_link.html" %}
                                 </div>
                             </div>
 
@@ -68,7 +67,7 @@
                                             Bonjour&nbsp;
                                             <strong>{{ request.user }}</strong>
                                         </div>
-                                        {% include "common/FAQ_link.html"%}
+                                        {% include "common/FAQ_link.html" %}
                                     </div>
                                 </li>
                                 <li class="apilos-navbar">

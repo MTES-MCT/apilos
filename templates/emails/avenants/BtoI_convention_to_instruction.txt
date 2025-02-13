@@ -1,6 +1,0 @@
-Bonjour
-
-Un avenant à la convention {{convention}} ({{convention_url}}) est à instruire.
-
-Cordialement,
-L'équipe APiLos

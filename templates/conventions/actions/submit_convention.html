@@ -1,5 +1,4 @@
-{% load custom_filters %}
-{% load display_filters %}
+{% load custom_filters display_filters %}
 
 {% if convention|display_submit_convention:request %}
     <div class="fr-col-12 fr-mb-5w fr-mt-3w">
@@ -8,9 +7,9 @@
                 Soumettre au service instructeur
             </p>
             <p>
-                Votre projet {{convention|display_kind_with_preposition}} est terminé ? Soumettez-le à l'instruction. Le service instructeur en sera informé et vous tiendra au courant de l'évolution de l'instruction.
+                Votre projet {{ convention|display_kind_with_preposition }} est terminé ? Soumettez-le à l'instruction. Le service instructeur en sera informé et vous tiendra au courant de l'évolution de l'instruction.
             </p>
-            <p>Si vous avez encore des modifications à apporter au projet de {{convention|display_kind_with_preposition}}, vous pouvez y revenir plus tard.
+            <p>Si vous avez encore des modifications à apporter au projet de {{ convention|display_kind_with_preposition }}, vous pouvez y revenir plus tard.
             </p>
             {% with numero_operation=convention.programme.numero_operation %}
                 {% if not numero_operation and not convention.is_avenant %}

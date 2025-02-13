@@ -1,21 +1,21 @@
 {% load static %}
 
-<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     {% if form_input.label %}
-        <label class="fr-label" for="{{form_input.id_for_label}}">
+        <label class="fr-label" for="{{ form_input.id_for_label }}">
             {{ form_input.label }}
             {% include "common/form/required_field.html" with form_input=form_input %}
             {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
-    <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+    <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
         <input
             class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
             aria-describedby="text-input-error-desc-error"
             type="text"
-            id="{{form_input.id_for_label}}"
-            name="{{form_input.html_name}}"
-            placeholder="{{placeholder|default_if_none:''}}"
+            id="{{ form_input.id_for_label }}"
+            name="{{ form_input.html_name }}"
+            placeholder="{{ placeholder|default_if_none:'' }}"
             value="{{ form_input.value|default_if_none:'' }}"
             {% include "common/form/disable_form_input.html" %}>
         {% include "common/utils/comments_field.html" %}
@@ -26,4 +26,3 @@
         </p>
     {% endfor %}
 </div>
-

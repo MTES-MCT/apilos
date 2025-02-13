@@ -1,4 +1,5 @@
 {% extends "layout/base.html" %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-3w">
         <div class="fr-container">
@@ -29,10 +30,10 @@
                         </p>
                     {% endif %}
                     {% if CERBERE_AUTH %}
-                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="{{SIAP_CLIENT_HOST}}/tableau-bord">Retourner au tableau de bord</a>
+                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="{{ SIAP_CLIENT_HOST }}/tableau-bord">Retourner au tableau de bord</a>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}
