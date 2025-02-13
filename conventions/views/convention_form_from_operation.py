@@ -80,10 +80,19 @@ class AddConventionView(
     def _handle(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         numero_operation = kwargs.get("numero_operation")
 
-        #  TODO: handle null operation and user rights
         operation = SelectOperationService(
             request=request, numero_operation=numero_operation
         ).get_operation()
+
+        if not operation:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                f"L'opération {numero_operation} n'a pas été trouvée dans Apilos.",
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:from_operation_select"),
+            )
 
         service = AddConventionService(request=request, operation=operation)
         if request.method == "POST":
