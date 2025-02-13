@@ -192,7 +192,7 @@ class AddConventionService:
         lot.convention = convention
         lot.save()
 
-        return Convention
+        return convention
 
     def save(self) -> ReturnStatus:
         if not self.form.is_valid():
