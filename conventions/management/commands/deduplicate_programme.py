@@ -7,7 +7,7 @@ from programmes.models import Programme
 
 
 class Command(BaseCommand):
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901
         num_galion = {
             v["numero_operation"]
             for v in Programme.objects.filter(parent_id=None)
