@@ -25,6 +25,8 @@ from conventions.services.avenants import (
 from conventions.services.selection import ConventionSelectionService
 from conventions.services.utils import ReturnStatus
 
+from conventions.models import AvenantType
+
 
 @login_required
 @currentrole_permission_required("convention.add_convention")
@@ -49,24 +51,9 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
         )
 
     if result["success"] == ReturnStatus.SUCCESS:
-        convention = result["convention"]
-        target_pathname = None
-        if result["avenant_type"].nom == "logements":
-            if convention.programme.is_foyer or convention.programme.is_residence:
-                target_pathname = "conventions:avenant_foyer_residence_logements"
-            else:
-                target_pathname = "conventions:avenant_logements"
-        if result["avenant_type"].nom == "bailleur":
-            target_pathname = "conventions:avenant_bailleur"
-        if result["avenant_type"].nom == "programme":
-            target_pathname = "conventions:avenant_programme"
-        if result["avenant_type"].nom == "duree":
-            target_pathname = "conventions:avenant_financement"
-        if result["avenant_type"].nom == "champ_libre":
-            target_pathname = "conventions:avenant_champ_libre"
-        if result["avenant_type"].nom == "commentaires":
-            target_pathname = "conventions:avenant_commentaires"
-        if target_pathname:
+        if target_pathname := _get_path_name_for_avenant_type(
+            avenant_type=result["avenant_type"], convention=result["convention"]
+        ):
             return HttpResponseRedirect(
                 reverse(target_pathname, args=[result["convention"].uuid])
             )
@@ -78,6 +65,28 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
             **result,
         },
     )
+
+
+def _get_path_name_for_avenant_type(
+    avenant_type: AvenantType, convention: Convention
+) -> str | None:
+    match avenant_type.nom:
+        case "logements":
+            if convention.programme.is_foyer or convention.programme.is_residence:
+                return "conventions:avenant_foyer_residence_logements"
+            return "conventions:avenant_logements"
+        case "bailleur":
+            return "conventions:avenant_bailleur"
+        case "programme":
+            return "conventions:avenant_programme"
+        case "duree":
+            return "conventions:avenant_financement"
+        case "champ_libre":
+            return "conventions:avenant_champ_libre"
+        case "commentaires":
+            return "conventions:avenant_commentaires"
+        case _:
+            return None
 
 
 @login_required

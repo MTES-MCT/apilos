@@ -150,7 +150,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     def _get_base_queryset(self) -> QuerySet:
         return self.user.conventions()
 
-    def _build_filters(self, queryset: QuerySet) -> QuerySet:
+    def _build_filters(self, queryset: QuerySet) -> QuerySet:  # noqa: C901
         if self.statuts:
             _statut_filters = Q(statut__in=[s.label for s in self.statuts])
 

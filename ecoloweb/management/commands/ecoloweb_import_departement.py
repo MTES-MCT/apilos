@@ -37,7 +37,7 @@ class Command(BaseCommand):
             help="Disable progress bar, only print info into newlines",
         )
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **options):  # noqa: C901
         if "ecoloweb" not in connections:
             self.stdout.write("No 'ecoloweb' connection defined, import aborted!")
             sys.exit(1)
