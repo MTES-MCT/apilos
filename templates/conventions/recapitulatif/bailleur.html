@@ -36,15 +36,14 @@
                     {% if convention.identification_bailleur %}
                         {% include "common/display_field_if_exists.html" with label="Identification personalisée du bailleur" value=convention.identification_bailleur_detail object_field="convention__identification_bailleur_detail__"|add:convention_uuid %}
                     {% else %}
-                        {% if bailleur.signataire_nom %}
-                            {% include "common/display_field_if_exists.html" with value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
-                            <em>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</em>
-                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
-
-                        {% else %}
+                        {% if convention.signataire_nom %}
                             {% include "common/display_field_if_exists.html" with value=convention.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
                             <em>{% include "common/display_field_if_exists.html" with value=convention.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</em>
                             {% include "common/display_field_if_exists.html" with label="Date de délibération" value=convention.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
+                        {% elif bailleur.signataire_nom %}
+                            {% include "common/display_field_if_exists.html" with value=bailleur.signataire_nom object_field="bailleur__signataire_nom__"|add:bailleur_uuid %}
+                            <em>{% include "common/display_field_if_exists.html" with value=bailleur.signataire_fonction object_field="bailleur__signataire_fonction__"|add:bailleur_uuid %}</em>
+                            {% include "common/display_field_if_exists.html" with label="Date de délibération" value=bailleur.signataire_date_deliberation object_field="bailleur__signataire_date_deliberation__"|add:bailleur_uuid %}
                         {% endif %}
                     {% endif %}
                     {% if bailleur.signature_nom %}
