@@ -303,7 +303,7 @@ class Convention(models.Model):
     def bailleur(self):
         return self.programme.bailleur
 
-    @property
+    @cached_property
     def ecolo_reference(self) -> EcoloReference | None:
         if self.id is not None:
             return EcoloReference.objects.filter(
