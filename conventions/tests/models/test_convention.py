@@ -371,3 +371,11 @@ def test_convention_date_signature_choices():
     choices = Convention.date_signature_choices(from_threshold=True)
     assert choices[0] == (current_year, str(current_year))
     assert choices[-1] == (1900, "1900")
+
+
+@pytest.mark.django_db
+def test_convention_lot_property_prefetch(django_assert_num_queries):
+    convention = ConventionFactory(create_lot=True)
+    convention = Convention.objects.get(pk=convention.pk)
+    with django_assert_num_queries(0):
+        convention.lot  # noqa: B018
