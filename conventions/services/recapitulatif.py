@@ -24,7 +24,7 @@ from conventions.tasks import task_generate_and_send
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
-from programmes.models import Annexe, Programme
+from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import GroupProfile, User
@@ -498,29 +498,33 @@ def _update_convention_for_avenant(
     convention: Convention,
     complete_for_avenant_form: CompleteforavenantForm,
 ) -> dict[str, Any]:
-    parentconvention = convention.parent
-    programme = convention.programme
-    parent_programme = parentconvention.programme
+    parent_convention: Convention = convention.parent
 
     if complete_for_avenant_form.cleaned_data["ville"]:
+        programme: Programme = convention.programme
+        parent_programme: Programme = parent_convention.programme
+
         parent_programme.ville = complete_for_avenant_form.cleaned_data["ville"]
         parent_programme.save()
+
         if not programme.ville:
             programme.ville = complete_for_avenant_form.cleaned_data["ville"]
             programme.save()
 
-    lot = convention.lot
-    parent_lot = parentconvention.lot
     if complete_for_avenant_form.cleaned_data["nb_logements"]:
+        lot: Lot = convention.lot
+        parent_lot: Lot = parent_convention.lot
+
         parent_lot.nb_logements = complete_for_avenant_form.cleaned_data["nb_logements"]
         parent_lot.save()
+
         if not lot.nb_logements:
             lot.nb_logements = complete_for_avenant_form.cleaned_data["nb_logements"]
             lot.save()
 
-    conventionfile = request.FILES.get("nom_fichier_signe", False)
-    if conventionfile:
-        ConventionFileService.upload_convention_file(parentconvention, conventionfile)
+    convention_file = request.FILES.get("nom_fichier_signe", False)
+    if convention_file:
+        ConventionFileService.upload_convention_file(parent_convention, convention_file)
 
     return {
         "success": utils.ReturnStatus.SUCCESS,
