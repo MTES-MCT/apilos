@@ -99,7 +99,6 @@ class ConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__bailleur",
         "programme__administration",
-        # "lot",
     ]
 
     user: User
