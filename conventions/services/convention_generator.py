@@ -180,6 +180,16 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     context.update(logements_totale)
     context.update(object_images)
     context.update(adresse)
+    if convention.parent:
+        last_avenant_or_parent = convention.get_last_avenant_or_parent()
+        context.update(
+            {
+                "parent_bailleur": model_to_dict(
+                    last_avenant_or_parent.programme.bailleur
+                ),
+                "parent_convention": model_to_dict(last_avenant_or_parent),
+            }
+        )
 
     try:
         doc.render(context, _get_jinja_env())

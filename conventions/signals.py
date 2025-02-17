@@ -60,12 +60,7 @@ def post_save_reset_avenant_fields_after_block_delete(
         and instance.is_avenant()
     ):
         for avenant_type in model.objects.filter(pk__in=list(pk_set)):
-            last_avenant_or_parent = instance.parent
-
-            if last_avenant_or_parent.avenants.count() > 1:
-                last_avenant_or_parent = last_avenant_or_parent.avenants.all().order_by(
-                    "-cree_le"
-                )[1]
+            last_avenant_or_parent = instance.get_last_avenant_or_parent()
 
             for field_name in avenant_type.fields:
                 _update_nested_convention_field(
