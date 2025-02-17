@@ -47,7 +47,6 @@ operation_response = {
     "conventions": [
         {
             "date_fin_conventionnement": None,
-            "financement": "PLUS",
             "fond_propre": None,
             "lot": {
                 "nb_logements": 1,
@@ -112,7 +111,6 @@ def create_all_for_siap():
 
     convention_plai = ConventionFactory(
         programme=programme_75,
-        financement=Financement.PLAI,
         numero="0002",
         make_upload_on_fields=["commentaires"],
     )
@@ -127,7 +125,6 @@ def create_all_for_siap():
 
     convention_plus = ConventionFactory(
         programme=programme_75,
-        financement=Financement.PLUS,
         numero="0001",
         make_upload_on_fields=["commentaires"],
     )
@@ -337,7 +334,6 @@ class OperationClosedAPITest(APITestCase):
         expected_conventions = [
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLUS",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,
@@ -379,7 +375,6 @@ class OperationClosedAPITest(APITestCase):
             },
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLAI",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,
@@ -508,7 +503,6 @@ class OperationClosedAPITest(APITestCase):
         expected_convention_list = [
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLUS",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,
@@ -550,7 +544,6 @@ class OperationClosedAPITest(APITestCase):
             },
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLAI",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,
@@ -666,7 +659,6 @@ class OperationClosedAPITest(APITestCase):
         expected_last_conventions_state = [
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLUS",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,
@@ -708,7 +700,6 @@ class OperationClosedAPITest(APITestCase):
             },
             {
                 "date_fin_conventionnement": None,
-                "financement": "PLAI",
                 "fond_propre": None,
                 "lot": {
                     "nb_logements": None,

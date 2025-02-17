@@ -21,7 +21,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b70",
             numero="33N611709S70002-9",
             statut=ConventionStatut.SIGNEE.label,
-            financement=Financement.PLUS,
             televersement_convention_signee_le="2024-01-01",
             programme=ProgrammeFactory(
                 anru=True,
@@ -45,7 +44,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b71",
             numero="51/2015/2006-569/049R",
             statut=ConventionStatut.PROJET.label,
-            financement=Financement.PLAI,
             programme=ProgrammeFactory(
                 anru=False,
                 numero_operation="20230600400040",
@@ -67,7 +65,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b72",
             numero="32O665408Y777889",
             statut=ConventionStatut.INSTRUCTION.label,
-            financement=Financement.PLS,
             programme=ProgrammeFactory(
                 anru=True,
                 numero_operation="2017490070049",
@@ -89,8 +86,9 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="a6862260-5afa-4e2c-ae07-a39276c55e46",
             parent=convention,
             statut=ConventionStatut.ANNULEE.label,
-            financement=Financement.PLS,
             programme=convention.programme,
+            create_lot=True,
+            create_lot__financement=Financement.PLS,
         )
 
         programme = ProgrammeFactory(
@@ -112,7 +110,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="53702e67-60c1-431e-baa9-449960cf8bcb",
             numero="QHKINZYDKDLSNJW",
             statut=ConventionStatut.RESILIEE.label,
-            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() + timedelta(days=1),
             programme=programme,
@@ -124,7 +121,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="4c337449-4fbc-42de-9f93-948a4dd65ee1",
             numero="QHKINZYDKDLSNJX",
             statut=ConventionStatut.RESILIEE.label,
-            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_resiliation=date.today() - timedelta(days=1),
             programme=programme,
@@ -136,7 +132,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="60511ac3-f979-4a13-917d-1c746b4e4390",
             numero="QHKINZYDKDLSNJY",
             statut=ConventionStatut.DENONCEE.label,
-            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() + timedelta(days=1),
             programme=programme,
@@ -148,7 +143,6 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             uuid="75d19956-2561-4987-9dbf-497803e152f8",
             numero="QHKINZYDKDLSNJZ",
             statut=ConventionStatut.DENONCEE.label,
-            financement=Financement.PALULOS,
             televersement_convention_signee_le="2014-01-01",
             date_denonciation=date.today() - timedelta(days=1),
             programme=programme,
