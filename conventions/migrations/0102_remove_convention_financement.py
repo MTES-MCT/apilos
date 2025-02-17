@@ -2,13 +2,11 @@
 
 from django.db import migrations
 
-# FIXME : supprimer cette migration vide ?
-
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("conventions", "0100_auto_20241213_1554"),
+        ("conventions", "0101_alter_convention_financement"),
     ]
 
     operations = [
