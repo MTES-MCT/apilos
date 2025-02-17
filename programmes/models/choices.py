@@ -26,7 +26,9 @@ class Financement(models.TextChoices):
     PLAI_RE = "PLAI_RE", "PLAI Réhabiliation"
     PLUS_PLAI = "PLUS-PLAI", "PLUS-PLAI"
     PLS = "PLS", "PLS"
-    PSH = "PSH", "PSH"
+    # cf. mail de LO3 (HELAL Thabet du 11/02) Pas de conventionnement pour les financements
+    # PSH
+    #    PSH = "PSH", "PSH"
     # PALULOS
     PALULOS = "PALULOS", "PALULOS"
     PALU_AV_21 = "PALU_AV_21", "PALULOS avant 2021"
