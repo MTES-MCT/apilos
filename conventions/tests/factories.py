@@ -29,9 +29,7 @@ class AvenantFactory(ConventionFactory):
     @factory.post_generation
     def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
         if extracted and create:
-            lot = LotFactory.create(convention=obj, programme=obj.programme, **kwargs)
-            obj.financement = lot.financement
-            obj.save()
+            LotFactory.create(convention=obj, programme=obj.programme, **kwargs)
 
 
 class AvenantTypeFactory(factory.django.DjangoModelFactory):
