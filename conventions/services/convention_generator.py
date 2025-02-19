@@ -625,8 +625,10 @@ def _get_residence_attributions(convention: Convention) -> str:
 def _get_foyer_attributions(convention: Convention) -> str:
     if not convention.programme.is_foyer:
         return ""
-
-    return foyer_attributions_mapping.get(convention.attribution_type, "")
+    attribution_type = convention.attribution_type
+    return (
+        foyer_attributions_mapping.get(attribution_type, "") if attribution_type else ""
+    )
 
 
 def fiche_caf_doc(convention):
