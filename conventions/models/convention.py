@@ -357,6 +357,18 @@ class Convention(models.Model):
     def get_last_instructeur_notification(self):
         return self._get_last_notification_by_role(TypeRole.INSTRUCTEUR)
 
+    def get_last_avenant_or_parent(self):
+        if not self.parent:
+            return None
+
+        last_avenant_or_parent = self.parent
+
+        if last_avenant_or_parent.avenants.count() > 1:
+            last_avenant_or_parent = last_avenant_or_parent.avenants.all().order_by(
+                "-cree_le"
+            )[1]
+        return last_avenant_or_parent
+
     def get_email_bailleur_users(self):
         """
         return the email of the bailleurs to send them an email following their email
