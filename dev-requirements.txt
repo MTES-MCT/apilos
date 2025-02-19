@@ -483,9 +483,9 @@ unittest-parametrize==1.6.0 \
     --hash=sha256:d9d2209a265b61b310ce81c1890f0e3a2282025deae758773f04d5a692cf1a3f \
     --hash=sha256:fcbc0023304b08624b38a4762d25b691468d66f61fd5f11672b372ed71eee0e2
     # via -r dev-requirements.in
-urllib3==2.0.7 \
-    --hash=sha256:c97dfde1f7bd43a71c8d2a58e369e9b2bf692d1334ea9f9cae55add7d0dd0f84 \
-    --hash=sha256:fdb6d215c776278489906c2f8916e6e7d4f5a9b602ccbcfdf7f016fc8da0596e
+urllib3==2.3.0 \
+    --hash=sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df \
+    --hash=sha256:f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d
     # via
     #   -c requirements.txt
     #   requests
