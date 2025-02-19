@@ -210,4 +210,3 @@ SELECT
   SUM(administration_with_convention_validate) AS administration_with_convention_validate
 FROM funnel_by_administration
 GROUP BY departement
-

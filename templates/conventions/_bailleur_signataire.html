@@ -8,9 +8,9 @@
     <div class="fr-col-12">
         {% if convention.programme.is_logements_ordinaires %}
             <div class="fr-toggle fr-mb-2w">
-                <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{form.identification_bailleur.html_name}}-messages" id="{{form.identification_bailleur.html_name}}" name="{{form.identification_bailleur.html_name}}"{% include "common/form/disable_form_input.html" %}>
-                <label class="fr-toggle__label" for="{{form.identification_bailleur.html_name}}">{{form.identification_bailleur.label}}</label>
-                <div class="fr-messages-group" id="{{form.identification_bailleur.html_name}}-messages" aria-live="polite"></div>
+                <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{ form.identification_bailleur.html_name }}-messages" id="{{ form.identification_bailleur.html_name }}" name="{{ form.identification_bailleur.html_name }}"{% include "common/form/disable_form_input.html" %}>
+                <label class="fr-toggle__label" for="{{ form.identification_bailleur.html_name }}">{{ form.identification_bailleur.label }}</label>
+                <div class="fr-messages-group" id="{{ form.identification_bailleur.html_name }}-messages" aria-live="polite"></div>
             </div>
             <div class="identification_bailleur_detail_outer_div fr-mb-2w">
                 {% include "common/form/input_textarea.html" with mandatory_input=True form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
@@ -69,7 +69,7 @@
         {% endif %}
     </div>
     {% if convention.programme.is_logements_ordinaires %}
-        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
             // Script to switch between bailleurs infos and identification personalisée depending on a toggle
             const textarea_outer_div = document.getElementsByClassName("identification_bailleur_detail_outer_div")[0]
             const signataire_infos_div = document.getElementsByClassName("signataire_infos")[0]

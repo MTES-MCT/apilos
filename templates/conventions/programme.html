@@ -2,16 +2,16 @@
 
 {% load static %}
 
-{% block page_title %}Opération - APiLos{% endblock%}
+{% block page_title %}Opération - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
         <div class="fr-container">
             <form method="post" action="">
                 {% csrf_token %}
@@ -34,7 +34,7 @@
                             </div>
                         {% endif %}
                         <div class="fr-my-3w">
-                            {% with convention_uuid=convention.uuid|stringformat:'s'%}
+                            {% with convention_uuid=convention.uuid|stringformat:'s' %}
                                 {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="convention__adresse__"|add:convention_uuid %}
                             {% endwith %}
                             {% if form.adresse.value is not None and not convention.adresse %}
@@ -49,7 +49,7 @@
                                 {% else %}
                                     <label class="fr-label">Code Postal</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_code_postal_div" >
-                                        <input class="fr-input" disabled value="{{convention.programme.code_postal}}"></input>
+                                        <input class="fr-input" disabled value="{{ convention.programme.code_postal }}"></input>
                                     </div>
                                 {% endif %}
                             </div>
@@ -59,7 +59,7 @@
                                 {% else %}
                                     <label class="fr-label">Ville</label>
                                     <div class="fr-mt-1w block--row-strech" id="id_ville_div" >
-                                        <input class="fr-input" disabled value="{{convention.programme.ville}}"></input>
+                                        <input class="fr-input" disabled value="{{ convention.programme.ville }}"></input>
                                     </div>
                                 {% endif %}
                             </div>
@@ -102,4 +102,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

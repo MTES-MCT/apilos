@@ -3,10 +3,10 @@
     <div class="{% if is_seconde_vie %}fr-notice fr-notice--info fr-px-5w{% endif %}">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-8 fr-py-3w">
-                <h1 class="fr-h2 apilos-d-inline">{{programme.nom}}</h1>
+                <h1 class="fr-h2 apilos-d-inline">{{ programme.nom }}</h1>
                 <div class="apilos-text--italic">
                     {% if programme.numero_operation %}
-                        Opération n°{{programme.numero_operation}}
+                        Opération n°{{ programme.numero_operation }}
                     {% endif %}
                     {% if request|is_instructeur and programme.bailleur %}
                         (Entreprise bailleur : {{ programme.bailleur }})

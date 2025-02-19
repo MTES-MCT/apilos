@@ -1,13 +1,13 @@
 <div class="fr-col-12 block--row-strech">
     <div class="block--row-strech-1 fr-mr-6w">
         <h2 class="fr-text--lg">Résilier la convention</h2>
-        {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant  %}
+        {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant %}
             <p>Ici, vous pouvez résilier votre convention</p>
         {% else %}
             <p>Un avenant est en cours. Annulez-le ou validez-le pour pouvoir procéder à la résiliation de votre convention.</p>
         {% endif %}
     </div>
-    {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant  %}
+    {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant %}
         <form method="post"  action="{% url 'conventions:resiliation_start' convention_uuid=convention.uuid %}" data-turbo="false">
             {% csrf_token %}
             <input id="resiliation_start" type="hidden" name="resiliation_start" value="true">
@@ -18,5 +18,3 @@
         <button class="fr-btn fr-btn--icon-left fr-icon-delete-line fr-my-2w" disabled>Résilier la convention</button>
     {% endif %}
 </div>
-
-

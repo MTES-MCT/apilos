@@ -1,20 +1,20 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Prévisualisation - APiLos{% endblock%}
+{% block page_title %}Prévisualisation - APiLos{% endblock %}
 
 {% load static %}
 
 {% block javascript_extras %}
     {% include "conventions/common/dropzone_js.html" %}
-{% endblock %}
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     {% include "conventions/common/dropzone_css.html" %}
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
+        {% include "conventions/common/form_header.html" %}
         {% include "common/nav_bar.html" with nav_bar_step="journal" %}
 
         <div class="fr-container fr-my-6w">
@@ -124,4 +124,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

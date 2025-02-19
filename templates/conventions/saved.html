@@ -2,17 +2,17 @@
 
 {% load display_filters %}
 
-{% block page_title %}Sauvegarde - APiLos{% endblock%}
+{% block page_title %}Sauvegarde - APiLos{% endblock %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
+        {% include "conventions/common/form_header.html" %}
         <div class="fr-container">
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-md-12  fr-my-5w">
                     <h2>Votre convention a été enregistrée !</h2>
                     <p class="fr-mb-3w">
-                        <span class="content__headline">Référence de la convention : {{convention}}</span>
+                        <span class="content__headline">Référence de la convention : {{ convention }}</span>
                     </p>
 
                     {% include "conventions/recapitulatif/alert_convention.html" %}
@@ -20,7 +20,7 @@
                     {% if request|is_bailleur and convention.statut == CONVENTION_STATUT.PROJET %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-my-5w">
                             {% include "conventions/actions/submit_convention.html" %}
-                            {% include "conventions/actions/cancel_convention.html"%}
+                            {% include "conventions/actions/cancel_convention.html" %}
                         </div>
                     {% endif %}
                 </div>
@@ -29,10 +29,10 @@
             <div class="form-button-footer fr-col-md-12  fr-py-5w">
                 {% include "common/button/return_convention_index.html" %}
                 <a class="fr-btn fr-btn--icon-left fr-icon-arrow-left-s-line" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
-                    Retour à {{convention|display_kind_with_pronom}}
+                    Retour à {{ convention|display_kind_with_pronom }}
                 </a>
             </div>
 
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

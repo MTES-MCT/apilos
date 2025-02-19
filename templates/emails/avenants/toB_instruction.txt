@@ -1,7 +1,0 @@
-Bonjour
-
-L'avenant à la convention {{convention}} ({{convention_url}}) a été envoyé avec succès à l’instructeur.
-Ce dernier reviendra vers vous pour l’instruction de cette convention.
-
-Cordialement,
-L'équipe APiLos

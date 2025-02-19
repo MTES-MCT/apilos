@@ -4,14 +4,14 @@
 
 <input
     type="hidden"
-    id="{{form.uuid.id_for_label}}"
-    name="{{form.uuid.html_name}}"
+    id="{{ form.uuid.id_for_label }}"
+    name="{{ form.uuid.html_name }}"
     value="{{ form.uuid.value|default_if_none:'' }}">
 <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
     <div class="fr-col-md-12">
         <h4>Surfaces à usage collectif</h4>
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='locaux_collectifs' upform=upform  what='surfaces à usage collectif' file_field_label='locaux' %}
+            {% include "common/form/download_upload_form.html" with file_type='locaux_collectifs' upform=upform what='surfaces à usage collectif' file_field_label='locaux' %}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 
@@ -46,9 +46,9 @@
                             <tbody>
                                 {% for form_locaux_collectifs in formset %}
                                     {% with main_object_field="locaux_collectifs__uuid__"|add:form_locaux_collectifs.uuid.value %}
-                                        <tr id="{{form_locaux_collectifs.uuid.id_for_label}}_group">
+                                        <tr id="{{ form_locaux_collectifs.uuid.id_for_label }}_group">
                                             {% if convention|display_comments %}
-                                                <td id="{{form_locaux_collectifs.uuid.id_for_label}}_div">
+                                                <td id="{{ form_locaux_collectifs.uuid.id_for_label }}_div">
                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_locaux_collectifs.uuid %}
                                                 </td>
                                             {% endif %}

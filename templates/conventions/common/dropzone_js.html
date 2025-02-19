@@ -1,5 +1,5 @@
 {% load static %}
 
-<script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-<script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-<script src="{% static "js/dropzone-client.js" %}" nonce="{{request.csp_nonce}}"></script>
+<script src="{% static "dropzonejs/min/dropzone.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+<script src="{% static "dropzonejs/min/dropzone-amd-module.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+<script src="{% static "js/dropzone-client.js" %}" nonce="{{ request.csp_nonce }}"></script>

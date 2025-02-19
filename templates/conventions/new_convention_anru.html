@@ -1,17 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% load static %}
-{% load custom_filters %}
+{% load custom_filters static %}
 
-{% block page_title %}Selection - APiLos{% endblock%}
+{% block page_title %}Selection - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
@@ -28,10 +27,10 @@
                             </div>
 
                             {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                 document.addEventListener('DOMContentLoaded', function () {
                                     VirtualSelect.init({
-                                        ele: '#{{form.administration.id_for_label}}',
+                                        ele: '#{{ form.administration.id_for_label }}',
                                         multiple: false,
                                         hideClearButton: true,
                                         search: true,
@@ -85,4 +84,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

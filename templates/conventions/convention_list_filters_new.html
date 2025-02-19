@@ -53,7 +53,7 @@
                                     {% endif %}
                                 </select>
                             </div>
-                            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                 VirtualSelect.init({
                                     ele: '#search-field-bailleur',
                                     search: true,
@@ -95,7 +95,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                         VirtualSelect.init({
                             ele: '#cstatut',
                             optionsCount: 5,
