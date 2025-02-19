@@ -228,7 +228,7 @@ class GetOrCreateConventionFromOperationTest(TestCase):
     def test_raises_when_unknown_aide(self):
         self.assertRaises(
             NoConventionForOperationSIAPException,
-            utils.get_or_create_conventions,
+            utils.get_or_create_conventions_from_siap,
             {
                 "detailsOperation": [
                     {"aide": {"code": "FAKE1", "libelle": "FAKE1"}},
@@ -241,7 +241,7 @@ class GetOrCreateConventionFromOperationTest(TestCase):
     def test_dont_raises_when_known_aide(self):
         # doesn't raise with NoConventionForOperationSIAPException
         try:
-            utils.get_or_create_conventions(
+            utils.get_or_create_conventions_from_siap(
                 {
                     "detailsOperation": [
                         {"aide": {"code": "PLAI", "libelle": "PLAI"}},

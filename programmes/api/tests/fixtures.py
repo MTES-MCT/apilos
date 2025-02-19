@@ -66,7 +66,6 @@ lot1 = {
 }
 convention1 = {
     "date_fin_conventionnement": None,
-    "financement": "PLUS",
     "fond_propre": None,
     "lot": lot1,
     "numero": "0001",
@@ -75,7 +74,6 @@ convention1 = {
 }
 convention1signed = {
     "date_fin_conventionnement": None,
-    "financement": "PLUS",
     "fond_propre": None,
     "lot": lot1,
     "numero": "0001",
@@ -144,7 +142,6 @@ lot2 = {
 }
 convention2 = {
     "date_fin_conventionnement": None,
-    "financement": "PLAI",
     "fond_propre": None,
     "lot": lot2,
     "numero": "0002",
@@ -153,7 +150,6 @@ convention2 = {
 }
 convention2signed = {
     "date_fin_conventionnement": None,
-    "financement": "PLAI",
     "fond_propre": None,
     "lot": lot2,
     "numero": "0002",

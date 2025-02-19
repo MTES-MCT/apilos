@@ -165,14 +165,14 @@ class ConventionModelsTest(TestCase):
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
         for financement in [Financement.PLUS, Financement.PLUS_CD]:
-            convention.financement = financement
+            convention.lot.financement = financement
             self.assertTrue(convention.mixity_option())
         for financement in [
             k
             for (k, _) in Financement.choices
             if k not in [Financement.PLUS, Financement.PLUS_CD]
         ]:
-            convention.financement = financement
+            convention.lot.financement = financement
             self.assertFalse(convention.mixity_option())
 
     def test_display_not_validated_status(self):

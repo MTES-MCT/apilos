@@ -89,25 +89,19 @@ class ConventionSelectionService:
                 # default ANRU when it is SIAP version
                 anru=bool(settings.CERBERE_AUTH),
             )
-            programme.save()
 
-            lot = Lot.objects.create(
+            self.convention = Convention.objects.create(
+                programme=programme,
+                cree_par=self.request.user,
+            )
+
+            Lot.objects.create(
                 nb_logements=self.form.cleaned_data["nb_logements"],
                 financement=self.form.cleaned_data["financement"],
                 type_habitat=self.form.cleaned_data["type_habitat"],
                 programme=programme,
+                convention=self.convention,
             )
-            lot.save()
-
-            self.convention = Convention.objects.create(
-                programme_id=lot.programme_id,
-                financement=lot.financement,
-                cree_par=self.request.user,
-            )
-            self.convention.save()
-
-            lot.convention = self.convention
-            lot.save()
 
             file = self.request.FILES.get("nom_fichier_signe", False)
             if file:
@@ -142,26 +136,20 @@ class ConventionSelectionService:
                         else TypeOperation.NEUF
                     ),
                 )
-                programme.save()
-
-                lot = Lot.objects.create(
-                    nb_logements=self.form.cleaned_data["nb_logements"],
-                    financement=self.form.cleaned_data["financement"],
-                    programme=programme,
-                )
-                lot.save()
 
                 self.convention = Convention.objects.create(
-                    programme_id=lot.programme_id,
-                    financement=lot.financement,
+                    programme=programme,
                     cree_par=self.request.user,
                     statut=(ConventionStatut.SIGNEE.label),
                     numero=(self.form.cleaned_data["numero"]),
                 )
-                self.convention.save()
 
-                lot.convention = self.convention
-                lot.save()
+                Lot.objects.create(
+                    nb_logements=self.form.cleaned_data["nb_logements"],
+                    financement=self.form.cleaned_data["financement"],
+                    programme=programme,
+                    convention=self.convention,
+                )
 
                 conventionfile = self.request.FILES.get("nom_fichier_signe", False)
                 if conventionfile:

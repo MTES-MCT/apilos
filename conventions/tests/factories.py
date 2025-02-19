@@ -14,10 +14,6 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
     numero = factory.Sequence(lambda n: f"Convention {n}")
     programme = factory.SubFactory(ProgrammeFactory)
 
-    # lot = factory.SubFactory("programmes.tests.factories.LotFactory")
-    # programme = factory.SelfAttribute("lot.programme")
-    # financement = factory.SelfAttribute("lot.financement")
-
     @factory.post_generation
     def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
         if extracted and create:
@@ -29,6 +25,11 @@ class ConventionFactory(BaseFactory, UploadFactoryMixin):
 class AvenantFactory(ConventionFactory):
     numero = "1"
     parent = factory.SubFactory(ConventionFactory)
+
+    @factory.post_generation
+    def create_lot(obj, create, extracted, **kwargs):  # noqa: N805
+        if extracted and create:
+            LotFactory.create(convention=obj, programme=obj.programme, **kwargs)
 
 
 class AvenantTypeFactory(factory.django.DjangoModelFactory):

@@ -99,7 +99,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
         self.assertEqual(
             self.service.convention,
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test", lots__financement=Financement.PLUS
             ),
         )
         self.assertEqual(
@@ -129,7 +129,7 @@ class ConventionSelectionServiceForInstructeurTests(TestCase):
             self.service.convention,
             Convention.objects.get(
                 programme__nom="Programme de test",
-                financement=Financement.PLAI,
+                lots__financement=Financement.PLAI,
                 parent_id__isnull=True,
             ),
         )
@@ -235,7 +235,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
         self.assertEqual(
             self.service.convention,
             Convention.objects.get(
-                programme__nom="Programme de test", financement=Financement.PLUS
+                programme__nom="Programme de test", lots__financement=Financement.PLUS
             ),
         )
         self.assertEqual(
@@ -266,7 +266,7 @@ class ConventionSelectionServiceForBailleurTests(TestCase):
             self.service.convention,
             Convention.objects.get(
                 programme__nom="Programme de test",
-                financement=Financement.PLUS,
+                lots__financement=Financement.PLUS,
                 parent_id__isnull=True,
             ),
         )

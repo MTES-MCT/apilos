@@ -68,14 +68,12 @@ class ConventionAdmin(ApilosModelAdmin):
         view_programme,
         "administration",
         "bailleur",
-        "financement",
         "uuid",
         view_programme_operation,
     )
     search_fields = [
         "programme__ville",
         "programme__nom",
-        "financement",
         "uuid",
         "programme__bailleur__nom",
         "programme__administration__nom",
@@ -90,7 +88,6 @@ class ConventionAdmin(ApilosModelAdmin):
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
-        "financement",
         "fond_propre",
         "commentaires",
         "statut",
