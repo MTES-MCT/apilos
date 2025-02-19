@@ -49,14 +49,14 @@ unfixable = ["B"]
 "scripts/*.py" = ["INP001"]
 "**/migrations/*.py" = ["E501", "N806"]
 # TODO: ignored because of low coverage, fix and remove
-"conventions/services/upload_objects.py" = ["UP"]
+"conventions/services/upload_objects.py" = ["UP", "C901"]
 "conventions/services/recapitulatif.py" = ["UP"]
 "conventions/views/avenants.py" = ["I001"]
 # TODO: changing imports order make tests fail, fix and remove
 "ecoloweb/services/__init__.py" = ["I001"]
 
 [tool.ruff.lint.mccabe]
-max-complexity = 20 # TODO: very high value, reduce to 10
+max-complexity = 10 # TODO: very high value, reduce to 10
 
 [tool.ruff.lint.isort]
 case-sensitive = true
