@@ -23,6 +23,21 @@ class ConventionLogementsService(ConventionService):
     upform: UploadForm = UploadForm()
 
     def initialize_formsets(self):
+        if self.request.POST:
+            # Dans le cas d'un POST (à l'upload d'un fichier), on initialise les tableaux avec les params du POST
+            self.formset = LogementFormSet(self.request.POST, prefix="avec_loyer")
+            self.formset_sans_loyer = LogementSansLoyerFormSet(
+                self.request.POST, prefix="sans_loyer"
+            )
+            self.formset_corrigee = LogementCorrigeeFormSet(
+                self.request.POST, prefix="corrigee_avec_loyer"
+            )
+            self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
+                self.request.POST, prefix="corrigee_sans_loyer"
+            )
+            return
+
+        # Dans le cas d'un GET, on initialise les tableaux à partir de la BDD
         initial = []
         initial_sans_loyer = []
         initial_corrigee = []
@@ -85,7 +100,6 @@ class ConventionLogementsService(ConventionService):
                             **surface_utile_params,
                         }
                     )
-
         self.formset = LogementFormSet(initial=initial, prefix="avec_loyer")
         self.formset_sans_loyer = LogementSansLoyerFormSet(
             initial=initial_sans_loyer, prefix="sans_loyer"
