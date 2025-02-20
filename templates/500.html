@@ -13,7 +13,7 @@
                             Nos équipes techniques travaillent actuellement à la mise en place de cette fonctionnalité.
                         </p>
                         <p class="fr-mb-3w">
-                            Nous vous prions de nous excuser pour la gène occasionnée. Si votre besoin est urgent, merci de <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank">contacter notre assistance</a>
+                            Nous vous prions de nous excuser pour la gène occasionnée. Si votre besoin est urgent, merci de <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">contacter notre assistance</a>
                         </p>
                     {% elif exception_type == 'NoConventionForOperationSIAPException' %}
                         <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Cette opération ne donne pas lieu à un conventionnement.</h2>
@@ -26,7 +26,7 @@
                             Une erreur est survenue. Nous vous prions de nous excuser.
                         </p>
                         <p class="fr-mb-3w">
-                            Si le problème persiste merci de contacter l'équipe <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank">APiLos</a>
+                            Si le problème persiste merci de contacter l'équipe <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">APiLos</a>
                         </p>
                     {% endif %}
                     {% if CERBERE_AUTH %}

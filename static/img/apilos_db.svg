@@ -3808,7 +3808,7 @@
     <switch>
         <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" />
         <a transform="translate(0,-5)"
-            xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank" rel="noreferrer">
             <text text-anchor="middle" font-size="10px" x="50%" y="100%">Text is not SVG - cannot
                 display</text>
         </a>
