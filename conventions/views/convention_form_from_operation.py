@@ -58,7 +58,6 @@ class SelectOperationView(FromOperationBaseView, TemplateView):
 
         return super().get_context_data(**kwargs) | {
             "operations": operations,
-            "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
             "exact_match": exact_match,
         }
 

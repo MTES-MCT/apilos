@@ -600,7 +600,7 @@ MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]
 # Assistance
 SIAP_ASSISTANCE_URL = get_env_variable(
     "SIAP_ASSISTANCE_URL",
-    default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3/group/8/create/14",
+    default="https://siap-logement.atlassian.net/servicedesk/customer/portal/3",
 )
 
 # LibreOffice
