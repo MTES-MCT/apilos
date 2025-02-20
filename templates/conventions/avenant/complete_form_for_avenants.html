@@ -1,7 +1,7 @@
 {% load display_filters %}
-<p class="fr-alert__title">Valider {{convention|display_kind_with_pronom}} </p>
+<p class="fr-alert__title">Valider {{ convention|display_kind_with_pronom }} </p>
 {% if form %}
-    <p class="fr-mb-0">Pour pouvoir valider {{convention|display_kind_with_demonstratif}}, vous devez remplir les informations suivantes concernant la convention originale.</p>
+    <p class="fr-mb-0">Pour pouvoir valider {{ convention|display_kind_with_demonstratif }}, vous devez remplir les informations suivantes concernant la convention originale.</p>
     <form method="post"  action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false"  enctype="multipart/form-data">
         {% csrf_token %}
         <div class="fr-col-12 fr-mt-2w">
@@ -29,24 +29,24 @@
         <div class="fr-col-md-12">
             {% if convention.numero and convention.numero != conventionNumberForm.convention_numero.value %}
                 <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
-                <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{conventionNumberForm.convention_numero.value}}</p>
+                <p>En fonction du nombre d'avenants répertoriés dans APiLos, il devrait porter le numéro {{ conventionNumberForm.convention_numero.value }}</p>
             {% else %}
                 {% if convention.numero %}
                     <p class="fr-mb-0">Le bailleur a indiqué qu'il s'agissait de l'avenant numéro <strong>{{ convention.numero }}</strong>.</p>
                     <p>Cette déclaration est cohérente avec l'historique connu dans APiLos.</p>
                 {% else %}
-                    <p>L'avenant aura le numéro {{conventionNumberForm.convention_numero.value}}.</p>
+                    <p>L'avenant aura le numéro {{ conventionNumberForm.convention_numero.value }}.</p>
                 {% endif %}
             {% endif %}
             <p class="fr-mb-0">Vous pouvez le valider avec ce numéro ou modifier le numéro ci-dessous avant de valider.</p>
             <p><em>N'oubliez pas d'importer les avenants manquants, le cas échéant.</em></p>
             <input class="fr-input fr-col-12 fr-my-3w"
-                   id="{{conventionNumberForm.convention_numero.id_for_label}}"
-                   name="{{conventionNumberForm.convention_numero.html_name}}"
+                   id="{{ conventionNumberForm.convention_numero.id_for_label }}"
+                   name="{{ conventionNumberForm.convention_numero.html_name }}"
                    {% if convention.numero %}
-                       value="{{convention.numero}}"
+                       value="{{ convention.numero }}"
                    {% else %}
-                       value="{{conventionNumberForm.convention_numero.value}}"
+                       value="{{ conventionNumberForm.convention_numero.value }}"
                    {% endif %}
             >
         </div>
@@ -57,7 +57,3 @@
         </div>
     </form>
 {% endif %}
-
-
-
-

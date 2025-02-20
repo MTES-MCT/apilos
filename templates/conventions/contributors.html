@@ -1,6 +1,6 @@
 <div class="fr-pl-2w">
     <a class="fr-link fr-text--sm" aria-describedby="tooltip-contributors" id="link-contibutors" href="#">
-        {{contributors.number}} contributeur{% if contributors.number > 1 %}s{% endif %}
+        {{ contributors.number }} contributeur{% if contributors.number > 1 %}s{% endif %}
     </a>
     <span class="fr-tooltip fr-placement" id="tooltip-contributors" role="tooltip" aria-hidden="true">
         {% if contributors.number == 0 %}
@@ -9,7 +9,7 @@
         {% if contributors.instructeurs %}
             pour l'instruction
             {% for instructeur in contributors.instructeurs %}
-                <strong>{{instructeur.0}} {{instructeur.1}}</strong>
+                <strong>{{ instructeur.0 }} {{ instructeur.1 }}</strong>
                 {% if not forloop.last %} et {% endif %}
             {% endfor %}
             {% if contributors.bailleurs %}, {% endif %}
@@ -17,7 +17,7 @@
         {% if contributors.bailleurs %}
             pour le bailleur
             {% for bailleur in contributors.bailleurs %}
-                <strong>{{bailleur.0}} {{bailleur.1}}</strong>
+                <strong>{{ bailleur.0 }} {{ bailleur.1 }}</strong>
                 {% if not forloop.last %} et {% endif %}
             {% endfor %}
         {% endif %}

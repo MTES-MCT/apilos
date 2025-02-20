@@ -2,14 +2,14 @@
 
 {% if object_field %}
     {% if file_list or text or comments|has_comments:object_field %}
-        <div class="block--row-strech" id="{{object_field}}_group">
+        <div class="block--row-strech" id="{{ object_field }}_group">
             <div class="block--row-strech-1">
-                <p class="fr-my-1w">{% if label %}<strong>{{label}} : </strong>{% endif %}{% if text %}{{ text|linebreaks }}{% endif %}</p>
+                <p class="fr-my-1w">{% if label %}<strong>{{ label }} : </strong>{% endif %}{% if text %}{{ text|linebreaks }}{% endif %}</p>
             </div>
             {% include "common/utils/comments_field.html" with callback_click="refresh_opened_comments" %}
         </div>
     {% endif %}
 {% elif file_list or text %}
-    <p class="fr-my-1w">{% if label %}<strong>{{label}} : </strong>{% endif %}{% if text %}{{ text|linebreaks }}{% endif %}</p>
+    <p class="fr-my-1w">{% if label %}<strong>{{ label }} : </strong>{% endif %}{% if text %}{{ text|linebreaks }}{% endif %}</p>
 {% endif %}
 {% include "common/display_files.html" with file_list=file_list %}

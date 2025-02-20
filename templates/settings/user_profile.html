@@ -2,15 +2,15 @@
 
 {% load static %}
 
-{% block page_title %}Votre Profil - APiLos{% endblock%}
+{% block page_title %}Votre Profil - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static "virtual-select/virtual-select.min.css" %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
     <div class="fr-container-fluid">
@@ -40,4 +40,4 @@
             </div>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

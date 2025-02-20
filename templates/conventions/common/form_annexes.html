@@ -4,8 +4,8 @@
 
 <input
     type="hidden"
-    id="{{form.uuid.id_for_label}}"
-    name="{{form.uuid.html_name}}"
+    id="{{ form.uuid.id_for_label }}"
+    name="{{ form.uuid.html_name }}"
     value="{{ form.uuid.value|default_if_none:'' }}">
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-md-12">
@@ -14,7 +14,7 @@
             <p class="fr-mb-1w">Attention, les annexes concernées sont ici les jardins, les cours et les surfaces de terrasse au-delà de 9 m² (ex : Pour une terrasse d’une surface totale de 10 m², renseignez ici uniquement 1 m², les 9m² sont intégrés dans le calcul de la surface utile)</p>
         </div>
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-            {% include "common/form/download_upload_form.html" with file_type='annexes' upform=upform  what='annexes' file_field_label='annexe'%}
+            {% include "common/form/download_upload_form.html" with file_type='annexes' upform=upform what='annexes' file_field_label='annexe' %}
             <hr class="fr-col-12 fr-my-3w">
         </div>
 
@@ -52,17 +52,17 @@
                             <tbody>
                                 {% for form_annexe in formset %}
                                     {% with main_object_field="annexe__uuid__"|add:form_annexe.uuid.value %}
-                                        <tr id="{{form_annexe.uuid.id_for_label}}_group">
+                                        <tr id="{{ form_annexe.uuid.id_for_label }}_group">
                                             {% if convention|display_comments %}
-                                                <td id="{{form_annexe.uuid.id_for_label}}_div">
+                                                <td id="{{ form_annexe.uuid.id_for_label }}_div">
                                                     {% include 'common/utils/comments_field.html' with object_field=main_object_field form_input=form_annexe.uuid %}
                                                 </td>
                                             {% endif %}
                                             <td>
                                                 <input
                                                     type="hidden"
-                                                    id="{{form_annexe.uuid.id_for_label}}"
-                                                    name="{{form_annexe.uuid.html_name}}"
+                                                    id="{{ form_annexe.uuid.id_for_label }}"
+                                                    name="{{ form_annexe.uuid.html_name }}"
                                                     value="{{ form_annexe.uuid.value|default_if_none:'' }}">
                                                 {% include "common/form/input_select.html" with form_input=form_annexe.typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                             </td>

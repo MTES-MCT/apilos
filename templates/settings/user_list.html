@@ -1,15 +1,15 @@
 {% load static %}
 
 <form class="fr-my-3w" method="get" action="" id="search_table">
-    <input type="hidden" id="page" name="page" value="{{users.number}}">
-    <input type="hidden" id="order_by" name="order_by" value="{{order_by}}">
+    <input type="hidden" id="page" name="page" value="{{ users.number }}">
+    <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
 
     {% if total_users > 3 %}
         <div class="fr-search-bar" id="header-search" role="search">
             <label class="fr-label" for="search_input">
                 Recherche
             </label>
-            <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{search_input}}">
+            <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{ search_input }}">
             <button class="fr-btn" title="Rechercher">
                 Rechercher
             </button>
@@ -22,7 +22,7 @@
         <div class="fr-table__container">
             <div class="fr-table__content">
                 <table>
-                    <caption>{{users.paginator.count}}{% if users.paginator.count != total_users %} / {{total_users}}{% endif %} utilisateur{{ users.paginator.count|pluralize }}</caption>
+                    <caption>{{ users.paginator.count }}{% if users.paginator.count != total_users %} / {{ total_users }}{% endif %} utilisateur{{ users.paginator.count|pluralize }}</caption>
 
                     <thead>
                         <tr>
@@ -46,14 +46,14 @@
                     </thead>
                     <tbody>
                         {% for user in users %}
-                            {% if user.username%}
+                            {% if user.username %}
                                 <tr>
                                     <td>
-                                        {{ user.username}}
+                                        {{ user.username }}
                                     </td>
-                                    <td>{{ user.first_name}}</td>
-                                    <td>{{ user.last_name}}</td>
-                                    <td>{{ user.email}}</td>
+                                    <td>{{ user.first_name }}</td>
+                                    <td>{{ user.last_name }}</td>
+                                    <td>{{ user.email }}</td>
                                 </tr>
                             {% endif %}
                         {% endfor %}

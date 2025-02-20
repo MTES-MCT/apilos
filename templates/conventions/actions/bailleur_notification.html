@@ -13,15 +13,15 @@
                     <div class="fr-checkbox-group">
                         <input
                             type="hidden"
-                            id="{{notificationForm.from_instructeur.id_for_label}}"
-                            name="{{notificationForm.from_instructeur.html_name}}"
+                            id="{{ notificationForm.from_instructeur.id_for_label }}"
+                            name="{{ notificationForm.from_instructeur.html_name }}"
                             value=1>
                         <input
                             type="checkbox"
-                            id="{{notificationForm.send_copy.id_for_label}}"
-                            name="{{notificationForm.send_copy.html_name}}"
+                            id="{{ notificationForm.send_copy.id_for_label }}"
+                            name="{{ notificationForm.send_copy.html_name }}"
                             checked>
-                        <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
+                        <label class="fr-label" for="{{ notificationForm.send_copy.id_for_label }}">Envoyez-moi une copie du message envoyé
                         </label>
                     </div>
                     <button class="fr-btn fr-mt-2w">
@@ -54,15 +54,15 @@
                     <div class="fr-checkbox-group">
                         <input
                             type="hidden"
-                            id="{{notificationForm.from_instructeur.id_for_label}}"
-                            name="{{notificationForm.from_instructeur.html_name}}"
+                            id="{{ notificationForm.from_instructeur.id_for_label }}"
+                            name="{{ notificationForm.from_instructeur.html_name }}"
                             value=1>
                         <input
                             type="checkbox"
-                            id="{{notificationForm.send_copy.id_for_label}}"
-                            name="{{notificationForm.send_copy.html_name}}"
+                            id="{{ notificationForm.send_copy.id_for_label }}"
+                            name="{{ notificationForm.send_copy.html_name }}"
                             checked>
-                        <label class="fr-label" for="{{notificationForm.send_copy.id_for_label}}">Envoyez-moi une copie du message envoyé
+                        <label class="fr-label" for="{{ notificationForm.send_copy.id_for_label }}">Envoyez-moi une copie du message envoyé
                         </label>
                     </div>
                     {% if convention|display_demande_correction %}

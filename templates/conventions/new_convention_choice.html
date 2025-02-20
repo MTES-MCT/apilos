@@ -1,12 +1,8 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Créer une convention - APiLos{% endblock%}
+{% block page_title %}Créer une convention - APiLos{% endblock %}
 
-{% load static %}
-
-{% load custom_filters %}
-
-{% load waffle_tags %}
+{% load custom_filters static waffle_tags %}
 
 {% block content %}
     <div class="fr-container fr-my-5w">
@@ -35,4 +31,4 @@
             </div>
         {% endflag %}
     </div>
-{% endblock %}
+{% endblock content %}

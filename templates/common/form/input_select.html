@@ -1,17 +1,17 @@
-<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     {% if form_input.label %}
-        <label class="fr-label {{ label_class }}" for="{{form_input.id_for_label}}">
+        <label class="fr-label {{ label_class }}" for="{{ form_input.id_for_label }}">
             {{ form_input.label }}
             {% include "common/form/required_field.html" with form_input=form_input %}
             {% include "common/help_field.html" with form_input=form_input %}
         </label>
     {% endif %}
 
-    <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+    <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
         <select
             class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
-            id="{{form_input.id_for_label}}"
-            name="{{form_input.html_name}}"
+            id="{{ form_input.id_for_label }}"
+            name="{{ form_input.html_name }}"
             {% if form_input.required %}required{% endif %}
             {% include "common/form/disable_form_input.html" %}>
             {% if not without_empty_option %}
@@ -22,16 +22,16 @@
             {% endif %}
             {% if enum %}
                 {% for element in enum %}
-                    <option value="{{element.value}}"
-                            {% if element.value  == form_input.value %}selected{% endif %}>
-                        {{element.label}}
+                    <option value="{{ element.value }}"
+                            {% if element.value == form_input.value %}selected{% endif %}>
+                        {{ element.label }}
                     </option>
                 {% endfor %}
             {% else %}
                 {% for value, label in form_input.field.choices %}
                     <option value="{{ value|safe }}"
-                            {% if value|safe  == form_input.value|safe %}selected{% endif %}>
-                        {{label}}
+                            {% if value|safe == form_input.value|safe %}selected{% endif %}>
+                        {{ label }}
                     </option>
                 {% endfor %}
             {% endif %}

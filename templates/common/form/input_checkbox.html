@@ -1,15 +1,15 @@
-<div id="{{form_input.id_for_label}}_group">
-    <div class="fr-mt-1w block--row-strech" id="{{form_input.id_for_label}}_div">
+<div id="{{ form_input.id_for_label }}_group">
+    <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
         <div class="fr-checkbox-group block--row-strech-1 {% if form_input.errors %}fr-checkbox-group--error{% endif %}">
-            <input type='hidden' value='FALSE' name="{{form_input.html_name}}"
+            <input type='hidden' value='FALSE' name="{{ form_input.html_name }}"
                    {% include "common/form/disable_form_input.html" %}>
             <input
                 type="checkbox"
-                id="{{form_input.html_name}}"
+                id="{{ form_input.html_name }}"
                 {% if form_input.value %}checked="checked"{% endif %}
-                name="{{form_input.html_name}}"
+                name="{{ form_input.html_name }}"
                 {% include "common/form/disable_form_input.html" %}>
-            <label class="fr-label {% if strike_unchecked and not form_input.value %}apilos-form-label--strike{% endif %}" for="{{form_input.html_name}}">
+            <label class="fr-label {% if strike_unchecked and not form_input.value %}apilos-form-label--strike{% endif %}" for="{{ form_input.html_name }}">
                 {% if form_input.label %}
                     {{ form_input.label|safe }}
                 {% endif %}

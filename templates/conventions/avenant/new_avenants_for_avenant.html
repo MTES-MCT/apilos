@@ -1,13 +1,13 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Déposer les avenants{% endblock%}
+{% block page_title %} Déposer les avenants{% endblock %}
 
 {% load static %}
 
 {% block content %}
     <div class="fr-container fr-py-5w">
         <div class="fr-col-12 fr-mt-2w fr-mb-4w">
-            <h2>{{convention}}</h2>
+            <h2>{{ convention }}</h2>
             {% include "conventions/avenant/list_avenants_for_avenant.html" with conventions=avenants %}
             {% include "conventions/avenant/televersement_avenants_for_avenant_start.html" with ongoing_avenants=ongoing_avenants %}
             <hr>
@@ -18,5 +18,4 @@
             </a>
         </div>
     </div>
-{% endblock %}
-
+{% endblock content %}

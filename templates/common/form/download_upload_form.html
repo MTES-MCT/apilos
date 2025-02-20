@@ -11,8 +11,8 @@
     <input
         class="fileinput--hidden"
         type="file"
-        id="{{file_field_label}}"
-        name="{{upform.file.html_name}}"
+        id="{{ file_field_label }}"
+        name="{{ upform.file.html_name }}"
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <div class="block--row-strech">
         <a class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left" href="{% url 'conventions:load_xlsx_model' file_type=file_type %}">
@@ -22,7 +22,7 @@
         <div class="fr-mx-2w">Puis</div>
 
         <div>
-            <button id="{{file_field_label}}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
+            <button id="{{ file_field_label }}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
                 Déposer le fichier de vos {{ what }}
             </button>
             {% for error in upform.file.errors %}
@@ -34,11 +34,11 @@
 
     </div>
 
-    <script type="text/javascript" nonce="{{request.csp_nonce}}">
-        document.getElementById('{{file_field_label}}_upload_button').onclick = function() {
-            document.getElementById('{{file_field_label}}').click();
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+        document.getElementById('{{ file_field_label }}_upload_button').onclick = function() {
+            document.getElementById('{{ file_field_label }}').click();
         };
-        document.getElementById('{{file_field_label}}').onchange = function() {
+        document.getElementById('{{ file_field_label }}').onchange = function() {
             var input = document.createElement('input');
             input.setAttribute('type', 'hidden');//hidden input
             input.setAttribute('name', 'Upload');//set the param name

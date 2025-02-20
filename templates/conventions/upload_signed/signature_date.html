@@ -1,16 +1,16 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Envoi - APiLos {% endblock%}
+{% block page_title %} Envoi - APiLos{% endblock %}
 
 {% load static %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
-        {% include "conventions/common/form_header.html"%}
+        {% include "conventions/common/form_header.html" %}
         {% include "common/nav_bar.html" with nav_bar_step="sent" %}
 
         <div class="fr-container fr-py-5w">
-            {% include "conventions/common/stepper.html"%}
+            {% include "conventions/common/stepper.html" %}
             <h4>Indiquez la date de signature de la convention</h4>
             <form method="POST">
                 {% csrf_token %}
@@ -35,4 +35,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

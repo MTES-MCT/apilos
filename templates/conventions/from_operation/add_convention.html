@@ -2,22 +2,22 @@
 
 {% load static %}
 
-{% block page_title %}Ajout de convention simplifié - APiLos{% endblock%}
+{% block page_title %}Ajout de convention simplifié - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock %}
+{% endblock css_extras %}
 
 {% block content %}
 
     <div class="fr-container fr-my-5w">
         <h1>Ajouter une convention</h1>
 
-        {% include "../common/stepper.html"%}
+        {% include "../common/stepper.html" %}
 
         {% if operation is None %}
 
@@ -30,16 +30,16 @@
             <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Opération liée</h4>
 
             <div class="fr-mb-7w">
-                <h6 class="fr-mb-0 fr-text--lg">{{operation.nom}}</h6>
+                <h6 class="fr-mb-0 fr-text--lg">{{ operation.nom }}</h6>
                 <div class="apilos-input-group--inline">
                     <div class="fr-grid-row fr-mt-1w apilos-text--black">
                         <div class="fr-pr-2w fr-text--sm apilos-separator">
                             <a href="{% url 'programmes:operation_conventions' numero_operation=operation.numero %}">
-                                Opération n°{{operation.numero}}
+                                Opération n°{{ operation.numero }}
                             </a>
                         </div>
-                        <div class="fr-px-2w fr-text--sm apilos-separator">{{operation.commune}}</div>
-                        <div class="fr-px-2w fr-text--sm">Bailleur : {{operation.bailleur}}</div>
+                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ operation.commune }}</div>
+                        <div class="fr-px-2w fr-text--sm">Bailleur : {{ operation.bailleur }}</div>
                     </div>
                 </div>
                 {% if conventions.count > 0 %}
@@ -60,10 +60,10 @@
                                         </thead>
                                         <tbody>
                                             {% for convention in conventions %}
-                                                <tr class="clickable" id="convention_redirect_{{convention.uuid}}">
+                                                <tr class="clickable" id="convention_redirect_{{ convention.uuid }}">
                                                     <td>
                                                         <div class="fr-pr-2w">
-                                                            {% include "conventions/home/statut_tag.html"  %}
+                                                            {% include "conventions/home/statut_tag.html" %}
                                                         </div>
                                                     </td>
                                                     <td>{{ convention.numero|default_if_none:"-" }}</td>
@@ -76,9 +76,9 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                                                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                                     document.addEventListener('DOMContentLoaded', function () {
-                                                        document.getElementById('convention_redirect_{{convention.uuid}}').addEventListener('click', function(){
+                                                        document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
                                                             if (this.classList.contains("sent")) {
                                                                 const url="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
                                                                 window.open(url, "_blank");
@@ -121,7 +121,7 @@
                         {% endfor %}
 
                         <div class="fr-col-6">
-                            {% include "common/form/input_text.html" with form_input=form.numero  mandatory_input=True editable=True %}
+                            {% include "common/form/input_text.html" with form_input=form.numero mandatory_input=True editable=True %}
                         </div>
                         <div class="fr-col-6">
                             {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}
@@ -133,7 +133,7 @@
                             {% include "common/form/input_select.html" with form_input=form.annee_signature mandatory_input=True editable=True %}
                         </div>
                         <div class="fr-col-12">
-                            <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{form.nom_fichier_signe.id_for_label}}_group">
+                            <div class="fr-upload-group {% if form.nom_fichier_signe.errors %}fr-select-group--error{% endif %}" id="{{ form.nom_fichier_signe.id_for_label }}_group">
                                 <label class="fr-label" for="file-upload">Déposer la convention (en PDF)
                                     {% include "common/form/required_field.html" with form_input=form_input mandatory_input=True %}
                                     <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
@@ -142,7 +142,7 @@
                                     class="fr-upload {% if form.nom_fichier_signe.errors %}fr-input--error{% endif %}"
                                     type="file"
                                     id="file-upload"
-                                    name="{{form.nom_fichier_signe.html_name}}"
+                                    name="{{ form.nom_fichier_signe.html_name }}"
                                     accept="application/pdf"
                                 >
                             </div>
@@ -163,4 +163,4 @@
         {% endif %}
     </div>
 
-{% endblock %}
+{% endblock content %}

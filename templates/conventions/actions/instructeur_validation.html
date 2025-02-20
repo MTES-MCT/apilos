@@ -1,6 +1,4 @@
-{% load custom_filters %}
-{% load display_filters %}
-{% load waffle_tags %}
+{% load custom_filters display_filters waffle_tags %}
 {% if convention|display_validation:request %}
 
     <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-arrow-right-s-line-double h-100">
@@ -66,8 +64,8 @@
 
 {% if convention|display_is_validated %}
     <div role="alert" class="fr-alert fr-alert--success">
-        <p class="fr-alert__title">{{convention|display_kind_with_pronom}} a été validé{{convention|display_gender_terminaison}} le {{ convention.valide_le|date:"j F Y" }}</p>
-        <p class="fr-alert__title">avec le numéro {{convention.numero}}</p>
+        <p class="fr-alert__title">{{ convention|display_kind_with_pronom }} a été validé{{ convention|display_gender_terminaison }} le {{ convention.valide_le|date:"j F Y" }}</p>
+        <p class="fr-alert__title">avec le numéro {{ convention.numero }}</p>
     </div>
     <hr>
 {% endif %}

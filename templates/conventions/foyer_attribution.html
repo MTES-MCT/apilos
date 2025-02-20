@@ -1,26 +1,24 @@
 {% extends "layout/base.html" %}
 
-{% load static %}
+{% load custom_filters static %}
 
-{% load custom_filters %}
-
-{% block page_title %}Attribution - APiLos{% endblock%}
+{% block page_title %}Attribution - APiLos{% endblock %}
 
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner fr-pb-1w">
-        {% include "conventions/common/form_header.html"%}
-        {% include "common/step_progressbar.html"%}
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input
                     type="hidden"
-                    id="{{form.uuid.id_for_label}}"
-                    name="{{form.uuid.html_name}}"
+                    id="{{ form.uuid.id_for_label }}"
+                    name="{{ form.uuid.html_name }}"
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-12">
@@ -37,15 +35,15 @@
                                     <div class="fr-radio-group">
                                         <input
                                             type="radio"
-                                            id="{{form.attribution_type.html_name}}-agees"
+                                            id="{{ form.attribution_type.html_name }}-agees"
                                             value="agees"
-                                            name="{{form.attribution_type.html_name}}"
+                                            name="{{ form.attribution_type.html_name }}"
                                             {% if form.attribution_type.value == 'agees' %}checked{% endif %}
                                             {% include "common/form/disable_form_input.html" %}>
-                                        <label class="fr-label fr-h5" for="{{form.attribution_type.html_name}}-agees">Aux personnes âgées seules ou en ménage
+                                        <label class="fr-label fr-h5" for="{{ form.attribution_type.html_name }}-agees">Aux personnes âgées seules ou en ménage
                                         </label>
                                     </div>
-                                    <div id="{{form.attribution_type.html_name}}-agees-details">
+                                    <div id="{{ form.attribution_type.html_name }}-agees-details">
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_autonomie object_field="convention__attribution_agees_autonomie__"|add:form.uuid.value %}
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_ephad object_field="convention__attribution_agees_ephad__"|add:form.uuid.value %}
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_agees_desorientees object_field="convention__attribution_agees_desorientees__"|add:form.uuid.value %}
@@ -56,15 +54,15 @@
                                     <div class="fr-radio-group">
                                         <input
                                             type="radio"
-                                            id="{{form.attribution_type.html_name}}-handicapees"
+                                            id="{{ form.attribution_type.html_name }}-handicapees"
                                             value="handicapees"
-                                            name="{{form.attribution_type.html_name}}"
+                                            name="{{ form.attribution_type.html_name }}"
                                             {% if form.attribution_type.value == 'handicapees' %}checked{% endif %}
                                             {% include "common/form/disable_form_input.html" %}>
-                                        <label class="fr-label fr-h5" for="{{form.attribution_type.html_name}}-handicapees">Aux personnes handicapées seules ou en ménage
+                                        <label class="fr-label fr-h5" for="{{ form.attribution_type.html_name }}-handicapees">Aux personnes handicapées seules ou en ménage
                                         </label>
                                     </div>
-                                    <div id="{{form.attribution_type.html_name}}-handicapees-details">
+                                    <div id="{{ form.attribution_type.html_name }}-handicapees-details">
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer object_field="convention__attribution_handicapes_foyer__"|add:form.uuid.value %}
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_de_vie object_field="convention__attribution_handicapes_foyer_de_vie__"|add:form.uuid.value %}
                                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_handicapes_foyer_medicalise object_field="convention__attribution_handicapes_foyer_medicalise__"|add:form.uuid.value %}
@@ -74,16 +72,16 @@
                                     <div class="fr-radio-group">
                                         <input
                                             type="radio"
-                                            id="{{form.attribution_type.html_name}}-inclusif"
+                                            id="{{ form.attribution_type.html_name }}-inclusif"
                                             value="inclusif"
-                                            name="{{form.attribution_type.html_name}}"
+                                            name="{{ form.attribution_type.html_name }}"
                                             {% if form.attribution_type.value == 'inclusif' %}checked{% endif %}
                                             {% include "common/form/disable_form_input.html" %}>
-                                        <label class="fr-label fr-h5" for="{{form.attribution_type.html_name}}-inclusif">Habitat inclusif
+                                        <label class="fr-label fr-h5" for="{{ form.attribution_type.html_name }}-inclusif">Habitat inclusif
                                             <span class="fr-hint-text">Aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage</span>
                                         </label>
                                     </div>
-                                    <div id="{{form.attribution_type.html_name}}-inclusif-details">
+                                    <div id="{{ form.attribution_type.html_name }}-inclusif-details">
                                         {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_conditions_specifiques helptext_visible=True object_field="convention__attribution_inclusif_conditions_specifiques__"|add:form.uuid.value mandatory_input=True %}
                                         {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_conditions_admission helptext_visible=True object_field="convention__attribution_inclusif_conditions_admission__"|add:form.uuid.value mandatory_input=True %}
                                         {% include "common/form/input_textarea.html" with form_input=form.attribution_inclusif_modalites_attribution helptext_visible=True object_field="convention__attribution_inclusif_modalites_attribution__"|add:form.uuid.value mandatory_input=True %}
@@ -93,7 +91,7 @@
                                 </div>
                             </fieldset>
                         </div>
-                        <script type="text/javascript" nonce="{{request.csp_nonce}}">
+                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                             document.addEventListener('DOMContentLoaded', function () {
                                 radio_options = document.getElementsByName('attribution_type')
                                 for (var i = 0;i<radio_options.length;i++) {
@@ -132,4 +130,4 @@
             </form>
         </div>
     </div>
-{% endblock %}
+{% endblock content %}

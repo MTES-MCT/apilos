@@ -10,7 +10,7 @@
 
         <!--Title and desc-->
 
-        <title>{% block page_title %}APiLos, la plateforme de conventionement des logements sociaux{% endblock%}</title>
+        <title>{% block page_title %}APiLos, la plateforme de conventionement des logements sociaux{% endblock %}</title>
         <meta name="description" content="{% block page_description %}Plateforme permettant d'instruire des conventionnnements de logements sociaux en France{% endblock %}">
 
         <!--Favicon-->
@@ -38,7 +38,7 @@
 
         <!-- Matomo -->
         {% if ENVIRONMENT == "production" %}
-            <script type="text/javascript" nonce="{{request.csp_nonce}}">
+            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                 var _paq = window._paq = window._paq || [];
                 _paq.push(['trackPageView']);
                 _paq.push(['enableLinkTracking']);
@@ -58,18 +58,18 @@
     <body>
         {% block header %}
             {% include "layout/header.html" with without_action_button=False %}
-        {% endblock %}
+        {% endblock header %}
 
         <main role="main" class="contentAll">
             {% block message %}
                 <div class="fr-container">
                     {% for message in messages %}
-                        <div class="fr-alert {% if message.tags %}fr-alert--{{message.tags}}{% endif %} fr-mt-2w">
+                        <div class="fr-alert {% if message.tags %}fr-alert--{{ message.tags }}{% endif %} fr-mt-2w">
                             <p>{{ message }}</p>
                         </div>
                     {% endfor %}
                 </div>
-            {% endblock %}
+            {% endblock message %}
 
             {% block content %}{% endblock %}
         </main>
@@ -77,7 +77,7 @@
 
         {% block footer %}
             {% include "layout/footer.html" %}
-        {% endblock %}
+        {% endblock footer %}
 
         {% include "layout/sentry.html" %}
         {% include "layout/javascript_load.html" %}

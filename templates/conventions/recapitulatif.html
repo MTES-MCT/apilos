@@ -1,25 +1,25 @@
 {% extends "layout/base.html" %}
+
 {% block page_title %}Recapitulatif - APiLos{% endblock %}
-{% load static %}
-{% load display_filters %}
-{% load custom_filters %}
+{% load custom_filters display_filters static %}
 {% block javascript_extras %}
-    <script src="{% static "js/comment-factory.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script src="{% static "turbo/turbo.es2017-umd.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{request.csp_nonce}}"></script>
-    <script nonce="{{request.csp_nonce}}">Turbo.session.drive = false</script>
-{% endblock %}
+    <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
+    <script src="{% static "turbo/turbo.es2017-umd.js" %}" nonce="{{ request.csp_nonce }}"></script>
+    <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{ request.csp_nonce }}"></script>
+    <script nonce="{{ request.csp_nonce }}">Turbo.session.drive = false</script>
+{% endblock javascript_extras %}
+
 {% block content %}
     {% comment %} TODO: reverse relation convention lot {% endcomment %}
     {% with programme_uuid=convention.programme.uuid|slugify convention_uuid=convention.uuid|slugify lot_uuid=convention.lot.uuid|slugify ecolo_ref=convention.ecolo_reference %}
         <input type="hidden" id="convention_uuid" value="{{ convention.uuid }}">
         <div class="fr-container-fluid ds_banner recapitulatif">
             {% include "conventions/common/form_header.html" %}
-            {% include "common/nav_bar.html"  with nav_bar_step="recapitulatif" %}
+            {% include "common/nav_bar.html" with nav_bar_step="recapitulatif" %}
             <div class="fr-container fr-mt-5w">
                 {% if convention.statut == CONVENTION_STATUT.SIGNEE %}
                     <div class="fr-px-2w">
-                        {{convention|display_kind|capfirst}} n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{convention|display_gender_terminaison}} le <span class="fr-ml-1v">{{convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-'}}</span>
+                        {{ convention|display_kind|capfirst }} n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</span>
                     </div>
                 {% endif %}
                 {% csrf_token %}
@@ -49,13 +49,13 @@
                     {% endif %}
                 {% endif %}
                 {% if convention.is_denonciation %}
-                    {% include "conventions/recapitulatif/denonciation.html"  with target_url='conventions:denonciation' %}
+                    {% include "conventions/recapitulatif/denonciation.html" with target_url='conventions:denonciation' %}
                 {% elif convention.is_resiliation %}
                     {% if request.user.is_instructeur_departemental %}
-                        {% include "conventions/recapitulatif/resiliation.html"  with target_url='conventions:resiliation' %}
-                        {% include "conventions/recapitulatif/resiliation_acte.html"  with target_url='conventions:resiliation_acte' %}
+                        {% include "conventions/recapitulatif/resiliation.html" with target_url='conventions:resiliation' %}
+                        {% include "conventions/recapitulatif/resiliation_acte.html" with target_url='conventions:resiliation_acte' %}
                     {% else %}
-                        {% include "conventions/recapitulatif/resiliation.html"  with target_url='conventions:resiliation_creation' %}
+                        {% include "conventions/recapitulatif/resiliation.html" with target_url='conventions:resiliation_creation' %}
                     {% endif %}
                 {% elif convention.is_avenant %}
                     {% if 'bailleur' in avenant_list %}
@@ -109,11 +109,11 @@
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    {% include "conventions/recapitulatif/bailleur.html"  with target_url='conventions:bailleur' bailleur=convention.bailleur %}
+                    {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:bailleur' bailleur=convention.bailleur %}
                     {% include "conventions/recapitulatif/operation.html" with target_url='conventions:programme' programme=convention.programme lot=convention.lot %}
-                    {% include "conventions/recapitulatif/references_cadastrales.html"  with target_url='conventions:references_cadastrales' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all %}
+                    {% include "conventions/recapitulatif/references_cadastrales.html" with target_url='conventions:references_cadastrales' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all %}
                     {% if not ecolo_ref %}
-                        {% include "conventions/recapitulatif/edd.html"  with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
+                        {% include "conventions/recapitulatif/edd.html" with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
                     {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.lot.logements_import_ordered logements_sans_loyer=convention.lot.logements_sans_loyer_import_ordered logements_corrigee=convention.lot.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.lot.logements_corrigee_sans_loyer_import_ordered %}
@@ -173,6 +173,6 @@
                 <div class="fr-col-12 fr-py-5w">{% include "common/button/return_convention_index.html" %}</div>
             </div>
         </div>
-        <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{request.csp_nonce}}"></script>
+        <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
     {% endwith %}
-{% endblock %}
+{% endblock content %}

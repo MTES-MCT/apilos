@@ -1,35 +1,34 @@
-{% load custom_filters %}
-{% load display_filters %}
+{% load custom_filters display_filters %}
 
 {% if convention|display_delete_convention %}
     <div class="fr-col-12 block--row-strech fr-my-5w">
         <div class="block--row-strech-1 fr-mt-2w fr-mr-5w">
             <p class="fr-alert__title">
-                Supprimer ce projet {{convention|display_kind_with_preposition}}
+                Supprimer ce projet {{ convention|display_kind_with_preposition }}
             </p>
             <p class="fr-mb-0">
-                {{convention|display_kind_with_demonstratif|capfirst}} est annulé{{convention|display_gender_terminaison}}, il vous est possible de {{convention|display_pronom}} supprimer définitivement. Vous perdrez alors tous les informations liées à {{convention|display_kind_with_demonstratif}}.
+                {{ convention|display_kind_with_demonstratif|capfirst }} est annulé{{ convention|display_gender_terminaison }}, il vous est possible de {{ convention|display_pronom }} supprimer définitivement. Vous perdrez alors tous les informations liées à {{ convention|display_kind_with_demonstratif }}.
             </p>
         </div>
-        <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{convention.uuid}}">
-            Supprimer définitivement {{convention|display_kind_with_pronom}}
+        <button type="button" class="fr-btn apilos-btn--secondary--red fr-btn--icon-left fr-icon-delete-line fr-my-1w" data-fr-opened="false" aria-controls="fr-modal-{{ convention.uuid }}">
+            Supprimer définitivement {{ convention|display_kind_with_pronom }}
         </button>
     </div>
     <hr>
-    <dialog aria-labelledby="fr-modal-{{convention.uuid}}-title" id="fr-modal-{{convention.uuid}}" class="fr-modal" role="dialog" >
+    <dialog aria-labelledby="fr-modal-{{ convention.uuid }}-title" id="fr-modal-{{ convention.uuid }}" class="fr-modal" role="dialog" >
         <div class="fr-container fr-container--fluid fr-container-md">
             <div class="fr-grid-row fr-grid-row--center">
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button class="fr-link--close fr-link" aria-controls="fr-modal-{{convention.uuid}}">Fermer</button>
+                            <button class="fr-link--close fr-link" aria-controls="fr-modal-{{ convention.uuid }}">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
-                            <h1 id="fr-modal-{{convention.uuid}}-title" class="fr-modal__title">
+                            <h1 id="fr-modal-{{ convention.uuid }}-title" class="fr-modal__title">
                                 <span class="fr-icon-arrow-right-line fr-icon--lg"></span>
                                 {{ convention }}{% if convention.is_avenant %} {% if not convention.is_denonciation %} - Avenant {% else %} - Dénonciation {% endif %}{% if convention.numero %} n°{{ convention.numero }}{% endif %}{% endif %}
                             </h1>
-                            <p>Vous vous apprétez à supprimer {% if convention.is_avenant %}{% if not convention.is_denonciation %}l'avenant à la convention{% else %}la dénonciation de la convention{% endif %}{% else %}la convention{% endif %} "{{convention}}", êtes-vous sur de vouloir supprimer {{convention|display_kind_with_demonstratif}} ?</p>
+                            <p>Vous vous apprétez à supprimer {% if convention.is_avenant %}{% if not convention.is_denonciation %}l'avenant à la convention{% else %}la dénonciation de la convention{% endif %}{% else %}la convention{% endif %} "{{ convention }}", êtes-vous sur de vouloir supprimer {{ convention|display_kind_with_demonstratif }} ?</p>
                         </div>
                         <div class="fr-modal__footer">
                             <ul class="fr-btns-group fr-btns-group--right fr-btns-group--inline-reverse fr-btns-group--inline-lg fr-btns-group--icon-left">
@@ -37,12 +36,12 @@
                                     <form action="{% url 'conventions:delete' convention_uuid=convention.uuid %}" method="post" data-turbo="false">
                                         {% csrf_token %}
                                         <button type="submit" class="fr-btn fr-btn--icon-left fr-icon-delete-line">
-                                            Supprimer définitivement {{convention|display_kind_with_pronom}}
+                                            Supprimer définitivement {{ convention|display_kind_with_pronom }}
                                         </button>
                                     </form>
                                 </li>
                                 <li>
-                                    <button type="button" class="fr-btn fr-btn--secondary" aria-controls="fr-modal-{{convention.uuid}}">Annuler</button>
+                                    <button type="button" class="fr-btn fr-btn--secondary" aria-controls="fr-modal-{{ convention.uuid }}">Annuler</button>
                                 </li>
                             </ul>
                         </div>

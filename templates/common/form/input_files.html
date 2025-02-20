@@ -1,7 +1,5 @@
-{% load static %}
-
-{% load custom_filters %}
-<div class="fr-upload-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{form_input.id_for_label}}_group">
+{% load custom_filters static %}
+<div class="fr-upload-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
     <label class="fr-label" for="file-upload">{{ form_input.label }}
         {% include "common/form/required_field.html" with form_input=form_input %}
         <span class="fr-hint-text">Taille maximale : 500 Mo. Formats supportés : pdf</span>
@@ -10,7 +8,7 @@
         class="fr-upload fr-mt-0 {% if form_input.errors %}fr-input--error{% endif %}"
         type="file"
         id="file-upload"
-        name="{{form_input.html_name}}"
+        name="{{ form_input.html_name }}"
         accept="application/pdf"
     >
     {% for error in form_input.errors %}

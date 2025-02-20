@@ -1,5 +1,5 @@
-<a class="fr-link fr-link--sm" id='{{order_by_column}}' href='#'>
-    {% if '-'|add:order_by_column == order_by%}
+<a class="fr-link fr-link--sm" id='{{ order_by_column }}' href='#'>
+    {% if '-'|add:order_by_column == order_by %}
         <div class="table__icons--blue table__icons--active">
             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortDownIconTitle">
                 <title id="sortDownIconTitle">Tri descendant</title>
@@ -35,7 +35,7 @@
     {% endif %}
 </a>
 
-<script type="text/javascript" nonce="{{request.csp_nonce}}">
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('{{ order_by_column }}')
             .addEventListener('click', function(){

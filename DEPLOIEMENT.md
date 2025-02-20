@@ -183,4 +183,3 @@ Quelques informations complémentaires:
 * Les données stockées par Metabase sont cryptées grâce à la variable d'environnement MB_ENCRYPTION_SECRET_KEY
 
 Metabase est accessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/](https://apilos-metabase-prod.osc-fr1.scalingo.io/)
-
