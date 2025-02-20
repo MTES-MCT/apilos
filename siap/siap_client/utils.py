@@ -53,6 +53,9 @@ MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT = {
     "PUV": "ALF",
     "RAC": "REA",
     "RAU": "ALF",
+    # WARNING : RENO_LF i the only case of a multi nature_logement possible
+    # here we can have a edge case if this kind of nature_operation is used with a
+    # sans_financment financement
     "RENO_LF": "ALF",  # "PEF","REA","RES",
     "RENO_LLS": "LOO",  # "REU",
     "RESSOCJA": "RES",
@@ -445,6 +448,13 @@ def _get_nature_logement(donnees_operation: dict) -> NatureLogement:
         nature_logement = MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT[
             donnees_operation["natureOperation"]
         ]
+        if donnees_operation["natureOperation"] == "RENO_LF":
+            # This will raise a Sentry error without anoy the user if the edge case
+            # occure
+            logger.error(
+                "RENO_LF is the only case of a multi nature_logement possible, "
+                " please check the operation if it fit the correct nature_logement",
+            )
 
     return _nature_logement(nature_logement)
 
