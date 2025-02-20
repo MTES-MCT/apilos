@@ -147,7 +147,7 @@
                                                     {% if request|display_administration %}
                                                         <td>{{ convention.programme.administration.nom }}</td>
                                                     {% endif %}
-                                                    <td data-test-role="programme-financement-cell">{{ convention.get_financement_display }}</td>
+                                                    <td data-test-role="programme-financement-cell">{{ convention.lot.get_financement_display }}</td>
                                                     <td>
                                                         <strong>
                                                             {{ convention.programme.ville|highlight_if_match:search_lieu }}

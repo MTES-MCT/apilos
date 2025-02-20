@@ -129,7 +129,7 @@
                                                 <div class="fr-text--xs">
                                                     <div>
                                                         {% if convention.is_pls_financement_type %}
-                                                            La convention bénéficie d'un financement «{{ convention.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
+                                                            La convention bénéficie d'un financement «{{ convention.lot.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
                                                         {% elif convention.lot.financement == 'SANS_FINANCEMENT' %}
                                                             La convention ne bénéficie pas de financement, la durée de conventionnement doit être supérieure à 9 ans.
                                                         {% else %}
