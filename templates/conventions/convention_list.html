@@ -180,13 +180,11 @@
                                 </a>
                             </li>
                         {% endif %}
-                        {% if siap_assistance_url %}
-                            <li>
-                                <a class="fr-btn fr-btn--tertiary fr-icon-mail-line apilos-no-dsfr-target" href="{{ siap_assistance_url }}" target="_blank"  rel="noopener">
-                                    Contactez l'assistance
-                                </a>
-                            </li>
-                        {% endif %}
+                        <li>
+                            <a class="fr-btn fr-btn--tertiary fr-icon-mail-line apilos-no-dsfr-target" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank"  rel="noopener">
+                                Contactez l'assistance
+                            </a>
+                        </li>
                     </ul>
                     <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                 {% else %}
@@ -213,13 +211,11 @@
                                             </a>
                                         </div>
                                     {% endflag %}
-                                    {% if siap_assistance_url %}
-                                        <div class="">
-                                            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ siap_assistance_url }}" target="_blank"  rel="noopener">
-                                                Contactez l'assistance
-                                            </a>
-                                        </div>
-                                    {% endif %}
+                                    <div class="">
+                                        <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank"  rel="noopener">
+                                            Contactez l'assistance
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

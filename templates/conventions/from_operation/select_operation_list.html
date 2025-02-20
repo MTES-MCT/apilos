@@ -62,13 +62,11 @@
                     </div>
                     <div class="fr-mt-5w fr-ml-1w">
                         <div class="fr-grid-row fr-grid-row--gutters" >
-                            {% if siap_assistance_url %}
-                                <div class="">
-                                    <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ siap_assistance_url }}" target="_blank" rel="noopener">
-                                        Contactez l'assistance
-                                    </a>
-                                </div>
-                            {% endif %}
+                            <div class="">
+                                <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noopener">
+                                    Contactez l'assistance
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -90,13 +88,11 @@
                 </div>
                 <div class="fr-mt-5w fr-ml-1w">
                     <div class="fr-grid-row fr-grid-row--gutters" >
-                        {% if siap_assistance_url %}
-                            <div class="">
-                                <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ siap_assistance_url }}" target="_blank" rel="noopener">
-                                    Contactez l'assistance
-                                </a>
-                            </div>
-                        {% endif %}
+                        <div class="">
+                            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noopener">
+                                Contactez l'assistance
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,11 +102,9 @@
         </div>
     {% else %}
         <p class="fr-mt-10w fr-mb-2w">Vous n'avez pas le numéro de l'opération ?</p>
-        {% if siap_assistance_url %}
-            <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ siap_assistance_url }}" target="_blank" rel="noopener">
-                Contactez l'assistance
-            </a>
-        {% endif %}
+        <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary apilos-no-dsfr-target" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noopener">
+            Contactez l'assistance
+        </a>
     {% endif %}
 
 

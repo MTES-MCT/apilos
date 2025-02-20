@@ -17,6 +17,7 @@ def get_environment(request):
         nature_bailleur.name: nature_bailleur.label
         for nature_bailleur in NatureBailleur
     }
+    data["SIAP_ASSISTANCE_URL"] = settings.SIAP_ASSISTANCE_URL
 
     if settings.CERBERE_AUTH:
         client = SIAPClient.get_instance()

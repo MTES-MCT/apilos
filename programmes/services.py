@@ -2,7 +2,6 @@ import functools
 from datetime import date
 from typing import Any
 
-from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import resolve
@@ -76,7 +75,6 @@ class OperationService:
             "conventions": paginator.get_page(self.request.GET.get("page", 1)),
             "filtered_conventions_count": paginator.count,
             "all_conventions_count": paginator.count,
-            "siap_assistance_url": settings.SIAP_ASSISTANCE_URL,
             "search_operation_nom": "",
             "search_numero": "",
             "search_lieu": "",
