@@ -26,7 +26,6 @@ class ConventionInline(admin.StackedInline):
     fields = (
         "uuid",
         "get_statut",
-        "financement",
     )
     readonly_fields = (
         "uuid",
