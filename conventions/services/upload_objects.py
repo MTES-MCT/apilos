@@ -204,7 +204,9 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
         # Check the empty lines to don't fill it
         empty_line = False
         value = None
-        model_field = import_mapping[column_from_index[cell.column]]
+        model_field = cls._meta.get_field(
+            import_mapping[column_from_index[cell.column]]
+        )
 
         if isinstance(model_field, str):
             key = model_field
