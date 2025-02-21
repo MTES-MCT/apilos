@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Recapitulatif - APiLos{% endblock %}
+{% block page_title %}Recapitulatif - APiLos{% endblock page_title %}
 {% load custom_filters display_filters static %}
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -90,7 +90,9 @@
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=False %}
                     {% endif %}
                     {% if 'champ_libre' in avenant_list %}
-                        {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' %}
+                        {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' checked=False %}
                     {% endif %}
                     {% if 'commentaires' in avenant_list %}
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
