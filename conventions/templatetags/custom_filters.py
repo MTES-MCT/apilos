@@ -11,7 +11,7 @@ from django.utils.safestring import mark_safe
 
 from bailleurs.models import Bailleur
 from conventions.models import ConventionStatut, PieceJointe
-from core.utils import get_key_from_json_field, is_valid_uuid
+from core.utils import get_key_from_json_field, is_valid_uuid, strip_accents
 from instructeurs.models import Administration
 from programmes.models import Financement
 from siap.siap_client.client import SIAPClient
@@ -515,3 +515,28 @@ def can_use_expert_mode(request, convention):
     is_readonly = "readonly" in request.session and request.session["readonly"]
     is_signee = convention.statut == ConventionStatut.SIGNEE.label
     return is_signee and is_instructeur(request) and not is_readonly
+
+
+@register.filter
+def siap_convention_step_doc_url(step: str) -> str | None:
+    match strip_accents(step.lower()).replace(" ", "_"):
+        case "bailleur":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8093758/Bailleur+-+Conventionnement+APL"
+        case "operation":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7962720/Op+ration+-+Conventionnement+APL"
+        case "cadastre":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8093770/Cadastre+-+Conventionnement+APL"
+        case "etats_descriptifs_de_division":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061055/EDD+-+Conventionnement+APL"
+        case "financement":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8028258/Financement+-+Conventionnement+APL"
+        case "logements":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements+-+Conventionnement+APL"
+        case "annexes":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7962734/Annexes+-+Conventionnement+APL"
+        case "stationnements":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8093790/Stationnements+-+Conventionnement+APL"
+        case "commentaires":
+            return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7962747/Commentaires+-+Conventionnement+APL"
+        case _:
+            return None
