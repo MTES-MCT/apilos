@@ -2,6 +2,7 @@ import datetime
 from decimal import ROUND_HALF_UP, Decimal
 from io import BytesIO
 
+from django.core.exceptions import FieldDoesNotExist
 from openpyxl import load_workbook
 from zipfile import BadZipFile
 
@@ -204,9 +205,12 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
         # Check the empty lines to don't fill it
         empty_line = False
         value = None
-        model_field = cls._meta.get_field(
-            import_mapping[column_from_index[cell.column]]
-        )
+        try:
+            model_field = cls._meta.get_field(
+                import_mapping[column_from_index[cell.column]]
+            )
+        except FieldDoesNotExist:
+            model_field = import_mapping[column_from_index[cell.column]]
 
         if isinstance(model_field, str):
             key = model_field
