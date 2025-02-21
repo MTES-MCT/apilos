@@ -6,7 +6,9 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
     parameters = {}
     parameters[object_name]= object_uuid
     if (accepted_files == undefined ) {
-        accepted_files = 'image/*'
+        // Image
+        accepted_files = 'image/jpeg,image/png,image/gif,image/bmp,image/webp,image/tiff,image/heif,image/heic'
+        // PDF
         accepted_files = accepted_files + ',application/pdf'
         // MS: doc, ppt, xls
         accepted_files = accepted_files + ',application/msword,application/vnd.ms-powerpoint,application/vnd.ms-excel'
