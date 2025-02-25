@@ -180,7 +180,6 @@ class AddConventionService:
     def _create_convention(self, lot: Lot) -> Convention:
         convention = Convention.objects.create(
             programme_id=lot.programme_id,
-            financement=lot.financement,
             cree_par=self.request.user,
             numero=self.form.cleaned_data["numero"],
             televersement_convention_signee_le=datetime.date(
