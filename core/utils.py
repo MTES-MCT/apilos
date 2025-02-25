@@ -1,4 +1,5 @@
 import json
+import unicodedata
 import uuid
 from typing import Any, SupportsRound
 
@@ -49,4 +50,10 @@ def make_random_string(length: int = 10) -> str:
     return get_random_string(
         length,
         allowed_chars="abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789",
+    )
+
+
+def strip_accents(s: str) -> str:
+    return "".join(
+        c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"
     )
