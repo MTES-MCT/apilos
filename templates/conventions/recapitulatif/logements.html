@@ -9,20 +9,25 @@
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Logements" title_unchecked="Mettre à jour les logements" checked=checked id="logements" avenant_type="logements" %}
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Logements et annexes" title_unchecked="Mettre à jour les logements et annexes" title_convention="Logements" checked=checked id="logements" avenant_type="logements" %}
                             </h4>
                         </div>
-                        {% if checked %}
+                        {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
                         {% endif %}
                     </div>
-                    {% if checked %}
+                    {% if convention.is_avenant %}
+                    <h5 class="apilos-recap-subtitle fr-mt-4w fr-mb-1w">
+                        Logements
+                    </h5>
+                    {% endif %}
+                    {% if not convention.is_avenant or checked %}
                     <div class="block--row-strech">
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                     </div>
                     {% if logements %}
                         {% if convention.is_avenant %}
-                            <label class="fr-mt-2w">Logements en surface utile, avec loyers</label>
+                            <label class="fr-mt-2w"><strong>Logements en surface utile, avec loyers</strong></label>
                         {% endif %}
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
@@ -114,7 +119,7 @@
                         </div>
                     {% endif %}
                     {% if logements_sans_loyer %}
-                        <label class="fr-mt-2w">Logements en surface utile, sans loyers</label>
+                        <label class="fr-mt-2w"><strong>Logements en surface utile, sans loyers</strong></label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
@@ -185,7 +190,7 @@
                             </div>
                     {% endif %}
                     {% if logements_corrigee %}
-                        <label class="fr-mt-2w">Logements en surface corrigée, avec loyers</label>
+                        <label class="fr-mt-2w"><strong>Logements en surface corrigée, avec loyers</strong></label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
@@ -263,7 +268,7 @@
                         </div>
                     {% endif %}
                     {% if logements_corrigee_sans_loyer %}
-                        <label class="fr-mt-2w">Logements en surface corrigée, sans loyers</label>
+                        <label class="fr-mt-2w"><strong>Logements en surface corrigée, sans loyers</strong></label>
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
                                 <div class="fr-table__container">
@@ -369,6 +374,10 @@
                     {% include "common/display_field_if_exists.html" with label="Surface des locaux collectifs résidentiels" value=lot.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:lot_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Nombre de logements à louer en plus à des ménages dont les ressources n'excèdent pas le plafond" value=lot.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:lot_uuid %}
                     {% include "common/display_field_if_exists.html" with label="Loyer pour les associations foncières" value=lot.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:lot_uuid %}
+                    {% endif %}
+
+                    {% if convention.is_avenant and checked%}
+                        {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.lot.annexes.all lot=convention.lot checked=False %}
                     {% endif %}
                 </div>
             </div>

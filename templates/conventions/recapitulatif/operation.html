@@ -11,11 +11,11 @@
                                 {% include "conventions/common/avenants_checkboxes.html" with title="Opération" title_unchecked="Mettre à jour les informations de l'opération" checked=checked id="operation" avenant_type="programme" %}
                             </h4>
                         </div>
-                        {% if checked %}
+                        {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
                         {% endif %}
                     </div>
-                    {% if checked %}
+                    {% if not convention.is_avenant or checked %}
                     <div class="table--limited-height">
 
                         {% if request.user.is_instructeur %}
