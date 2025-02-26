@@ -358,11 +358,11 @@ class ConventionLogementsService(ConventionService):
         self.formset_corrigee.total_nb_logements = total_nb_logements
         self.formset_corrigee_sans_loyer.total_nb_logements = total_nb_logements
 
-        formset_is_valid = self.formset.is_valid()
-        formset_sans_loyer_is_valid = self.formset_sans_loyer.is_valid()
-        formset_corrigee_is_valid = self.formset_corrigee.is_valid()
+        formset_is_valid = self.formset.is_valid()or self.form.cleaned_data["formset_disabled"]
+        formset_sans_loyer_is_valid = self.formset_sans_loyer.is_valid() or self.form.cleaned_data["formset_sans_loyer_disabled"]
+        formset_corrigee_is_valid = self.formset_corrigee.is_valid() or self.form.cleaned_data["formset_corrigee_disabled"]
         formset_corrigee_sans_loyer_is_valid = (
-            self.formset_corrigee_sans_loyer.is_valid()
+            self.formset_corrigee_sans_loyer.is_valid() or self.form.cleaned_data["formset_corrigee_sans_loyer_disabled"]
         )
 
         if (

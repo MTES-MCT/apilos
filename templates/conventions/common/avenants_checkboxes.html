@@ -1,3 +1,4 @@
+{% if convention.is_avenant %}
 <div class="fr-toggle apilos-toggle-block">
     <form action="{% if checked %}{% url 'conventions:remove_from_avenant' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
         {% csrf_token %}
@@ -17,3 +18,10 @@
         document.getElementById("toggle-{{id}}").form.submit();
     }
 </script>
+{% else %}
+    {% if title_convention %}
+        {{title_convention}}
+    {% else %}
+        {{title}}
+    {% endif %}
+{% endif %}

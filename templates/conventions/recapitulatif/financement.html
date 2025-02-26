@@ -12,11 +12,11 @@
                                 {% include "conventions/common/avenants_checkboxes.html" with title="Financements" title_unchecked="Mettre à jour la durée de la convention" checked=checked id="financement" avenant_type="duree" %}
                             </h4>
                         </div>
-                        {% if checked %}
+                        {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
                         {% endif %}
                     </div>
-                    {% if checked %}
+                    {% if not convention.is_avenant or checked %}
                     <p class="fr-my-1w">Prêts et Subventions : </p>
                     {% comment %} TODO: reverse relation convention lot {% endcomment %}
                     {% if convention.lot.prets.all %}
