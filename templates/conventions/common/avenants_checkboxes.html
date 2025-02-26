@@ -1,11 +1,12 @@
 {% if convention.is_avenant %}
 <div class="fr-toggle apilos-toggle-block">
-    <form action="{% if checked %}{% url 'conventions:remove_from_avenant' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
+    <form action="{% if checked %}{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
         {% csrf_token %}
         <input
             name="avenant_type"
             value="{{avenant_type}}" hidden>
             <input type="hidden" value="{{convention.uuid}}" name="uuid">
+            <input type="hidden" value="{{title|lower}}" name="uncheck_avenant_type">
         <input type="checkbox" class="fr-toggle__input" {% if checked %}checked="checked"{% endif %} aria-describedby="toggle-{{id}}-messages" id="toggle-{{id}}">
     <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}">{% if checked %}{{title}}{% else %}{{title_unchecked}}{% endif %}</label>
     </form>
@@ -14,7 +15,8 @@
 </div>
 
 <script type="text/javascript" nonce="{{request.csp_nonce}}">
-    document.getElementById("toggle-{{id}}").onchange = () => {
+    document.getElementById("toggle-{{id}}").onclick = (e) => {
+        e.preventDefault()
         document.getElementById("toggle-{{id}}").form.submit();
     }
 </script>

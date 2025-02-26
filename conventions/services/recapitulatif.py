@@ -148,6 +148,20 @@ class ConventionRecapitulatifService(ConventionService):
             "programmeNumberForm": programme_number_form,
             "repartition_surfaces": self.convention.lot.repartition_surfaces(),
         }
+    
+    def uncheck_avenant_type(self, avenant_type, avenant_type_title):
+        result = self.get_convention_recapitulatif()
+
+        if self.convention.is_avenant():
+            result["avenant_list"] = [
+                avenant_type.nom for avenant_type in self.convention.avenant_types.all()
+            ]
+
+        result["uncheck_modal_opened"] = True
+        result["avenant_type_title"] = avenant_type_title
+        result["avenant_type"] = avenant_type
+
+        return result
 
     def save_convention_type_1_and_2(self):
         convention_type1_and_2_form = ConventionType1and2Form(self.request.POST)
