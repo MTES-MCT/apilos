@@ -169,4 +169,5 @@
         </div>
         <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
     {% endwith %}
+    {% include  "conventions/recapitulatif/uncheck_modal.html" %}
 {% endblock content %}
