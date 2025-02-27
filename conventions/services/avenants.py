@@ -47,11 +47,13 @@ def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any
                     avenant = convention_to_clone.clone(
                         request.user, convention_origin=parent_convention
                     )
-
-            avenant_type = AvenantType.objects.get(
-                nom=avenant_form.cleaned_data["avenant_type"]
-            )
-            avenant.avenant_types.add(avenant_type)
+  
+            avenant_type = None
+            if avenant_form.cleaned_data.get("avenant_type"):
+                avenant_type = AvenantType.objects.get(
+                    nom=avenant_form.cleaned_data["avenant_type"]
+                )
+                avenant.avenant_types.add(avenant_type)
 
             return {
                 "success": utils.ReturnStatus.SUCCESS,
