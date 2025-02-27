@@ -50,20 +50,15 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
             reverse("conventions:recapitulatif", args=[last_avenant.uuid])
         )
 
-    if result["success"] == ReturnStatus.SUCCESS:
-        if target_pathname := _get_path_name_for_avenant_type(
-            avenant_type=result["avenant_type"], convention=result["convention"]
-        ):
-            return HttpResponseRedirect(
-                reverse(target_pathname, args=[result["convention"].uuid])
-            )
-
-    return render(
-        request,
-        "conventions/new_avenant.html",
-        {
-            **result,
-        },
+    # return render(
+    #     request,
+    #     "conventions/recapitulatif.html",
+    #     {
+    #         **result,
+    #     },
+    # )
+    return HttpResponseRedirect(
+        reverse("conventions:recapitulatif", args=[result["convention"].uuid])
     )
 
 
