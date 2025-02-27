@@ -8,9 +8,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Logements et annexes" title_unchecked="Mettre à jour les logements et annexes" title_convention="Logements" checked=checked id="logements" avenant_type="logements" %}
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Logements et annexes" title_unchecked="Mettre à jour les logements et annexes" title_convention="Logements" checked=checked id="logements" avenant_type="logements" description="En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers." %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
