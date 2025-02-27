@@ -93,11 +93,13 @@
                         {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' checked=False %}
                     {% endif %}
                     {% if 'commentaires' in avenant_list %}
-                        {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' %}
+                        {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' checked=False %}
                     {% endif %}
-                    <hr class="fr-mt-3w">
-                    {% if convention|display_convention_form_progressbar %}
+                    {% if not convention.is_avenant and convention|display_convention_form_progressbar %}
                         {% if 'commentaires' not in avenant_list %}
+                            <hr class="fr-mt-3w">
                             {% include "conventions/avenant/commentaires_update_start.html" with avenant_uuid=convention.uuid %}
                             <hr>
                         {% endif %}
