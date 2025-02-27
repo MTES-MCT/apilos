@@ -8,9 +8,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Financements" title_unchecked="Mettre à jour la durée de la convention" checked=checked id="financement" avenant_type="duree" %}
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Financements" title_unchecked="Mettre à jour la durée de la convention" checked=checked id="financement" avenant_type="duree" description="En cas de nouveaux travaux financés" %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}

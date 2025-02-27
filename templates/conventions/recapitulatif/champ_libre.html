@@ -7,9 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Informations complémentaires" title_unchecked="Informations complémentaires" checked=checked id="champ_libre" avenant_type="champ_libre" %}
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Informations complémentaires" title_unchecked="Informations complémentaires" checked=checked id="champ_libre" avenant_type="champ_libre" description="Pour ajouter, dans l'avenant, des renseignements supplémentaires de type désignation des immeubles, origines des propriétés ou autre." %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}

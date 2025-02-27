@@ -8,7 +8,8 @@
             <input type="hidden" value="{{convention.uuid}}" name="uuid">
             <input type="hidden" value="{{title|lower}}" name="uncheck_avenant_type">
         <input type="checkbox" class="fr-toggle__input" {% if checked %}checked="checked"{% endif %} aria-describedby="toggle-{{id}}-messages" id="toggle-{{id}}">
-    <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}">{% if checked %}{{title}}{% else %}{{title_unchecked}}{% endif %}</label>
+    <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}"><h4 class="fr-card__title">{% if checked %}{{title}}{% else %}{{title_unchecked}}{% endif %}</h4></label>
+    <p class="fr-hint-text fr-mt-1w" id="toggle-{{id}}-text">{{description}}</p>
     </form>
     <div class="fr-messages-group" id="toggle-{{id}}-messages" aria-live="polite">
     </div>

@@ -7,9 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération" title_unchecked="Mettre à jour les informations de l'opération" checked=checked id="operation" avenant_type="programme" %}
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Opération" title_unchecked="Mettre à jour les informations de l'opération" checked=checked id="operation" avenant_type="programme" description="Suite à la modification du nom ou de l'adresse de l'opération" description="Suite à la modification du nom ou de l'adresse de l'opération" %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
