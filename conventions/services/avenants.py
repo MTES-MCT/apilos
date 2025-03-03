@@ -47,7 +47,7 @@ def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any
                     avenant = convention_to_clone.clone(
                         request.user, convention_origin=parent_convention
                     )
-  
+
             avenant_type = None
             if avenant_form.cleaned_data.get("avenant_type"):
                 avenant_type = AvenantType.objects.get(

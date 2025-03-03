@@ -148,7 +148,7 @@ class ConventionRecapitulatifService(ConventionService):
             "programmeNumberForm": programme_number_form,
             "repartition_surfaces": self.convention.lot.repartition_surfaces(),
         }
-    
+
     def uncheck_avenant_type(self, avenant_type, avenant_type_title):
         result = self.get_convention_recapitulatif()
 
