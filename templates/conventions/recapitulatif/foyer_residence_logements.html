@@ -8,12 +8,18 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Logements
-                            </h4>
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Logements et collectifs" title_unchecked="Mettre à jour les logements et collectifs" title_convention="Logements" checked=checked id="logements" avenant_type="logements" description="En cas de modification du programme, de travaux, de réhabilitation totale, ou d’une évolution des loyers." %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if convention.is_avenant and checked %}
+                    <h5 class="apilos-recap-subtitle fr-mt-4w fr-mb-1w">
+                        Logements
+                    </h5>
+                    {% endif %}
+                    {% if not convention.is_avenant or checked %}
                     <div class="block--row-strech">
                         {% include "common/display_field_if_exists.html" with label="Nombre de logements" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                     </div>
@@ -84,8 +90,10 @@
 
                     {% include "common/display_field_if_exists.html" with label="Surface habitable totale en m²" value=lot.surface_habitable_totale object_field="lot__surface_habitable_totale__"|add:lot_uuid %}
 
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
+                    {% endif %}
+
+                    {% if convention.is_avenant and checked%}
+                        {% include "conventions/recapitulatif/collectif_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.lot.annexes.all lot=convention.lot %}
                     {% endif %}
 
                 </div>

@@ -7,7 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            {% include "conventions/common/avenants_checkboxes.html" with title="Ajouter des commentaires" title_unchecked="Informations à l'attention du service instructeur" checked=checked id="commentaires" avenant_type="commentaires" description="Ces informations sont complémentaires et servent à l’instruction. Elles ne figureront pas dans le document final d'avenant." %}
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Ajouter des commentaires" title_unchecked="Commentaires à l'attention du service instructeur" checked=checked id="commentaires" avenant_type="commentaires" description="Ces informations sont complémentaires et servent à l’instruction. Elles ne figureront pas dans le document final d'avenant." %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
