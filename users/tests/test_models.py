@@ -11,7 +11,7 @@ from bailleurs.models import Bailleur
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import create_avenant
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from programmes.models import Programme
 from users.models import ExceptionPermissionConfig, Role, User
 from users.tests.factories import GroupFactory, UserFactory

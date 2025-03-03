@@ -106,35 +106,35 @@ class ProgrammeAdmin(ApilosModelAdmin):
 
 @admin.display(description="Programme")
 def view_programme(lot):
-    return f"{lot.programme.ville} -  {lot.programme.nom}"
+    return f"{lot.convention.programme.ville} -  {lot.convention.programme.nom}"
 
 
 @admin.register(Lot)
 class LotAdmin(ApilosModelAdmin):
     list_display = (view_programme, "financement", "uuid")
 
-    list_select_related = ("programme",)
+    list_select_related = ("convention__programme",)
 
     search_fields = [
-        "programme__ville",
-        "programme__nom",
-        "programme__numero_operation",
+        "convention__programme__ville",
+        "convention__programme__nom",
+        "convention__programme__numero_operation",
         "financement",
         "uuid",
     ]
 
     fields = (
         "uuid",
+        "convention",
         "financement",
         "nb_logements",
         "type_habitat",
-        "programme",
         "parent",
     )
 
     readonly_fields = ("uuid",)
 
-    autocomplete_fields = ("programme", "parent")
+    autocomplete_fields = ("convention", "parent")
 
 
 @admin.register(Annexe)

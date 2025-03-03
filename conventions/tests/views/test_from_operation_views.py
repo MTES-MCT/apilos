@@ -10,10 +10,8 @@ from waffle.testutils import override_flag
 from conventions.forms.convention_from_operation import AddAvenantForm
 from conventions.models import Convention, ConventionStatut
 from conventions.services.utils import ReturnStatus
-from conventions.tests.factories import ConventionFactory
-from conventions.views.convention_form_from_operation import (
-    FromOperationBaseView,
-)
+from conventions.views.convention_form_from_operation import FromOperationBaseView
+from core.tests.factories import ConventionFactory
 
 
 class StepperTest(ParametrizedTestCase, SimpleTestCase):

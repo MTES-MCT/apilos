@@ -8,6 +8,7 @@ from django.test import TestCase
 from bailleurs.models import Bailleur
 from bailleurs.tests.factories import BailleurFactory
 from core.tests import utils_assertions
+from core.tests.factories import ConventionFactory, LotFactory, ProgrammeFactory
 from instructeurs.models import Administration
 from programmes.models import (
     Annexe,
@@ -27,7 +28,6 @@ from programmes.models import (
     TypologieStationnement,
 )
 from programmes.models.models import OutreMerNatureLogementError
-from programmes.tests.factories import ProgrammeFactory
 
 
 def params_logement(index):
@@ -54,8 +54,9 @@ class ProgrammeModelsTest(TestCase):
         programme = ProgrammeFactory()
 
         for financement in [Financement.PLAI, Financement.PLUS]:
-            lot = Lot.objects.create(
-                programme=programme,
+            convention = ConventionFactory(programme=programme)
+            lot = LotFactory(
+                convention=convention,
                 financement=financement,
                 nb_logements=50,
             )
@@ -112,7 +113,7 @@ class ProgrammeModelsTest(TestCase):
         self.assertEqual(str(logement_edd), expected_object_name)
 
         lot = Lot.objects.order_by("-uuid").first()
-        expected_object_name = f"{lot.programme.nom} - {lot.financement}"
+        expected_object_name = f"{lot.convention.programme.nom} - {lot.financement}"
         self.assertEqual(str(lot), expected_object_name)
 
         logement = Logement.objects.order_by("-uuid").order_by("-uuid").first()
@@ -126,7 +127,7 @@ class ProgrammeModelsTest(TestCase):
         stationnement = TypeStationnement.objects.order_by("-uuid").first()
         expected_object_name = (
             f"{stationnement.typologie} - "
-            + f"{stationnement.lot.programme.nom} - {stationnement.lot.financement}"
+            + f"{stationnement.lot.convention.programme.nom} - {stationnement.lot.financement}"
         )
         self.assertEqual(str(stationnement), expected_object_name)
 
@@ -412,22 +413,24 @@ class LotModelsTest(TestCase):
 
     def test_lot_bailleur(self):
         lot = Lot.objects.order_by("uuid").first()
-        self.assertEqual(lot.bailleur, lot.programme.bailleur)
+        self.assertEqual(lot.bailleur, lot.convention.programme.bailleur)
 
     def test_clone(self):
         lot = Lot.objects.order_by("-uuid").first()
-        cloned_programme1 = lot.programme.clone()
-        cloned_lot1 = lot.clone(cloned_programme1)
+        cloned_programme1 = lot.convention.programme.clone()
+        convention = ConventionFactory(programme=cloned_programme1)
+        cloned_lot1 = lot.clone(convention=convention)
 
         self.assertIsNone(lot.parent_id)
         self.assertEqual(cloned_lot1.parent_id, lot.id)
-        self.assertEqual(cloned_lot1.programme_id, cloned_programme1.id)
+        self.assertEqual(cloned_lot1.convention.programme_id, cloned_programme1.id)
 
         cloned_programme2 = cloned_programme1.clone()
-        cloned_lot2 = cloned_lot1.clone(cloned_programme2)
+        convention = ConventionFactory(programme=cloned_programme2)
+        cloned_lot2 = cloned_lot1.clone(convention=convention)
 
         self.assertEqual(cloned_lot2.parent_id, lot.id)
-        self.assertEqual(cloned_lot2.programme_id, cloned_programme2.id)
+        self.assertEqual(cloned_lot2.convention.programme_id, cloned_programme2.id)
 
 
 class ReferenceCadastraleTest(TestCase):
@@ -468,8 +471,10 @@ class LogementModelsTest(TestCase):
             )
 
     def test_clone(self):
-        cloned_programme1 = self.lot.programme.clone()
-        cloned_lot1 = self.lot.clone(cloned_programme1)
+        convention = ConventionFactory()
+        # cloned_programme1 = self.lot.convention.programme.clone()
+        # cloned_convention1 = self.lot.convention.clone(convention_origin=self.lot.convention)
+        cloned_lot1 = self.lot.clone(convention=convention)
 
         logement = self.lot.logements.get(designation="B1")
         self.assertEqual(logement.typologie, TypologieLogement.T1)

@@ -170,16 +170,9 @@ class AddConventionService:
             if financement[0] not in existing_financements
         ]
 
-    def _create_lot(self, programme: Programme) -> Lot:
-        return Lot.objects.create(
-            programme=programme,
-            financement=self.form.cleaned_data["financement"],
-            nb_logements=self.form.cleaned_data["nb_logements"],
-        )
-
-    def _create_convention(self, lot: Lot) -> Convention:
+    def _create_convention(self, programme: Programme) -> Convention:
         convention = Convention.objects.create(
-            programme_id=lot.programme_id,
+            programme=programme,
             cree_par=self.request.user,
             numero=self.form.cleaned_data["numero"],
             televersement_convention_signee_le=datetime.date(
@@ -188,10 +181,14 @@ class AddConventionService:
             statut=ConventionStatut.SIGNEE.label,
         )
 
-        lot.convention = convention
-        lot.save()
-
         return convention
+
+    def _create_lot(self, convention: Convention) -> Lot:
+        return Lot.objects.create(
+            convention=convention,
+            financement=self.form.cleaned_data["financement"],
+            nb_logements=self.form.cleaned_data["nb_logements"],
+        )
 
     def save(self) -> ReturnStatus:
         if not self.form.is_valid():
@@ -208,8 +205,8 @@ class AddConventionService:
                         numero_operation=self.operation.numero, parent_id=None
                     )
 
-                lot = self._create_lot(programme=programme)
-                self.convention = self._create_convention(lot=lot)
+                self.convention = self._create_convention(programme=programme)
+                self._create_lot(convention=self.convention)
 
                 file = self.request.FILES.get("nom_fichier_signe", False)
                 if file:
