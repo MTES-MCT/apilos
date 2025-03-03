@@ -6,10 +6,9 @@ from unittest_parametrize import ParametrizedTestCase, param, parametrize
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models import ConventionStatut
 from conventions.services.search import ConventionSearchService
-from conventions.tests.factories import AvenantFactory, ConventionFactory
+from core.tests.factories import AvenantFactory, ConventionFactory, ProgrammeFactory
 from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models.choices import Financement, NatureLogement
-from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import UserFactory
 
 

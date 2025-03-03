@@ -7,7 +7,7 @@ from conventions.services.resiliation import (
     ConventionResiliationActeService,
     ConventionResiliationService,
 )
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from users.tests.factories import UserFactory
 
 

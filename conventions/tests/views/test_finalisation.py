@@ -8,7 +8,7 @@ from conventions.forms.convention_form_finalisation import (
     FinalisationNumeroForm,
 )
 from conventions.models.choices import ConventionStatut
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
 from users.type_models import TypeRole
 

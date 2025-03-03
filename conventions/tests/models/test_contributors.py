@@ -6,11 +6,10 @@ from django.test import RequestFactory
 
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models.choices import ConventionStatut
-from conventions.tests.factories import ConventionFactory
 from conventions.views import save_convention
 from conventions.views.conventions import validate_convention
+from core.tests.factories import ConventionFactory, ProgrammeFactory
 from instructeurs.tests.factories import AdministrationFactory
-from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
 from users.type_models import TypeRole
 

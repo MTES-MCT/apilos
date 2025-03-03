@@ -7,7 +7,13 @@ from rest_framework.test import APIClient, APITestCase
 from bailleurs.tests.factories import BailleurFactory
 from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import (
+    AnnexeFactory,
+    ConventionFactory,
+    LogementFactory,
+    LotFactory,
+    ProgrammeFactory,
+)
 from instructeurs.tests.factories import AdministrationFactory
 from programmes.api.tests import fixtures
 from programmes.models import (
@@ -16,12 +22,6 @@ from programmes.models import (
     TypeHabitat,
     TypologieAnnexe,
     TypologieLogement,
-)
-from programmes.tests.factories import (
-    AnnexeFactory,
-    LogementFactory,
-    LotFactory,
-    ProgrammeFactory,
 )
 from siap.siap_client.client import build_jwt
 from users.models import User
@@ -116,7 +116,6 @@ def create_all_for_siap():
     )
     lot_plai = LotFactory(
         convention=convention_plai,
-        programme=programme_75,
         financement=Financement.PLAI,
         type_habitat=TypeHabitat.MIXTE,
         nb_logements=None,
@@ -130,7 +129,6 @@ def create_all_for_siap():
     )
     lot_plus = LotFactory(
         convention=convention_plus,
-        programme=programme_75,
         financement=Financement.PLUS,
         type_habitat=TypeHabitat.COLLECTIF,
         nb_logements=None,

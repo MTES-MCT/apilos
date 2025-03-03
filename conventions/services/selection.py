@@ -99,7 +99,6 @@ class ConventionSelectionService:
                 nb_logements=self.form.cleaned_data["nb_logements"],
                 financement=self.form.cleaned_data["financement"],
                 type_habitat=self.form.cleaned_data["type_habitat"],
-                programme=programme,
                 convention=self.convention,
             )
 
@@ -147,7 +146,6 @@ class ConventionSelectionService:
                 Lot.objects.create(
                     nb_logements=self.form.cleaned_data["nb_logements"],
                     financement=self.form.cleaned_data["financement"],
-                    programme=programme,
                     convention=self.convention,
                 )
 

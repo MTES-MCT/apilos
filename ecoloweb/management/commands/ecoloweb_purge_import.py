@@ -163,9 +163,9 @@ delete
 from programmes_programme p
 where not exists(
     select *
-    from programmes_lot l
+    from conventions_convention c
     where
-        l.programme_id = p.id
+        c.programme_id = p.id
 )
             """
                 )
