@@ -9,7 +9,9 @@
             <input type="hidden" value="{{title|lower}}" name="uncheck_avenant_type">
         <input type="checkbox" class="fr-toggle__input" {% if checked %}checked="checked"{% endif %} aria-describedby="toggle-{{id}}-messages" id="toggle-{{id}}">
     <label class="fr-toggle__label apilos-label-larger" for="toggle-{{id}}"><h4 class="fr-card__title">{% if checked %}{{title}}{% else %}{{title_unchecked}}{% endif %}</h4></label>
-    <p class="fr-hint-text fr-mt-1w" id="toggle-{{id}}-text">{{description}}</p>
+    {% if not checked %}
+        <p class="fr-hint-text fr-mt-1w" id="toggle-{{id}}-text">{{description}}</p>
+    {% endif %}
     </form>
     <div class="fr-messages-group" id="toggle-{{id}}-messages" aria-live="polite">
     </div>
@@ -22,9 +24,11 @@
     }
 </script>
 {% else %}
-    {% if title_convention %}
-        {{title_convention}}
-    {% else %}
-        {{title}}
-    {% endif %}
+    <h4 class="fr-card__title">
+        {% if title_convention %}
+            {{title_convention}}
+        {% else %}
+            {{title}}
+        {% endif %}
+    </h4>
 {% endif %}
