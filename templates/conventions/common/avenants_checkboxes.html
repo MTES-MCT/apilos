@@ -1,0 +1,34 @@
+{% if convention.is_avenant %}
+    <div class="fr-toggle apilos-toggle-block">
+        <form action="{% if checked %}{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
+            {% csrf_token %}
+            <input
+                name="avenant_type"
+                value="{{ avenant_type }}" hidden>
+            <input type="hidden" value="{{ convention.uuid }}" name="uuid">
+            <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
+            <input type="checkbox" class="fr-toggle__input" {% if checked %}checked="checked"{% endif %} aria-describedby="toggle-{{ id }}-messages" id="toggle-{{ id }}">
+            <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}"><h4 class="fr-card__title">{% if checked %}{{ title }}{% else %}{{ title_unchecked }}{% endif %}</h4></label>
+            {% if not checked %}
+                <p class="fr-hint-text fr-mt-1w" id="toggle-{{ id }}-text">{{ description }}</p>
+            {% endif %}
+        </form>
+        <div class="fr-messages-group" id="toggle-{{ id }}-messages" aria-live="polite">
+        </div>
+    </div>
+
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+        document.getElementById("toggle-{{ id }}").onclick = (e) => {
+            e.preventDefault()
+            document.getElementById("toggle-{{ id }}").form.submit();
+        }
+    </script>
+{% else %}
+    <h4 class="fr-card__title">
+        {% if title_convention %}
+            {{ title_convention }}
+        {% else %}
+            {{ title }}
+        {% endif %}
+    </h4>
+{% endif %}
