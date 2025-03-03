@@ -121,7 +121,7 @@ class RecapitulatifView(BaseConventionView):
         elif request.POST.get("uncheck_avenant_type"):
             result = service.uncheck_avenant_type(
                 avenant_type=request.POST.get("avenant_type"),
-                avenant_type_title=request.POST.get("uncheck_avenant_type")
+                avenant_type_title=request.POST.get("uncheck_avenant_type"),
             )
         else:
             result = service.save_convention_type_1_and_2()
