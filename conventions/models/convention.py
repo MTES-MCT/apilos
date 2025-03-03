@@ -634,13 +634,11 @@ class Convention(models.Model):
             exclude=[
                 "id",
                 "parent",
-                "programme",
                 "convention",
                 "cree_le",
                 "mis_a_jour_le",
             ],
         ) | {
-            "programme": cloned_programme,
             "parent_id": convention_origin.lot.id,
             "convention": cloned_convention,
         }

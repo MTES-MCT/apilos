@@ -7,11 +7,10 @@ from django.test import TestCase, override_settings
 
 from bailleurs.models import SousNatureBailleur
 from conventions.tasks import task_generate_and_send
-from conventions.tests.factories import ConventionFactory
 from core.services import EmailTemplateID
+from core.tests.factories import ConventionFactory, ProgrammeFactory
 from instructeurs.tests.factories import AdministrationFactory
 from programmes.models import NatureLogement
-from programmes.tests.factories import ProgrammeFactory
 
 
 @override_settings(EMAIL_BACKEND="anymail.backends.test.EmailBackend")

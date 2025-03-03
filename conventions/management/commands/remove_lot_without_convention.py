@@ -30,7 +30,9 @@ class Command(BaseCommand):
         for lot in lots:
             self.stdout.write(
                 self.style.SUCCESS(
-                    f" - {lot.programme.nom} - {lot.programme.numero_operation} - {lot.financement} - {lot.cree_le}"
+                    f" - {lot.convention.programme.nom}"
+                    f" - {lot.convention.programme.numero_operation}"
+                    f" - {lot.financement} - {lot.cree_le}"
                 )
             )
 

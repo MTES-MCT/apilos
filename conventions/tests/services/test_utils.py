@@ -4,7 +4,7 @@ from unittest_parametrize import ParametrizedTestCase, parametrize
 
 from conventions.models import ConventionStatut
 from conventions.services.utils import convention_upload_filename
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):

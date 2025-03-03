@@ -5,11 +5,11 @@ from django.contrib.messages.storage.fallback import FallbackStorage
 from django.test import RequestFactory
 from django.urls import reverse
 
-from conventions.tests.factories import ConventionFactory
 from conventions.views.conventions import (
     ConventionDateUploadSignedView,
     ConventionPreviewUploadSignedView,
 )
+from core.tests.factories import ConventionFactory
 from users.tests.factories import UserFactory
 
 

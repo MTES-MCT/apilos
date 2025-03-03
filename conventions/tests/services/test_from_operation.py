@@ -14,10 +14,9 @@ from conventions.services.from_operation import (
     SelectOperationService,
 )
 from conventions.services.utils import ReturnStatus
-from conventions.tests.factories import AvenantTypeFactory, ConventionFactory
+from core.tests.factories import AvenantTypeFactory, ConventionFactory, ProgrammeFactory
 from core.tests.test_utils import PGTrgmTestMixin
 from programmes.models import NatureLogement
-from programmes.tests.factories import ProgrammeFactory
 from siap.siap_client.mock_data import operation_mock
 from users.tests.factories import UserFactory
 

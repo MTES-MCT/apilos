@@ -10,9 +10,8 @@ from apilos_settings.services.list_services import (
     user_list,
 )
 from bailleurs.tests.factories import BailleurFactory
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory, ProgrammeFactory
 from instructeurs.tests.factories import AdministrationFactory
-from programmes.tests.factories import ProgrammeFactory
 from users.tests.factories import UserFactory
 
 

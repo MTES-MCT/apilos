@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from conventions.models.convention import Convention
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from users.models import User
 
 
