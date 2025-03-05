@@ -5,7 +5,7 @@
   },
   "dependencies": {
     "@gouvfr/dsfr": "^1.13.0",
-    "@hotwired/turbo": "^8.0.12",
+    "@hotwired/turbo": "^8.0.13",
     "virtual-select-plugin": "^1.0.47"
   }
 }
