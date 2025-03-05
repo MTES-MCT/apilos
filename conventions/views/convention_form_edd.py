@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 
 from conventions.models import Convention
 from conventions.services.edd import ConventionEDDService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_edd_step
 
 
 class ConventionEDDView(ConventionView):
@@ -16,3 +16,6 @@ class ConventionEDDView(ConventionView):
             .prefetch_related("programme__logementedds"),
             uuid=convention_uuid,
         )
+    
+class AvenantEDDView(ConventionEDDView):
+    form_steps = [avenant_edd_step]
