@@ -161,7 +161,7 @@ class ReferenceCadastraleAdmin(ApilosModelAdmin):
 
 @admin.register(TypeStationnement)
 class TypeStationnementAdmin(admin.ModelAdmin):
-    list_select_related = ("lot__programme",)
+    list_select_related = ("lot__convention",)
     readonly_fields = ("lot",)
 
 
