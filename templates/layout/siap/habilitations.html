@@ -1,9 +1,9 @@
 <button class="fr-nav__btn orange-background" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
     {% for habilitation in request.session.habilitations %}
         {% if habilitation.id == request.session.habilitation_id %}
-            {% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}<br>
+            {% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}
             {% if habilitation.sousTitre1 %}
-                {{ habilitation.sousTitre1 }}<br>
+                {{ habilitation.sousTitre1 }}
             {% endif %}
             {% if habilitation.sousTitre2 %}
                 {{ habilitation.sousTitre2 }}
@@ -12,14 +12,13 @@
     {% endfor %}
 </button>
 <div class="fr-collapse fr-menu habilitation-bloc" id="list-habilitation">
-    <div class="fr-menu__list">
-        <ul>
+    <ul class="fr-menu__list">
             {% for habilitation in request.session.habilitations %}
                 {% if habilitation.id != request.session.habilitation_id %}
                     <li>
-                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}</strong><br>
+                        <a class="fr-nav__link fr-p-1w" href="{{ request|get_change_habilitation_url:habilitation.id }}"><strong>{% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}</strong>
                             {% if habilitation.sousTitre1 %}
-                                {{ habilitation.sousTitre1 }}<br>
+                                {{ habilitation.sousTitre1 }}
                             {% endif %}
                             {% if habilitation.sousTitre2 %}
                                 {{ habilitation.sousTitre2 }}
@@ -28,9 +27,8 @@
                     </li>
                 {% endif %}
             {% endfor %}
-        </ul>
         <a href="{{ request|get_manage_habilitation_url }}" class="fr-btn fr-px-2w fr-py-3v fr-text--md">
             <div aria-hidden="true">Gérer mes habilitations</div>
         </a>
-    </div>
+    </ul>
 </div>

@@ -47,14 +47,19 @@
   margin-bottom: 0;
 }
 
-.habilitation-bloc .fr-menu__list ul {
+.habilitation-bloc .fr-menu__list {
   padding: 0;
 }
 
-.habilitation-bloc .fr-menu__list ul li {
+.habilitation-bloc .fr-menu__list li {
   text-align: left;
 }
 
-.habilitation-bloc .fr-menu__list ul li:hover a {
+.habilitation-bloc .fr-menu__list li:hover a {
   text-decoration: none;
+}
+
+.habilitation-bloc .fr-nav__link {
+  flex-direction: column;
+  align-items: flex-start;
 }
