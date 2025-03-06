@@ -1,7 +1,7 @@
 {% load custom_filters %}
 
 {% if convention_form_steps|is_a_step:'ConventionAnnexesView' or convention_form_steps|is_a_step:'AvenantAnnexesView' %}
-
+    {% if checked %}
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">
@@ -12,150 +12,12 @@
                                 Annexes
                             </h4>
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                            {% include "conventions/actions/goto.html" %}
                     </div>
-                    {% if annexes %}
-                        <div class="fr-table table--limited-height">
-                            <div class="fr-table__wrapper">
-                                <div class="fr-table__container">
-                                    <div class="fr-table__content">
-                                        <table aria-label="Annexes">
-                                            <thead>
-                                                <tr>
-                                                    {% if convention|display_comments %}
-                                                        {% include 'common/utils/comments_header.html' with object_name='annexe' label="Annexes" callback_click="refresh_opened_comments" %}
-                                                    {% endif %}
-                                                    <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
-                                                    <th scope="col" class="col__width--120">Loyer maximum du logement en € {% include "common/form/required_field_star.html" %}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for annexe in annexes %}
-                                                    {% with annexe_uuid=annexe.uuid|slugify %}
-                                                        {% with main_object_field="annexe__uuid__"|add:annexe_uuid %}
-                                                            <tr id="{{ main_object_field }}_group">
-                                                                {% if convention|display_comments %}
-                                                                    <td id="{{ main_object_field }}_div">
-                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Annexe" callback_click="refresh_opened_comments" %}
-                                                                    </td>
-                                                                {% endif %}
-                                                                <td>
-                                                                    {{ annexe.get_typologie_display }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ annexe.logement.designation }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ annexe.logement.get_typologie_display }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ annexe.surface_hors_surface_retenue|floatformat:2 }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ annexe.loyer_par_metre_carre|floatformat:2 }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ annexe.loyer|floatformat:2 }}
-                                                                </td>
-                                                            </tr>
-                                                        {% endwith %}
-                                                    {% endwith %}
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {% else %}
-                        <div class="fr-my-2w">
-                            <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucune annexe.</em></p>
-                            <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter une annexe</a>
-                        </div>
-                    {% endif %}
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                            {% if lot.annexe_caves %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Caves</p>
-                            {% endif %}
-                            {% if lot.annexe_soussols %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Sous-sols</p>
-                            {% endif %}
-                            {% if lot.annexe_remises %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Remises</p>
-                            {% endif %}
-                            {% if lot.annexe_ateliers %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Ateliers</p>
-                            {% endif %}
-                            {% if lot.annexe_sechoirs %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Séchoirs</p>
-                            {% endif %}
-                            {% if lot.annexe_celliers %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Celliers extérieurs au logement</p>
-                            {% endif %}
-                            {% if lot.annexe_resserres %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Resserres</p>
-                            {% endif %}
-                            {% if lot.annexe_combles %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Combles et greniers aménageables</p>
-                            {% endif %}
-                            {% if lot.annexe_balcons %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Balcons</p>
-                            {% endif %}
-                            {% if lot.annexe_loggias %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Loggias et vérandas</p>
-                            {% endif %}
-                            {% if lot.annexe_terrasses %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Terrasses</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    <div class="fr-grid-row fr-grid-row--gutters">
-                        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-                            {% if lot.annexe_caves is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Caves</p>
-                            {% endif %}
-                            {% if lot.annexe_soussols is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Sous-sols</p>
-                            {% endif %}
-                            {% if lot.annexe_remises is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Remises</p>
-                            {% endif %}
-                            {% if lot.annexe_ateliers is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Ateliers</p>
-                            {% endif %}
-                            {% if lot.annexe_sechoirs is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Séchoirs</p>
-                            {% endif %}
-                            {% if lot.annexe_celliers is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Celliers extérieurs au logement</p>
-                            {% endif %}
-                            {% if lot.annexe_resserres is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Resserres</p>
-                            {% endif %}
-                            {% if lot.annexe_combles is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Combles et greniers aménageables</p>
-                            {% endif %}
-                            {% if lot.annexe_balcons is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Balcons</p>
-                            {% endif %}
-                            {% if lot.annexe_loggias is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Loggias et vérandas</p>
-                            {% endif %}
-                            {% if lot.annexe_terrasses is False %}
-                                <p class="fr-tag fr-mb-2w fr-mr-1w">Terrasses</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="logements" %}
-                    {% endif %}
+                    {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.lot.annexes.all lot=convention.lot checked=False %}
                 </div>
             </div>
         </div>
     </div>
+    {% endif %}
 {% endif %}
