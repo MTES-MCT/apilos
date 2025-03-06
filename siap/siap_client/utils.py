@@ -350,7 +350,6 @@ def get_or_create_lots_and_conventions(
             user=user,
         )
         (lot, _) = Lot.objects.get_or_create(
-            programme=programme,
             financement=Financement.SANS_FINANCEMENT,
             convention=convention,
             defaults={
@@ -386,7 +385,6 @@ def get_or_create_lots_and_conventions(
                 user=user,
             )
             (lot, _) = Lot.objects.get_or_create(
-                programme=programme,
                 financement=financement,
                 convention=convention,
                 defaults={

@@ -17,7 +17,7 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from programmes.models import Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient

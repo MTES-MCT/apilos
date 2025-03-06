@@ -6,10 +6,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
 
-from programmes.models import (
-    FinancementEDD,
-    Lot,
-)
+from programmes.models import FinancementEDD, Lot
 
 
 class ProgrammeEDDForm(forms.Form):
@@ -142,7 +139,7 @@ class BaseLogementEDDFormSet(BaseFormSet):
         self.optional_errors = []
         if len(self.forms) == 0 or self.ignore_optional_errors:
             return
-        lots = Lot.objects.filter(programme_id=self.programme_id)
+        lots = Lot.objects.filter(convention__programme_id=self.programme_id)
         programme_financements = list(set(map(lambda x: x.financement, lots)))
         lgts_edd_financements = list(
             set(map(lambda x: x.cleaned_data.get("financement"), self.forms))

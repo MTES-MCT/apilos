@@ -1,10 +1,10 @@
 import logging
 
-from django.db.models.signals import post_delete, pre_save
+from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
 from apilos_settings.models import Departement
-from programmes.models.models import Lot, Programme
+from programmes.models.models import Programme
 
 logger = logging.getLogger(__name__)
 
@@ -64,10 +64,3 @@ def set_insee_code(sender, instance, *args, **kwargs):
                     code_departement,
                     instance.code_postal,
                 )
-
-
-@receiver(post_delete, sender=Lot)
-def remove_lot(sender, instance, *args, **kwargs):
-    programme = Programme.objects.filter(id=instance.programme_id).first()
-    if programme and programme.conventions.count() == 0:
-        programme.delete()

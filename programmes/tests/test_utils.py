@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from programmes.tests.factories import ProgrammeFactory
+from core.tests.factories import ProgrammeFactory
 from programmes.utils import diff_programme_duplication
 
 

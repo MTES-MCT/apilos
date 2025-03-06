@@ -255,72 +255,73 @@ class User(AbstractUser):
         return self.is_staff or self.is_superuser
 
     def has_object_permission(self, obj):
-        if isinstance(obj, Convention | Lot):
-            if (
-                "role" in self.siap_habilitation
-                and self.siap_habilitation["role"]["typologie"]
-                == TypeRole.ADMINISTRATEUR
-            ):
-                if self.siap_habilitation["role"]["perimetre_departement"]:
-                    return (
-                        obj.programme.code_insee_departement
-                        == self.siap_habilitation["role"]["perimetre_departement"]
-                    )
-                if self.siap_habilitation["role"]["perimetre_region"]:
-                    return (
-                        obj.programme.code_insee_region
-                        == self.siap_habilitation["role"]["perimetre_region"]
-                    )
-                return True
-
-            # Get bailleur and its parent to know if the user has rights on one of those
-            bailleur = Bailleur.objects.prefetch_related("parent").get(
-                id=obj.programme.bailleur_id
+        programme = None
+        if isinstance(obj, Lot):
+            programme = obj.convention.programme
+        elif isinstance(obj, Convention):
+            programme = obj.programme
+        else:
+            raise ExceptionPermissionConfig(
+                "Les permissions ne sont pas correctement configurées, un "
+                + "objet de type Convention doit être asocié à la "
+                + "permission 'change_convention'"
             )
 
-            if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
-                # This block aims to determine the effective bailleur_id for the conventions
-                # If there are no avenants, the effective bailleur_id is from the convention programme
-                # If there are avenants, the effective bailleur_id is the programme bailleur_id
-                # from the most recent avenant
-                avenants_bailleur_id = (
-                    Convention.objects.filter(
-                        parent_id=Coalesce(obj.parent_id, obj.id),
-                        statut__in=[
-                            ConventionStatut.CORRECTION.label,
-                            ConventionStatut.A_SIGNER.label,
-                            ConventionStatut.SIGNEE.label,
-                        ],
-                    )
-                    .order_by("-cree_le")
-                    .values("programme__bailleur_id")
-                    .first()
+        if (
+            "role" in self.siap_habilitation
+            and self.siap_habilitation["role"]["typologie"] == TypeRole.ADMINISTRATEUR
+        ):
+            if self.siap_habilitation["role"]["perimetre_departement"]:
+                return (
+                    programme.code_insee_departement
+                    == self.siap_habilitation["role"]["perimetre_departement"]
                 )
+            if self.siap_habilitation["role"]["perimetre_region"]:
+                return (
+                    programme.code_insee_region
+                    == self.siap_habilitation["role"]["perimetre_region"]
+                )
+            return True
 
-                if avenants_bailleur_id is not None:
-                    effective_bailleur_id = avenants_bailleur_id[
-                        "programme__bailleur_id"
-                    ]
-                else:
-                    effective_bailleur_id = obj.programme.bailleur_id
-            else:
-                effective_bailleur_id = obj.programme.bailleur_id
+        # Get bailleur and its parent to know if the user has rights on one of those
+        bailleur = Bailleur.objects.prefetch_related("parent").get(
+            id=programme.bailleur_id
+        )
 
-            bailleur_ids = [effective_bailleur_id]
-            if bailleur.parent:
-                bailleur_ids.append(bailleur.parent.id)
-            # is bailleur of the convention or is instructeur of the convention
-            return self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0 or (
-                obj.programme.administration_id is not None
-                and self.roles.filter(
-                    administration_id=obj.programme.administration_id
-                ).count()
-                > 0
+        if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
+            # This block aims to determine the effective bailleur_id for the conventions
+            # If there are no avenants, the effective bailleur_id is from the convention programme
+            # If there are avenants, the effective bailleur_id is the programme bailleur_id
+            # from the most recent avenant
+            avenants_bailleur_id = (
+                Convention.objects.filter(
+                    parent_id=Coalesce(obj.parent_id, obj.id),
+                    statut__in=[
+                        ConventionStatut.CORRECTION.label,
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ],
+                )
+                .order_by("-cree_le")
+                .values("programme__bailleur_id")
+                .first()
             )
-        raise ExceptionPermissionConfig(
-            "Les permissions ne sont pas correctement configurées, un "
-            + "objet de type Convention doit être asocié à la "
-            + "permission 'change_convention'"
+
+            if avenants_bailleur_id is not None:
+                effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
+            else:
+                effective_bailleur_id = programme.bailleur_id
+        else:
+            effective_bailleur_id = programme.bailleur_id
+
+        bailleur_ids = [effective_bailleur_id]
+        if bailleur.parent:
+            bailleur_ids.append(bailleur.parent.id)
+        # is bailleur of the convention or is instructeur of the convention
+        return self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0 or (
+            programme.administration_id is not None
+            and self.roles.filter(administration_id=programme.administration_id).count()
+            > 0
         )
 
     def has_perm(self, perm, obj=None, role_id: int | None = None):
