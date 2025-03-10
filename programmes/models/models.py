@@ -452,21 +452,12 @@ class Lot(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True, blank=True)
 
-    # TODO: make this field required once all the data is migrated
     convention = models.ForeignKey(
         "conventions.Convention",
         related_name="lots",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-
-    # TODO: remove this field and use convention.programme instead
-    programme = models.ForeignKey(
-        "Programme",
-        on_delete=models.CASCADE,
         null=False,
-        related_name="lots",
+        blank=False,
     )
 
     financement = models.CharField(
@@ -534,14 +525,14 @@ class Lot(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["convention_id", "financement"],
+                fields=["convention", "financement"],
                 name="unique_convention_financement",
             ),
             # TODO : quand on intégrera les convention mixte ou les conventions seconde
             # vie il faudra supprimer cette contrainte et gérer plusieurs lots par
             # convention
             models.UniqueConstraint(
-                fields=["convention_id"],
+                fields=["convention"],
                 name="unique_convention",
             ),
         ]
@@ -549,7 +540,7 @@ class Lot(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.programme.bailleur
+        return self.convention.programme.bailleur
 
     @property
     def annexes(self):
@@ -579,7 +570,7 @@ class Lot(models.Model):
             surface_corrigee__isnull=False, loyer__isnull=True
         ).order_by("import_order")
 
-    def clone(self, cloned_programme):
+    def clone(self, convention):
         parent_id = self.parent_id or self.id
 
         lot_fields = model_to_dict(
@@ -587,14 +578,13 @@ class Lot(models.Model):
             exclude=[
                 "id",
                 "parent",
-                "programme",
                 "convention",
                 "cree_le",
                 "mis_a_jour_le",
             ],
         ) | {
-            "programme": cloned_programme,
             "parent_id": parent_id,
+            "convention": convention,
         }
         cloned_lot = Lot(**lot_fields)
         cloned_lot.save()
@@ -659,7 +649,7 @@ class Lot(models.Model):
         return self.financement in [Financement.PLUS, Financement.PLUS_CD]
 
     def __str__(self):
-        return f"{self.programme.nom} - {self.financement}"
+        return f"{self.convention.programme.nom} - {self.financement}"
 
 
 class Logement(models.Model):
@@ -764,7 +754,7 @@ class Logement(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.lot.programme.bailleur
+        return self.lot.convention.programme.bailleur
 
     def clone(self, lot: Lot, **kwargs: dict[str, Any]) -> "Logement":
         logement_fields = (
@@ -1044,7 +1034,7 @@ class TypeStationnement(models.Model):
     # Needed for admin
     @property
     def bailleur(self):
-        return self.lot.programme.bailleur
+        return self.lot.convention.programme.bailleur
 
     def __str__(self):
         return f"{self.typologie} - {self.lot}"

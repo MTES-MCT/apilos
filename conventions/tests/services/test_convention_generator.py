@@ -37,10 +37,9 @@ from conventions.services.convention_generator import (
     to_fr_short_date_or_default,
     typologie_label,
 )
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory, UploadedFileFactory
 from programmes.models import ActiveNatureLogement, Logement, TypologieLogement
 from programmes.models.choices import NatureLogement
-from upload.tests.factories import UploadedFileFactory
 from users.models import User
 
 

@@ -6,10 +6,9 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 
 from apilos_settings.models import Departement
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory, DepartementFactory, ProgrammeFactory
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer, OperationService
-from programmes.tests.factories import DepartementFactory, ProgrammeFactory
 from siap.siap_client.client import SIAPClient
 from users.tests.factories import UserFactory
 

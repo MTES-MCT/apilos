@@ -6,7 +6,7 @@ import pytest
 from django.test import TestCase
 
 from conventions.models import Convention, ConventionHistory, ConventionStatut
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from programmes.models import Financement
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole

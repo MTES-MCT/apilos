@@ -5,9 +5,8 @@ from django.test import TestCase
 from rest_framework import serializers
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
+from core.tests.factories import UploadedFileFactory
 from upload.models import UploadedFileSerializer
-
-from .factories import UploadedFileFactory
 
 
 class UploadedFileTest(ParametrizedTestCase, TestCase):

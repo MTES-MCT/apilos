@@ -78,7 +78,6 @@
     "pk": 1,
     "fields": {
       "uuid": "09b07c04-a46a-4d41-a463-71b00c2d38ac",
-      "programme": 1,
       "convention": 2,
       "financement": "PLAI",
       "type_habitat": "INDIVIDUEL",
@@ -94,7 +93,6 @@
     "pk": 2,
     "fields": {
       "uuid": "3918d6f7-fcee-42c2-aa81-c56b97e802fb",
-      "programme": 1,
       "convention": 1,
       "financement": "PLUS",
       "type_habitat": "INDIVIDUEL",
@@ -111,7 +109,6 @@
     "pk": 3,
     "fields": {
       "uuid": "3cabcbcd-9cf0-4cb8-8170-27be8e9e159c",
-      "programme": 2,
       "convention": 4,
       "financement": "PLAI",
       "type_habitat": "INDIVIDUEL",
@@ -126,7 +123,6 @@
     "pk": 4,
     "fields": {
       "uuid": "3be91b08-5bb7-4c03-95a8-168e6602ac91",
-      "programme": 2,
       "convention": 3,
       "financement": "PLUS",
       "type_habitat": "COLLECTIF",

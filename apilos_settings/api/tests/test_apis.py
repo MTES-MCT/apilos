@@ -7,7 +7,7 @@ from unittest_parametrize import ParametrizedTestCase, param, parametrize
 
 from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
-from conventions.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory
 from siap.siap_client.client import build_jwt
 from users.models import User
 
