@@ -8,6 +8,7 @@ from core.utils import (
     is_valid_uuid,
     make_random_string,
     round_half_up,
+    strip_accents,
 )
 
 
@@ -101,6 +102,10 @@ class UtilsTest(unittest.TestCase):
 
     def test_make_random_password(self):
         assert len(make_random_string(12)) == 12
+
+    def test_strip_accents(self):
+        assert strip_accents("éèêë") == "eeee"
+        assert strip_accents("àâä") == "aaa"
 
 
 class PGTrgmTestMixin:

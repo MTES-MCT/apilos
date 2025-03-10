@@ -3,10 +3,25 @@
 {% if form_step and form_step.total > 1 %}
     <div class="fr-container">
         <div class="fr-stepper fr-mt-2w">
-            <h2 class="fr-stepper__title">
-                <span class="fr-stepper__state">Étape {{ form_step.number }} sur {{ form_step.total }}</span>
-                {{ form_step.title }}
-            </h2>
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-11">
+                    <h2 class="fr-stepper__title">
+                        <span class="fr-stepper__state">Étape {{ form_step.number }} sur {{ form_step.total }}</span>
+                        {{ form_step.title }}
+                    </h2>
+                </div>
+                {% with doc_url=form_step.title|siap_convention_step_doc_url %}
+                {% if doc_url %}
+                    <div class="fr-col-1">
+                        <a class="fr-btn fr-icon-question-mark fr-btn--icon-left fr-btn--tertiary"
+                            href={{ doc_url }}
+                            target="_blank">
+                        </a>
+                    </div>
+                {% endif %}
+                {% endwith %}
+            </div>
+
             <div class="fr-stepper__steps" data-fr-current-step="{{ form_step.number }}" data-fr-steps="{{ form_step.total }}"></div>
             {% if form_step.next %}
                 <div class="fr-grid-row">
