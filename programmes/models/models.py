@@ -452,13 +452,12 @@ class Lot(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False)
     nb_logements = models.IntegerField(null=True, blank=True)
 
-    # TODO: make this field required once all the data is migrated
     convention = models.ForeignKey(
         "conventions.Convention",
         related_name="lots",
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
     )
 
     financement = models.CharField(
@@ -526,14 +525,14 @@ class Lot(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["convention_id", "financement"],
+                fields=["convention", "financement"],
                 name="unique_convention_financement",
             ),
             # TODO : quand on intégrera les convention mixte ou les conventions seconde
             # vie il faudra supprimer cette contrainte et gérer plusieurs lots par
             # convention
             models.UniqueConstraint(
-                fields=["convention_id"],
+                fields=["convention"],
                 name="unique_convention",
             ),
         ]
