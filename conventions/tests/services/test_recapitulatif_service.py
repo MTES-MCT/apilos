@@ -17,8 +17,8 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
-from core.tests.factories import ConventionFactory
-from programmes.models import Lot, Programme
+from core.tests.factories import ConventionFactory, LotFactory, ProgrammeFactory
+from programmes.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
@@ -65,12 +65,8 @@ class ConventionRecapitulatifServiceTests(TestCase):
         service_avenant = recapitulatif.ConventionRecapitulatifService(
             convention=avenant, request=self.request
         )
-        programme = Programme.objects.get(pk=1)
-        dummy_lot = Lot.objects.get(pk=1)
-        dummy_lot.pk = None
-        dummy_lot.nb_logements = 69
-        dummy_lot.convention = None
-        dummy_lot.save()
+        lot = LotFactory(nb_logements=69)
+        programme = ProgrammeFactory(ville="Paris")
 
         with patch.object(
             Convention, "is_incompleted_avenant_parent"
@@ -78,7 +74,7 @@ class ConventionRecapitulatifServiceTests(TestCase):
             mock_is_incompleted_avenant_parent.return_value = True
 
             with patch.object(Convention, "programme", programme):
-                with patch.object(Convention, "lot", dummy_lot):
+                with patch.object(Convention, "lot", lot):
                     with patch.object(Programme, "ville", programme):
                         result = service_avenant.get_convention_recapitulatif()
 
