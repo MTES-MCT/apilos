@@ -7,17 +7,14 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Informations à l'attention du service instructeur
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Ajouter des commentaires" title_unchecked="Commentaires à l'attention du service instructeur" checked=checked id="commentaires" avenant_type="commentaires" description="Ces informations sont complémentaires et servent à l’instruction. Elles ne figureront pas dans le document final d'avenant." %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
                     {% include "common/display_text_and_files_if_exists.html" with text=convention.commentaires|get_text_from_textfiles file_list=convention.commentaires|get_files_from_textfiles %}
                     {% include "common/display_text_and_files_if_exists.html" with text=convention.attached|get_text_from_textfiles label="Fichiers à joindre à la convention" file_list=convention.attached|get_files_from_textfiles object_field="convention__attached__"|add:convention_uuid %}
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="commentaires" %}
-                    {% endif %}
                 </div>
             </div>
         </div>

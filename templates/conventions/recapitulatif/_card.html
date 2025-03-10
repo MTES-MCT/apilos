@@ -6,17 +6,17 @@
             <div class="fr-card__body fr-my-2w">
                 <div class="block--row-strech" id="{{ object_field }}_div">
                     <div class="block--row-strech-1">
-                        <h4 class="fr-card__title">
-                            {% block title %}
-                            {% endblock title %}
-                        </h4>
+                        {% block title %}
+                        {% endblock title %}
                     </div>
-                    {% if target_url %}
+                    {% if target_url and not convention.is_avenant or checked %}
                         {% include "conventions/actions/goto.html" %}
                     {% endif %}
                 </div>
-                {% block body %}
-                {% endblock body %}
+                {% if not convention.is_avenant or checked %}
+                    {% block body %}
+                    {% endblock body %}
+                {% endif %}
             </div>
         </div>
     </div>
