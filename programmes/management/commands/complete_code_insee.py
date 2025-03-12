@@ -61,10 +61,30 @@ class Command(BaseCommand):
         return insee_table
 
     def _add_missing_code_insee(self, insee_table):
-        insee_table["49150"].append(
-            {"insee_com": "49018", "postal_code": "49150", "nom_comm": "BAUGE EN ANJOU"}
+        for entry in [
+            {
+                "insee_com": "49018",
+                "postal_code": "49150",
+                "nom_comm": "BAUGE EN ANJOU",
+            },
+            {
+                "insee_com": "33067",
+                "postal_code": "33710",
+                "nom_comm": "BOURG SUR GIRONDE",
+            },
+            {
+                "insee_com": "49092",
+                "postal_code": "49120",
+                "nom_comm": "CHEMILLE EN ANJOU",
+            },
+            {
+                "insee_com": "24053",
+                "postal_code": "24750",
+                "nom_comm": "BOULAZAC ISLE MANOIRE",
+            },
             # TODO: Add more missing code postal / code INSEE pairs
-        )
+        ]:
+            insee_table[entry["postal_code"]].append(entry)
 
     def handle(self, *args, **options):
         self._print_status()

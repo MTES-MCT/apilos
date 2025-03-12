@@ -11,6 +11,7 @@ class Command(BaseCommand):
             "croisille": "Croisilles",
             "lamballe ARMOR": "Lamballe",
             "capavenir vosges": "Thaon-les-Vosges",
+            "le luc en provence": "Le Luc",
         }.items():
             queryset = Programme.objects.filter(ville__iexact=k)
             if count := queryset.count():
@@ -18,7 +19,7 @@ class Command(BaseCommand):
                 queryset.update(ville=v)
 
         for k, v in {"biot": "06410"}.items():
-            queryset = Programme.objects.filter(ville__iexact=k)
+            queryset = Programme.objects.filter(ville__iexact=k).exclude(code_postal=v)
             if count := queryset.count():
                 self.stdout.write(f"{count} codes postaux mis à jour pour '{k}'")
                 queryset.update(code_postal=v)
