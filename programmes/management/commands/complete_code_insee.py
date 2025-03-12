@@ -58,55 +58,29 @@ class Command(BaseCommand):
                     }
                 )
 
-        return insee_table
-
-    def _add_missing_code_insee(self, insee_table):
-        for entry in [
-            {
-                "insee_com": "49018",
-                "postal_code": "49150",
-                "nom_comm": "BAUGE EN ANJOU",
-            },
-            {
-                "insee_com": "33067",
-                "postal_code": "33710",
-                "nom_comm": "BOURG SUR GIRONDE",
-            },
-            {
-                "insee_com": "49092",
-                "postal_code": "49120",
-                "nom_comm": "CHEMILLE EN ANJOU",
-            },
-            {
-                "insee_com": "24053",
-                "postal_code": "24750",
-                "nom_comm": "BOULAZAC ISLE MANOIRE",
-            },
-            # TODO: Add more missing code postal / code INSEE pairs
-        ]:
+        for entry in extra_code_insee_entries:
             insee_table[entry["postal_code"]].append(entry)
 
-    def handle(self, *args, **options):
+        return insee_table
+
+    def handle(self, *args, **options):  # noqa: C901
         self._print_status()
 
         self.stdout.write("Chargement du référentiel des codes INSEE...")
         insee_table = self._load_code_insee_ref()
-        self._add_missing_code_insee(insee_table)
 
         errors_unknown_code_postal = []
+        errors_unknown_commune = []
         errors_multiple_choices = []
 
         self.stdout.write("Processing...")
         for programme in Programme.objects.filter(code_insee_commune="").exclude(
             code_postal="", ville=""
         ):
-            p_code_postal = programme.code_postal or "???"
-            p_commune = self._normalize(programme.ville or "???")
-
-            entries = insee_table.get(p_code_postal, [])
+            entries = insee_table.get(programme.code_postal, [])
 
             if not len(entries):
-                errors_unknown_code_postal.append(p_code_postal)
+                errors_unknown_code_postal.append(programme.code_postal)
                 continue
 
             if len(entries) == 1:
@@ -115,18 +89,26 @@ class Command(BaseCommand):
                 continue
 
             if len(entries) > 1:
+                commune = self._normalize(programme.ville)
+                if not len(commune):
+                    errors_unknown_commune.append(
+                        f"Programme {programme.id} ({programme.code_postal})"
+                    )
+                    continue
+
                 for entry in entries:
-                    if entry["nom_comm"] == p_commune:
+                    if entry["nom_comm"] == commune:
                         programme.code_insee_commune = entry["insee_com"]
                         programme.save()
                         break
                 else:
                     errors_multiple_choices.append(
-                        f"Programme {programme.id} ({p_code_postal}, {p_commune})"
+                        f"Programme {programme.id} ({programme.code_postal}, {commune})"
                     )
 
         errors_unknown_code_postal = sorted(list(set(errors_unknown_code_postal)))
         errors_multiple_choices = sorted(list(set(errors_multiple_choices)))
+        errors_unknown_commune = sorted(list(set(errors_unknown_commune)))
 
         self.stdout.write("Traitement terminé.")
         self.stdout.write("Résultats:")
@@ -135,14 +117,21 @@ class Command(BaseCommand):
         if len(errors_unknown_code_postal):
             self.stdout.write(
                 self.style.ERROR(
-                    f"{len(errors_unknown_code_postal)} codes postaux inconnus par le référentiel."
+                    f"{len(errors_unknown_code_postal)} programmes au code postal inconnu."
+                )
+            )
+
+        if len(errors_unknown_commune):
+            self.stdout.write(
+                self.style.ERROR(
+                    f"{len(errors_unknown_commune)} programmes sans nom de commune."
                 )
             )
 
         if len(errors_multiple_choices):
             self.stdout.write(
                 self.style.ERROR(
-                    f"{len(errors_multiple_choices)} codes postaux avec plusieurs choix possibles."
+                    f"{len(errors_multiple_choices)} programmes avec plusieurs choix possibles."
                 )
             )
 
@@ -154,4 +143,32 @@ class Command(BaseCommand):
                 f.write(json.dumps(errors_unknown_code_postal, indent=2))
             with open(f"{output_dir}/errors_multiple_choices.json", "w") as f:
                 f.write(json.dumps(errors_multiple_choices, indent=2))
+            with open(f"{output_dir}/errors_unknown_commune.json", "w") as f:
+                f.write(json.dumps(errors_unknown_commune, indent=2))
             self.stdout.write(f"Données enregistrées dans {output_dir}.")
+
+
+extra_code_insee_entries = [
+    {"insee_com": "49018", "postal_code": "49150", "nom_comm": "BAUGE EN ANJOU"},
+    {"insee_com": "33067", "postal_code": "33710", "nom_comm": "BOURG SUR GIRONDE"},
+    {"insee_com": "49092", "postal_code": "49120", "nom_comm": "CHEMILLE EN ANJOU"},
+    {"insee_com": "24053", "postal_code": "24750", "nom_comm": "BOULAZAC ISLE MANOIRE"},
+    {"insee_com": "14762", "postal_code": "14500", "nom_comm": "VIRE NORMANDIE"},
+    {"insee_com": "22093", "postal_code": "22400", "nom_comm": "LAMBALLE ARMOR"},
+    {"insee_com": "80598", "postal_code": "80860", "nom_comm": "NOUVION EN PONTHIEU"},
+    {"insee_com": "60104", "postal_code": "60120", "nom_comm": "BRETEUIL SUR NOYE"},
+    {"insee_com": "73010", "postal_code": "73410", "nom_comm": "ENTRELACS"},
+    {
+        "insee_com": "49377",
+        "postal_code": "49140",
+        "nom_comm": "RIVES DU LOIR EN ANJOU",
+    },
+    {
+        "insee_com": "24026",
+        "postal_code": "24330",
+        "nom_comm": "BASSILLAC ET AUBEROCHE",
+    },
+    {"insee_com": "74010", "postal_code": "74370", "nom_comm": "ANNECY"},
+    {"insee_com": "19123", "postal_code": "19360", "nom_comm": "MALEMORT"},
+    {"insee_com": "59004", "postal_code": "59310", "nom_comm": "AIX EN PEVELE"},
+]
