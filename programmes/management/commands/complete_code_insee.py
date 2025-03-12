@@ -171,4 +171,13 @@ extra_code_insee_entries = [
     {"insee_com": "74010", "postal_code": "74370", "nom_comm": "ANNECY"},
     {"insee_com": "19123", "postal_code": "19360", "nom_comm": "MALEMORT"},
     {"insee_com": "59004", "postal_code": "59310", "nom_comm": "AIX EN PEVELE"},
+    {"insee_com": "59526", "postal_code": "59230", "nom_comm": "SAINT AMAND"},
+    {"insee_com": "59586", "postal_code": "59242", "nom_comm": "TEMPLEUVE EN PEVELE"},
+    {"insee_com": "68070", "postal_code": "68350", "nom_comm": "BRUNSTATT DIDENHEIM"},
+    {"insee_com": "76108", "postal_code": "76230", "nom_comm": "BOIS GUILLAUME"},
+    {
+        "insee_com": "78158",
+        "postal_code": "78150",
+        "nom_comm": "LE CHESNAY ROCQUENCOURT",
+    },
 ]
