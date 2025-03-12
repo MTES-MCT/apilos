@@ -53,17 +53,25 @@ class Command(BaseCommand):
                 insee_table[postal_code].append(
                     {
                         "insee_com": entry["insee_com"],
+                        "postal_code": postal_code,
                         "nom_comm": self._normalize(entry["nom_comm"]),
                     }
                 )
 
         return insee_table
 
+    def _add_missing_code_insee(self, insee_table):
+        insee_table["49150"].append(
+            {"insee_com": "49018", "postal_code": "49150", "nom_comm": "BAUGE EN ANJOU"}
+            # TODO: Add more missing code postal / code INSEE pairs
+        )
+
     def handle(self, *args, **options):
         self._print_status()
 
         self.stdout.write("Chargement du référentiel des codes INSEE...")
         insee_table = self._load_code_insee_ref()
+        self._add_missing_code_insee(insee_table)
 
         errors_unknown_code_postal = []
         errors_multiple_choices = []
