@@ -1,7 +1,7 @@
 <div class="fr-col-12 block--row-strech">
     <div class="block--row-strech-1 fr-mr-6w">
         <h2 class="fr-text--lg">Informations complémentaires</h2>
-        <p>Pour ajouter, dans l'avenant, des renseignements supplémentaires de type désignation des immeubles, origines des propriétés ou autre.</p>
+        <p>Pour ajouter dans le document de l'avenant des renseignements supplémentaires de type désignation des immeubles, origines des propriétés ou autre.</p>
     </div>
     <form method="post" {% if avenant_uuid %}action="{% url 'conventions:new_avenant' convention_uuid=avenant_uuid %}"{% endif %}>
         {% csrf_token %}

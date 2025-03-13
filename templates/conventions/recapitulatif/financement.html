@@ -8,12 +8,13 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Financements
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Financements" title_unchecked="Mettre à jour la durée de la convention" checked=checked id="financement" avenant_type="duree" description="En cas de nouveaux travaux financés" %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if not convention.is_avenant or checked %}
                     <p class="fr-my-1w">Prêts et Subventions : </p>
                     {% comment %} TODO: reverse relation convention lot {% endcomment %}
                     {% if convention.lot.prets.all %}
@@ -86,9 +87,6 @@
                     {% else %}
                         {% include "common/display_field_if_exists.html" with label="Fonds propres" value=convention.fond_propre object_field="convention__fond_propre__"|add:convention_uuid %}
                     {% endif %}
-
-                    {% if convention.is_avenant %}
-                        {% include "conventions/actions/remove_from_avenant.html" with avenant_type="duree" %}
                     {% endif %}
                 </div>
             </div>

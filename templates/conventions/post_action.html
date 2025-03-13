@@ -62,10 +62,12 @@
                                         <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer un {% if convention.is_avenant %}autre {% endif %}avenant
                                     </button>
                                 {% else %}
-
-                                    <a class="fr-btn fr-my-1w fr-mr-2w" href="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}">
-                                        <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer un {% if convention.is_avenant %}autre {% endif %}avenant
-                                    </a>
+                                    <form action="{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}" method="POST">
+                                        {% csrf_token %}
+                                        <button class="fr-btn fr-my-1w fr-mr-2w">
+                                            <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>Créer un {% if convention.is_avenant %}autre {% endif %}avenant
+                                        </button>
+                                    </form>
                                 {% endif %}
                             {% else %}
                                 <button class="fr-btn fr-my-1w fr-mr-2w" disabled>

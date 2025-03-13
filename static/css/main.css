@@ -1117,3 +1117,14 @@ table .apilos-badge {
   width: fit-content;
   margin: auto;
 }
+.fr-toggle label.apilos-label-larger {
+  font-size: 1.2rem;
+}
+
+.fr-toggle.apilos-toggle-block {
+  display: block;
+}
+
+.apilos-recap-subtitle {
+  font-size: 1.2rem;
+}

@@ -14,7 +14,7 @@ class AvenantForm(forms.Form):
     avenant_type = forms.ChoiceField(
         label="Type d'avenant",
         choices=AvenantType.get_as_choices,
-        required=True,
+        required=False,
     )
 
 
