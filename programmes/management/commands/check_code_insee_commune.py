@@ -11,7 +11,7 @@ from programmes.models import Programme
 
 
 class Command(BaseCommand):
-    help = "Complete the empty code_insee field of the Programme model"
+    help = "Vérifie et corrige les codes INSEE communes des programmes"
 
     def add_arguments(self, parser):
         parser.add_argument(
