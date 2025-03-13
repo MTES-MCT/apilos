@@ -31,6 +31,7 @@ class Command(BaseCommand):
             "SAINT PANTALEON DE L ARCHE": "SAINT PANTALEON DE LARCHE",
             "STIRING WENEL": "STIRING WENDEL",
             "SAINT-JUSTE-IBARRE": "Saint-Just-Ibarre",
+            "BOUSSIERE SUR SAMBRE": "BOUSSIERES SUR SAMBRE",
         }.items():
             queryset = Programme.objects.filter(ville__iexact=k)
             if count := queryset.count():
@@ -61,6 +62,10 @@ class Command(BaseCommand):
             "La Gorgue": "59253",
             "BARBY": "73230",
             "Houlbec-Cocherel": "27120",
+            "Bazoges-en-Paillers": "85130",
+            "Barr": "67140",
+            "Faches-Thumesnil": "59155",
+            "Beaumont-Monteux": "26600",
         }.items():
             queryset = Programme.objects.filter(ville__iexact=k).exclude(code_postal=v)
             if count := queryset.count():
@@ -83,4 +88,13 @@ class Command(BaseCommand):
         Programme.objects.filter(pk=647779).update(code_postal="02120")
         Programme.objects.filter(pk=651951).update(
             code_postal="18190", code_insee_commune="18270"
+        )
+        Programme.objects.filter(pk=651951).update(code_insee_commune="49125")
+        Programme.objects.filter(pk__in=(38830, 38831)).update(
+            code_insee_commune="50550"
+        )
+        Programme.objects.filter(pk=33185).update(code_insee_commune="49377")
+        Programme.objects.filter(pk=38847).update(code_insee_commune="50487")
+        Programme.objects.filter(pk=643940).update(
+            code_postal="77310", code_insee_commune="77407"
         )

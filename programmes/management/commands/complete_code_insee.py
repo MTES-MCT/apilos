@@ -231,4 +231,12 @@ extra_code_insee_entries = [
     {"insee_com": "85084", "postal_code": "85140", "nom_comm": "ESSARTS EN BOCAGE"},
     {"insee_com": "80621", "postal_code": "80320", "nom_comm": "HYPERCOURT"},
     {"insee_com": "26038", "postal_code": "26600", "nom_comm": "BEAUMONT MONTEUX"},
+    {
+        "insee_com": "28015",
+        "postal_code": "28700",
+        "nom_comm": "AUNEAU BLEURY SAINT SYMPHORIEN",
+    },
+    {"insee_com": "39043", "postal_code": "39190", "nom_comm": "BEAUFORT ORBAGNA"},
+    {"insee_com": "02018", "postal_code": "02320", "nom_comm": "ANIZY LE GRAND"},
+    {"insee_com": "49125", "postal_code": "49700", "nom_comm": "DOUE EN ANJOU"},
 ]
