@@ -33,8 +33,9 @@ class Command(BaseCommand):
         for c in ["(", ")", "-", "'"]:
             n_str = n_str.replace(c, " ")
         n_str = re.sub(" +", " ", n_str)
+        n_str = n_str.upper().strip()
         n_str = n_str.replace("ST ", "SAINT ").replace("STE ", "SAINTE ")
-        return n_str.upper()
+        return n_str
 
     def _load_code_insee_ref(self) -> dict[list[dict[str, str]]]:
         """
@@ -180,4 +181,54 @@ extra_code_insee_entries = [
         "postal_code": "78150",
         "nom_comm": "LE CHESNAY ROCQUENCOURT",
     },
+    {"insee_com": "85008", "postal_code": "85430", "nom_comm": "AUBIGNY LES CLOUZEAUX"},
+    {
+        "insee_com": "25368",
+        "postal_code": "25640",
+        "nom_comm": "MARCHAUX CHAUDEFONTAINE",
+    },
+    {
+        "insee_com": "62764",
+        "postal_code": "62223",
+        "nom_comm": "SAINT NICOLAS LEZ ARRAS",
+    },
+    {"insee_com": "31232", "postal_code": "31330", "nom_comm": "GRENADE SUR GARONNE"},
+    {
+        "insee_com": "59588",
+        "postal_code": "59229",
+        "nom_comm": "TETEGHEM COUDEKERQUE VILLAGE",
+    },
+    {"insee_com": "33344", "postal_code": "33350", "nom_comm": "PUJOLS SUR DORDOGNE"},
+    {"insee_com": "59405", "postal_code": "59400", "nom_comm": "MOEUVRES"},
+    {"insee_com": "67372", "postal_code": "67350", "nom_comm": "VAL DE MODER"},
+    {"insee_com": "49200", "postal_code": "49770", "nom_comm": "LONGUENEE EN ANJOU"},
+    {"insee_com": "49200", "postal_code": "49220", "nom_comm": "LONGUENEE EN ANJOU"},
+    {"insee_com": "31277", "postal_code": "31530", "nom_comm": "LASSERRE PRADERE"},
+    {"insee_com": "49301", "postal_code": "49230", "nom_comm": "SEVREMOINE"},
+    {"insee_com": "50292", "postal_code": "50570", "nom_comm": "MARIGNY LE LOZON"},
+    {"insee_com": "01130", "postal_code": "01340", "nom_comm": "BRESSE VALLONS"},
+    {"insee_com": "49023", "postal_code": "49600", "nom_comm": "BEAUPREAU EN MAUGES"},
+    {"insee_com": "39491", "postal_code": "39170", "nom_comm": "COTEAUX DU LIZON"},
+    {"insee_com": "54079", "postal_code": "54700", "nom_comm": "BLENOD LES PAM"},
+    {"insee_com": "28422", "postal_code": "28150", "nom_comm": "LES VILLAGES VOVEENS"},
+    {"insee_com": "30112", "postal_code": "30730", "nom_comm": "FONS OUTRE GARDON"},
+    {"insee_com": "25035", "postal_code": "25870", "nom_comm": "LES AUXONS"},
+    {"insee_com": "24312", "postal_code": "24660", "nom_comm": "SANILHAC"},
+    {"insee_com": "79179", "postal_code": "79320", "nom_comm": "MONCOUTANT SUR SEVRE"},
+    {
+        "insee_com": "41059",
+        "postal_code": "41700",
+        "nom_comm": "LE CONTROIS EN SOLOGNE",
+    },
+    {"insee_com": "76618", "postal_code": "76370", "nom_comm": "PETIT CAUX"},
+    {"insee_com": "53136", "postal_code": "53200", "nom_comm": "LA ROCHE NEUVILLE"},
+    {"insee_com": "86281", "postal_code": "86380", "nom_comm": "SAINT MARTIN LA PALLU"},
+    {
+        "insee_com": "48094",
+        "postal_code": "48500",
+        "nom_comm": "MASSEGROS CAUSSES GORGES",
+    },
+    {"insee_com": "85084", "postal_code": "85140", "nom_comm": "ESSARTS EN BOCAGE"},
+    {"insee_com": "80621", "postal_code": "80320", "nom_comm": "HYPERCOURT"},
+    {"insee_com": "26038", "postal_code": "26600", "nom_comm": "BEAUMONT MONTEUX"},
 ]
