@@ -79,7 +79,7 @@ class Command(BaseCommand):
         self.stdout.write("Chargement du référentiel des codes INSEE...")
         insee_table_by_postal_code, insee_table_by_commune = self._load_code_insee_ref()
 
-        errors_unknown_code_postal = []
+        errors_invalid_code_postal = []
         errors_unknown_commune = []
         errors_multiple_choices = []
 
@@ -105,7 +105,7 @@ class Command(BaseCommand):
                         code_insee_commune=ref_commune_entries[0]["insee_com"],
                     )
                 else:
-                    errors_unknown_code_postal.append(
+                    errors_invalid_code_postal.append(
                         f"Programme {programme.id} (code_postal: {programme.code_postal}, commune: {commune or '???'})"
                     )
                 continue
@@ -134,7 +134,7 @@ class Command(BaseCommand):
                         f"Programme {programme.id} ({programme.code_postal}, {commune})"
                     )
 
-        errors_unknown_code_postal = sorted(list(set(errors_unknown_code_postal)))
+        errors_invalid_code_postal = sorted(list(set(errors_invalid_code_postal)))
         errors_multiple_choices = sorted(list(set(errors_multiple_choices)))
         errors_unknown_commune = sorted(list(set(errors_unknown_commune)))
 
@@ -142,10 +142,10 @@ class Command(BaseCommand):
         self.stdout.write("Résultats:")
         self._print_status()
 
-        if len(errors_unknown_code_postal):
+        if len(errors_invalid_code_postal):
             self.stdout.write(
                 self.style.ERROR(
-                    f"{len(errors_unknown_code_postal)} programmes au code postal inconnu."
+                    f"{len(errors_invalid_code_postal)} programmes avec un code postal erroné."
                 )
             )
 
@@ -165,16 +165,15 @@ class Command(BaseCommand):
 
         if output_dir := options["output_dir"]:
             os.makedirs(output_dir, exist_ok=True)
-            with open(f"{output_dir}/insee_table_by_postal_code.json", "w") as f:
-                f.write(json.dumps(insee_table_by_postal_code, indent=2))
-            with open(f"{output_dir}/insee_table_by_commune.json", "w") as f:
-                f.write(json.dumps(insee_table_by_commune, indent=2))
-            with open(f"{output_dir}/errors_unknown_code_postal.json", "w") as f:
-                f.write(json.dumps(errors_unknown_code_postal, indent=2))
-            with open(f"{output_dir}/errors_multiple_choices.json", "w") as f:
-                f.write(json.dumps(errors_multiple_choices, indent=2))
-            with open(f"{output_dir}/errors_unknown_commune.json", "w") as f:
-                f.write(json.dumps(errors_unknown_commune, indent=2))
+            for var_name in (
+                "insee_table_by_postal_code",
+                "insee_table_by_commune",
+                "errors_invalid_code_postal",
+                "errors_multiple_choices",
+                "errors_unknown_commune",
+            ):
+                with open(f"{output_dir}/{var_name}.json", "w") as f:
+                    f.write(json.dumps(locals()[var_name], indent=2))
             self.stdout.write(f"Données enregistrées dans {output_dir}.")
 
 
