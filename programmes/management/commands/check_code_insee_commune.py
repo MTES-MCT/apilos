@@ -20,6 +20,11 @@ class Command(BaseCommand):
             help="Output directory for the generated files",
             default=None,
         )
+        parser.add_argument(
+            "--dryrun",
+            action="store_true",
+            help="Run the command in dry run mode without making any changes",
+        )
 
     def _print_status(self):
         total_count = Programme.objects.count()
@@ -100,10 +105,11 @@ class Command(BaseCommand):
                 ref_commune_entries = insee_table_by_commune.get(commune)
                 if ref_commune_entries and len(ref_commune_entries) == 1:
                     # si on n'a qu'une seule correspondance, on l'applique
-                    Programme.objects.filter(pk=programme.id).update(
-                        code_postal=ref_commune_entries[0]["postal_code"],
-                        code_insee_commune=ref_commune_entries[0]["insee_com"],
-                    )
+                    if not options["dryrun"]:
+                        Programme.objects.filter(pk=programme.id).update(
+                            code_postal=ref_commune_entries[0]["postal_code"],
+                            code_insee_commune=ref_commune_entries[0]["insee_com"],
+                        )
                 else:
                     errors_invalid_code_postal.append(
                         f"Programme {programme.id} (code_postal: {programme.code_postal}, commune: {commune or '???'})"
@@ -113,7 +119,8 @@ class Command(BaseCommand):
             # si on trouve une seule correspondance, on l'applique
             if len(ref_postal_code_entries) == 1:
                 programme.code_insee_commune = ref_postal_code_entries[0]["insee_com"]
-                programme.save()
+                if not options["dryrun"]:
+                    programme.save()
                 continue
 
             # si on trouve plusieurs correspondances, on cherche celle qui correspond au nom de commune
@@ -127,7 +134,8 @@ class Command(BaseCommand):
                 for entry in ref_postal_code_entries:
                     if entry["nom_comm"] == commune:
                         programme.code_insee_commune = entry["insee_com"]
-                        programme.save()
+                        if not options["dryrun"]:
+                            programme.save()
                         break
                 else:
                     errors_multiple_choices.append(
