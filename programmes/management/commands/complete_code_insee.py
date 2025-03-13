@@ -37,21 +37,23 @@ class Command(BaseCommand):
         n_str = n_str.replace("ST ", "SAINT ").replace("STE ", "SAINTE ")
         return n_str
 
-    def _load_code_insee_ref(self) -> dict[list[dict[str, str]]]:
+    def _load_code_insee_ref(self) -> tuple[dict[list], dict[list]]:
         """
         Chargement d'un tableau de correspondance code postal / (code INSEE, nom commune)
         """
 
-        insee_table = defaultdict(list)
-
+        # chargement du référentiel des codes INSEE
         response = requests.get(
             "https://public.opendatasoft.com/api/explore/v2.1/catalog/datasets/correspondance-code-insee-code-postal/exports/json?lang=fr&timezone=Europe%2FBerlin"
         )
         response.raise_for_status()
 
+        # creation d'une table indéxée par code postal
+        insee_table_by_postal_code = defaultdict(list)
+
         for entry in response.json():
             for postal_code in entry["postal_code"].split("/"):
-                insee_table[postal_code].append(
+                insee_table_by_postal_code[postal_code].append(
                     {
                         "insee_com": entry["insee_com"],
                         "postal_code": postal_code,
@@ -60,15 +62,22 @@ class Command(BaseCommand):
                 )
 
         for entry in extra_code_insee_entries:
-            insee_table[entry["postal_code"]].append(entry)
+            insee_table_by_postal_code[entry["postal_code"]].append(entry)
 
-        return insee_table
+        # creation d'une seconde table indéxée par nom de commune
+        insee_table_by_commune = defaultdict(list)
+
+        for entries in insee_table_by_postal_code.values():
+            for entry in entries:
+                insee_table_by_commune[entry["nom_comm"]].append(entry)
+
+        return insee_table_by_postal_code, insee_table_by_commune
 
     def handle(self, *args, **options):  # noqa: C901
         self._print_status()
 
         self.stdout.write("Chargement du référentiel des codes INSEE...")
-        insee_table = self._load_code_insee_ref()
+        insee_table_by_postal_code, insee_table_by_commune = self._load_code_insee_ref()
 
         errors_unknown_code_postal = []
         errors_unknown_commune = []
@@ -78,26 +87,44 @@ class Command(BaseCommand):
         for programme in Programme.objects.filter(code_insee_commune="").exclude(
             code_postal="", ville=""
         ):
-            entries = insee_table.get(programme.code_postal, [])
+            # on normalise le nom de la commune
+            commune = self._normalize(programme.ville)
 
-            if not len(entries):
-                errors_unknown_code_postal.append(programme.code_postal)
+            # on cherche dans l'index des codes postaux
+            ref_postal_code_entries = insee_table_by_postal_code.get(
+                programme.code_postal, []
+            )
+
+            # si on ne trouve rien, on cherche dans l'index des noms de communes
+            if not len(ref_postal_code_entries):
+                ref_commune_entries = insee_table_by_commune.get(commune)
+                if ref_commune_entries and len(ref_commune_entries) == 1:
+                    # si on n'a qu'une seule correspondance, on l'applique
+                    Programme.objects.filter(pk=programme.id).update(
+                        code_postal=ref_commune_entries[0]["postal_code"],
+                        code_insee_commune=ref_commune_entries[0]["insee_com"],
+                    )
+                else:
+                    errors_unknown_code_postal.append(
+                        f"Programme {programme.id} (code_postal: {programme.code_postal}, commune: {commune or '???'})"
+                    )
                 continue
 
-            if len(entries) == 1:
-                programme.code_insee_commune = entries[0]["insee_com"]
+            # si on trouve une seule correspondance, on l'applique
+            if len(ref_postal_code_entries) == 1:
+                programme.code_insee_commune = ref_postal_code_entries[0]["insee_com"]
                 programme.save()
                 continue
 
-            if len(entries) > 1:
-                commune = self._normalize(programme.ville)
+            # si on trouve plusieurs correspondances, on cherche celle qui correspond au nom de commune
+            if len(ref_postal_code_entries) > 1:
                 if not len(commune):
                     errors_unknown_commune.append(
                         f"Programme {programme.id} ({programme.code_postal})"
                     )
                     continue
 
-                for entry in entries:
+                for entry in ref_postal_code_entries:
                     if entry["nom_comm"] == commune:
                         programme.code_insee_commune = entry["insee_com"]
                         programme.save()
@@ -138,8 +165,10 @@ class Command(BaseCommand):
 
         if output_dir := options["output_dir"]:
             os.makedirs(output_dir, exist_ok=True)
-            with open(f"{output_dir}/insee_table.json", "w") as f:
-                f.write(json.dumps(insee_table, indent=2))
+            with open(f"{output_dir}/insee_table_by_postal_code.json", "w") as f:
+                f.write(json.dumps(insee_table_by_postal_code, indent=2))
+            with open(f"{output_dir}/insee_table_by_commune.json", "w") as f:
+                f.write(json.dumps(insee_table_by_commune, indent=2))
             with open(f"{output_dir}/errors_unknown_code_postal.json", "w") as f:
                 f.write(json.dumps(errors_unknown_code_postal, indent=2))
             with open(f"{output_dir}/errors_multiple_choices.json", "w") as f:
