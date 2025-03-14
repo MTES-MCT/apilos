@@ -180,16 +180,10 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     context.update(logements_totale)
     context.update(object_images)
     context.update(adresse)
-    if convention.parent:
-        last_avenant_or_parent = convention.get_last_avenant_or_parent()
-        context.update(
-            {
-                "parent_bailleur": model_to_dict(
-                    last_avenant_or_parent.programme.bailleur
-                ),
-                "parent_convention": model_to_dict(last_avenant_or_parent),
-            }
-        )
+    # Dans le cas d'un avenant, c'est toujours le bailleur de la précédente convention
+    # qui signe la convention
+    context = _get_parent_data(convention, context)
+    context.update(_get_bailleur_and_signataire(convention))
 
     try:
         doc.render(context, _get_jinja_env())
@@ -218,6 +212,140 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         )
 
     return doc
+
+
+def _get_bailleur_and_signataire(convention: Convention) -> dict:
+    context_update = {}
+    bailleur_signataire = None
+    convention_signataire = None
+    if convention.is_avenant():
+        new_bailleur_signataire = convention.programme.bailleur
+        context_update = {
+            "new_bailleur_nom": new_bailleur_signataire.nom,
+            "new_bailleur_siret": new_bailleur_signataire.siret,
+            "new_bailleur_capital_social": new_bailleur_signataire.capital_social,
+            "new_bailleur_adresse": new_bailleur_signataire.adresse,
+            "new_bailleur_code_postal": new_bailleur_signataire.code_postal,
+            "new_bailleur_ville": new_bailleur_signataire.ville,
+            "new_signataire_nom": convention.signataire_nom
+            or new_bailleur_signataire.signataire_nom
+            or "---",
+            "new_signataire_fonction": convention.signataire_fonction
+            or new_bailleur_signataire.signataire_fonction
+            or "---",
+            "new_signataire_date_deliberation": convention.signataire_date_deliberation
+            or new_bailleur_signataire.signataire_date_deliberation
+            or "---",
+            "new_identification_bailleur": convention.identification_bailleur,
+            "new_identification_bailleur_detail": (
+                convention.identification_bailleur_detail
+            ),
+            "new_gestionnaire": convention.gestionnaire,
+            "new_gestionnaire_signataire_nom": convention.gestionnaire_signataire_nom,
+            "new_gestionnaire_signataire_fonction": (
+                convention.gestionnaire_signataire_fonction
+            ),
+            "new_gestionnaire_signataire_date_deliberation": (
+                convention.gestionnaire_signataire_date_deliberation
+            ),
+            "new_gestionnaire_bloc_info_complementaire": (
+                convention.gestionnaire_bloc_info_complementaire
+            ),
+        }
+        convention_signataire = convention.get_last_avenant_or_parent()
+        bailleur_signataire = convention_signataire.programme.bailleur
+    else:
+        bailleur_signataire = convention.programme.bailleur
+        convention_signataire = convention
+    if convention_signataire is None:
+        raise ValueError(
+            f"convention_signataire is None, pb in DB with convention {convention.id}"
+        )
+    context_update.update(
+        {
+            "bailleur_nom": bailleur_signataire.nom,
+            "bailleur_siret": bailleur_signataire.siret,
+            "bailleur_capital_social": bailleur_signataire.capital_social,
+            "bailleur_adresse": bailleur_signataire.adresse,
+            "bailleur_code_postal": bailleur_signataire.code_postal,
+            "bailleur_ville": bailleur_signataire.ville,
+            "signataire_nom": convention_signataire.signataire_nom
+            or bailleur_signataire.signataire_nom
+            or "---",
+            "signataire_fonction": convention_signataire.signataire_fonction
+            or bailleur_signataire.signataire_fonction
+            or "---",
+            "signataire_date_deliberation": (
+                convention_signataire.signataire_date_deliberation
+                or bailleur_signataire.signataire_date_deliberation
+                or "---"
+            ),
+            "identification_bailleur": convention_signataire.identification_bailleur,
+            "identification_bailleur_detail": (
+                convention_signataire.identification_bailleur_detail
+            ),
+            "gestionnaire": convention_signataire.gestionnaire,
+            "gestionnaire_signataire_nom": (
+                convention_signataire.gestionnaire_signataire_nom
+            ),
+            "gestionnaire_signataire_fonction": (
+                convention_signataire.gestionnaire_signataire_fonction
+            ),
+            "gestionnaire_signataire_date_deliberation": (
+                convention_signataire.gestionnaire_signataire_date_deliberation
+            ),
+            "gestionnaire_bloc_info_complementaire": (
+                convention_signataire.gestionnaire_bloc_info_complementaire
+            ),
+        }
+    )
+    return context_update
+
+
+def _get_parent_data(convention: Convention, context: dict) -> dict:
+    if convention.is_avenant():
+        if last_avenant_or_parent := convention.get_last_avenant_or_parent():
+            context.update(
+                {
+                    "parent_bailleur": model_to_dict(
+                        last_avenant_or_parent.programme.bailleur,
+                        fields=[
+                            "nom",
+                            "siret",
+                            "capital_social",
+                            "adresse",
+                            "code_postal",
+                            "ville",
+                            "signataire_nom",
+                            "signataire_fonction",
+                            "signataire_date_deliberation",
+                        ],
+                    ),
+                    "parent_convention": model_to_dict(
+                        last_avenant_or_parent,
+                        fields=[
+                            "identification_bailleur",
+                            "identification_bailleur_detail",
+                            "nom",
+                            "signataire_nom",
+                            "signataire_fonction",
+                            "signataire_date_deliberation",
+                        ],
+                    ),
+                }
+            )
+            for key in [
+                "signataire_nom",
+                "signataire_fonction",
+                "signataire_date_deliberation",
+            ]:
+                if not context["parent_convention"][key]:
+                    context["parent_convention"][key] = context["parent_bailleur"][key]
+        else:
+            raise ValueError(
+                "get_last_avenant_or_parent is none but convention as parent !"
+            )
+    return context
 
 
 def typologie_label(typologie: str):
