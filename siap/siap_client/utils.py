@@ -262,7 +262,6 @@ def get_or_create_programme(
         type_operation = _type_operation(
             programme_from_siap["donneesOperation"]["sousNatureOperation"]
         )
-    nature_logement = _get_nature_logement(programme_from_siap["donneesOperation"])
 
     (adresse, code_postal, ville) = _get_address_from_locdata(
         programme_from_siap["donneesLocalisation"]
@@ -287,6 +286,7 @@ def get_or_create_programme(
             f" conventionnement : {aides if aides else 'Pas de détails de l\'op'}"
         )
 
+    nature_logement = _get_nature_logement(programme_from_siap["donneesOperation"])
     try:
         (programme, _) = Programme.objects.get_or_create(
             numero_operation=programme_from_siap["donneesOperation"]["numeroOperation"],
@@ -370,6 +370,8 @@ def get_or_create_lots_and_conventions(
     else:
         for aide in operation["detailsOperation"]:
             financement = _financement(aide["aide"]["code"])
+            if financement is None:
+                continue
 
             if (
                 financement == Financement.PLAI_ADP
@@ -481,12 +483,10 @@ def _nature_logement(nature_logement_from_siap: str) -> NatureLogement:
     return nature_logement
 
 
-def _financement(code):
+def _financement(code) -> str | None:
     if code in Financement.values:
         return code
-    raise InconsistentDataSIAPException(
-        f"Financement code {code} is not handled by the APILOS"
-    )
+    return None
 
 
 def _get_nature_bailleur(bailleur_from_siap):
