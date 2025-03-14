@@ -193,12 +193,10 @@ class GetOrCreateProgrammeTest(TestCase):
     def test_get_or_create_no_nature_failed(self):
         data_from_siap = {**self.data_from_siap}
         data_from_siap["donneesOperation"]["natureLogement"] = None
-        self.data_from_siap["detailsOperation"] = (
-            [
-                {"aide": {"code": "PLAI", "libelle": "PLAI"}},
-                {"aide": {"code": "PLUS", "libelle": "PLUS"}},
-            ],
-        )
+        self.data_from_siap["detailsOperation"] = [
+            {"aide": {"code": "PLAI", "libelle": "PLAI"}},
+            {"aide": {"code": "PLUS", "libelle": "PLUS"}},
+        ]
         self.assertRaises(
             InconsistentDataSIAPException,
             utils.get_or_create_programme,
