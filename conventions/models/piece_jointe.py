@@ -1,6 +1,10 @@
+import logging
 import uuid
 
+from django.core.files.storage import default_storage
 from django.db import models
+
+logger = logging.getLogger(__name__)
 
 
 class PieceJointeType(models.TextChoices):
@@ -43,3 +47,8 @@ class PieceJointe(models.Model):
             return self.type == PieceJointeType.AVENANT
 
         return self.type == PieceJointeType.CONVENTION
+
+    def delete(self, *args, **kwargs):
+        if self.fichier:
+            default_storage.delete(self.fichier)
+        super().delete(*args, **kwargs)
