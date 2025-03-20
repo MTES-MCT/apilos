@@ -1,4 +1,6 @@
-<dialog aria-labelledby="uncheck-modal-title" id="uncheck-modal" class="fr-modal {% if uncheck_modal_opened %}fr-modal--opened{% endif %}" >
+<input data-fr-opened="{{ uncheck_modal_opened|yesno:"true,false" }}" aria-controls="uncheck-modal" type="hidden">
+
+<dialog aria-labelledby="uncheck-modal-title" id="uncheck-modal" class="fr-modal {% if uncheck_modal_opened %}fr-modal--opened{% endif %}">
     <div class="fr-container fr-container--fluid fr-container-md">
         <div class="fr-grid-row fr-grid-row--center">
             <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">

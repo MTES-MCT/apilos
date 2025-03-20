@@ -1,4 +1,4 @@
-{% if convention.is_avenant and not request|is_readonly %}
+{% if convention|display_checkbox:request %}
     <div class="fr-toggle apilos-toggle-block">
         <form action="{% if checked %}{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:new_avenant' convention_uuid=convention.uuid %}{% endif %}" method="post">
             {% csrf_token %}
