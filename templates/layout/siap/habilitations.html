@@ -1,9 +1,9 @@
 <button class="fr-nav__btn orange-background" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
     {% for habilitation in request.session.habilitations %}
         {% if habilitation.id == request.session.habilitation_id %}
-            {% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}
+            {% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}<br>
             {% if habilitation.sousTitre1 %}
-                {{ habilitation.sousTitre1 }}
+                {{ habilitation.sousTitre1 }}<br>
             {% endif %}
             {% if habilitation.sousTitre2 %}
                 {{ habilitation.sousTitre2 }}

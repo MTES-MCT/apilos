@@ -12,9 +12,10 @@
 .fr-nav__btn[aria-current].orange-background,
 .fr-nav__btn[aria-current].orange-background:hover,
 .fr-nav__btn[aria-current].orange-background:hover a {
-  background-color: #ff6f4c;
+  background-color: #e4794a;
   color: #fff;
   text-decoration: none;
+  width: 100%;
 }
 .fr-nav__btn[aria-current].orange-background::after {
   margin-left: auto;
