@@ -1,10 +1,13 @@
 from django import forms
 from django.contrib import admin
-from django.contrib.admin import ChoicesFieldListFilter
+from django.contrib.admin import ChoicesFieldListFilter, TabularInline
+from django.urls import reverse
+from django.utils.html import format_html
 
 from admin.admin import ApilosModelAdmin
 from admin.filters import IsCloneFilter
 from conventions.models.choices import ConventionStatut
+from conventions.models.piece_jointe import PieceJointe
 
 from .models import AvenantType, Convention, Pret
 
@@ -60,6 +63,39 @@ class ConventionModelForm(forms.ModelForm):
 @admin.display(description="Numero d'opération")
 def view_programme_operation(convention):
     return convention.programme.numero_operation
+
+
+class PieceJointeInline(TabularInline):
+    model = PieceJointe
+    extra = 0
+
+    readonly_fields = fields = (
+        "id",
+        "uuid",
+        "type",
+        "fichier_link",
+        "nom_reel",
+        "description",
+        "cree_le",
+    )
+
+    def has_add_permission(self, request, obj):
+        return False
+
+    def has_change_permission(self, request, obj):
+        return False
+
+    def has_delete_permission(self, request, obj):
+        return True
+
+    def fichier_link(self, obj):
+        if obj.fichier:
+            return format_html(
+                '<a href="{}" target="_blank">{}</a>',
+                reverse("conventions:piece_jointe", args=[obj.uuid]),
+                obj.fichier,
+            )
+        return "-"
 
 
 @admin.register(Convention)
@@ -132,6 +168,7 @@ class ConventionAdmin(ApilosModelAdmin):
     )
 
     form = ConventionModelForm
+    inlines = [PieceJointeInline]
 
     @admin.display(description="Lot")
     def lot(self, obj):
