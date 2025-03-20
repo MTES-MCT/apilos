@@ -375,6 +375,23 @@ def display_convention_form_progressbar(convention):
 
 
 @register.filter
+def display_checkbox(convention, request):
+    return (
+        convention.is_avenant()
+        and not request.session.get("readonly")
+        and (
+            convention.statut
+            in [
+                ConventionStatut.PROJET.label,
+                ConventionStatut.INSTRUCTION.label,
+                ConventionStatut.CORRECTION.label,
+            ]
+            or request.session.get("is_expert", False)
+        )
+    )
+
+
+@register.filter
 def display_type1and2(convention):
     return (
         convention.programme.bailleur.is_type1and2()
