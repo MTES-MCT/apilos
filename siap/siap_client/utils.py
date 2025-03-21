@@ -153,7 +153,10 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     if (
         bailleur_siret := (
             (bailleur_from_siap["siret"])
-            if "siret" in bailleur_from_siap
+            if (
+                "siret" in bailleur_from_siap
+                and bailleur_from_siap["siret"] is not None
+            )
             else bailleur_siren
         )
     ) is None:
