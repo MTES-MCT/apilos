@@ -60,6 +60,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "nom",
         "adresse",
         "code_postal",
+        "code_insee_commune",
         "code_insee_departement",
         "ville",
         "numero_operation",
