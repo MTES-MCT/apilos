@@ -16,6 +16,7 @@ class ConventionEDDView(ConventionView):
             .prefetch_related("programme__logementedds"),
             uuid=convention_uuid,
         )
-    
+
+
 class AvenantEDDView(ConventionEDDView):
     form_steps = [avenant_edd_step]
