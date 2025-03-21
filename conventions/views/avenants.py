@@ -64,7 +64,7 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
         )
 
     return HttpResponseRedirect(
-        reverse("conventions:new_avenant", args=[convention_uuid])
+        reverse("conventions:recapitulatif", args=[convention_uuid])
     )
 
 
