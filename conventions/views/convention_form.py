@@ -120,6 +120,12 @@ avenant_programme_step = ConventionFormStep(
     classname="AvenantProgrammeView",
 )
 
+avenant_edd_step = ConventionFormStep(
+    pathname="conventions:avenant_edd",
+    label="États descriptifs de division",
+    classname="AvenantEDDView",
+)
+
 avenant_logements_step = ConventionFormStep(
     pathname="conventions:avenant_logements",
     label="Logements",
@@ -257,6 +263,7 @@ class ConventionFormSteps:
                 self.steps = [
                     avenant_bailleur_step,
                     avenant_programme_step,
+                    avenant_edd_step,
                     avenant_financement_step,
                     *varying_steps,
                     avenant_champ_libre_step,

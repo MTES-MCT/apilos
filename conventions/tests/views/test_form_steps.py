@@ -10,6 +10,7 @@ from conventions.views.convention_form import (
     avenant_champ_libre_step,
     avenant_collectif_step,
     avenant_commentaires_step,
+    avenant_edd_step,
     avenant_financement_step,
     avenant_foyer_residence_logements_step,
     avenant_logements_step,
@@ -94,6 +95,7 @@ class ConventionFormStepsTests(TestCase):
             [
                 avenant_bailleur_step,
                 avenant_programme_step,
+                avenant_edd_step,
                 avenant_financement_step,
                 avenant_foyer_residence_logements_step,
                 avenant_collectif_step,
@@ -113,6 +115,7 @@ class ConventionFormStepsTests(TestCase):
             [
                 avenant_bailleur_step,
                 avenant_programme_step,
+                avenant_edd_step,
                 avenant_financement_step,
                 avenant_foyer_residence_logements_step,
                 avenant_collectif_step,
