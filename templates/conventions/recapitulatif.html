@@ -72,6 +72,11 @@
                     {% else %}
                         {% include "conventions/recapitulatif/operation.html" with target_url='conventions:avenant_programme' programme=convention.programme lot=convention.lot checked=False %}
                     {% endif %}
+                    {% if 'cadastre' in avenant_list %}
+                        {% include "conventions/recapitulatif/references_cadastrales.html" with target_url='conventions:avenant_cadastre' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/references_cadastrales.html" with target_url='conventions:avenant_cadastre' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all checked=False %}
+                    {% endif %}
                     {% if 'edd' in avenant_list %}
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:avenant_edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all checked=True %}
                     {% else %}
@@ -110,7 +115,7 @@
                 {% else %}
                     {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:bailleur' bailleur=convention.bailleur %}
                     {% include "conventions/recapitulatif/operation.html" with target_url='conventions:programme' programme=convention.programme lot=convention.lot %}
-                    {% include "conventions/recapitulatif/references_cadastrales.html" with target_url='conventions:references_cadastrales' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all %}
+                    {% include "conventions/recapitulatif/references_cadastrales.html" with target_url='conventions:cadastre' programme=convention.programme reference_cadastrales=convention.programme.referencecadastrales.all %}
                     {% if not ecolo_ref %}
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}

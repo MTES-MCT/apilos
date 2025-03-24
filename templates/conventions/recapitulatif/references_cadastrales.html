@@ -1,22 +1,26 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'ConventionCadastreView' %}
+{% if convention_form_steps|is_a_step:'ConventionCadastreView' or convention_form_steps|is_a_step:'AvenantCadastreView' %}
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Références cadastrales et effet relatif
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Références cadastrales et effet relatif" title_unchecked="Mettre à jour les références cadastrales et effet relatif" checked=checked id="cadastre" avenant_type="cadastre" description="Lorem ipsum" %}
                         </div>
-                        {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
-                            <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}#id_reference_cadastrale_div" >
-                                <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
-                            </a>
+                        {% if not convention.is_avenant or checked %}
+                            {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
+                                <a class="fr-link fr-mb-1w" href="{% url target_url convention_uuid=convention.uuid %}{% if not convention.is_avenant %}#id_reference_cadastrale_div{% endif %}" >
+                                    <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                </a>
+                            {% endif %}
                         {% endif %}
                     </div>
+                    {% if not convention.is_avenant or checked %}
+                    {% if convention.is_avenant %}
+                        {% include "conventions/recapitulatif/cadastre_inner_content.html" %}
+                    {% endif %}
                     {% include "common/display_text_and_files_if_exists.html" with text=programme.reference_cadastrale|get_text_from_textfiles file_list=programme.reference_cadastrale|get_files_from_textfiles %}
                     {% if reference_cadastrales %}
                         <div class="fr-table table--limited-height">
@@ -75,6 +79,7 @@
                         </div>
                     {% endif %}
                     {% include "common/display_text_and_files_if_exists.html" with file_list=programme.effet_relatif|get_files_from_textfiles %}
+                    {% endif %}
                 </div>
             </div>
         </div>

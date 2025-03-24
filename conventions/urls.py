@@ -106,6 +106,11 @@ urlpatterns = [
         name="avenant_programme",
     ),
     path(
+        "avenant_cadastre/<convention_uuid>",
+        views.AvenantCadastreView.as_view(),
+        name="avenant_cadastre",
+    ),
+    path(
         "avenant_edd/<convention_uuid>",
         views.AvenantEDDView.as_view(),
         name="avenant_edd",
