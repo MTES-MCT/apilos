@@ -7,7 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération - EDD" title_unchecked="Mettre à jour l'EDD" checked=checked id="edd" avenant_type="edd" description="Lorem ipsum" %}
+                                {% include "conventions/common/avenants_checkboxes.html" with title="Opération - EDD" title_unchecked="Mettre à jour l'état descriptif de division" checked=checked id="edd" avenant_type="edd" description="En cas de modification de l'acte notarié concernant l'état descriptif de division" %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
