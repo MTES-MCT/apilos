@@ -74,6 +74,8 @@ def _get_path_name_for_avenant_type(
             return "conventions:avenant_bailleur"
         case "programme":
             return "conventions:avenant_programme"
+        case "edd":
+            return "conventions:avenant_edd"
         case "duree":
             return "conventions:avenant_financement"
         case "champ_libre":
