@@ -10,15 +10,12 @@
     </div>
 
     <div class="fr-container">
+        {% include "common/messages.html" %}
+    </div>
+
+    <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-my-5w fr-table">
-                {% if programme is None %}
-                    <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
-                        <div role="alert" class="fr-alert fr-alert--warning">
-                            <p class="fr-alert__title">L'opération numéro « {{ numero_operation }} » n'est pas disponible sur l'espace de financement du SIAP</p>
-                        </div>
-                    </div>
-                {% endif %}
                 {% include "conventions/convention_list.html" %}
             </div>
         </div>
