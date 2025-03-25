@@ -65,7 +65,7 @@ def view_programme_operation(convention):
 @admin.register(Convention)
 class ConventionAdmin(ApilosModelAdmin):
     list_display = (
-        view_programme,
+        "__str__",
         "administration",
         "bailleur",
         "uuid",

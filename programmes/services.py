@@ -7,13 +7,17 @@ from django.http import HttpRequest
 from django.urls import resolve
 
 from apilos_settings.models import Departement
+from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from programmes.models import IndiceEvolutionLoyer, NatureLogement
+from programmes.models.choices import TypeOperation
 from programmes.models.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import (
+    get_filtered_aides,
     get_or_create_conventions_from_siap,
+    get_or_create_lots_and_conventions_by_financement,
     get_or_create_programme_from_siap_operation,
 )
 
@@ -22,8 +26,8 @@ class OperationService:
     client: SIAPClient
     numero_operation: str
     requets: HttpRequest
-    operation: dict[str, Any]
-    programme: Programme
+    operation: dict[str, Any] | None = None
+    programmes: list[Programme]  # queryset of programmes
     siap_error: bool = False
     siap_exception_detail: SIAPException
 
@@ -42,7 +46,35 @@ class OperationService:
             self.siap_error = True
             self.siap_exception_detail = e
 
+    def get_or_create_operation(self) -> list[Programme]:
+        """
+        Récupère les opérations existantes et crée une opération si aucune existe
+        """
+        self.programmes = list(
+            Programme.objects.filter(numero_operation=self.numero_operation)
+        )
+        if len(self.programmes) == 0:
+            programme = get_or_create_programme_from_siap_operation(self.operation)
+            self.programmes = [programme]
+        return self.programmes
+
+    def programme(self):
+        return self.programmes[0] if len(self.programmes) > 0 else None
+
+    def check_sans_financement_consistancy(self):
+        if len(self.programmes) > 1:
+            if self.operation["donneesOperation"]["sansTravaux"] and any(
+                programme.type_operation != TypeOperation.SANSTRAVAUX
+                for programme in self.programmes
+            ):
+                # TODO : return a issue instead of raise?
+                raise ValueError(
+                    "Multi programme avec certain en sans financement et d'autre avec financements"
+                )
+
     def is_seconde_vie(self):
+        if self.operation is None:
+            return False
         for aide in self.operation["donneesOperation"]["aides"]:
             if aide["code"] == "SECD_VIE":
                 return True
@@ -59,6 +91,40 @@ class OperationService:
             raise self.siap_exception_detail
         self.programme = get_or_create_programme_from_siap_operation(self.operation)
         return self.programme
+
+    def collect_conventions_by_financements(self):
+        conventions = (
+            Convention.objects.prefetch_related("lots")
+            .filter(
+                programme__numero_operation=self.numero_operation, parent__isnull=True
+            )
+            .exclude(statut=ConventionStatut.ANNULEE)
+            .distinct()
+        )
+        if self.operation is None:
+            # group by financement
+            conventions_by_financements = {}
+            for convention in conventions:
+                financement = convention.lot.financement
+                if financement not in conventions_by_financements:
+                    conventions_by_financements[financement] = []
+                conventions_by_financements[financement].append(convention)
+        else:
+            filtered_op_aides = get_filtered_aides(self.operation)
+            conventions_by_financements = {}
+            for aide in filtered_op_aides:
+                conventions_by_financements[aide] = [
+                    convention
+                    for convention in conventions
+                    for lot in convention.lots.all()
+                    if lot.financement == aide
+                ]
+        return conventions_by_financements
+
+    def create_convention_by_financement(self, programme, financement):
+        get_or_create_lots_and_conventions_by_financement(
+            self.operation, programme, self.request.user, financement
+        )
 
     def get_or_create_conventions(self):
         if self.siap_error:

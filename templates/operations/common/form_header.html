@@ -5,8 +5,8 @@
             <div class="fr-col-8 fr-py-3w">
                 <h1 class="fr-h2 apilos-d-inline">{{ programme.nom }}</h1>
                 <div class="apilos-text--italic">
-                    {% if programme.numero_operation %}
-                        Opération n°{{ programme.numero_operation }}
+                    {% if numero_operation %}
+                        Opération n°{{ numero_operation }}
                     {% endif %}
                     {% if request|is_instructeur and programme.bailleur %}
                         (Entreprise bailleur : {{ programme.bailleur }})
