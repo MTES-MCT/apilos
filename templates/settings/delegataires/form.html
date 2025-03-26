@@ -4,7 +4,7 @@
     <h4>Gestion des délégataires</h4>
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
+        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 bypass_readonly=request.user.is_staff %}
         <script type="text/javascript" nonce="{{ request.csp_nonce }}">
             document.addEventListener('DOMContentLoaded', function () {
                 VirtualSelect.init({
@@ -17,7 +17,7 @@
                 });
             });
         </script>
-        {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False %}
+        {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False bypass_readonly=request.user.is_staff %}
         <div id='download_upload_block'>
             {% include "common/form/download_upload_form.html" with file_type='communes' upform=form what='communes' file_field_label='commune' %}
         </div>

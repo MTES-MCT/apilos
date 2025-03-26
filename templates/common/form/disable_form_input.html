@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if request|is_readonly %}
+{% if request|is_readonly and not bypass_readonly %}
     disabled data-readonly="true"
 {% elif comments and parent_object_field %}
     {% if not editable and comments|hasnt_active_comments:parent_object_field %}disabled{% endif %}
