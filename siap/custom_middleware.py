@@ -163,7 +163,8 @@ def _find_or_create_entity(
 
     # Manage readonly access
     request.session["readonly"] = (
-        from_habilitation["groupe"]["codeRole"]
+        not (request.user.is_staff or request.user.is_superuser)
+        and from_habilitation["groupe"]["codeRole"]
         in GroupProfileRole.readonly_group_profile_roles()
     )
 
