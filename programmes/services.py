@@ -2,7 +2,7 @@ import functools
 from datetime import date
 from typing import Any
 
-from django.db.models import Q
+from django.db.models import Q, QuerySet
 from django.http import HttpRequest
 from django.urls import resolve
 
@@ -80,10 +80,17 @@ class OperationService:
                 return True
         return False
 
+    def get_active_conventions(self) -> QuerySet[Convention]:
+        return (
+            Convention.objects.filter(
+                programme__numero_operation=self.numero_operation, parent__isnull=True
+            )
+            .exclude(statut=ConventionStatut.ANNULEE)
+            .distinct()
+        )
+
     def has_conventions(self):
-        number_of_conventions = Convention.objects.filter(
-            programme_id=self.programme.id
-        ).count()
+        number_of_conventions = self.get_active_conventions().count()
         return number_of_conventions == len(self.operation["detailsOperation"])
 
     def get_or_create_programme(self):
@@ -93,14 +100,7 @@ class OperationService:
         return self.programme
 
     def collect_conventions_by_financements(self):
-        conventions = (
-            Convention.objects.prefetch_related("lots")
-            .filter(
-                programme__numero_operation=self.numero_operation, parent__isnull=True
-            )
-            .exclude(statut=ConventionStatut.ANNULEE)
-            .distinct()
-        )
+        conventions = self.get_active_conventions().prefetch_related("lots")
         if self.operation is None:
             # group by financement
             conventions_by_financements = {}
