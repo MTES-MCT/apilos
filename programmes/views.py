@@ -60,7 +60,7 @@ def operation_conventions(request, numero_operation):
             "Vérifier que le numéro d'opération est correct",
         )
         return HttpResponseRedirect(
-            f"{reverse('conventions:search')}?search_numero={numero_operation}"
+            reverse("conventions:search") + f"?search_numero={numero_operation}"
         )
 
     # Seconde vie : on ne crée pas les conventions automatiquement

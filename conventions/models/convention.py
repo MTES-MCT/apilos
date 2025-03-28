@@ -316,7 +316,6 @@ class Convention(models.Model):
             str_compose.append(lot.financement)
         if not str_compose:
             str_compose.append(self.uuid)
-        logging.warning(str_compose)
         return " - ".join(str_compose)
 
     def is_bailleur_editable(self):

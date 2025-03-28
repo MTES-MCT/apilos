@@ -196,11 +196,11 @@
                                         </div>
                                     {% endflag %}
                                     {% if request.GET.from_convention %}
-                                        <li>
+                                        <div>
                                             <a class="fr-btn fr-btn--secondary fr-icon-arrow-left-s-line" href="{% url 'conventions:post_action' convention_uuid=request.GET.from_convention %}">
                                                 Revenir à la convention
                                             </a>
-                                        </li>
+                                        </div>
                                     {% endif %}
                                     <div>
                                         <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">
