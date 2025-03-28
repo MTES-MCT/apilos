@@ -275,4 +275,13 @@ extra_code_insee_entries = [
     {"insee_com": "39043", "postal_code": "39190", "nom_comm": "BEAUFORT ORBAGNA"},
     {"insee_com": "02018", "postal_code": "02320", "nom_comm": "ANIZY LE GRAND"},
     {"insee_com": "49125", "postal_code": "49700", "nom_comm": "DOUE EN ANJOU"},
+    {"insee_com": "59355", "postal_code": "59160", "nom_comm": "LOMME"},
+    {"insee_com": "59298", "postal_code": "59260", "nom_comm": "HELLEMMES"},
+    {
+        "insee_com": "62757",
+        "postal_code": "62500",
+        "nom_comm": "SAINT MARTIN LEZ TATINGHEM",
+    },
+    {"insee_com": "73003", "postal_code": "73260", "nom_comm": "GRAND AIGUEBLANCHE"},
+    {"insee_com": "24540", "postal_code": "24420", "nom_comm": "SORGES ET LIGUEUX"},
 ]
