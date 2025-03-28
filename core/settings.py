@@ -490,16 +490,6 @@ CERBERE_AUTH = get_env_variable("CERBERE_AUTH")
 USE_MOCKED_SIAP_CLIENT = get_env_variable("USE_MOCKED_SIAP_CLIENT", cast=bool)
 NO_SIAP_MENU = get_env_variable("NO_SIAP_MENU", cast=bool)
 
-MOCK_CERBERE_USER_ID = get_env_variable("MOCK_CERBERE_USER_ID")
-
-if MOCK_CERBERE_USER_ID and ENVIRONMENT == "development":
-    AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
-        "core.backends.MockCerbereBackend",
-    ]
-    MIDDLEWARE = MIDDLEWARE + [
-        "core.middleware.AutoLoginMiddleware",
-    ]
-
 if CERBERE_AUTH:
     MIDDLEWARE = MIDDLEWARE + [
         "django_cas_ng.middleware.CASMiddleware",
@@ -526,6 +516,16 @@ if CERBERE_AUTH:
     CAS_LOGGED_MSG = None
 
     LOGIN_URL = "/accounts/cerbere-login"
+
+MOCK_CERBERE_USER_ID = get_env_variable("MOCK_CERBERE_USER_ID")
+
+if MOCK_CERBERE_USER_ID and ENVIRONMENT == "development":
+    AUTHENTICATION_BACKENDS = AUTHENTICATION_BACKENDS + [
+        "core.backends.MockCerbereBackend",
+    ]
+    MIDDLEWARE = MIDDLEWARE + [
+        "core.middleware.AutoLoginMiddleware",
+    ]
 
 # Django defender (doc https://github.com/jazzband/django-defender#customizing-django-defender)
 REDIS_URL = get_env_variable("REDIS_URL")
