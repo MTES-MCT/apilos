@@ -163,9 +163,9 @@ django-browser-reload==1.18.0 \
     --hash=sha256:c5f0b134723cbf2a0dc9ae1ee1d38e42db28fe23c74cdee613ba3ef286d04735 \
     --hash=sha256:ed4cc2fb83c3bf6c30b54107a1a6736c0b896e62e4eba666d81005b9f2ecf6f8
     # via -r dev-requirements.in
-django-debug-toolbar==5.0.1 \
-    --hash=sha256:296f6f18a80710e84fbb8361538ae5ec522a75ebe9ab67db34bcf1026cbeb420 \
-    --hash=sha256:7456cc2e951db37dab335686db7803c4a0ecb6736d120705f6668db9548bf49f
+django-debug-toolbar==5.1.0 \
+    --hash=sha256:8a3b9da4aeab8d384a366e20304bd939a451f0242523c5b7b402248ad474eed2 \
+    --hash=sha256:c0591e338ee9603bdfce5aebf8d18ca7341fdbb69595e2b0b34869be5857180e
     # via -r dev-requirements.in
 django-extensions==3.2.3 \
     --hash=sha256:44d27919d04e23b3f40231c4ab7af4e61ce832ef46d610cc650d53e68328410a \
