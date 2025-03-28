@@ -15,9 +15,11 @@
                     <li class="fr-nav__item">
                         <a class="fr-nav__link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "recapitulatif" %}aria-current="page"{% endif %}>Informations détaillées</a>
                     </li>
-                    <li class="fr-nav__item">
-                        <a class="fr-nav__link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "preview" %}aria-current="page"{% endif %}>Visualiser votre document</a>
-                    </li>
+                    {% if not convention.is_denonciation and not convention.is_resiliation %}
+                        <li class="fr-nav__item">
+                            <a class="fr-nav__link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "preview" %}aria-current="page"{% endif %}>Visualiser votre document</a>
+                        </li>
+                    {% endif %}
                     {# Accès au journal de board restreint à l'équipe Apilos le temps de la validation #}
                     {% if user.is_instructeur %}
                         <li class="fr-nav__item">
