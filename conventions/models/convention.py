@@ -311,7 +311,7 @@ class Convention(models.Model):
             str_compose.append(programme.ville)
             str_compose.append(programme.nom)
         if lot := self.lot:
-            str_compose.append(str(lot.nb_logements))
+            str_compose.append(f"{lot.nb_logements} lgts")
             str_compose.append(lot.get_type_habitat_display())
             str_compose.append(lot.financement)
         if not str_compose:

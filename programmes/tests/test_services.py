@@ -69,10 +69,13 @@ class TestOperationService:
         assert operation_service.is_seconde_vie() == expected
 
     def test_has_conventions(self, operation_service):
-        operation_service.programme = ProgrammeFactory()
+        programme = ProgrammeFactory(numero_operation="num1")
+        operation_service.programmes = [programme]
+        operation_service.numero_operation = "num1"
         assert not operation_service.has_conventions()
 
-        ConventionFactory.create_batch(2, programme=operation_service.programme)
+        ConventionFactory.create_batch(2, programme=programme)
+
         assert operation_service.has_conventions()
 
 
