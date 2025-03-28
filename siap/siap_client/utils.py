@@ -1,6 +1,8 @@
 import logging
 import re
 
+from django.db import transaction
+
 from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention
 from instructeurs.models import Administration
@@ -97,16 +99,19 @@ def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
     return programme
 
 
+def get_filtered_aides(operation: dict):
+    op_aides = [
+        aide["aide"]["code"]
+        for aide in operation["detailsOperation"]
+        if "aide" in aide and "code" in aide["aide"]
+    ]
+    return [aide for aide in op_aides if aide in Financement.values]
+
+
 def get_or_create_conventions_from_siap(operation: dict, user: User):
-    if operation["detailsOperation"]:
-        op_aides = [
-            aide["aide"]["code"]
-            for aide in operation["detailsOperation"]
-            if "aide" in aide and "code" in aide["aide"]
-        ]
-        filtered_op_aides = [aide for aide in op_aides if aide in Financement.values]
-        if len(filtered_op_aides) == 0:
-            raise NoConventionForOperationSIAPException()
+    filtered_op_aides = get_filtered_aides(operation)
+    if len(filtered_op_aides) == 0:
+        raise NoConventionForOperationSIAPException()
 
     programme = get_or_create_programme_from_siap_operation(operation)
 
@@ -335,6 +340,50 @@ def get_or_create_programme(
         programme.type_operation = TypeOperation.SANSTRAVAUX
     programme.save()
     return programme
+
+
+def get_or_create_lots_and_conventions_by_financement(
+    operation: dict, programme: Programme, user: User, financement: Financement
+):
+    if (
+        operation["detailsOperation"] is None
+        and programme.type_operation == TypeOperation.SANSTRAVAUX
+    ):
+        convention = Convention.objects.create(
+            programme=programme,
+            cree_par=user,
+        )
+        Lot.objects.create(
+            financement=Financement.SANS_FINANCEMENT,
+            convention=convention,
+        )
+        return
+
+    aide_details = next(
+        (
+            aide
+            for aide in operation["detailsOperation"]
+            if aide["aide"]["code"] == financement
+        ),
+        None,
+    )
+    if aide_details is None:
+        return
+
+    if financement == Financement.PLAI_ADP or financement not in Financement.values:
+        return
+
+    with transaction.atomic():
+        convention = Convention.objects.create(
+            programme=programme,
+            cree_par=user,
+        )
+        Lot.objects.create(
+            financement=financement,
+            convention=convention,
+            type_habitat=_type_habitat(aide_details),
+            nb_logements=_nb_logements(aide_details),
+        )
 
 
 def get_or_create_lots_and_conventions(

@@ -85,9 +85,13 @@ def test_operation_conventions_seconde_vie_create_conventions(render_mock):
 
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_instance = mock_get_instance.return_value
+        get_operation_return_value = _get_seconde_vie_operation()
         mock_instance.get_operation.return_value = _get_seconde_vie_operation()
+        numero_operation = get_operation_return_value["donneesOperation"][
+            "numeroOperation"
+        ]
 
-        seconde_vie_new(request, numero_operation="1")
+        seconde_vie_new(request, numero_operation=numero_operation)
         render_mock.assert_called_once()
         args, _ = render_mock.call_args
         assert args[1] == "operations/conventions.html"
@@ -95,13 +99,15 @@ def test_operation_conventions_seconde_vie_create_conventions(render_mock):
 
         # Get operation : display the created convention instead of choice.html
         url = reverse(
-            "programmes:operation_conventions", kwargs={"numero_operation": "1"}
+            "programmes:operation_conventions",
+            kwargs={"numero_operation": numero_operation},
         )
         request = _get_habilited_request(url)
 
-        operation_conventions(request, numero_operation="1")
+        operation_conventions(request, numero_operation=numero_operation)
         render_mock.assert_called()
         args, _ = render_mock.call_args
+
         assert args[1] == "operations/conventions.html"
         assert args[2]["conventions"].object_list.count() == 1
 

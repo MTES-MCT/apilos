@@ -65,8 +65,6 @@ class Comment(models.Model):
             "programme__nom": "Nom de l'opération",
             "programme__code_postal": "Code postal de l'opération",
             "programme__ville": "Ville de l'opération",
-            # FIXME : should be lot__nb_logements
-            "programme__nb_logements": "Nombre de logements à conventionner",
             "programme__anru": "Option ANRU de l'opération",
             "programme__nb_locaux_commerciaux": (
                 "Nombre de locaux commerciaux de l'opération"
@@ -103,8 +101,15 @@ class Comment(models.Model):
             "programme__reference_cadastrale": (
                 "Références cadastrales de l'opération"
             ),
-            "convention__annee_fin_conventionnement": "Date de fin de la convention",
-            "convention__fond_propre": "Fonds propres finançant l'opération",
+            "programme__edd_stationnements": "EDD pour les stationnements",
+            "programme__mention_publication_edd_volumetrique": (
+                "Mention de publication de l'edd volumétrique"
+            ),
+            "programme__mention_publication_edd_classique": (
+                "Mention de publication de l'edd classique"
+            ),
+            # FIXME : should be lot__nb_logements
+            "programme__nb_logements": "Nombre de logements à conventionner",
             "lot__loyer_derogatoire": "Loyer dérogatoire des logements",
             "lot__surface_locaux_collectifs_residentiels": "Surface des locaux collectifs résidentiels",
             "lot__loyer_associations_foncieres": "Montant du loyer pour les associations foncières et leurs filiales",
@@ -120,16 +125,16 @@ class Comment(models.Model):
             "lot__annexe_balcons": "Option balcons dans les annexes",
             "lot__annexe_loggias": "Option loggias et vérandas dans les annexes",
             "lot__annexe_terrasses": "Option terrasses dans les annexes",
-            "convention__commentaires": "Commentaires à l'attention de l'instructeur",
             "lot__edd_volumetrique": "EDD volumétrique",
             "lot__edd_classique": "EDD classique",
-            "programme__edd_stationnements": "EDD pour les stationnements",
-            "programme__mention_publication_edd_volumetrique": (
-                "Mention de publication de l'edd volumétrique"
+            "lot__foyer_residence_nb_garage_parking": "Garages et/ ou parking (nombre)",
+            "lot__foyer_residence_dependance": "Dépendances (nombre et surface)",
+            "lot__foyer_residence_locaux_hors_convention": (
+                "Locaux auxquels ne s'appliquent pas la convention (Liste)"
             ),
-            "programme__mention_publication_edd_classique": (
-                "Mention de publication de l'edd classique"
-            ),
+            "convention__annee_fin_conventionnement": "Date de fin de la convention",
+            "convention__fond_propre": "Fonds propres finançant l'opération",
+            "convention__commentaires": "Commentaires à l'attention de l'instructeur",
             "convention__adresse": "Adresse de l'opération",
             "convention__type1and2": "Selection du type I ou II de la convention",
             "convention__type2_lgts_concernes_option1": (
@@ -168,11 +173,6 @@ class Comment(models.Model):
             ),
             "convention__gestionnaire_signataire_bloc_signature": (
                 "Bloc signature du gestionnaire"
-            ),
-            "lot__foyer_residence_nb_garage_parking": "Garages et/ ou parking (nombre)",
-            "lot__foyer_residence_dependance": "Dépendances (nombre et surface)",
-            "lot__foyer_residence_locaux_hors_convention": (
-                "Locaux auxquels ne s'appliquent pas la convention (Liste)"
             ),
             "convention__attribution_inclusif_conditions_specifiques": (
                 "Conditions spécifiques d'accueil"

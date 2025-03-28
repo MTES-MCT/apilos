@@ -12,17 +12,7 @@
                     {% include 'settings/common/side_menu.html' with active_menu='users' %}
                 </div>
                 <div class='fr-col-12 fr-col-md-8 fr-col-lg-9 fr-pl-md-3w'>
-                    {# Success alert messages #}
-                    {% if messages %}
-                        {% for message in messages %}
-                            {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
-                                <div class="fr-alert fr-alert--success">
-                                    <h3 class="fr-alert__title">{{ message.extra_tags }}</h3>
-                                    <p>{{ message.message }}</p>
-                                </div>
-                            {% endif %}
-                        {% endfor %}
-                    {% endif %}
+                    {% include "common/messages.html" %}
                     {% include 'settings/user_list.html' with users=paginated_users %}
                 </div>
             </div>
