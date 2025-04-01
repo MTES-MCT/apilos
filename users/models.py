@@ -723,6 +723,11 @@ class User(AbstractUser):
         )
 
 
+class AdditionalEmail(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    email = models.EmailField(max_length=264)
+
+
 class Role(models.Model):
     class Meta:
         unique_together = ("typologie", "bailleur", "administration", "user")

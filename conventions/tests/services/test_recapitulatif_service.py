@@ -21,7 +21,7 @@ from core.tests.factories import ConventionFactory, LotFactory, ProgrammeFactory
 from programmes.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
-from users.models import User
+from users.models import AdditionalEmail, User
 from users.type_models import EmailPreferences
 
 
@@ -389,6 +389,34 @@ class CollectInstructeurEmailsTestCase(TestCase):
                 )
 
                 self.assertEqual(["user4@SER_GEST.com"], instructeur_emails)
+
+    def test_collect_instructeur_emails_permissions_additional_emails(self):
+        user = User.objects.create(
+            email="user@SER_GEST.com", preferences_email=EmailPreferences.AUCUN
+        )
+        additional_email = "user2@SER_GEST.com"
+        AdditionalEmail.objects.create(user=user, email=additional_email)
+
+        with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
+            mock_is_cerbere_user.return_value = True
+            with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+                mock_instance = mock_get_instance.return_value
+                mock_instance.get_operation.return_value = {
+                    "gestionnaireSecondaire": {
+                        "utilisateurs": [
+                            {
+                                "email": "user2@SER_GEST.com",
+                                "groupes": [{"profil": {"code": "SER_GEST"}}],
+                            },
+                        ]
+                    }
+                }
+
+                (instructeur_emails, _) = recapitulatif.collect_instructeur_emails(
+                    self.request, self.convention
+                )
+
+                self.assertEqual([], instructeur_emails)
 
     def test_collect_instructeur_cerbere_user_raise_siapexception(self):
         with patch.object(User, "is_cerbere_user") as mock_is_cerbere_user:
