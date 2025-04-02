@@ -322,16 +322,20 @@ def collect_instructeur_emails(
                         if "profil" in group and "code" in group["profil"]
                     ]:
                         instructeur_emails.append(utilisateur["email"])
-            user_to_remove = User.objects.filter(
+            users_to_remove = User.objects.filter(
                 Q(email__in=instructeur_emails)
                 | Q(secondary_email__in=instructeur_emails),
                 preferences_email=EmailPreferences.AUCUN,
             )
+            emails_to_remove = users_to_remove.values_list("email", flat=True)
+            secondary_emails_to_remove = users_to_remove.values_list(
+                "secondary_email", flat=True
+            )
             instructeur_emails = [
                 email
                 for email in instructeur_emails
-                if (email not in [user.email for user in user_to_remove])
-                and (email not in [user.secondary_email for user in user_to_remove])
+                if (email not in emails_to_remove)
+                and (email not in secondary_emails_to_remove)
             ]
         except SIAPException:
             submitted = utils.ReturnStatus.WARNING
