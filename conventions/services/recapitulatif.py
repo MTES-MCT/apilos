@@ -27,7 +27,7 @@ from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
-from users.models import AdditionalEmail, GroupProfile, User
+from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
 
@@ -323,19 +323,15 @@ def collect_instructeur_emails(
                     ]:
                         instructeur_emails.append(utilisateur["email"])
             user_to_remove = User.objects.filter(
-                email__in=instructeur_emails,
+                Q(email__in=instructeur_emails)
+                | Q(secondary_email__in=instructeur_emails),
                 preferences_email=EmailPreferences.AUCUN,
             )
-
-            additional_emails_to_remove = AdditionalEmail.objects.filter(
-                email__in=instructeur_emails,
-                user__preferences_email=EmailPreferences.AUCUN,
-            ).values_list("email", flat=True)
             instructeur_emails = [
                 email
                 for email in instructeur_emails
                 if (email not in [user.email for user in user_to_remove])
-                and (email not in additional_emails_to_remove)
+                and (email not in [user.secondary_email for user in user_to_remove])
             ]
         except SIAPException:
             submitted = utils.ReturnStatus.WARNING
