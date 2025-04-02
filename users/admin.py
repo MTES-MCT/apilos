@@ -1,11 +1,12 @@
 from django.contrib import admin
+from django.contrib.admin import TabularInline
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
 from admin.admin import ApilosModelAdmin
 from bailleurs.models import Bailleur
 from instructeurs.models import Administration
 
-from .models import Role, User
+from .models import AdditionalEmail, Role, User
 
 
 @admin.register(Role)
@@ -23,6 +24,12 @@ class CustomAdministrationAdmin(ApilosModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+class AdditionalEmailInline(TabularInline):
+    model = AdditionalEmail
+
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, ApilosModelAdmin):
-    pass
+    inlines = [
+        AdditionalEmailInline,
+    ]
