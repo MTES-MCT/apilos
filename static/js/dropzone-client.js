@@ -1,32 +1,43 @@
 
-function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
+function init_dropzone_from_file(form_id, accepted_files, singleFile = false) {
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
     object_name = document.getElementById(form_id + "_object_name").value
     object_uuid = document.getElementById(form_id + "_object_uuid").value
+
     parameters = {}
-    parameters[object_name]= object_uuid
-    if (accepted_files == undefined ) {
-        accepted_files = 'image/*'
+    parameters[object_name] = object_uuid
+
+    let accepted_images = 'image/jpeg,image/png,image/gif,image/bmp,image/webp,image/tiff,image/heif,image/heic'
+    let accepted_documents = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+
+    if (accepted_files == 'images') {
+        accepted_files = accepted_images
+    } else if (accepted_files == 'documents') {
+        accepted_files = accepted_documents
+    } else {
+        // Image
+        accepted_files = accepted_images
+        // PDF
         accepted_files = accepted_files + ',application/pdf'
         // MS: doc, ppt, xls
         accepted_files = accepted_files + ',application/msword,application/vnd.ms-powerpoint,application/vnd.ms-excel'
         // MS openxmlformats : pptx, docx, xlsx
-        accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        accepted_files = accepted_files + ',' + accepted_documents
         accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.presentationml.presentation'
         accepted_files = accepted_files + ',application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         // Opendocument : odp, ods, odt
         accepted_files = accepted_files + ',application/vnd.oasis.opendocument.presentation'
         accepted_files = accepted_files + ',application/vnd.oasis.opendocument.spreadsheet'
         accepted_files = accepted_files + ',application/vnd.oasis.opendocument.text'
-
     }
-    let myDropzone = new Dropzone("div#"+form_id+"_dropzone", {
+
+    let myDropzone = new Dropzone("div#" + form_id + "_dropzone", {
         url: "/upload/",
         uploadMultiple: true,
         maxFilesize: 100, // 100 Mo
         acceptedFiles: accepted_files,
         addRemoveLinks: true,
-        accept:function(file, done) {
+        accept: function (file, done) {
             if (file.name.includes('"')) {
                 done("Erreur! le fichier ne doit pas comprendre de double quote");
             }
@@ -45,14 +56,24 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
                 error.appendChild(document.createTextNode(errorMessage))
                 document.getElementById(form_id + '_errors').appendChild(error)
             })
-            this.on("queuecomplete", function() {
+            this.on("queuecomplete", function () {
                 console.log('all_files_uploaded');
             });
             this.on("success", function (file, response) {
                 let filename = encodeURI(file.name)
-                if (document.querySelector('img[alt="'+filename+'"]') != null) {
-                    file.thumbnail = document.querySelector('img[alt="'+filename+'"]').src;
+
+                let thumbnailPlaceholderUrl = "/static/img/img.png";
+                if (file.type === "image/heif" || file.type === "image/heic") {
+                    file.thumbnail = thumbnailPlaceholderUrl;
+                } else {
+                    let img_node = document.querySelector('img[alt="' + filename + '"]')
+                    if (img_node != null) {
+                        file.thumbnail = img_node.src;
+                    } else {
+                        file.thumbnail = thumbnailPlaceholderUrl;
+                    }
                 }
+
                 for (var i = 0; i < response.uploaded_file.length; i++) {
                     if (filename == encodeURI(response.uploaded_file[i].realname)) {
                         file.uuid = response.uploaded_file[i].uuid
@@ -65,8 +86,8 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
                 if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
                 if (files.constructor !== Object) files = {}
                 if (files[file.uuid] === undefined) files[file.uuid] = {
-                    'uuid':file.uuid,
-                    'thumbnail' : file.thumbnail,
+                    'uuid': file.uuid,
+                    'thumbnail': file.thumbnail,
                     'size': file.size,
                     'filename': file.filename,
                     'realname': file.realname,
@@ -76,7 +97,7 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
             })
             if (singleFile) {
                 this.hiddenFileInput.removeAttribute('multiple');
-                this.on('addedfile', function(file) {
+                this.on('addedfile', function (file) {
                     if (this.files.length > 1) {
                         this.removeFile(this.files[0]);
                     }
@@ -93,7 +114,7 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile=false) {
         dictCancelUploadConfirmation: "Êtes vous certain de vouloir supprimer ce fichier ?",
         dictRemoveFile: "Supprimer",
         dictMaxFilesExceeded: "Vous ne pouvez plus déposer d'autres documents",
-        headers: {'X-CSRFToken': csrf_token},
+        headers: { 'X-CSRFToken': csrf_token },
         params: parameters
     });
     Dropzone.autoDiscover = false;
@@ -110,7 +131,7 @@ function init_dropzone_thumbnail(myDropzone, name, size, uuid, thumbnail_url) {
     myDropzone.emit("complete", mockFile);
 }
 
-function init_dropzone_list(myDropzone,form_id) {
+function init_dropzone_list(myDropzone, form_id) {
     let files = {};
     if (document.getElementById(form_id).value) files = JSON.parse(document.getElementById(form_id).value);
     Object.keys(files).forEach(file_uuid => {
