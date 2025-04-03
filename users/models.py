@@ -249,6 +249,7 @@ class User(AbstractUser):
         "users.User", on_delete=models.SET_NULL, blank=True, null=True
     )
     history = HistoricalRecords(excluded_fields=["last_login"])
+    secondary_email = models.EmailField(max_length=264, blank=True)
 
     @property
     def is_admin(self):
