@@ -306,12 +306,17 @@ class Convention(models.Model):
         return None
 
     def __str__(self):
-        programme = self.programme
-        lot = self.lot
-        return (
-            f"{programme.ville} - {programme.nom} - "
-            + f"{lot.nb_logements} lgts - {lot.get_type_habitat_display()} - {lot.financement}"
-        )
+        str_compose = []
+        if programme := self.programme:
+            str_compose.append(programme.ville)
+            str_compose.append(programme.nom)
+        if lot := self.lot:
+            str_compose.append(f"{lot.nb_logements} lgts")
+            str_compose.append(lot.get_type_habitat_display())
+            str_compose.append(lot.financement)
+        if not str_compose:
+            str_compose.append(self.uuid)
+        return " - ".join(str_compose)
 
     def is_bailleur_editable(self):
         return self.statut in (

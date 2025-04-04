@@ -17,7 +17,9 @@
     <div class="fr-container fr-my-5w">
         <h1>Ajouter une convention</h1>
 
-        {% include "../common/stepper.html" %}
+        {% include "conventions/common/stepper.html" %}
+
+        {% include "common/messages.html" %}
 
         {% if avenants %}
             <div class="fr-table apilos-text--black fr-mt-2w">

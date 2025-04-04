@@ -274,7 +274,28 @@ L'ensemble des fonctions de la page sont maintenant testables
 
 Il est possible aussi de générer de token via un site tel que https://jwt.io/ et en utilisant la clé JWT_SIGN_KEY pour signer le token
 
-## Questions ouvertes pour plus tard :
+## Questions ouvertes pour plus tard
 
-- [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
-- [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
+* [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
+* [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
+
+## Comportement APilos lors de l'accès à une opération SIAP
+
+```mermaid
+
+graph TD
+    A["route /operations/num_op"] --> B[Collect Programmes, on collecte l'ensemble des programmes qui ont le numéro d'opération]
+    B --> C{programmes existants ?}
+    C -->|Oui| D[Collect Conventions, on collecte l'ensemble des conventions et leurs lots]
+    C -->|Non| E[Creation du Programme]
+    E --> F{Progrmme de type SECONDE_VIE ?}
+    F -->|Oui| G[Gestion en mode seconde vie]
+    F -->|Non| D
+    D --> I{"Conventions (non annulées) alignées sur les financement de l'opération ?"}
+    I -->|Oui| J[Affichage des conventions]
+    I -->|Non| K{On ne trouve pas de conventions correspondant à chacun des financements de l'opération}
+    K -->|Oui| L[Création des conventions/lots manquantes]
+    L --> M{il y a trop de conventions : plusieurs conventions trouvé par type de financement?}
+    M --> N[Création de messages d'erreur]
+    N --> J
+```

@@ -49,8 +49,8 @@ class Command(BaseCommand):
                 "lots__logements__annexes",
                 "lots__prets",
             )
-            .order_by("numero", "-cree_le")
-            .distinct("numero")
+            .order_by("uuid", "-cree_le")
+            .distinct("uuid")
         )
         if nb_conventions:
             conventions = conventions[:nb_conventions]

@@ -170,23 +170,6 @@
                         </div>
                     </div>
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
-
-                {% elif programme is None %}
-                    <ul class="fr-btns-group fr-btns-group--inline fr-btns-group--icon-left">
-                        {% if request.GET.from_convention %}
-                            <li>
-                                <a class="fr-btn fr-btn--secondary fr-icon-arrow-left-s-line" href="{% url 'conventions:post_action' convention_uuid=request.GET.from_convention %}">
-                                    Revenir à la convention
-                                </a>
-                            </li>
-                        {% endif %}
-                        <li>
-                            <a class="fr-btn fr-btn--tertiary fr-icon-mail-line apilos-no-dsfr-target" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">
-                                Contactez l'assistance
-                            </a>
-                        </li>
-                    </ul>
-                    <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                 {% else %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
                         <div class="fr-mr-2w notes fr-col-2">Aucun résultat</div>
@@ -204,6 +187,7 @@
                             </div>
                             <div class="fr-mt-5w fr-ml-1w">
                                 <div class="fr-grid-row fr-grid-row--gutters" >
+
                                     {% flag "ajout_convention" %}
                                         <div>
                                             <a class="fr-btn fr-icon-add-line fr-btn--icon-left fr-btn--secondary fr-mr-2w" href="{% url 'conventions:from_operation_select' %}">
@@ -211,7 +195,14 @@
                                             </a>
                                         </div>
                                     {% endflag %}
-                                    <div class="">
+                                    {% if request.GET.from_convention %}
+                                        <div>
+                                            <a class="fr-btn fr-btn--secondary fr-icon-arrow-left-s-line" href="{% url 'conventions:post_action' convention_uuid=request.GET.from_convention %}">
+                                                Revenir à la convention
+                                            </a>
+                                        </div>
+                                    {% endif %}
+                                    <div>
                                         <a class="fr-btn fr-icon-mail-line fr-btn--icon-left fr-btn--tertiary" href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">
                                             Contactez l'assistance
                                         </a>
@@ -222,6 +213,7 @@
                         <img class="fr-mr-3w" src="/static/icons/not_found.png" alt="not_found">
                     </div>
                 {% endif %}
+
             </div>
         </div>
     </div>

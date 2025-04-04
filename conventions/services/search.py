@@ -82,7 +82,6 @@ class AvenantListSearchService(ConventionSearchServiceBase):
 class ProgrammeConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
         "programme__administration",
-        # "lot",
     ]
 
     def __init__(self, programme: Programme, order_by: str | None = None):
@@ -93,6 +92,23 @@ class ProgrammeConventionSearchService(ConventionSearchServiceBase):
 
     def _get_base_queryset(self) -> QuerySet:
         return Convention.objects.filter(programme=self.programme)
+
+
+class OperationConventionSearchService(ConventionSearchServiceBase):
+    prefetch = [
+        "programme__administration",
+    ]
+
+    def __init__(self, num_operation: str, order_by: str | None = None):
+        self.num_operation: str = num_operation
+
+        if order_by:
+            self.order_by = order_by
+
+    def _get_base_queryset(self) -> QuerySet:
+        return Convention.objects.filter(
+            programme__numero_operation_pour_recherche=self.num_operation
+        )
 
 
 class ConventionSearchService(ConventionSearchServiceBase):
