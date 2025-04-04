@@ -320,7 +320,7 @@ class SIAPClientRemote(SIAPClientInterface):
         self, user_login: str, habilitation_id: int, payload: dict[str, Any]
     ) -> dict:
         return _call_siap_api(
-            "/alerte",
+            "/alertes",
             base_route="/services/tableaubord",
             user_login=user_login,
             habilitation_id=habilitation_id,
@@ -333,7 +333,7 @@ class SIAPClientRemote(SIAPClientInterface):
         self, user_login: str, habilitation_id: int, alerte_id: str
     ) -> dict:
         return _call_siap_api(
-            f"/alerte/{alerte_id}",
+            f"/alertes/{alerte_id}",
             base_route="/services/tableaubord",
             user_login=user_login,
             habilitation_id=habilitation_id,
