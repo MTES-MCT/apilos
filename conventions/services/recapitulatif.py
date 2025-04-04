@@ -1,10 +1,12 @@
 import datetime
 from typing import Any, List
 
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
+from waffle import flag_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
@@ -27,6 +29,8 @@ from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
+from siap.siap_client.schemas import Alerte, Destinataire
+from siap.siap_client.services import create_siap_alerte
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
@@ -277,19 +281,39 @@ def convention_submit(request: HttpRequest, convention: Convention):
         convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
 
-        instructeur_emails, submitted = collect_instructeur_emails(
-            request, convention, submitted
-        )
-        send_email_instruction(
-            request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid])
-            ),
-            convention,
-            request.user,
-            instructeur_emails,
-        )
+        if flag_is_active(request=request, flag_name=settings.FLAG_SIAP_ALERTES):
+            alerte = Alerte.from_convention(
+                convention=convention,
+                categorie_information="CATEGORIE_ALERTE_ACTION",
+                destinataires=[
+                    Destinataire(role="INSTRUCTEUR", service="MO"),
+                    Destinataire(role="INSTRUCTEUR", service="SG"),
+                ],
+                etiquette="CUSTOM",
+                etiquette_personnalisee="Convention à instruire",
+                type_alerte="Changement de statut",
+                url_direction=request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                ),
+            )
+            create_siap_alerte(alerte=alerte, request=request)
+
+        else:
+            instructeur_emails, submitted = collect_instructeur_emails(
+                request, convention, submitted
+            )
+            send_email_instruction(
+                request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                ),
+                convention,
+                request.user,
+                instructeur_emails,
+            )
+
         if submitted != utils.ReturnStatus.WARNING:
             submitted = utils.ReturnStatus.SUCCESS
+
     return {
         "success": submitted,
         "convention": convention,
@@ -346,7 +370,12 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def send_email_instruction(convention_url, convention, user, instructeur_emails):
+def send_email_instruction(
+    convention_url: str,
+    convention: Convention,
+    user: User,
+    instructeur_emails: list[str],
+):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
