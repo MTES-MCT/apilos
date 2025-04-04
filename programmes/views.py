@@ -34,7 +34,6 @@ def operation_conventions(request, numero_operation):
             f"L'opération {numero_operation} n'existe pas dans le SIAP",
         )
 
-        service = OperationConventionSearchService(numero_operation)
         # TODO: get_operations_from_numero_operation function ?
         operation_service.programmes = list(
             Programme.objects.filter(numero_operation_pour_recherche=numero_operation)
@@ -56,8 +55,7 @@ def operation_conventions(request, numero_operation):
         messages.add_message(
             request,
             messages.ERROR,
-            "Aucun programme trouvé : problème dans la fonction get_or_create_operation",
-            "Vérifier que le numéro d'opération est correct",
+            "Aucun programme trouvé : Vérifier que le numéro d'opération est correct",
         )
         return HttpResponseRedirect(
             reverse("conventions:search") + f"?search_numero={numero_operation}"
@@ -90,13 +88,6 @@ def operation_conventions(request, numero_operation):
                 f" {financement}, Merci d'annuler les conventions que vous ne"
                 " souhaitez pas conservées",
             )
-
-    try:
-        operation_service.get_or_create_conventions()
-    except DuplicatedOperationSIAPException as exc:
-        return HttpResponseRedirect(
-            f"{reverse('conventions:search')}?search_numero={exc.numero_operation}"
-        )
 
     service = OperationConventionSearchService(numero_operation)
     paginator = service.paginate()

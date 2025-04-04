@@ -85,7 +85,7 @@ class OperationService:
             Convention.objects.filter(
                 programme__numero_operation=self.numero_operation, parent__isnull=True
             )
-            .exclude(statut=ConventionStatut.ANNULEE)
+            .exclude(statut=ConventionStatut.ANNULEE.label)
             .distinct()
         )
 
