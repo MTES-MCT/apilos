@@ -290,28 +290,7 @@ class User(AbstractUser):
         )
 
         if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
-            # This block aims to determine the effective bailleur_id for the conventions
-            # If there are no avenants, the effective bailleur_id is from the convention programme
-            # If there are avenants, the effective bailleur_id is the programme bailleur_id
-            # from the most recent avenant
-            avenants_bailleur_id = (
-                Convention.objects.filter(
-                    parent_id=Coalesce(obj.parent_id, obj.id),
-                    statut__in=[
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ],
-                )
-                .order_by("-cree_le")
-                .values("programme__bailleur_id")
-                .first()
-            )
-
-            if avenants_bailleur_id is not None:
-                effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
-            else:
-                effective_bailleur_id = programme.bailleur_id
+            effective_bailleur_id = obj.get_effective_bailleur_id()
         else:
             effective_bailleur_id = programme.bailleur_id
 

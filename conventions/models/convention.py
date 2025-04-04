@@ -369,6 +369,29 @@ class Convention(models.Model):
             )[1]
         return last_avenant_or_parent
 
+    def get_effective_bailleur_id(self):
+        if self.parent_id is None:
+            # Case convention
+            effective_bailleur_id = self.programme.bailleur_id
+            if self.avenants.count() > 0:
+                last_avenant = (
+                    self.avenants.filter(
+                        statut__in=[
+                            ConventionStatut.CORRECTION.label,
+                            ConventionStatut.A_SIGNER.label,
+                            ConventionStatut.SIGNEE.label,
+                        ]
+                    )
+                    .order_by("-cree_le")
+                    .first()
+                )
+                if last_avenant:
+                    effective_bailleur_id = last_avenant.programme.bailleur_id
+            return effective_bailleur_id
+        else:
+            # Case avenant : recusive call on parent
+            return self.parent.get_effective_bailleur_id()
+
     def get_email_bailleur_users(self):
         """
         return the email of the bailleurs to send them an email following their email
