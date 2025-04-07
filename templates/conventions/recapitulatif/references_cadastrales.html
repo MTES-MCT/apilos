@@ -7,7 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            {% include "conventions/common/avenants_checkboxes.html" with title="Références cadastrales et effet relatif" title_unchecked="Mettre à jour les références cadastrales et effet relatif" checked=checked id="cadastre" avenant_type="cadastre" description="Lorem ipsum" %}
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Références cadastrales et effet relatif" title_unchecked="Mettre à jour les références cadastrales et effet relatif" checked=checked id="cadastre" avenant_type="cadastre" description="" %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
