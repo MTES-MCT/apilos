@@ -95,6 +95,11 @@
                     {% else %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=False %}
                     {% endif %}
+                    {% if 'stationnement' in avenant_list %}
+                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.lot.type_stationnements.all checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.lot.type_stationnements.all checked=False %}
+                    {% endif %}
                     {% if 'champ_libre' in avenant_list %}
                         {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' checked=True %}
                     {% else %}
