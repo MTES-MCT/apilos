@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # DEPLOIEMENT DE LA PLATEFORME APILOS
 
 ## Solution d'hébergement

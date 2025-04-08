@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" /><link rel="prev" title="API de la plateforme APiLos" href="API.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>DEPLOIEMENT DE LA PLATEFORME APILOS - Documentation APiLos</title>
@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -198,7 +198,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
+</ul>
+
 </div>
 </div>
 
@@ -231,13 +240,15 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="deploiement-de-la-plateforme-apilos">
+          <div class="toctree-wrapper compound">
+</div>
+<section id="deploiement-de-la-plateforme-apilos">
 <h1>DEPLOIEMENT DE LA PLATEFORME APILOS<a class="headerlink" href="#deploiement-de-la-plateforme-apilos" title="Lien vers cette rubrique">¶</a></h1>
 <section id="solution-d-hebergement">
 <h2>Solution d’hébergement<a class="headerlink" href="#solution-d-hebergement" title="Lien vers cette rubrique">¶</a></h2>
@@ -420,8 +431,26 @@ Using default option: Users won&#39;t be truncated
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="DEVELOPPEUR.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">DEVELOPPEMENT</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="API.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">API de la plateforme APiLos</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -440,49 +469,8 @@ Using default option: Users won&#39;t be truncated
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">DEPLOIEMENT DE LA PLATEFORME APILOS</a><ul>
-<li><a class="reference internal" href="#solution-d-hebergement">Solution d’hébergement</a></li>
-<li><a class="reference internal" href="#ci-cd-et-branch-git">CI/CD et branch git</a><ul>
-<li><a class="reference internal" href="#comment-release">Comment release</a></li>
-<li><a class="reference internal" href="#ci">CI</a></li>
-<li><a class="reference internal" href="#cd">CD</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#deploiement">Déploiement</a><ul>
-<li><a class="reference internal" href="#deploiement-en-staging">Déploiement en staging</a></li>
-<li><a class="reference internal" href="#deploiement-en-production">Déploiement en production</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#deployer-un-nouvel-environnement">Déployer un nouvel environnement</a></li>
-<li><a class="reference internal" href="#executer-une-commande-python-sur-un-scalingo">Executer une commande python sur un Scalingo</a></li>
-<li><a class="reference internal" href="#modification-de-l-appartenance-d-un-programme-a-un-bailleur-ou-une-administration">Modification de l’appartenance d’un programme à un bailleur ou une administration</a><ul>
-<li><a class="reference internal" href="#modification-de-l-administration">Modification de l’administration</a></li>
-<li><a class="reference internal" href="#modification-du-bailleur">Modification du bailleur</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#remise-a-zero-des-elements-metiers-de-la-base-de-donnees-d-un-environnement">Remise à zéro des éléments métiers de la base de données d’un environnement</a></li>
-<li><a class="reference internal" href="#rechargement-des-fixtures-de-tests-en-staging">Rechargement des fixtures de tests en staging</a></li>
-<li><a class="reference internal" href="#chargement-d-un-jeu-de-test">Chargement d’un jeu de test</a></li>
-<li><a class="reference internal" href="#deploiement-de-metabase">Déploiement de Metabase</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

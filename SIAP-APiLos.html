@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="prev" title="Backup des buckets S3" href="S3_BACKUP.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Documentation des interactions SIAP APiLos - Documentation APiLos</title>
@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -198,7 +198,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Documentation des interactions SIAP APiLos</a></li>
+</ul>
+
 </div>
 </div>
 
@@ -231,13 +240,15 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="documentation-des-interactions-siap-apilos">
+          <div class="toctree-wrapper compound">
+</div>
+<section id="documentation-des-interactions-siap-apilos">
 <h1>Documentation des interactions SIAP APiLos<a class="headerlink" href="#documentation-des-interactions-siap-apilos" title="Lien vers cette rubrique">¶</a></h1>
 <p><a class="reference external" href="https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866">Tableau de bord des développements communs entre SIAP et APiLos</a></p>
 <section id="environnements">
@@ -593,7 +604,17 @@ Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont acc
         
         <div class="related-pages">
           
-          
+          <a class="prev-page" href="S3_BACKUP.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Backup des buckets S3</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -612,52 +633,8 @@ Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont acc
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">Documentation des interactions SIAP APiLos</a><ul>
-<li><a class="reference internal" href="#environnements">Environnements</a></li>
-<li><a class="reference internal" href="#cas-d-utilisation">Cas d’utilisation</a><ul>
-<li><a class="reference internal" href="#autentification-au-siap-ou-apilos-via-cerbere">Autentification au SIAP ou APiLos via CERBERE</a></li>
-<li><a class="reference internal" href="#connexion-au-siap-et-redirection-apilos-siap-via-le-menu">Connexion au SIAP et redirection APiLos / SIAP via le menu</a></li>
-<li><a class="reference internal" href="#bascule-vers-le-conventionnement-a-partir-d-une-operation-siap">Bascule vers le conventionnement à partir d’une opération SIAP</a></li>
-<li><a class="reference internal" href="#affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap">Affichage des indicateurs de conventionnement dans le ableau de bord du SIAP</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#interpretation-des-habilitations-siap">Interprétation des Habilitations SIAP</a></li>
-<li><a class="reference internal" href="#partage-d-objet-avec-le-siap">Partage d’objet avec le SIAP</a><ul>
-<li><a class="reference internal" href="#details-des-objets-partages-par-le-siap-et-repris-dans-apilos">Détails des objets partagés par le SIAP et repris dans APiLos</a></li>
-<li><a class="reference internal" href="#les-valeurs-des-listes-valuees-et-leurs-correspondances">Les valeurs des listes valuées et leurs correspondances</a><ul>
-<li><a class="reference internal" href="#nature-du-bailleur-siap-apilos">Nature du bailleur (SIAP -&gt; APiLos)</a></li>
-<li><a class="reference internal" href="#type-de-l-operation-depend-des-champs-sanstravaux-ou-sousnatureoperation-siap-apilos">Type de l’opération (dépend des champs <code class="docutils literal notranslate"><span class="pre">sansTravaux</span></code> ou <code class="docutils literal notranslate"><span class="pre">sousNatureOperation</span></code>) (SIAP -&gt; APiLos)</a></li>
-<li><a class="reference internal" href="#nature-logement-siap-apilos">Nature logement (SIAP -&gt; APiLos)</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)</a></li>
-<li><a class="reference internal" href="#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)</a><ul>
-<li><a class="reference internal" href="#exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt">Exemple du contenu du token JWT généré par la fonction build_jwt</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#questions-ouvertes-pour-plus-tard">Questions ouvertes pour plus tard</a></li>
-<li><a class="reference internal" href="#comportement-apilos-lors-de-l-acces-a-une-operation-siap">Comportement APilos lors de l’accès à une opération SIAP</a></li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

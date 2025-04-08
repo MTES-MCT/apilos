@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEPLOIEMENT DE LA PLATEFORME APILOS" href="DEPLOIEMENT.html" /><link rel="prev" title="APiLos - documentation technique" href="README.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>API de la plateforme APiLos - Documentation APiLos</title>
@@ -198,7 +198,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">API de la plateforme APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
+</ul>
+
 </div>
 </div>
 
@@ -246,11 +255,11 @@ X étant la version majeur de l’API SIAP</p>
 <p>Une interface swagger est disponible sur la route <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/schema-ui/</span></code> et le contrat d’interface OpenAPI 3 sur la route <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/schema/</span></code>.</p>
 <p>L’authentification se fait par JWT token avec le protocole HC256.</p>
 <p>Pour se connecter, RDV sur la route <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/token/</span></code></p>
-<p><img alt="apilos_get_token1" src="static/img/get-token1.png" /></p>
+<p><img alt="apilos_get_token1" src="_images/get-token1.png" /></p>
 <p>Après connexion, récupérer l’access token</p>
-<p><img alt="apilos_get_token2" src="static/img/get-token2.png" /></p>
+<p><img alt="apilos_get_token2" src="_images/get-token2.png" /></p>
 <p>Accéder à l’interface swagger <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/schema-ui/</span></code>, s’authentifier en copiant le token dans la partie jwt token</p>
-<p><img alt="apilos_get_token3" src="static/img/get-token3.png" /></p>
+<p><img alt="apilos_get_token3" src="_images/get-token3.png" /></p>
 <p>L’authentification dure 5 minutes…</p>
 </section>
 <section id="les-autres-api">
@@ -266,8 +275,26 @@ Y étant la version majeur de l’API</p>
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="DEPLOIEMENT.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">DEPLOIEMENT DE LA PLATEFORME APILOS</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="README.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">

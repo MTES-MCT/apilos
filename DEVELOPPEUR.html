@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Migration des données depuis Ecoloweb" href="ECOLOWEB.html" /><link rel="prev" title="DEPLOIEMENT DE LA PLATEFORME APILOS" href="DEPLOIEMENT.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>DEVELOPPEMENT - Documentation APiLos</title>
@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -198,7 +198,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
+</ul>
+
 </div>
 </div>
 
@@ -231,13 +240,15 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="developpement">
+          <div class="toctree-wrapper compound">
+</div>
+<section id="developpement">
 <h1>DEVELOPPEMENT<a class="headerlink" href="#developpement" title="Lien vers cette rubrique">¶</a></h1>
 <p>Cette documentation décrit toutes les étapes nécessaires à l’intallation et au développement de la plateforme APiLos.</p>
 <p>Les règles et standards de codage y sont décrits</p>
@@ -555,8 +566,26 @@ python<span class="w"> </span>manage.py<span class="w"> </span>get_delivery_stat
       <footer>
         
         <div class="related-pages">
-          
-          
+          <a class="next-page" href="ECOLOWEB.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Migration des données depuis Ecoloweb</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="DEPLOIEMENT.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">DEPLOIEMENT DE LA PLATEFORME APILOS</div>
+                
+              </div>
+            </a>
         </div>
         <div class="bottom-of-page">
           <div class="left-details">
@@ -575,77 +604,8 @@ python<span class="w"> </span>manage.py<span class="w"> </span>get_delivery_stat
         
       </footer>
     </div>
-    <aside class="toc-drawer">
+    <aside class="toc-drawer no-toc">
       
-      
-      <div class="toc-sticky toc-scroll">
-        <div class="toc-title-container">
-          <span class="toc-title">
-            On this page
-          </span>
-        </div>
-        <div class="toc-tree-container">
-          <div class="toc-tree">
-            <ul>
-<li><a class="reference internal" href="#">DEVELOPPEMENT</a><ul>
-<li><a class="reference internal" href="#quelques-details-sur-la-stack-technique-utilisee">Quelques détails sur la stack technique utilisée</a><ul>
-<li><a class="reference internal" href="#framework-et-langages-de-programmation">Framework et langages de programmation</a><ul>
-<li><a class="reference internal" href="#django-python">Django / Python</a><ul>
-<li><a class="reference internal" href="#generation-de-documents-xls-et-pdf">Génération de documents xls et pdf</a></li>
-<li><a class="reference internal" href="#import-de-firchiers-excel">Import de firchiers excel</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#javascript">Javascript</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#installation">Installation</a><ul>
-<li><a class="reference internal" href="#prerequis">Prérequis</a></li>
-<li><a class="reference internal" href="#environment-virtuel-python">Environment virtuel python</a></li>
-<li><a class="reference internal" href="#services-docker">Services docker</a></li>
-<li><a class="reference internal" href="#variables-d-environnement">Variables d’environnement</a></li>
-<li><a class="reference internal" href="#installer-les-dependances-python">Installer les dépendances python</a></li>
-<li><a class="reference internal" href="#installer-les-dependances-npm">Installer les dependances npm</a></li>
-<li><a class="reference internal" href="#executer-les-migrations">Executer les migrations</a></li>
-<li><a class="reference internal" href="#populer-les-permissions-et-les-roles-et-les-departements">Populer les permissions et les roles et les departements</a><ul>
-<li><a class="reference internal" href="#modifier-les-permissions">Modifier les permissions</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#creer-un-super-utilisateur">Créer un super utilisateur</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#lancer-de-l-application">Lancer de l’application</a><ul>
-<li><a class="reference internal" href="#population-de-la-base-de-donnnees-en-environnement-de-developpement">Population de la base de donnnées en environnement de développement</a></li>
-<li><a class="reference internal" href="#clamav-optionnel">ClamAV (optionnel)</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#qualite-de-code">Qualité de code</a><ul>
-<li><a class="reference internal" href="#tests">Tests</a></li>
-<li><a class="reference internal" href="#lancement-des-tests">Lancement des tests</a></li>
-<li><a class="reference internal" href="#installer-les-hooks-de-pre-commit">Installer les hooks de pre-commit</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#les-api">Les API</a></li>
-<li><a class="reference internal" href="#ajouter-des-dependances-avec-pip-tools">Ajouter des dépendances avec pip-tools</a></li>
-<li><a class="reference internal" href="#manipulations-de-developpement">Manipulations de développement</a><ul>
-<li><a class="reference internal" href="#restaurer-un-dump-de-base-de-donnees">Restaurer un dump de base de données</a></li>
-<li><a class="reference internal" href="#restaurer-un-dump-sur-un-environnement-scalingo">Restaurer un dump sur un environnement Scalingo</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#mock-cerbere">MOCK CERBERE</a></li>
-<li><a class="reference internal" href="#statistiques-de-developpement">Statistiques de développement</a><ul>
-<li><a class="reference internal" href="#categoriser-les-pr">Catégoriser les PR</a></li>
-<li><a class="reference internal" href="#processus-d-extraction-des-statistiques-de-developpement">Processus d’extraction des statistiques de developpement</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-
-          </div>
-        </div>
-      </div>
       
       
     </aside>

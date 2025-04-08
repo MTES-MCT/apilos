@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # DEVELOPPEMENT
 
 Cette documentation décrit toutes les étapes nécessaires à l'intallation et au développement de la plateforme APiLos.

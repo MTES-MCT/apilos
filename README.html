@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="API de la plateforme APiLos" href="API.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Documentation APiLos</title>
@@ -198,7 +198,16 @@
   <input type="hidden" name="area" value="default">
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
-  
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
+</ul>
+
 </div>
 </div>
 
@@ -237,16 +246,75 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="apilos">
-<h1>APiLos<a class="headerlink" href="#apilos" title="Lien vers cette rubrique">¶</a></h1>
-<blockquote>
-<div><p>Assistance au Pilotage du Logement social</p>
-</div></blockquote>
-<p>Plateforme Numérique pour la gestion unifiée des conventions APL</p>
-<p>Lorsqu’un bailleur construit un logement social en france, avant la mise en location, il signe une convention APL avec le territoire. Cette convention est nécéssaire pour déterminer le prix au m2 et d’autres modalités de mise en location.</p>
-<p>APiLos offre une solution numérique pour l’instruction de ces conventions entre bailleurs et instructeurs de l’état.</p>
-<p>APiLos a aussi pour vocation de centraliser et fiabiliser les statistiques des logements sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.</p>
-<p>APiLos est un produit de la plateforme SIAP (Système d’information des aides à la pierre)</p>
+          <section id="apilos-documentation-technique">
+<h1>APiLos - documentation technique<a class="headerlink" href="#apilos-documentation-technique" title="Lien vers cette rubrique">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="API.html#api-pour-le-siap">API pour le SIAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="API.html#les-autres-api">Les autres API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#solution-d-hebergement">Solution d’hébergement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#ci-cd-et-branch-git">CI/CD et branch git</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#deploiement">Déploiement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#deployer-un-nouvel-environnement">Déployer un nouvel environnement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#executer-une-commande-python-sur-un-scalingo">Executer une commande python sur un Scalingo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#modification-de-l-appartenance-d-un-programme-a-un-bailleur-ou-une-administration">Modification de l’appartenance d’un programme à un bailleur ou une administration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#remise-a-zero-des-elements-metiers-de-la-base-de-donnees-d-un-environnement">Remise à zéro des éléments métiers de la base de données d’un environnement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#rechargement-des-fixtures-de-tests-en-staging">Rechargement des fixtures de tests en staging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#chargement-d-un-jeu-de-test">Chargement d’un jeu de test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#deploiement-de-metabase">Déploiement de Metabase</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#quelques-details-sur-la-stack-technique-utilisee">Quelques détails sur la stack technique utilisée</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#lancer-de-l-application">Lancer de l’application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#qualite-de-code">Qualité de code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#les-api">Les API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#ajouter-des-dependances-avec-pip-tools">Ajouter des dépendances avec pip-tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#manipulations-de-developpement">Manipulations de développement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#mock-cerbere">MOCK CERBERE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#statistiques-de-developpement">Statistiques de développement</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#installation-de-la-base-de-donnees">Installation de la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#structure-des-donnees-ecoloweb">Structure des données &#64; Ecoloweb</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#fonctionnement-de-la-commande">Fonctionnement de la commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#execution-de-depuis-scalingo">Exécution de depuis Scalingo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#tests-unitaires">Tests unitaires</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ECOLOWEB.html#retrouver-une-convention-dans-ecoloweb">Retrouver une convention dans Ecoloweb</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="PCA_PRA.html#prerequis">Prérequis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PCA_PRA.html#creaton-d-un-environnement-sur-le-paas-scalingo">Créaton d’un environnement sur le PaaS Scalingo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PCA_PRA.html#deployer-l-application">Deployer l’application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PCA_PRA.html#configurer">Configurer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="PCA_PRA.html#architecture-double-siap-et-webapp-independante">Architecture double : SIAP et Webapp indépendante</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="S3_BACKUP.html#configuration">Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="S3_BACKUP.html#execution">Execution</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#environnements">Environnements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#cas-d-utilisation">Cas d’utilisation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#interpretation-des-habilitations-siap">Interprétation des Habilitations SIAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#partage-d-objet-avec-le-siap">Partage d’objet avec le SIAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#questions-ouvertes-pour-plus-tard">Questions ouvertes pour plus tard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#comportement-apilos-lors-de-l-acces-a-une-operation-siap">Comportement APilos lors de l’accès à une opération SIAP</a></li>
+</ul>
+</li>
+</ul>
+</div>
 <section id="solution-technique">
 <h2>Solution technique<a class="headerlink" href="#solution-technique" title="Lien vers cette rubrique">¶</a></h2>
 <p>La plateforme est développé avec le framework Django et son moteur de template par défaut.</p>
@@ -440,7 +508,15 @@ Le rapport d’accessibilité est publié <a class="reference external" href="ht
       <footer>
         
         <div class="related-pages">
-          
+          <a class="next-page" href="API.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">API de la plateforme APiLos</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
           
         </div>
         <div class="bottom-of-page">
@@ -472,7 +548,7 @@ Le rapport d’accessibilité est publié <a class="reference external" href="ht
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">APiLos</a><ul>
+<li><a class="reference internal" href="#">APiLos - documentation technique</a><ul>
 <li><a class="reference internal" href="#solution-technique">Solution technique</a><ul>
 <li><a class="reference internal" href="#qualite-de-code">Qualité de code</a><ul>
 <li><a class="reference internal" href="#via-git">Via git</a></li>
