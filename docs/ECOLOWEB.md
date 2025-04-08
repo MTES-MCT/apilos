@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # Migration des données depuis Ecoloweb
 
 La migration des données depuis Ecoloweb se fait via une commande CLI (_command line interface_) de [Django](https://docs.djangoproject.com/fr/4.1/howto/custom-management-commands/).
@@ -53,6 +56,7 @@ Pour lancer l'import des conventions sur un département, il faut ajouter le cod
 ./manage.py ecoloweb_import_departement 2B
 ```
 
+
 D'autres options, _réellement optionnelles_ celles-ci, sont disponibles:
 * `--no-progress`: ne pas afficher la barre de progression dynamique (utile pour analyser les logs depuis Scalingo)
 * `--debug`: affiche des informations supplémentaires au développeur (à conjuguer avec l'option `--no-progress`)
@@ -63,7 +67,6 @@ dump de base de données Ecolo
 * `--update`: si une convention a déjà été importée depuis Ecolo, et non supprimée depuis, cette option
 force la mise à jour des données sur Apilos avec celles issues d'Ecoloweb (⚠️ tout changement survenu entre
 temps sera écrasé)
-
 ## Exécution de depuis Scalingo
 
 Puisque le lancement d'un import sur un département peut durer entre plusieurs dizaines de minutes et quelques heures, il
@@ -71,13 +74,13 @@ va nous falloir suivre [la (très bonne) documentation concernant les "detached 
 
 Ex: pour lancer l'import des Bouches du Rhône :
 
-```
+```sh
 scalingo --app <app> run --detached 'python ./manage.py ecoloweb_import_departement 13 --no-progress'
 ```
 
 Scaling va alors répondre avec un message comme suit :
 
-```txt
+```
 Starting one-off 'python ./manage.py ecoloweb_import_departement 13 --no-progress' for app '<app>'.
 Run `scalingo --region <region> --app <app> logs --filter one-off-<number>` to get the output
 ```

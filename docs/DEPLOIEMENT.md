@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # DEPLOIEMENT DE LA PLATEFORME APILOS
 
 ## Solution d'hébergement
@@ -7,7 +10,7 @@ La solution souveraine PaaS de [Scalingo](https://dashboard.scalingo.com/apps/os
 * worker : worker Celery pour déléguer des tâches longues qui s'executeront de manière asynchrone
 * Une base de données postgres en version 12.11.0
 
-Les applications lancées sont configurées dans le fichier [Procfile](Procfile)
+Les applications lancées sont configurées dans le fichier [Procfile](../Procfile)
 
 La base de données est sauvegardée toutes les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration.
 
@@ -17,7 +20,7 @@ Les "User Stories" (US) sont développées sur des "feature branches" (conventio
 les `feature branches` font l'objet de `pull request` à merger sur `main`.
 
 La solution github actions est utilisée: [Github Actions](https://github.com/MTES-MCT/apilos/actions)
-La config est ici : [.github/workflows](.github/workflows)
+La config est ici : [.github/workflows](../.github/workflows)
 
 ### Comment release
 
@@ -52,7 +55,7 @@ A chaque push de tag de la forme `v*.*.*`, le projet est déployé en production
 
 ## Déploiement
 
-Lors du déploiement, les étapes définis dans le script [bin/post_deploy](bin/post_deploy) sont exécutées :
+Lors du déploiement, les étapes définis dans le script [bin/post_deploy](../bin/post_deploy) sont exécutées :
 
 1. Execution des migrations de la base de données
 2. Population des roles et des permissions
@@ -183,3 +186,13 @@ Quelques informations complémentaires:
 * Les données stockées par Metabase sont cryptées grâce à la variable d'environnement MB_ENCRYPTION_SECRET_KEY
 
 Metabase est accessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scalingo.io/](https://apilos-metabase-prod.osc-fr1.scalingo.io/)
+
+## Deploiement de la documentation technique
+
+Les librairies nécessaires à la génération de la documentation sont maintenus dans le document [doc-requirements.txt](../doc-requirements.txt), généré avec pip-tools depuis [doc-requirements.in](../doc-requirements.in)
+
+La publication est executé à chaque mise à jour de la branch main via l'action github [publish-docs.yml](../.github/workflows/publish-docs.yml)
+
+La configuration Github suivante est nécessaire :
+
+![](./_static/configuration_github_pages_apilos.png)
