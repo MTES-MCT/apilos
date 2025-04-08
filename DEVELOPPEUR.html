@@ -562,6 +562,22 @@ python<span class="w"> </span>manage.py<span class="w"> </span>get_delivery_stat
 <section id="mise-a-jour-de-la-documentation-technique">
 <h2>Mise à jour de la documentation technique<a class="headerlink" href="#mise-a-jour-de-la-documentation-technique" title="Lien vers cette rubrique">¶</a></h2>
 <p>La documentation technique est maintenue dans la dossiers <a class="reference internal" href="#./docs"><span class="xref myst">docs</span></a> et elle est publiée avec la librairie python <a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">sphynx</a></p>
+<p>les images sont stockées dans le répertoire <a class="reference internal" href="#../docs/_static"><span class="xref myst">docs/_static</span></a></p>
+<section id="installation-des-librairie-de-generation-de-la-documentation">
+<h3>Installation des librairie de génération de la documentation<a class="headerlink" href="#installation-des-librairie-de-generation-de-la-documentation" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>doc-requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="visualiser-la-documentation-localement">
+<h3>Visualiser la documentation localement<a class="headerlink" href="#visualiser-la-documentation-localement" title="Lien vers cette rubrique">¶</a></h3>
+<p>Générer la documentation</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>rm<span class="w"> </span>-rf<span class="w"> </span>_build
+sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>_build
+</pre></div>
+</div>
+<p>La documentation est viualisable avec un navigateur à partir du fichier <a class="reference internal" href="#_build/html/README.html"><span class="xref myst">_build/html/README.html</span></a></p>
+</section>
 </section>
 </section>
 

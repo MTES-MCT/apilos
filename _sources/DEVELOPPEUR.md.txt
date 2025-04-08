@@ -347,3 +347,22 @@ Les statistiques de développement par mois sont disponibles dans le fichier `DE
 ## Mise à jour de la documentation technique
 
 La documentation technique est maintenue dans la dossiers [docs](./docs) et elle est publiée avec la librairie python [sphynx](https://www.sphinx-doc.org/en/master/index.html)
+
+les images sont stockées dans le répertoire [docs/_static](../docs/_static)
+
+### Installation des librairie de génération de la documentation
+
+```sh
+pip install -r doc-requirements.txt
+```
+
+### Visualiser la documentation localement
+
+Générer la documentation
+
+```sh
+rm -rf _build
+sphinx-build -M html docs _build
+```
+
+La documentation est viualisable avec un navigateur à partir du fichier [_build/html/README.html](_build/html/README.html)
