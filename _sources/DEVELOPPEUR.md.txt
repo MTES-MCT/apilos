@@ -343,3 +343,7 @@ python manage.py get_delivery_statistics --token $GITHUB_TOKEN --output DEV_STAT
 ```
 
 Les statistiques de développement par mois sont disponibles dans le fichier `DEV_STATISTICS.csv`
+
+## Mise à jour de la documentation technique
+
+La documentation technique est maintenue dans la dossiers [docs](./docs) et elle est publiée avec la librairie python [sphynx](https://www.sphinx-doc.org/en/master/index.html)
