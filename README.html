@@ -1,0 +1,531 @@
+<!doctype html>
+<html class="no-js" lang="fr" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>Documentation APiLos</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="#"><div class="brand">Documentation APiLos </div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="#">
+  
+  
+  <span class="sidebar-brand-text">Documentation APiLos </span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Recherche" name="q" aria-label="Recherche">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/README.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="apilos">
+<h1>APiLos<a class="headerlink" href="#apilos" title="Lien vers cette rubrique">¶</a></h1>
+<blockquote>
+<div><p>Assistance au Pilotage du Logement social</p>
+</div></blockquote>
+<p>Plateforme Numérique pour la gestion unifiée des conventions APL</p>
+<p>Lorsqu’un bailleur construit un logement social en france, avant la mise en location, il signe une convention APL avec le territoire. Cette convention est nécéssaire pour déterminer le prix au m2 et d’autres modalités de mise en location.</p>
+<p>APiLos offre une solution numérique pour l’instruction de ces conventions entre bailleurs et instructeurs de l’état.</p>
+<p>APiLos a aussi pour vocation de centraliser et fiabiliser les statistiques des logements sociaux sur le territoire français pour un pilotage éclairé de la construction du parc social en France.</p>
+<p>APiLos est un produit de la plateforme SIAP (Système d’information des aides à la pierre)</p>
+<section id="solution-technique">
+<h2>Solution technique<a class="headerlink" href="#solution-technique" title="Lien vers cette rubrique">¶</a></h2>
+<p>La plateforme est développé avec le framework Django et son moteur de template par défaut.</p>
+<p>Les librairies Javascript nécessaires à l’application sont compilés par l’aplication <a class="reference external" href="https://parceljs.org/">Parcel.js</a></p>
+<p>Le design de l’interface suit le <a class="reference external" href="https://www.systeme-de-design.gouv.fr/">Système de design de l’état</a></p>
+<p>APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authentifier ses utilisateurs. Les habilitations (gestion des droits et périmètres) sont fournies par le SIAP.</p>
+<p><img alt="Architecture APilos" src="_images/architecture_apilos.jpg" /></p>
+<p>Les solutions tierces utilisées par APiLos:</p>
+<ul class="simple">
+<li><p>SIAP : Système d’Information des Aides à la Pierre - Habilitations des utilisateurs</p></li>
+<li><p>CERBERE : SSO - Authentification des utilisateurs</p></li>
+<li><p>Scalingo : hébergement de la solution (cloud souverain)</p></li>
+<li><p>Scaleway : stockage de fichiers compatible avec le protocole S3</p></li>
+<li><p>Brevo : envoi de courriels transactionnels</p></li>
+<li><p>Sentry : monitoring logiciel</p></li>
+<li><p>Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)</p></li>
+</ul>
+<section id="qualite-de-code">
+<h3>Qualité de code<a class="headerlink" href="#qualite-de-code" title="Lien vers cette rubrique">¶</a></h3>
+<p>Plusieurs outils et processus sont utilisés pour gérer la qualité de code.</p>
+<section id="via-git">
+<h4>Via git<a class="headerlink" href="#via-git" title="Lien vers cette rubrique">¶</a></h4>
+<p>Lors de chaque commit, un controle de qualité est exécuté sur tous les fichiers édités via les hook git.</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://pre-commit.com/">git pre-commit</a> avec les hooks de bases : trailing-whitespace, check-yaml, check-added-large-files</p></li>
+<li><p><a class="reference external" href="https://github.com/astral-sh/ruff">ruff</a> comme linter intégré au pre-commit pour les fichiers python</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/djhtml/">djhtml</a> comme prettier des fichiers html</p></li>
+<li><p><a class="reference external" href="https://pypi.org/project/black/">black</a> comme prettier des fichiers python</p></li>
+</ul>
+</section>
+<section id="pull-request-et-processus-de-revue-de-code">
+<h4>Pull Request et processus de revue de code<a class="headerlink" href="#pull-request-et-processus-de-revue-de-code" title="Lien vers cette rubrique">¶</a></h4>
+<p>La branche <code class="docutils literal notranslate"><span class="pre">main</span></code> est protégée : il n’est pas possible de la modifier autre que par une Pull Request.</p>
+<p>Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>. Grâce à la fonctionnalité <a class="reference download internal" download="" href="_downloads/e741ad84c9a4daa32c31d2ec731d8d56/CODEOWNERS"><span class="xref download myst">CODEOWNERS</span></a> de github, la revue de la PR est assignée à 2 membres de l’équipe de développeur d’APiLos.</p>
+<p>Une Pull Request ne peut pas être « mergée » tant qu’elle n’a pas au moins une approbation d’un membre de l’équipe. Pour une Pull Request qui modifie l’architecture de l’application, qui modifie de manière importante le comportement de l’application ou qui met à jour une version majeur d’une dépendance, on préfèrera avoir 2 approbations.</p>
+<p>A chaque Pull Request, un certain nombre de controles sont exécutés.</p>
+<p>Les controles par des systèmes tiers:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://snyk.io/">Snik</a> : Recherche les vulnérabilités de l’application</p></li>
+<li><p><a class="reference external" href="https://www.sonarsource.com/products/sonarcloud/features/integrations/github-integration/">SonarCloud</a> : Vérifie la qualité de code</p></li>
+<li><p><a class="reference external" href="https://codeql.github.com/">CodeQL</a> : Recherche les vulnérabilités de l’application</p></li>
+<li><p><a class="reference external" href="https://github.com/apps/gitguardian">GitGuardian Security Checks</a> : Vérifie qu’aucun secret n’est partagé dans le code source</p></li>
+</ul>
+<p>Les controles implémentés par l’équipe :</p>
+<ul class="simple">
+<li><p>Tests unitaires et test d’intégration : exécuté avec pytest</p></li>
+<li><p>Coverage : test la couverture du code par les tests</p></li>
+</ul>
+<p>Ces mêmes controles sont exécutés à chaque modification de la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> (lors du « merge » de la Pull Request)</p>
+<p>En plus des controles de qualité éxécuté sur les Pull Request et la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>, les dépendances Python, Javascript et Github sont inspectées et les mise à jour sont proposées via Pull Request par l’application <a class="reference download internal" download="" href="_downloads/c05a5735ac569e496d7f733362ead567/dependabot.yml"><span class="xref download myst">dependabot</span></a></p>
+</section>
+</section>
+<section id="deploiement-staging-et-production">
+<h3>Déploiement (Staging et Production)<a class="headerlink" href="#deploiement-staging-et-production" title="Lien vers cette rubrique">¶</a></h3>
+<p>Le déploiement de la plateforme APiLos est exécuté via la <a class="reference external" href="https://github.com/MTES-MCT/apilos/actions">CI/CD github action</a></p>
+<p>L’application est déployée sur les environnements d’intégration, recette et école quand la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> est mise à jour (à chaque merge de Pull Request) : <a class="reference download internal" download="" href="_downloads/1ef5e8619b2df418fbc124d4437ff9ed/push-branch-main.yml"><span class="xref download myst">github action</span></a></p>
+<p>L’application est déployée sur l’environnement de production quand un tag de la forme v*.<em>.</em> est poussé sur Git : <a class="reference download internal" download="" href="_downloads/cbabcf9bf20555440255dd1abdfbec85/push-version-tag.yml"><span class="xref download myst">github action</span></a></p>
+<p>Pour en plus de détails, merci de se référer à la documentation sur <a class="reference internal" href="DEPLOIEMENT.html"><span class="std std-doc">DEPLOIEMENT.md</span></a></p>
+</section>
+<section id="installation-de-la-plateforme-en-local-developpeurs">
+<h3>Installation de la plateforme en local (Developpeurs)<a class="headerlink" href="#installation-de-la-plateforme-en-local-developpeurs" title="Lien vers cette rubrique">¶</a></h3>
+<p>Trouver les détails d’installation de l’application en local pour le développement et les détails techniques sur la documentation dédiée : <a class="reference internal" href="DEVELOPPEUR.html"><span class="std std-doc">DEVELOPPEUR.md</span></a></p>
+</section>
+<section id="envoi-de-mails">
+<h3>Envoi de mails<a class="headerlink" href="#envoi-de-mails" title="Lien vers cette rubrique">¶</a></h3>
+<p>Nous utilisons <a class="reference external" href="https://app.brevo.com/">Brevo</a> (anciennement sendinblue). Si la variable d’environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)</p>
+</section>
+<section id="dns-uniquement-pour-la-gestion-des-emails-et-emailists">
+<h3>DNS (uniquement pour la gestion des emails et emailists)<a class="headerlink" href="#dns-uniquement-pour-la-gestion-des-emails-et-emailists" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les DNS sont configurés dans <a class="reference external" href="https://admin.alwaysdata.com/">Alwaysdata</a>
+les emails et mailing list sous le domaine apilos.beta.gouv.fr sont aussi géré avec Alwaysdata : contact&#64;apilos.beta.gouv.fr, recrutement&#64;apilos.beta.gouv.fr, equipe&#64;apilos.beta.gouv.fr…</p>
+</section>
+<section id="bases-de-donnees">
+<h3>Bases de données<a class="headerlink" href="#bases-de-donnees" title="Lien vers cette rubrique">¶</a></h3>
+<pre  class="mermaid">
+        ---
+title: Schéma simplifié tables de l'application APiLos
+---
+erDiagram
+    Bailleur ||--|{ Operation : un-plusieurs
+    Administration ||--|{ Operation : un-plusieurs
+    Operation ||--|{ Lot : un-plusieurs
+    Operation ||--|{ Convention : un-plusieurs
+    Convention ||--|| Lot : un-un
+    Lot ||--|{ Logement : un-plusieurs
+    Logement ||--|{ Annexe : un-plusieurs
+    Lot ||--|{ TypeStationnement : un-plusieurs
+    Convention ||--|{ Pret : un-plusieurs
+    </pre><p>Notes :</p>
+<ul class="simple">
+<li><p>Une Opération sur le SIAP peut-être appelé un Programme sur APiLos, Dans la mesure du possible, nous utiliserons <code class="docutils literal notranslate"><span class="pre">Opération</span></code> dans la documentation.</p></li>
+<li><p>Une Opération contient un lot par type de financement</p></li>
+</ul>
+<section id="diagramme-des-statuts-d-une-convention">
+<h4>Diagramme des statuts d’une convention<a class="headerlink" href="#diagramme-des-statuts-d-une-convention" title="Lien vers cette rubrique">¶</a></h4>
+<p>Représente la vie d’une convention</p>
+<pre  class="mermaid">
+        ---
+title: Diagramme des statuts d'une convention
+---
+flowchart LR
+      Projet[En projet] --&gt; Instruction[À instruire] --&gt; ASigner[À signer] --&gt; Valide --&gt; Résiliation
+      Instruction --&gt; Correction[Corrections requises]
+      Correction --&gt; Instruction
+      Projet --&gt; Annule[Annulation]
+      Instruction --&gt; Annule
+      Correction --&gt; Annule
+      Valide --&gt; Dénonciation
+    </pre></section>
+<section id="gestion-des-avenants">
+<h4>Gestion des avenants<a class="headerlink" href="#gestion-des-avenants" title="Lien vers cette rubrique">¶</a></h4>
+<p>Lors de la création d’avenant, l’ensemble des objets : Opération, Convention, Lot, Logement, Annexe, Type de stationnement, Prêt liées à la convention sont dupliquées et les champs <code class="docutils literal notranslate"><span class="pre">parent_id</span></code> des objets Opérations, Lot et Convention se réfèrent aux objets de la convention principale. L’ordre des avenants est déterminé par leur date de création. il ne peux y avoir qu’un seul avenant en cours d’instruction par convention.</p>
+<pre  class="mermaid">
+        ---
+title: Schéma de l'application des corrections des acteurs
+---
+flowchart RL
+    subgraph Avenant3
+        direction LR
+        Opération3 --&gt; Convention3 --&gt; Lot3 --&gt; Logement3 --&gt; Annexe3
+        Lot3 --&gt; TypeStationnement3
+        Convention3 --&gt; Prêt3
+    end
+    subgraph Avenant2
+        direction LR
+        Opération2 --&gt; Convention2 --&gt; Lot2 --&gt; Logement2 --&gt; Annexe2
+        Lot2 --&gt; TypeStationnement2
+        Convention2 --&gt; Prêt2
+    end
+    subgraph Avenant1
+        direction LR
+        Opération1 --&gt; Convention1 --&gt; Lot1 --&gt; Logement1 --&gt; Annexe1
+        Lot1 --&gt; TypeStationnement1
+        Convention1 --&gt; Prêt1
+    end
+    subgraph ConventionPrincipale
+        direction LR
+        Opération --&gt; Convention --&gt; Lot --&gt; Logement --&gt; Annexe
+        Lot --&gt; TypeStationnement
+        Convention --&gt; Prêt
+    end
+    Avenant1 --&gt; ConventionPrincipale
+    Avenant2 --&gt; ConventionPrincipale
+    Avenant3 --&gt; ConventionPrincipale
+    </pre></section>
+</section>
+<section id="stockage-de-fichiers">
+<h3>Stockage de fichiers<a class="headerlink" href="#stockage-de-fichiers" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les documents sont stockés sur un répertoire distant et souverain compatible avec le protocole S3 sur <a class="reference external" href="https://console.scaleway.com/object-storage/buckets">Scaleway</a> ce processus est géré via la librairie python boto en combinaison avec le package default_storage de Django</p>
+<p>Ce stockage est activé lorsque les variables d’environnement AWS… sont définits.</p>
+<p>Ce stockage s3 est sauvegardé toutes les semaine via une action <a class="reference download internal" download="" href="_downloads/e0139c4346b93baf3ccf065e91e7348f/s3_backup.yml"><span class="xref download myst">github action</span></a></p>
+</section>
+<section id="monitoring-et-alerting-de-l-application-apilos">
+<h3>Monitoring et alerting de l’application APiLos<a class="headerlink" href="#monitoring-et-alerting-de-l-application-apilos" title="Lien vers cette rubrique">¶</a></h3>
+<section id="monitoring-logiciel">
+<h4>Monitoring logiciel<a class="headerlink" href="#monitoring-logiciel" title="Lien vers cette rubrique">¶</a></h4>
+<p>Le monitoring logiciel est assuré via <a class="reference external" href="https://sentry.incubateur.net/organizations/betagouv/projects/apilos/?project=29">Sentry</a> mis à disposition par beta.gouv.fr</p>
+</section>
+</section>
+<section id="monitoring-systeme">
+<h3>Monitoring système<a class="headerlink" href="#monitoring-systeme" title="Lien vers cette rubrique">¶</a></h3>
+<p>APiLos est monitoré par l’outil <a class="reference external" href="https://dashlord.mte.incubateur.net/dashlord/url/apilos-beta-gouv-fr/">Dashlord</a> de la fabrique du numérique du Ministère de la Transition écologique et de la Cohésion des territoires. Dashlord inclut un monitoring via updown.io qui ping l’application toutes les 5 minutes.</p>
+</section>
+</section>
+<section id="siap">
+<h2>SIAP<a class="headerlink" href="#siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Tous les détails concernant les interactions entre APiLos et la platefome SIAP sont décrites dans la documentation <a class="reference internal" href="SIAP-APiLos.html"><span class="std std-doc">SIAP-APiLos.md</span></a></p>
+</section>
+<section id="protection-des-donnees">
+<h2>Protection des données<a class="headerlink" href="#protection-des-donnees" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les CGU sont publiés <a class="reference external" href="https://apilos.beta.gouv.fr/cgu">sur le site APiLos</a> et inclus les obligations relatives au RGPD
+Le rapport d’accessibilité est publié <a class="reference external" href="https://apilos.beta.gouv.fr/accessibilite">sur le site APiLos</a></p>
+</section>
+<section id="statistique-de-la-plateforme">
+<h2>Statistique de la plateforme<a class="headerlink" href="#statistique-de-la-plateforme" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les statistiques d’usage et le suivi des KPIs de la start up d’état sont disponibles sur la <a class="reference external" href="https://apilos.beta.gouv.fr/stats">page de statistique</a></p>
+</section>
+<section id="administration-metier">
+<h2>Administration métier<a class="headerlink" href="#administration-metier" title="Lien vers cette rubrique">¶</a></h2>
+<p>Il est possible d’accéder à l’administration fournie par le framework Django si votre utilisateur est enregistré comme faisant parti du staff ou est super administrateur.</p>
+<p>Il faut d’abord être authentifié par CERBERE puis accéder à l”<a class="reference external" href="https://apilos.logement.gouv.fr/admin/">administration</a></p>
+<section id="edition-des-indices-de-loyer-pour-la-calculette-des-loyers-reprise-d-ecoloweb">
+<h3>Edition des indices de loyer pour la calculette des loyers (reprise d’Ecoloweb)<a class="headerlink" href="#edition-des-indices-de-loyer-pour-la-calculette-des-loyers-reprise-d-ecoloweb" title="Lien vers cette rubrique">¶</a></h3>
+<p>Pour éditer les indices de loyer par année, il faut et suffit de se connecter à l’administration Django et accéder à l”<a class="reference external" href="https://apilos.logements.gouv.fr/admin/programmes/indiceevolutionloyer/">administration des indices de loyer</a></p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sylvain Delabye, Nicolas Oudard
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">APiLos</a><ul>
+<li><a class="reference internal" href="#solution-technique">Solution technique</a><ul>
+<li><a class="reference internal" href="#qualite-de-code">Qualité de code</a><ul>
+<li><a class="reference internal" href="#via-git">Via git</a></li>
+<li><a class="reference internal" href="#pull-request-et-processus-de-revue-de-code">Pull Request et processus de revue de code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deploiement-staging-et-production">Déploiement (Staging et Production)</a></li>
+<li><a class="reference internal" href="#installation-de-la-plateforme-en-local-developpeurs">Installation de la plateforme en local (Developpeurs)</a></li>
+<li><a class="reference internal" href="#envoi-de-mails">Envoi de mails</a></li>
+<li><a class="reference internal" href="#dns-uniquement-pour-la-gestion-des-emails-et-emailists">DNS (uniquement pour la gestion des emails et emailists)</a></li>
+<li><a class="reference internal" href="#bases-de-donnees">Bases de données</a><ul>
+<li><a class="reference internal" href="#diagramme-des-statuts-d-une-convention">Diagramme des statuts d’une convention</a></li>
+<li><a class="reference internal" href="#gestion-des-avenants">Gestion des avenants</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#stockage-de-fichiers">Stockage de fichiers</a></li>
+<li><a class="reference internal" href="#monitoring-et-alerting-de-l-application-apilos">Monitoring et alerting de l’application APiLos</a><ul>
+<li><a class="reference internal" href="#monitoring-logiciel">Monitoring logiciel</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#monitoring-systeme">Monitoring système</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#siap">SIAP</a></li>
+<li><a class="reference internal" href="#protection-des-donnees">Protection des données</a></li>
+<li><a class="reference internal" href="#statistique-de-la-plateforme">Statistique de la plateforme</a></li>
+<li><a class="reference internal" href="#administration-metier">Administration métier</a><ul>
+<li><a class="reference internal" href="#edition-des-indices-de-loyer-pour-la-calculette-des-loyers-reprise-d-ecoloweb">Edition des indices de loyer pour la calculette des loyers (reprise d’Ecoloweb)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d1a510d7"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=e6b791cb"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    </body>
+</html>

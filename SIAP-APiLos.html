@@ -1,0 +1,679 @@
+<!doctype html>
+<html class="no-js" lang="fr" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>Documentation des interactions SIAP APiLos - Documentation APiLos</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="README.html"><div class="brand">Documentation APiLos </div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="README.html">
+  
+  
+  <span class="sidebar-brand-text">Documentation APiLos </span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Recherche" name="q" aria-label="Recherche">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/SIAP-APiLos.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="documentation-des-interactions-siap-apilos">
+<h1>Documentation des interactions SIAP APiLos<a class="headerlink" href="#documentation-des-interactions-siap-apilos" title="Lien vers cette rubrique">¶</a></h1>
+<p><a class="reference external" href="https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866">Tableau de bord des développements communs entre SIAP et APiLos</a></p>
+<section id="environnements">
+<h2>Environnements<a class="headerlink" href="#environnements" title="Lien vers cette rubrique">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-left"><p>Environnement</p></th>
+<th class="head text-left"><p>URL SIAP</p></th>
+<th class="head text-left"><p>URL APiLos version SIAP</p></th>
+<th class="head text-left"><p>Propos de l’environement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-left"><p>Production</p></td>
+<td class="text-left"><p>https://siap.logement.gouv.fr (MTE)</p></td>
+<td class="text-left"><p>https://apilos.logement.gouv.fr</p></td>
+<td class="text-left"><p>Partagé avec la version APiLos autonome de production</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Pilote</p></td>
+<td class="text-left"><p>https://prehabilitation.siap.logement.gouv.fr (MTE)</p></td>
+<td class="text-left"><p>❌</p></td>
+<td class="text-left"><p>Préhabilitation et recette de la reprise de donnée, pas d’intérêt d’avoir une plateforme APiLos en mirroir</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Ecole</p></td>
+<td class="text-left"><p>https://ecole.siap.logement.gouv.fr (MTE)</p></td>
+<td class="text-left"><p>https://siap-ecole.apilos.beta.gouv.fr</p></td>
+<td class="text-left"><p>Utilisé pour les formations</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>Préproduction</p></td>
+<td class="text-left"><p>https://preprod.siap.logement.gouv.fr (MTE)</p></td>
+<td class="text-left"><p>❌</p></td>
+<td class="text-left"><p>Peu d’intérêt d’avoir un environnement mirroir APiLos puisse que ce cas est testé sur tous les autres environnements. Proposition : supprimer le lien avec la plateforme APiLos car l’environnement actuellement utilisé est déjà utilisé par la plateforme recette</p></td>
+</tr>
+<tr class="row-even"><td class="text-left"><p>Recette</p></td>
+<td class="text-left"><p>https://minlog-siap.gateway.recette.sully-group.fr (Sully)</p></td>
+<td class="text-left"><p>https://siap-recette.apilos.beta.gouv.fr</p></td>
+<td class="text-left"><p>Rectte métier</p></td>
+</tr>
+<tr class="row-odd"><td class="text-left"><p>IntAPI</p></td>
+<td class="text-left"><p>https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully)</p></td>
+<td class="text-left"><p>https://siap-integration.apilos.beta.gouv.fr</p></td>
+<td class="text-left"><p>Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="cas-d-utilisation">
+<h2>Cas d’utilisation<a class="headerlink" href="#cas-d-utilisation" title="Lien vers cette rubrique">¶</a></h2>
+<section id="autentification-au-siap-ou-apilos-via-cerbere">
+<h3>Autentification au SIAP ou APiLos via CERBERE<a class="headerlink" href="#autentification-au-siap-ou-apilos-via-cerbere" title="Lien vers cette rubrique">¶</a></h3>
+<p>L’authentification via CERBERE utilise le même protocole pour SIAP et APiLos</p>
+<pre  class="mermaid">
+        sequenceDiagram
+    actor Client
+    participant SIAP / APiLos
+    participant CERBERE
+
+    Note over Client, CERBERE : Client non authentifié
+    Client-&gt;&gt;+SIAP / APiLos: Accès à l'application
+    Client-&gt;&gt;CERBERE: Redirection pour authentification
+    Note over CERBERE: Authentification
+    CERBERE-&gt;&gt;Client: Redirection avec token
+    Client-&gt;&gt;SIAP / APiLos: Accès avec token
+    SIAP / APiLos-&gt;&gt;CERBERE: Vérification du token
+    SIAP / APiLos-&gt;&gt;-Client: Accès identifié
+    Note over Client, CERBERE : Client authentifié
+
+    </pre><p>Bloc nommé <code class="docutils literal notranslate"><span class="pre">Authentification</span> <span class="pre">via</span> <span class="pre">CERBERE</span></code> dans la suite du document</p>
+</section>
+<section id="connexion-au-siap-et-redirection-apilos-siap-via-le-menu">
+<h3>Connexion au SIAP et redirection APiLos / SIAP via le menu<a class="headerlink" href="#connexion-au-siap-et-redirection-apilos-siap-via-le-menu" title="Lien vers cette rubrique">¶</a></h3>
+<pre  class="mermaid">
+        sequenceDiagram
+    actor Client
+    participant SIAP
+    participant APiLos
+
+    Client-&gt;&gt;+SIAP: Accès à la plateforme
+    Note over Client, APiLos: Authentification via CERBERE
+    SIAP-&gt;&gt;-Client: Affichage de la plateforme
+    Note Over Client: clic sur `Oprération &gt; Conventionnement`
+
+    Client-&gt;&gt;+APiLos: Redirection vers APiLos&lt;br&gt;avec habilitation_id active dans l'url
+    Note over Client, APiLos: Authentification via CERBERE
+    APiLos-&gt;&gt;SIAP: GET habilitations
+    APiLos-&gt;&gt;APiLos: CREATE IF NOT EXIST de l'entité de l'habilitation
+    APiLos-&gt;&gt;SIAP: GET menu
+    APiLos-&gt;&gt;-Client: Affichage de l'application avec l'entête selon habilitations
+
+    Note Over Client: clic sur `Opération &gt; Financement`
+    Client-&gt;&gt;SIAP: Redirection vers APiLos&lt;br&gt;avec habilitation_id active dans l'url
+
+    </pre></section>
+<section id="bascule-vers-le-conventionnement-a-partir-d-une-operation-siap">
+<h3>Bascule vers le conventionnement à partir d’une opération SIAP<a class="headerlink" href="#bascule-vers-le-conventionnement-a-partir-d-une-operation-siap" title="Lien vers cette rubrique">¶</a></h3>
+<pre  class="mermaid">
+        sequenceDiagram
+    actor Client
+    participant SIAP
+    participant APiLos
+
+    Client-&gt;&gt;+SIAP: Affichage d'une opération
+    Note over Client, APiLos: Authentification via CERBERE
+    SIAP-&gt;&gt;-Client: Affichage d'une opération
+    Note Over Client: clic sur `Conventionner l'opération`
+    Client-&gt;&gt;+APiLos: Accès à l'application
+    Note over Client, APiLos: Authentification via CERBERE
+    APiLos-&gt;&gt;SIAP: GET habilitations
+    APiLos-&gt;&gt;APiLos: CREATE IF NOT EXIST de l'entité de l'habilitation
+    APiLos-&gt;&gt;SIAP: GET menu
+    APiLos-&gt;&gt;SIAP: GET operation
+    APiLos-&gt;&gt;APiLos: CREATE IF NOT EXIST des conventions de l'opération
+    APiLos-&gt;&gt;-Client: Affichage des conventions de l'opération
+
+    </pre></section>
+<section id="affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap">
+<h3>Affichage des indicateurs de conventionnement dans le ableau de bord du SIAP<a class="headerlink" href="#affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap" title="Lien vers cette rubrique">¶</a></h3>
+<pre  class="mermaid">
+        sequenceDiagram
+    actor Client
+    participant SIAP
+    participant APiLos
+
+    Client-&gt;&gt;+SIAP: Accès au taleau de bord
+    Note over Client, APiLos: Authentification via CERBERE
+
+    SIAP-&gt;&gt;+APiLos: GET indicateur de conventionnement &lt;br&gt; avec utilisateur et habilitation_id
+    APiLos-&gt;&gt;SIAP: GET habilitations
+    APiLos-&gt;&gt;APiLos: CREATE IF NOT EXIST de l'entité de l'habilitation
+    APiLos-&gt;&gt;-SIAP: retour des indicateurs de conventionnement
+    SIAP-&gt;&gt;-Client: Affichage du tableau de bord
+
+    </pre></section>
+</section>
+<section id="interpretation-des-habilitations-siap">
+<h2>Interprétation des Habilitations SIAP<a class="headerlink" href="#interpretation-des-habilitations-siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les habilitations sont interprétées de 3 manières :</p>
+<ol class="arabic simple">
+<li><p>Les Bailleurs</p></li>
+</ol>
+<ul class="simple">
+<li><p>Maitre d’ouvrage personne moral</p></li>
+<li><p>Maitre d’ouvrage personne physique</p></li>
+</ul>
+<p>Les utilisateurs de type bailleur sont autoirisés à voir et modifier les opérations, conventions et objects associés appartenant à l’entité maitrise d’ouvrage définit par l’habilitation active.</p>
+<ol class="arabic simple" start="2">
+<li><p>Les instructeurs (Service gestionaire)</p></li>
+</ol>
+<ul class="simple">
+<li><p>Service gestionnaire</p></li>
+</ul>
+<p>Les utilisateurs de type instructeur sont autoirisés à voir et modifier les opérations, conventions et objects associés appartenant à l’entité administrative définit par l’habilitation active.</p>
+<ol class="arabic simple" start="3">
+<li><p>Les administrateurs</p></li>
+</ol>
+<ul class="simple">
+<li><p>Service départemental</p></li>
+<li><p>Direction régionale</p></li>
+<li><p>Administration centrale</p></li>
+</ul>
+<p>Les utilisateurs de type administrateur sont autoirisés à voir et modifier les opérations, conventions et objects associés selon la géographie du profile : le département, la région ou la france entièrte définit par l’habilitation active.</p>
+</section>
+<section id="partage-d-objet-avec-le-siap">
+<h2>Partage d’objet avec le SIAP<a class="headerlink" href="#partage-d-objet-avec-le-siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les objets de la plateforme de financement (SIAP) sont récupérés et créés à la demande sur APiLos dans 2 cas de figure</p>
+<ol class="arabic simple">
+<li><p>Lorsqu’un utilisateur se connecte sur APiLos:</p>
+<ol class="arabic simple">
+<li><p>APiLos vérifie l’authentification de l’utilisateur via CERBERE</p></li>
+<li><p>APiLos récupère les habilitations de l’utilisateur via le SIAP, l’habilitation active de l’utilisateur est transmise par le SIAP via le paramètre habilitation_id dans l’url. Si ce paramètre n’est pas présent, la première habilitation disponible dans la liste des habilitations récupérées du SIAP sera l’habilitation active.</p></li>
+<li><p>APilos crée le Bailleur ou l’Administration de l’habilitation active de l’utilisateur si cette entité n’existe pas déjà</p></li>
+<li><p>Les permissions associées à l’habilitation active sont stockées en session.</p></li>
+</ol>
+</li>
+<li><p>Lorsqu’un utilisateur accède aux conventions liées à une opération</p>
+<ol class="arabic simple">
+<li><p>APiLos récupère les informations liées à l’opération financée</p></li>
+<li><p>APiLos crée la Bailleur et l’Administration de l’opération si ces entités n’existent pas déjà</p></li>
+<li><p>APiLos crée l’Opération si cette entité n’existent pas déjà</p></li>
+<li><p>APiLos crée 1 lots par Aide (PLUS, PLAI, PLS…) si ces lot n’exitent pas déjà, note : l’aide PLAI_ADP (PLAI adapté) sont inclus dans dans l’aide PLAI et nefont pas l’objet de convention spécifique</p></li>
+<li><p>APiLos crée 1 convention par lots si cette convention n’existe pas déjà</p></li>
+</ol>
+</li>
+</ol>
+<section id="details-des-objets-partages-par-le-siap-et-repris-dans-apilos">
+<h3>Détails des objets partagés par le SIAP et repris dans APiLos<a class="headerlink" href="#details-des-objets-partages-par-le-siap-et-repris-dans-apilos" title="Lien vers cette rubrique">¶</a></h3>
+<p>On notera : <code class="docutils literal notranslate"><span class="pre">champ_siap</span></code> (<code class="docutils literal notranslate"><span class="pre">champ_apilos</span></code> details)</p>
+<ul class="simple">
+<li><p>Les Administrations</p>
+<ul>
+<li><p>champ pivot : <code class="docutils literal notranslate"><span class="pre">code</span></code> (<code class="docutils literal notranslate"><span class="pre">code</span></code> de l’administration)</p></li>
+<li><p>champs repris lors de la création : <code class="docutils literal notranslate"><span class="pre">libelle</span></code> (<code class="docutils literal notranslate"><span class="pre">nom</span></code> de l’administration)</p></li>
+</ul>
+</li>
+<li><p>Les Bailleurs</p>
+<ul>
+<li><p>champ pivot : <code class="docutils literal notranslate"><span class="pre">siren</span></code></p></li>
+<li><p>champs repris lors de la création :</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">nom</span></code> ou <code class="docutils literal notranslate"><span class="pre">raisonSociale</span></code> (<code class="docutils literal notranslate"><span class="pre">nom</span></code> du bailleur)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adresse</span></code> interprété des champs d’adresses du SIAP (<code class="docutils literal notranslate"><span class="pre">adresse</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">codePostal</span></code> (<code class="docutils literal notranslate"><span class="pre">code_postal</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ville</span></code> interprété des champs d’adresses du SIAP (<code class="docutils literal notranslate"><span class="pre">ville</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">codeFamilleMO</span></code> (nature du bailleur)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Les Opérations (opérations financées via le SIAP)</p>
+<ul>
+<li><p>champ pivot : <code class="docutils literal notranslate"><span class="pre">numeroOperation</span></code> (numero_operation)</p></li>
+<li><p>champs repris lors de la création :</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">nomOperation</span></code> (<code class="docutils literal notranslate"><span class="pre">nom</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">adresse</span></code> interprété des champs d’adresses du SIAP (<code class="docutils literal notranslate"><span class="pre">adresse</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">code_postal</span></code> interprété des champs d’adresses du SIAP (<code class="docutils literal notranslate"><span class="pre">code_postal</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ville</span></code> interprété des champs d’adresses du SIAP (<code class="docutils literal notranslate"><span class="pre">ville</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">commune</span></code>/<code class="docutils literal notranslate"><span class="pre">codeInsee</span></code> (<code class="docutils literal notranslate"><span class="pre">code_insee_commune</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">departement</span></code>/<code class="docutils literal notranslate"><span class="pre">codeInsee</span></code> (<code class="docutils literal notranslate"><span class="pre">code_insee_departement</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">region</span></code>/<code class="docutils literal notranslate"><span class="pre">codeInsee</span></code> (<code class="docutils literal notranslate"><span class="pre">code_insee_region</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zonage123</span></code> (<code class="docutils literal notranslate"><span class="pre">zone_abc</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">zonageABC</span></code> (<code class="docutils literal notranslate"><span class="pre">zone_123</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">sansTravaux</span></code> ou <code class="docutils literal notranslate"><span class="pre">sousNatureOperation</span></code> (<code class="docutils literal notranslate"><span class="pre">type_operation</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">natureLogement</span></code> (<code class="docutils literal notranslate"><span class="pre">nature_logement</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Les Lots ( un lot par financement et par Opération)</p>
+<ul>
+<li><p>champ pivot : <code class="docutils literal notranslate"><span class="pre">numero</span></code> de l’opération + <code class="docutils literal notranslate"><span class="pre">financement</span></code></p></li>
+<li><p>champs repris lors de la création :</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">aide</span></code>/<code class="docutils literal notranslate"><span class="pre">code</span></code> (<code class="docutils literal notranslate"><span class="pre">financement</span></code>)</p></li>
+<li><p>selon les valeurs <code class="docutils literal notranslate"><span class="pre">nbLogementsIndividuels</span></code>, <code class="docutils literal notranslate"><span class="pre">nbLogementsCollectifs</span></code> (<code class="docutils literal notranslate"><span class="pre">type_habitat</span></code> COLLECTIF, INDIVIDUEL ou MIXTE),</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nbLogementsIndividuels</span></code> + <code class="docutils literal notranslate"><span class="pre">nbLogementsCollectifs</span></code> (<code class="docutils literal notranslate"><span class="pre">nb_logements</span></code>)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="les-valeurs-des-listes-valuees-et-leurs-correspondances">
+<h3>Les valeurs des listes valuées et leurs correspondances<a class="headerlink" href="#les-valeurs-des-listes-valuees-et-leurs-correspondances" title="Lien vers cette rubrique">¶</a></h3>
+<section id="nature-du-bailleur-siap-apilos">
+<h4>Nature du bailleur (SIAP -&gt; APiLos)<a class="headerlink" href="#nature-du-bailleur-siap-apilos" title="Lien vers cette rubrique">¶</a></h4>
+<ul class="simple">
+<li><p>HLM -&gt; HLM</p></li>
+<li><p>SEM -&gt; SEM</p></li>
+<li><p>par défaut (toute autre valeur) -&gt; Bailleurs privés</p></li>
+</ul>
+</section>
+<section id="type-de-l-operation-depend-des-champs-sanstravaux-ou-sousnatureoperation-siap-apilos">
+<h4>Type de l’opération (dépend des champs <code class="docutils literal notranslate"><span class="pre">sansTravaux</span></code> ou <code class="docutils literal notranslate"><span class="pre">sousNatureOperation</span></code>) (SIAP -&gt; APiLos)<a class="headerlink" href="#type-de-l-operation-depend-des-champs-sanstravaux-ou-sousnatureoperation-siap-apilos" title="Lien vers cette rubrique">¶</a></h4>
+<ul class="simple">
+<li><p>Si <code class="docutils literal notranslate"><span class="pre">sansTravaux</span></code> = 1 -&gt; SANSTRAVAUX</p></li>
+<li><p>CNE -&gt; NEUF</p></li>
+<li><p>AAM -&gt; ACQUISAMELIORATION</p></li>
+<li><p>AST -&gt; ACQUISSANSTRAVAUX</p></li>
+<li><p>par défaut (toute autre valeur) -&gt; SANSOBJET</p></li>
+</ul>
+</section>
+<section id="nature-logement-siap-apilos">
+<h4>Nature logement (SIAP -&gt; APiLos)<a class="headerlink" href="#nature-logement-siap-apilos" title="Lien vers cette rubrique">¶</a></h4>
+<ul class="simple">
+<li><p>ALF -&gt; AUTRE</p></li>
+<li><p>HEB -&gt; HEBERGEMENT</p></li>
+<li><p>RES -&gt; RESISDENCESOCIALE</p></li>
+<li><p>PEF -&gt; PENSIONSDEFAMILLE</p></li>
+<li><p>REA -&gt; RESIDENCEDACCUEIL</p></li>
+<li><p>REU -&gt; RESIDENCEUNIVERSITAIRE</p></li>
+<li><p>RHVS -&gt; RHVS</p></li>
+<li><p>LOO -&gt; LOGEMENTSORDINAIRES</p></li>
+</ul>
+<p>Par défaut la valeur LOGEMENTSORDINAIRES est appliquée</p>
+</section>
+</section>
+</section>
+<section id="pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">
+<h2>Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)<a class="headerlink" href="#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos" title="Lien vers cette rubrique">¶</a></h2>
+<p>Récupérer l’email de l’utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
+Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d’habilitation en haut à droite de l’écran</p>
+<p>Ouvrir un shell django, puis tester quelques appels:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">siap.siap_client.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">SIAPClient</span>
+<span class="n">SIAPClient</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_habilitations</span><span class="p">(</span><span class="n">user_login</span><span class="o">=</span><span class="s1">&#39;user@domain.com&#39;</span><span class="p">)</span>
+<span class="n">SIAPClient</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_menu</span><span class="p">(</span><span class="n">user_login</span><span class="o">=</span><span class="s1">&#39;user@domain.com&#39;</span><span class="p">,</span> <span class="n">habilitation_id</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">SIAPClient</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_operation</span><span class="p">(</span><span class="n">user_login</span><span class="o">=</span><span class="s1">&#39;user@domain.com&#39;</span><span class="p">,</span> <span class="n">habilitation_id</span><span class="o">=</span><span class="mi">27</span><span class="p">,</span> <span class="n">operation_identifier</span><span class="o">=</span><span class="s1">&#39;20221000003&#39;</span><span class="p">)</span>
+<span class="n">SIAPClient</span><span class="o">.</span><span class="n">get_instance</span><span class="p">()</span><span class="o">.</span><span class="n">get_fusion</span><span class="p">(</span><span class="n">user_login</span><span class="o">=</span><span class="s1">&#39;user@domain.com&#39;</span><span class="p">,</span> <span class="n">habilitation_id</span><span class="o">=</span><span class="mi">123</span><span class="p">,</span> <span class="n">bailleur_siren</span><span class="o">=</span><span class="s2">&quot;123456789&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">
+<h2>Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)<a class="headerlink" href="#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Récupérer l’email de l’utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
+Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d’habilitation en haut à droite de l’écran</p>
+<p>Ouvrir un shell django, pour générer un Token JWT :</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">siap.siap_client.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_jwt</span>
+<span class="n">build_jwt</span><span class="p">(</span><span class="n">user_login</span><span class="o">=</span><span class="s2">&quot;my.name@beta.gouv.fr&quot;</span><span class="p">,</span> <span class="n">habilitation_id</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Accéder à l’interface de test : <HOST>/api-siap/v0/schema-ui/#/statistics/convention_kpi_list</p>
+<p>Cliquez sur le bouton <code class="docutils literal notranslate"><span class="pre">Authorize</span></code> à droite de d’écran et copier le JWT token</p>
+<p>L’ensemble des fonctions de la page sont maintenant testables</p>
+<p>⚠️ Attention, le token JWT n’est valide que 5 minutes</p>
+<section id="exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt">
+<h3>Exemple du contenu du token JWT généré par la fonction build_jwt<a class="headerlink" href="#exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;iat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1555458148</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;exp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2655458448</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;token_type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;access&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;jti&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;c14f318c99024a398a39281d3827e612&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;user-login&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;user@domain.com&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;habilitation-id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">6</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Il est possible aussi de générer de token via un site tel que https://jwt.io/ et en utilisant la clé JWT_SIGN_KEY pour signer le token</p>
+</section>
+</section>
+<section id="questions-ouvertes-pour-plus-tard">
+<h2>Questions ouvertes pour plus tard<a class="headerlink" href="#questions-ouvertes-pour-plus-tard" title="Lien vers cette rubrique">¶</a></h2>
+<ul class="simple">
+<li><p>[ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP</p></li>
+<li><p>[ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes</p></li>
+</ul>
+</section>
+<section id="comportement-apilos-lors-de-l-acces-a-une-operation-siap">
+<h2>Comportement APilos lors de l’accès à une opération SIAP<a class="headerlink" href="#comportement-apilos-lors-de-l-acces-a-une-operation-siap" title="Lien vers cette rubrique">¶</a></h2>
+<pre  class="mermaid">
+        graph TD
+    A[&quot;route /operations/num_op&quot;] --&gt; B[Collect Programmes, on collecte l'ensemble des programmes qui ont le numéro d'opération]
+    B --&gt; C{programmes existants ?}
+    C --&gt;|Oui| D[Collect Conventions, on collecte l'ensemble des conventions et leurs lots]
+    C --&gt;|Non| E[Creation du Programme]
+    E --&gt; F{Progrmme de type SECONDE_VIE ?}
+    F --&gt;|Oui| G[Gestion en mode seconde vie]
+    F --&gt;|Non| D
+    D --&gt; I{&quot;Conventions (non annulées) alignées sur les financement de l'opération ?&quot;}
+    I --&gt;|Oui| J[Affichage des conventions]
+    I --&gt;|Non| K{On ne trouve pas de conventions correspondant à chacun des financements de l'opération}
+    K --&gt;|Oui| L[Création des conventions/lots manquantes]
+    L --&gt; M{il y a trop de conventions : plusieurs conventions trouvé par type de financement?}
+    M --&gt; N[Création de messages d'erreur]
+    N --&gt; J
+    </pre></section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sylvain Delabye, Nicolas Oudard
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Documentation des interactions SIAP APiLos</a><ul>
+<li><a class="reference internal" href="#environnements">Environnements</a></li>
+<li><a class="reference internal" href="#cas-d-utilisation">Cas d’utilisation</a><ul>
+<li><a class="reference internal" href="#autentification-au-siap-ou-apilos-via-cerbere">Autentification au SIAP ou APiLos via CERBERE</a></li>
+<li><a class="reference internal" href="#connexion-au-siap-et-redirection-apilos-siap-via-le-menu">Connexion au SIAP et redirection APiLos / SIAP via le menu</a></li>
+<li><a class="reference internal" href="#bascule-vers-le-conventionnement-a-partir-d-une-operation-siap">Bascule vers le conventionnement à partir d’une opération SIAP</a></li>
+<li><a class="reference internal" href="#affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap">Affichage des indicateurs de conventionnement dans le ableau de bord du SIAP</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#interpretation-des-habilitations-siap">Interprétation des Habilitations SIAP</a></li>
+<li><a class="reference internal" href="#partage-d-objet-avec-le-siap">Partage d’objet avec le SIAP</a><ul>
+<li><a class="reference internal" href="#details-des-objets-partages-par-le-siap-et-repris-dans-apilos">Détails des objets partagés par le SIAP et repris dans APiLos</a></li>
+<li><a class="reference internal" href="#les-valeurs-des-listes-valuees-et-leurs-correspondances">Les valeurs des listes valuées et leurs correspondances</a><ul>
+<li><a class="reference internal" href="#nature-du-bailleur-siap-apilos">Nature du bailleur (SIAP -&gt; APiLos)</a></li>
+<li><a class="reference internal" href="#type-de-l-operation-depend-des-champs-sanstravaux-ou-sousnatureoperation-siap-apilos">Type de l’opération (dépend des champs <code class="docutils literal notranslate"><span class="pre">sansTravaux</span></code> ou <code class="docutils literal notranslate"><span class="pre">sousNatureOperation</span></code>) (SIAP -&gt; APiLos)</a></li>
+<li><a class="reference internal" href="#nature-logement-siap-apilos">Nature logement (SIAP -&gt; APiLos)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)</a></li>
+<li><a class="reference internal" href="#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)</a><ul>
+<li><a class="reference internal" href="#exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt">Exemple du contenu du token JWT généré par la fonction build_jwt</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#questions-ouvertes-pour-plus-tard">Questions ouvertes pour plus tard</a></li>
+<li><a class="reference internal" href="#comportement-apilos-lors-de-l-acces-a-une-operation-siap">Comportement APilos lors de l’accès à une opération SIAP</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d1a510d7"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=e6b791cb"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs"></script>
+    <script type="module">import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";import elkLayouts from "https://cdn.jsdelivr.net/npm/@mermaid-js/layout-elk@0.1.4/dist/mermaid-layout-elk.esm.min.mjs";mermaid.registerLayoutLoaders(elkLayouts);mermaid.initialize({startOnLoad:false});</script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.2.0/dist/mermaid.esm.min.mjs";
+window.addEventListener("load", () => mermaid.run());
+</script>
+    </body>
+</html>

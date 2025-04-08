@@ -1,0 +1,342 @@
+# DEVELOPPEMENT
+
+Cette documentation décrit toutes les étapes nécessaires à l'intallation et au développement de la plateforme APiLos.
+
+Les règles et standards de codage y sont décrits
+
+## Quelques détails sur la stack technique utilisée
+
+### Framework et langages de programmation
+
+#### Django / Python
+
+On utilise le framework python Django
+
+Dans la plus part des cas la logique logicielle est découpée comme suit
+
+* Les vues : prennent en charges les permissions et affichages des pages
+* Les services : prennent en charge la logique métier avec l'execution des formulaires
+* Les formulaires : définissent les règles métiers
+* Les models : assurent la cohérence du schéma et des objets en base de données
+
+##### Génération de documents xls et pdf
+
+APiLos est un outils permettant de générer un document contractuel de convention APL.
+
+La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](../documents)
+
+Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
+
+##### Import de firchiers excel
+
+Lors de l'instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes. Le package openpyxl est utilisé pour l'interprétation des fichiers xlsx
+
+#### Javascript
+
+Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](../package.json)
+
+Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
+
+```sh
+npm install
+```
+
+## Installation
+
+La plateforme APiLos est open source et la gestion de version est assuré via Github. La première étape est donc de cloner ce repository github.
+
+### Prérequis
+
+Les services Postgresql et Redis utilisés par APiLos sont dockerisés
+Python et Node sont nécessaires pour faire lancer l'application
+Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python et node d'APiLos (asdf par exemple)
+
+- Python >=3.10
+- Node >=18.14
+- docker
+- docker-compose
+
+### Environment virtuel python
+
+```sh
+python -m venv .venv --prompt $(basename $(pwd))
+source .venv/bin/activate
+```
+
+### Services docker
+
+```sh
+docker-compose build
+docker-compose up -d
+```
+
+### Variables d'environnement
+
+Copier les [.env.template](../.env.template) dans un fichier `.env` et [.env.test](../.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
+
+```sh
+cp .env.template .env
+cp .env.test .env.test.local
+```
+
+Par exemple:
+
+```ini
+DB_USER=apilos
+DB_NAME=apilos
+DB_HOST=localhost
+DB_PASSWORD=apilos
+DB_PORT=5433
+```
+
+### Installer les dépendances python
+
+On utilise pip-tools pour gérer les dépendances `python`
+
+```sh
+pip install pip-tools
+pip install -r requirements.txt -r dev-requirements.txt
+```
+
+### Installer les dependances npm
+
+```sh
+npm install
+```
+
+### Executer les migrations
+
+```sh
+python manage.py migrate
+```
+
+### Populer les permissions et les roles et les departements
+
+```sh
+python manage.py loaddata auth.json departements.json
+```
+
+#### Modifier les permissions
+
+Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
+
+```sh
+python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json
+```
+
+### Créer un super utilisateur
+
+```sh
+python manage.py createsuperuser
+```
+
+## Lancer de l'application
+
+On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](../Procfile.dev)
+
+```sh
+honcho start -f Procfile.dev
+```
+
+L'application est désormais disponible à l'adresse [http://localhost:8001](http://localhost:8001)
+
+### Population de la base de donnnées en environnement de développement
+
+Ajout de bailleurs, administrations, programmes et lots de test
+
+```sh
+python manage.py load_test_fixtures
+```
+
+### ClamAV (optionnel)
+
+ClamAV est utilisé pour le scan des fichiers uploadés.
+Une version _as-a-service_ est utilisée.
+Pour développer localement, il est nécessaire d'utiliser [le projet dédié](https://github.com/betagouv/clamav-service).
+
+Pour l'utiliser, depuis un autre répertoire que le dépôt courant :
+
+```sh
+git clone git@github.com:betagouv/clamav-service.git
+cd clamav-service
+make up
+```
+
+Le service expose l'API sur le port 3310, celui-ci doit être défini dans le fichier `.env` de `APiLos`.
+Basé sur `.env.template`, définir la variable d'environnement `CLAMAV_SERVICE_URL` dans le fichier `.env` :
+```sh
+# .env
+# other environment variables ...
+CLAMAV_SERVICE_URL=http://localhost:3310
+```
+
+## Qualité de code
+
+### Tests
+
+La librairie pytest est utilisée pour lancer les tests.
+Quelques tests d'intégration utilisent la libraire `beautifulsoup` quand il est nécessaire d'inspecter le DOM.
+La librairie factory_boy est utilisé pour gérer des fixtures
+
+Les tests sont organisés comme suit :
+
+* Tests unitaires : APPNAME/tests/models/…
+* Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…
+
+### Lancement des tests
+
+L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
+
+```sh
+pytest
+```
+
+et pour les lancer avec un test de coverage et afficher le rapport :
+
+```sh
+coverage run -m pytest
+coverage report
+```
+
+### Installer les hooks de pre-commit
+
+Pour installer les git hook de pre-commit, installer le package precommit et installer les hooks en executant pre-commit
+
+```sh
+pip install pre-commit
+pre-commit install
+```
+
+## Les API
+
+Plus de détails sur la doc dédiée [API.md](API.md)
+
+## Ajouter des dépendances avec pip-tools
+
+Ajouter les dépendances dans requirements.in ou dev-requirements.in
+
+Puis compiler (recquiert l'installation de `pip-tools`):
+
+```sh
+make freeze-requirements
+```
+
+Et installer
+
+```sh
+pip install -r requirements.txt -r dev-requirements.txt
+```
+
+## Manipulations de développement
+
+### Restaurer un dump de base de données
+
+Afin de restaurer _proprement_ un fichier de dump de base de données, en supprimant au préalable les tables existantes,
+on peut jouer le script suivant :
+
+```bash
+DUMP_FILE=</path/to/dump/file>
+DB_URL=postgres://apilos:apilos@localhost:5433/apilos
+
+for table in $(psql "${DB_URL}" -t -c "SELECT \"tablename\" FROM pg_tables WHERE schemaname='public'"); do
+     psql "${DB_URL}" -c "DROP TABLE IF EXISTS \"${table}\" CASCADE;"
+done
+pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
+```
+
+Note : le fichier de dump est a l'extension `pgsql`
+
+### Restaurer un dump sur un environnement Scalingo
+
+**⚠️⚠️⚠️ Cette opération va supprimer les données sur l'environnement cible, n'executer cette commande que si vous êtes sûr de vous.**
+
+Ouvrir un tunnel (cf. le dashboard de la base de données) :
+
+```sh
+DB_URL=postgres://<user>:<password>@<server>:<port>/<database>?sslmode=prefer
+scalingo --app my-app db-tunnel --identity ~/.ssh/my_ssh_key $DB_URL
+```
+
+la commande retourne l'url d'accès à la base de données
+
+```
+Building tunnel to apilos-stag-3603.postgresql.dbs.scalingo.com:37228
+You can access your database on:
+127.0.0.1:10000
+```
+
+Dans un autre terminal, lancer la restauration
+
+```sh
+DB_URL=postgres://<user>:<password>@127.0.0.1:10000/<database>?sslmode=prefer
+DUMP_FILE=</path/to/dump/file>
+pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
+```
+
+## MOCK CERBERE
+
+En cas de non disponibilité de CERBERE en recette, il est possible de bouchonner l'authentification via CERBERE en définisant en variable d'environnement l'id de l'utilisateur à authentifier (à récupérer en base de données directement):
+
+```sh
+# Mock Cerbere user id - in case of CERBERE authentication failure
+MOCK_CERBERE_USER_ID=
+```
+
+Si cette variable est définie, alors l'utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.
+
+## Statistiques de développement
+
+Pour suivre le travail et les performances de développement de l'équipe APiLos, On extrait régulièrement des statistiques en inspectant les releases et PR github.
+Les indicateurs sont extraits et agrégés par mois :
+
+* nb version majeur
+* nb version mineur
+* nb version de patch
+* nb d'évolutions livrées
+* nb de corrections livrées
+* nb de mises à jour de dépendances
+* nb de mises à jour technique
+* nb de mises à jour de documentation
+* nb d'escalades (demande de correction faite par l'équipe support suite à des retours des utilisateurs)
+* nb de régressions (ça arrive :) )
+
+Ces statistiques sont basées sur l'interprétation des numéros de release qui utilise la convention `semantic versionning` (vx.y.z, x majeur, y mineur, z patch) et sur l'inspection des tags des PR de chaque release : cela est possible car on utilise la fonction `squash and merge` de github lors de l'intégration de la PR sur la branche principale `main`, on a un commit par PR sur la branche main.
+
+### Catégoriser les PR
+
+Pour que le script d'extraction marche correctement, il est nécessaire de catégoriser les PR en les taguant avec les labels comme suit:
+
+* bug
+* enhancement
+* documentation
+* technical
+* dependencies (tags déposé automatiquement par dépendadot lorsqu'il ouvre une PR)
+
+Cette catégorisation est inspirée des labels proposés par défaut par Github
+
+On ajoute aussi 2 labels en plus de cette catégorisation lorsque c'est approprié :
+
+* escalation : quand la PR vient de notre processus d'escalade avec l'équipe Support
+* regression : Pour le suivi des regressions
+
+### Processus d'extraction des statistiques de developpement
+
+Créer un token GitHub :
+
+* Accéder à https://github.com
+* Accéder au menu de votre profile
+* Cliquer sur le menu `Settings`
+* Cliquer sur le menu `Developper settings`
+* Cliquer sur le menu `Personal access token` > `Tokens (classic)`
+* Cliquer sur le bouton `Generate new token` > `Generate new token (classic)`
+* Selectionner les options `public_repo`, `read:project`, `repo:status`, `repo_deployment`
+* Créer le token et copier le
+
+Lancer le script d'extraction des statistiques:
+
+```sh
+export GITHUB_TOKEN=<GITHUB_TOKEN>
+python manage.py get_delivery_statistics --token $GITHUB_TOKEN --output DEV_STATISTICS.csv
+```
+
+Les statistiques de développement par mois sont disponibles dans le fichier `DEV_STATISTICS.csv`

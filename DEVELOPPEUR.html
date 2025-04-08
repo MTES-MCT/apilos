@@ -1,0 +1,659 @@
+<!doctype html>
+<html class="no-js" lang="fr" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>DEVELOPPEMENT - Documentation APiLos</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="README.html"><div class="brand">Documentation APiLos </div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="README.html">
+  
+  
+  <span class="sidebar-brand-text">Documentation APiLos </span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Recherche" name="q" aria-label="Recherche">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/DEVELOPPEUR.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="developpement">
+<h1>DEVELOPPEMENT<a class="headerlink" href="#developpement" title="Lien vers cette rubrique">¶</a></h1>
+<p>Cette documentation décrit toutes les étapes nécessaires à l’intallation et au développement de la plateforme APiLos.</p>
+<p>Les règles et standards de codage y sont décrits</p>
+<section id="quelques-details-sur-la-stack-technique-utilisee">
+<h2>Quelques détails sur la stack technique utilisée<a class="headerlink" href="#quelques-details-sur-la-stack-technique-utilisee" title="Lien vers cette rubrique">¶</a></h2>
+<section id="framework-et-langages-de-programmation">
+<h3>Framework et langages de programmation<a class="headerlink" href="#framework-et-langages-de-programmation" title="Lien vers cette rubrique">¶</a></h3>
+<section id="django-python">
+<h4>Django / Python<a class="headerlink" href="#django-python" title="Lien vers cette rubrique">¶</a></h4>
+<p>On utilise le framework python Django</p>
+<p>Dans la plus part des cas la logique logicielle est découpée comme suit</p>
+<ul class="simple">
+<li><p>Les vues : prennent en charges les permissions et affichages des pages</p></li>
+<li><p>Les services : prennent en charge la logique métier avec l’execution des formulaires</p></li>
+<li><p>Les formulaires : définissent les règles métiers</p></li>
+<li><p>Les models : assurent la cohérence du schéma et des objets en base de données</p></li>
+</ul>
+<section id="generation-de-documents-xls-et-pdf">
+<h5>Génération de documents xls et pdf<a class="headerlink" href="#generation-de-documents-xls-et-pdf" title="Lien vers cette rubrique">¶</a></h5>
+<p>APiLos est un outils permettant de générer un document contractuel de convention APL.</p>
+<p>La génération de document de convention au format .docx est prise en charge par la librairie <a class="reference external" href="https://docxtpl.readthedocs.io/en/latest/">python-docx-template</a> qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier <a class="reference internal" href="#../documents"><span class="xref myst">./documents</span></a></p>
+<p>Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L’application <a class="reference external" href="https://https://fr.libreoffice.org/discover/libreoffice/">Libreoffice</a> est utilisée pour générer une version pdf du document docx.</p>
+</section>
+<section id="import-de-firchiers-excel">
+<h5>Import de firchiers excel<a class="headerlink" href="#import-de-firchiers-excel" title="Lien vers cette rubrique">¶</a></h5>
+<p>Lors de l’instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes. Le package openpyxl est utilisé pour l’interprétation des fichiers xlsx</p>
+</section>
+</section>
+<section id="javascript">
+<h4>Javascript<a class="headerlink" href="#javascript" title="Lien vers cette rubrique">¶</a></h4>
+<p>Peu de JS est utilisé dans l’application. Les dépendances sont déclarées dans le fichier <a class="reference download internal" download="" href="_downloads/107ae6f6a70591a8435722bf4be2e286/package.json"><span class="xref download myst">package.json</span></a></p>
+<p>Avant de lancer l’application, il est nécessaire d’installer ces dépendances:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Lien vers cette rubrique">¶</a></h2>
+<p>La plateforme APiLos est open source et la gestion de version est assuré via Github. La première étape est donc de cloner ce repository github.</p>
+<section id="prerequis">
+<h3>Prérequis<a class="headerlink" href="#prerequis" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les services Postgresql et Redis utilisés par APiLos sont dockerisés
+Python et Node sont nécessaires pour faire lancer l’application
+Il est conseillé d’installer un environnment virtuel pour isoler l’environnement python et node d’APiLos (asdf par exemple)</p>
+<ul class="simple">
+<li><p>Python &gt;=3.10</p></li>
+<li><p>Node &gt;=18.14</p></li>
+<li><p>docker</p></li>
+<li><p>docker-compose</p></li>
+</ul>
+</section>
+<section id="environment-virtuel-python">
+<h3>Environment virtuel python<a class="headerlink" href="#environment-virtuel-python" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span>--prompt<span class="w"> </span><span class="k">$(</span>basename<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">))</span>
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</pre></div>
+</div>
+</section>
+<section id="services-docker">
+<h3>Services docker<a class="headerlink" href="#services-docker" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>build
+docker-compose<span class="w"> </span>up<span class="w"> </span>-d
+</pre></div>
+</div>
+</section>
+<section id="variables-d-environnement">
+<h3>Variables d’environnement<a class="headerlink" href="#variables-d-environnement" title="Lien vers cette rubrique">¶</a></h3>
+<p>Copier les <a class="reference download internal" download="" href="_downloads/076c3c84591bf93ec4d66f3c60b8f97a/.env.template"><span class="xref download myst">.env.template</span></a> dans un fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> et <a class="reference download internal" download="" href="_downloads/e28f130f1719e0574875616dfd2ecdf6/.env.test"><span class="xref download myst">.env.test</span></a> dans <code class="docutils literal notranslate"><span class="pre">.env.test.local</span></code> puis mettre à jour les variables d’environements.</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>.env.template<span class="w"> </span>.env
+cp<span class="w"> </span>.env.test<span class="w"> </span>.env.test.local
+</pre></div>
+</div>
+<p>Par exemple:</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">DB_USER</span><span class="o">=</span><span class="s">apilos</span>
+<span class="na">DB_NAME</span><span class="o">=</span><span class="s">apilos</span>
+<span class="na">DB_HOST</span><span class="o">=</span><span class="s">localhost</span>
+<span class="na">DB_PASSWORD</span><span class="o">=</span><span class="s">apilos</span>
+<span class="na">DB_PORT</span><span class="o">=</span><span class="s">5433</span>
+</pre></div>
+</div>
+</section>
+<section id="installer-les-dependances-python">
+<h3>Installer les dépendances python<a class="headerlink" href="#installer-les-dependances-python" title="Lien vers cette rubrique">¶</a></h3>
+<p>On utilise pip-tools pour gérer les dépendances <code class="docutils literal notranslate"><span class="pre">python</span></code></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pip-tools
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>-r<span class="w"> </span>dev-requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="installer-les-dependances-npm">
+<h3>Installer les dependances npm<a class="headerlink" href="#installer-les-dependances-npm" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+<section id="executer-les-migrations">
+<h3>Executer les migrations<a class="headerlink" href="#executer-les-migrations" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
+</pre></div>
+</div>
+</section>
+<section id="populer-les-permissions-et-les-roles-et-les-departements">
+<h3>Populer les permissions et les roles et les departements<a class="headerlink" href="#populer-les-permissions-et-les-roles-et-les-departements" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>loaddata<span class="w"> </span>auth.json<span class="w"> </span>departements.json
+</pre></div>
+</div>
+<section id="modifier-les-permissions">
+<h4>Modifier les permissions<a class="headerlink" href="#modifier-les-permissions" title="Lien vers cette rubrique">¶</a></h4>
+<p>Pour modifier les permissions, il suffit de modifier dans l’interface d’administration puis d’exporter les données d’authentification :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>dumpdata<span class="w"> </span>auth<span class="w"> </span>--natural-foreign<span class="w"> </span>--natural-primary<span class="w"> </span>&gt;<span class="w"> </span>users/fixtures/auth.json
+</pre></div>
+</div>
+</section>
+</section>
+<section id="creer-un-super-utilisateur">
+<h3>Créer un super utilisateur<a class="headerlink" href="#creer-un-super-utilisateur" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>createsuperuser
+</pre></div>
+</div>
+</section>
+</section>
+<section id="lancer-de-l-application">
+<h2>Lancer de l’application<a class="headerlink" href="#lancer-de-l-application" title="Lien vers cette rubrique">¶</a></h2>
+<p>On utilise la librairie  <code class="docutils literal notranslate"><span class="pre">honcho</span></code> en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier <a class="reference download internal" download="" href="_downloads/9d6b62a1a5bdfbe7c26b02cc0b6aa0ca/Procfile.dev"><span class="xref download myst">Procfile.dev</span></a></p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>honcho<span class="w"> </span>start<span class="w"> </span>-f<span class="w"> </span>Procfile.dev
+</pre></div>
+</div>
+<p>L’application est désormais disponible à l’adresse <a class="reference external" href="http://localhost:8001">http://localhost:8001</a></p>
+<section id="population-de-la-base-de-donnnees-en-environnement-de-developpement">
+<h3>Population de la base de donnnées en environnement de développement<a class="headerlink" href="#population-de-la-base-de-donnnees-en-environnement-de-developpement" title="Lien vers cette rubrique">¶</a></h3>
+<p>Ajout de bailleurs, administrations, programmes et lots de test</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>load_test_fixtures
+</pre></div>
+</div>
+</section>
+<section id="clamav-optionnel">
+<h3>ClamAV (optionnel)<a class="headerlink" href="#clamav-optionnel" title="Lien vers cette rubrique">¶</a></h3>
+<p>ClamAV est utilisé pour le scan des fichiers uploadés.
+Une version <em>as-a-service</em> est utilisée.
+Pour développer localement, il est nécessaire d’utiliser <a class="reference external" href="https://github.com/betagouv/clamav-service">le projet dédié</a>.</p>
+<p>Pour l’utiliser, depuis un autre répertoire que le dépôt courant :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:betagouv/clamav-service.git
+<span class="nb">cd</span><span class="w"> </span>clamav-service
+make<span class="w"> </span>up
+</pre></div>
+</div>
+<p>Le service expose l’API sur le port 3310, celui-ci doit être défini dans le fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> de <code class="docutils literal notranslate"><span class="pre">APiLos</span></code>.
+Basé sur <code class="docutils literal notranslate"><span class="pre">.env.template</span></code>, définir la variable d’environnement <code class="docutils literal notranslate"><span class="pre">CLAMAV_SERVICE_URL</span></code> dans le fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># .env</span>
+<span class="c1"># other environment variables ...</span>
+<span class="nv">CLAMAV_SERVICE_URL</span><span class="o">=</span>http://localhost:3310
+</pre></div>
+</div>
+</section>
+</section>
+<section id="qualite-de-code">
+<h2>Qualité de code<a class="headerlink" href="#qualite-de-code" title="Lien vers cette rubrique">¶</a></h2>
+<section id="tests">
+<h3>Tests<a class="headerlink" href="#tests" title="Lien vers cette rubrique">¶</a></h3>
+<p>La librairie pytest est utilisée pour lancer les tests.
+Quelques tests d’intégration utilisent la libraire <code class="docutils literal notranslate"><span class="pre">beautifulsoup</span></code> quand il est nécessaire d’inspecter le DOM.
+La librairie factory_boy est utilisé pour gérer des fixtures</p>
+<p>Les tests sont organisés comme suit :</p>
+<ul class="simple">
+<li><p>Tests unitaires : APPNAME/tests/models/…</p></li>
+<li><p>Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…</p></li>
+</ul>
+</section>
+<section id="lancement-des-tests">
+<h3>Lancement des tests<a class="headerlink" href="#lancement-des-tests" title="Lien vers cette rubrique">¶</a></h3>
+<p>L’application prend en charge des test unitaire et des tests d’intégration. Pour les lancer:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pytest
+</pre></div>
+</div>
+<p>et pour les lancer avec un test de coverage et afficher le rapport :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>coverage<span class="w"> </span>run<span class="w"> </span>-m<span class="w"> </span>pytest
+coverage<span class="w"> </span>report
+</pre></div>
+</div>
+</section>
+<section id="installer-les-hooks-de-pre-commit">
+<h3>Installer les hooks de pre-commit<a class="headerlink" href="#installer-les-hooks-de-pre-commit" title="Lien vers cette rubrique">¶</a></h3>
+<p>Pour installer les git hook de pre-commit, installer le package precommit et installer les hooks en executant pre-commit</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pre-commit
+pre-commit<span class="w"> </span>install
+</pre></div>
+</div>
+</section>
+</section>
+<section id="les-api">
+<h2>Les API<a class="headerlink" href="#les-api" title="Lien vers cette rubrique">¶</a></h2>
+<p>Plus de détails sur la doc dédiée <a class="reference internal" href="API.html"><span class="std std-doc">API.md</span></a></p>
+</section>
+<section id="ajouter-des-dependances-avec-pip-tools">
+<h2>Ajouter des dépendances avec pip-tools<a class="headerlink" href="#ajouter-des-dependances-avec-pip-tools" title="Lien vers cette rubrique">¶</a></h2>
+<p>Ajouter les dépendances dans requirements.in ou dev-requirements.in</p>
+<p>Puis compiler (recquiert l’installation de <code class="docutils literal notranslate"><span class="pre">pip-tools</span></code>):</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>freeze-requirements
+</pre></div>
+</div>
+<p>Et installer</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span>-r<span class="w"> </span>dev-requirements.txt
+</pre></div>
+</div>
+</section>
+<section id="manipulations-de-developpement">
+<h2>Manipulations de développement<a class="headerlink" href="#manipulations-de-developpement" title="Lien vers cette rubrique">¶</a></h2>
+<section id="restaurer-un-dump-de-base-de-donnees">
+<h3>Restaurer un dump de base de données<a class="headerlink" href="#restaurer-un-dump-de-base-de-donnees" title="Lien vers cette rubrique">¶</a></h3>
+<p>Afin de restaurer <em>proprement</em> un fichier de dump de base de données, en supprimant au préalable les tables existantes,
+on peut jouer le script suivant :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DUMP_FILE</span><span class="o">=</span>&lt;/path/to/dump/file&gt;
+<span class="nv">DB_URL</span><span class="o">=</span>postgres://apilos:apilos@localhost:5433/apilos
+
+<span class="k">for</span><span class="w"> </span>table<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>psql<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-t<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT \&quot;tablename\&quot; FROM pg_tables WHERE schemaname=&#39;public&#39;&quot;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">     </span>psql<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP TABLE IF EXISTS \&quot;</span><span class="si">${</span><span class="nv">table</span><span class="si">}</span><span class="s2">\&quot; CASCADE;&quot;</span>
+<span class="k">done</span>
+pg_restore<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--clean<span class="w"> </span>--no-acl<span class="w"> </span>--no-owner<span class="w"> </span>--no-privileges<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DUMP_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+<p>Note : le fichier de dump est a l’extension <code class="docutils literal notranslate"><span class="pre">pgsql</span></code></p>
+</section>
+<section id="restaurer-un-dump-sur-un-environnement-scalingo">
+<h3>Restaurer un dump sur un environnement Scalingo<a class="headerlink" href="#restaurer-un-dump-sur-un-environnement-scalingo" title="Lien vers cette rubrique">¶</a></h3>
+<p><strong>⚠️⚠️⚠️ Cette opération va supprimer les données sur l’environnement cible, n’executer cette commande que si vous êtes sûr de vous.</strong></p>
+<p>Ouvrir un tunnel (cf. le dashboard de la base de données) :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">DB_URL</span><span class="o">=</span>postgres://&lt;user&gt;:&lt;password&gt;@&lt;server&gt;:&lt;port&gt;/&lt;database&gt;?sslmode<span class="o">=</span>prefer
+scalingo<span class="w"> </span>--app<span class="w"> </span>my-app<span class="w"> </span>db-tunnel<span class="w"> </span>--identity<span class="w"> </span>~/.ssh/my_ssh_key<span class="w"> </span><span class="nv">$DB_URL</span>
+</pre></div>
+</div>
+<p>la commande retourne l’url d’accès à la base de données</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Building</span> <span class="n">tunnel</span> <span class="n">to</span> <span class="n">apilos</span><span class="o">-</span><span class="n">stag</span><span class="o">-</span><span class="mf">3603.</span><span class="n">postgresql</span><span class="o">.</span><span class="n">dbs</span><span class="o">.</span><span class="n">scalingo</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">37228</span>
+<span class="n">You</span> <span class="n">can</span> <span class="n">access</span> <span class="n">your</span> <span class="n">database</span> <span class="n">on</span><span class="p">:</span>
+<span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">10000</span>
+</pre></div>
+</div>
+<p>Dans un autre terminal, lancer la restauration</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nv">DB_URL</span><span class="o">=</span>postgres://&lt;user&gt;:&lt;password&gt;@127.0.0.1:10000/&lt;database&gt;?sslmode<span class="o">=</span>prefer
+<span class="nv">DUMP_FILE</span><span class="o">=</span>&lt;/path/to/dump/file&gt;
+pg_restore<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--clean<span class="w"> </span>--no-acl<span class="w"> </span>--no-owner<span class="w"> </span>--no-privileges<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DUMP_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="mock-cerbere">
+<h2>MOCK CERBERE<a class="headerlink" href="#mock-cerbere" title="Lien vers cette rubrique">¶</a></h2>
+<p>En cas de non disponibilité de CERBERE en recette, il est possible de bouchonner l’authentification via CERBERE en définisant en variable d’environnement l’id de l’utilisateur à authentifier (à récupérer en base de données directement):</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mock Cerbere user id - in case of CERBERE authentication failure</span>
+<span class="nv">MOCK_CERBERE_USER_ID</span><span class="o">=</span>
+</pre></div>
+</div>
+<p>Si cette variable est définie, alors l’utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.</p>
+</section>
+<section id="statistiques-de-developpement">
+<h2>Statistiques de développement<a class="headerlink" href="#statistiques-de-developpement" title="Lien vers cette rubrique">¶</a></h2>
+<p>Pour suivre le travail et les performances de développement de l’équipe APiLos, On extrait régulièrement des statistiques en inspectant les releases et PR github.
+Les indicateurs sont extraits et agrégés par mois :</p>
+<ul class="simple">
+<li><p>nb version majeur</p></li>
+<li><p>nb version mineur</p></li>
+<li><p>nb version de patch</p></li>
+<li><p>nb d’évolutions livrées</p></li>
+<li><p>nb de corrections livrées</p></li>
+<li><p>nb de mises à jour de dépendances</p></li>
+<li><p>nb de mises à jour technique</p></li>
+<li><p>nb de mises à jour de documentation</p></li>
+<li><p>nb d’escalades (demande de correction faite par l’équipe support suite à des retours des utilisateurs)</p></li>
+<li><p>nb de régressions (ça arrive :) )</p></li>
+</ul>
+<p>Ces statistiques sont basées sur l’interprétation des numéros de release qui utilise la convention <code class="docutils literal notranslate"><span class="pre">semantic</span> <span class="pre">versionning</span></code> (vx.y.z, x majeur, y mineur, z patch) et sur l’inspection des tags des PR de chaque release : cela est possible car on utilise la fonction <code class="docutils literal notranslate"><span class="pre">squash</span> <span class="pre">and</span> <span class="pre">merge</span></code> de github lors de l’intégration de la PR sur la branche principale <code class="docutils literal notranslate"><span class="pre">main</span></code>, on a un commit par PR sur la branche main.</p>
+<section id="categoriser-les-pr">
+<h3>Catégoriser les PR<a class="headerlink" href="#categoriser-les-pr" title="Lien vers cette rubrique">¶</a></h3>
+<p>Pour que le script d’extraction marche correctement, il est nécessaire de catégoriser les PR en les taguant avec les labels comme suit:</p>
+<ul class="simple">
+<li><p>bug</p></li>
+<li><p>enhancement</p></li>
+<li><p>documentation</p></li>
+<li><p>technical</p></li>
+<li><p>dependencies (tags déposé automatiquement par dépendadot lorsqu’il ouvre une PR)</p></li>
+</ul>
+<p>Cette catégorisation est inspirée des labels proposés par défaut par Github</p>
+<p>On ajoute aussi 2 labels en plus de cette catégorisation lorsque c’est approprié :</p>
+<ul class="simple">
+<li><p>escalation : quand la PR vient de notre processus d’escalade avec l’équipe Support</p></li>
+<li><p>regression : Pour le suivi des regressions</p></li>
+</ul>
+</section>
+<section id="processus-d-extraction-des-statistiques-de-developpement">
+<h3>Processus d’extraction des statistiques de developpement<a class="headerlink" href="#processus-d-extraction-des-statistiques-de-developpement" title="Lien vers cette rubrique">¶</a></h3>
+<p>Créer un token GitHub :</p>
+<ul class="simple">
+<li><p>Accéder à https://github.com</p></li>
+<li><p>Accéder au menu de votre profile</p></li>
+<li><p>Cliquer sur le menu <code class="docutils literal notranslate"><span class="pre">Settings</span></code></p></li>
+<li><p>Cliquer sur le menu <code class="docutils literal notranslate"><span class="pre">Developper</span> <span class="pre">settings</span></code></p></li>
+<li><p>Cliquer sur le menu <code class="docutils literal notranslate"><span class="pre">Personal</span> <span class="pre">access</span> <span class="pre">token</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Tokens</span> <span class="pre">(classic)</span></code></p></li>
+<li><p>Cliquer sur le bouton <code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">new</span> <span class="pre">token</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Generate</span> <span class="pre">new</span> <span class="pre">token</span> <span class="pre">(classic)</span></code></p></li>
+<li><p>Selectionner les options <code class="docutils literal notranslate"><span class="pre">public_repo</span></code>, <code class="docutils literal notranslate"><span class="pre">read:project</span></code>, <code class="docutils literal notranslate"><span class="pre">repo:status</span></code>, <code class="docutils literal notranslate"><span class="pre">repo_deployment</span></code></p></li>
+<li><p>Créer le token et copier le</p></li>
+</ul>
+<p>Lancer le script d’extraction des statistiques:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">GITHUB_TOKEN</span><span class="o">=</span>&lt;GITHUB_TOKEN&gt;
+python<span class="w"> </span>manage.py<span class="w"> </span>get_delivery_statistics<span class="w"> </span>--token<span class="w"> </span><span class="nv">$GITHUB_TOKEN</span><span class="w"> </span>--output<span class="w"> </span>DEV_STATISTICS.csv
+</pre></div>
+</div>
+<p>Les statistiques de développement par mois sont disponibles dans le fichier <code class="docutils literal notranslate"><span class="pre">DEV_STATISTICS.csv</span></code></p>
+</section>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sylvain Delabye, Nicolas Oudard
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">DEVELOPPEMENT</a><ul>
+<li><a class="reference internal" href="#quelques-details-sur-la-stack-technique-utilisee">Quelques détails sur la stack technique utilisée</a><ul>
+<li><a class="reference internal" href="#framework-et-langages-de-programmation">Framework et langages de programmation</a><ul>
+<li><a class="reference internal" href="#django-python">Django / Python</a><ul>
+<li><a class="reference internal" href="#generation-de-documents-xls-et-pdf">Génération de documents xls et pdf</a></li>
+<li><a class="reference internal" href="#import-de-firchiers-excel">Import de firchiers excel</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#javascript">Javascript</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#prerequis">Prérequis</a></li>
+<li><a class="reference internal" href="#environment-virtuel-python">Environment virtuel python</a></li>
+<li><a class="reference internal" href="#services-docker">Services docker</a></li>
+<li><a class="reference internal" href="#variables-d-environnement">Variables d’environnement</a></li>
+<li><a class="reference internal" href="#installer-les-dependances-python">Installer les dépendances python</a></li>
+<li><a class="reference internal" href="#installer-les-dependances-npm">Installer les dependances npm</a></li>
+<li><a class="reference internal" href="#executer-les-migrations">Executer les migrations</a></li>
+<li><a class="reference internal" href="#populer-les-permissions-et-les-roles-et-les-departements">Populer les permissions et les roles et les departements</a><ul>
+<li><a class="reference internal" href="#modifier-les-permissions">Modifier les permissions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#creer-un-super-utilisateur">Créer un super utilisateur</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#lancer-de-l-application">Lancer de l’application</a><ul>
+<li><a class="reference internal" href="#population-de-la-base-de-donnnees-en-environnement-de-developpement">Population de la base de donnnées en environnement de développement</a></li>
+<li><a class="reference internal" href="#clamav-optionnel">ClamAV (optionnel)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#qualite-de-code">Qualité de code</a><ul>
+<li><a class="reference internal" href="#tests">Tests</a></li>
+<li><a class="reference internal" href="#lancement-des-tests">Lancement des tests</a></li>
+<li><a class="reference internal" href="#installer-les-hooks-de-pre-commit">Installer les hooks de pre-commit</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#les-api">Les API</a></li>
+<li><a class="reference internal" href="#ajouter-des-dependances-avec-pip-tools">Ajouter des dépendances avec pip-tools</a></li>
+<li><a class="reference internal" href="#manipulations-de-developpement">Manipulations de développement</a><ul>
+<li><a class="reference internal" href="#restaurer-un-dump-de-base-de-donnees">Restaurer un dump de base de données</a></li>
+<li><a class="reference internal" href="#restaurer-un-dump-sur-un-environnement-scalingo">Restaurer un dump sur un environnement Scalingo</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mock-cerbere">MOCK CERBERE</a></li>
+<li><a class="reference internal" href="#statistiques-de-developpement">Statistiques de développement</a><ul>
+<li><a class="reference internal" href="#categoriser-les-pr">Catégoriser les PR</a></li>
+<li><a class="reference internal" href="#processus-d-extraction-des-statistiques-de-developpement">Processus d’extraction des statistiques de developpement</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d1a510d7"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=e6b791cb"></script>
+    </body>
+</html>

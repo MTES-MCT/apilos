@@ -1,0 +1,5 @@
+#!/bin/env bash
+
+python manage.py migrate
+python manage.py loaddata auth.json departements.json avenant_types.json
+python manage.py clearsessions

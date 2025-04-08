@@ -1,0 +1,496 @@
+<!doctype html>
+<html class="no-js" lang="fr" data-content_root="./">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" />
+
+    <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
+        <title>DEPLOIEMENT DE LA PLATEFORME APILOS - Documentation APiLos</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="README.html"><div class="brand">Documentation APiLos </div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="README.html">
+  
+  
+  <span class="sidebar-brand-text">Documentation APiLos </span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Recherche" name="q" aria-label="Recherche">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/DEPLOIEMENT.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section id="deploiement-de-la-plateforme-apilos">
+<h1>DEPLOIEMENT DE LA PLATEFORME APILOS<a class="headerlink" href="#deploiement-de-la-plateforme-apilos" title="Lien vers cette rubrique">¶</a></h1>
+<section id="solution-d-hebergement">
+<h2>Solution d’hébergement<a class="headerlink" href="#solution-d-hebergement" title="Lien vers cette rubrique">¶</a></h2>
+<p>La solution souveraine PaaS de <a class="reference external" href="https://dashboard.scalingo.com/apps/osc-fr1/fabnum-apilos">Scalingo</a> est utilisée avec les composants suivants :</p>
+<ul class="simple">
+<li><p>webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x</p></li>
+<li><p>worker : worker Celery pour déléguer des tâches longues qui s’executeront de manière asynchrone</p></li>
+<li><p>Une base de données postgres en version 12.11.0</p></li>
+</ul>
+<p>Les applications lancées sont configurées dans le fichier <a class="reference download internal" download="" href="_downloads/05eca1040a8f3bd4fb4fd238712c4700/Procfile"><span class="xref download myst">Procfile</span></a></p>
+<p>La base de données est sauvegardée toutes les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration.</p>
+</section>
+<section id="ci-cd-et-branch-git">
+<h2>CI/CD et branch git<a class="headerlink" href="#ci-cd-et-branch-git" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les « User Stories » (US) sont développées sur des « feature branches » (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch <code class="docutils literal notranslate"><span class="pre">main</span></code>.
+les <code class="docutils literal notranslate"><span class="pre">feature</span> <span class="pre">branches</span></code> font l’objet de <code class="docutils literal notranslate"><span class="pre">pull</span> <span class="pre">request</span></code> à merger sur <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
+<p>La solution github actions est utilisée: <a class="reference external" href="https://github.com/MTES-MCT/apilos/actions">Github Actions</a>
+La config est ici : <a class="reference internal" href="#../.github/workflows"><span class="xref myst">.github/workflows</span></a></p>
+<section id="comment-release">
+<h3>Comment release<a class="headerlink" href="#comment-release" title="Lien vers cette rubrique">¶</a></h3>
+<ul class="simple">
+<li><p>Taggez le dernier commit de la branche main et uploadez sur github.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">tag</span> <span class="pre">v1.23.0</span></code>
+<code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">--tags</span></code></p>
+<p>La CI va lancer les tests, déployer en production et créer une release.</p>
+<ul class="simple">
+<li><p>Vérifiez que les déploiements en production se passent bien en consultant les logs. Une CI verte ne veut pas dire que le déploiement a fonctionné.</p></li>
+<li><p>Ajoutez le changelog technique à la release github, vous pouvez le générer avec la commande</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">log</span> <span class="pre">v1.23.0...v1.22.0</span> <span class="pre">--oneline</span></code></p>
+<ul class="simple">
+<li><p>Toujours sur la release github, ajoutez les sections Fonctionnalités, Correctifs, Mise à jour des dépendances et Amélioratons techniques. Ajoutez-y les lignes de changelog qui correspondent en reformulant pour les rendre compréhensible par quelqu’un de non-technique. Inspirez-vous des releases précédentes.</p></li>
+<li><p>Prévenez de la mise en production sur mattermost, ainsi que sur le slack du SIAP.</p></li>
+<li><p>Sur le board de sprint, passez les tickets de staging vers prod.</p></li>
+</ul>
+</section>
+<section id="ci">
+<h3>CI<a class="headerlink" href="#ci" title="Lien vers cette rubrique">¶</a></h3>
+<p>A chaque push sur <a class="reference external" href="https://github.com/MTES-MCT/apilos">Github</a>, le projet est <em>buildé</em> et les tests sont passés</p>
+</section>
+<section id="cd">
+<h3>CD<a class="headerlink" href="#cd" title="Lien vers cette rubrique">¶</a></h3>
+<p>A chaque push sur la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>, le projet est déployé en <a class="reference external" href="https://siap-integration.apilos.beta.gouv.fr/">staging</a>.</p>
+<p>A chaque push de tag de la forme <code class="docutils literal notranslate"><span class="pre">v*.*.*</span></code>, le projet est déployé en production.</p>
+</section>
+</section>
+<section id="deploiement">
+<h2>Déploiement<a class="headerlink" href="#deploiement" title="Lien vers cette rubrique">¶</a></h2>
+<p>Lors du déploiement, les étapes définis dans le script <a class="reference download internal" download="" href="_downloads/13d418c896eac4114958e8f16d495641/post_deploy"><span class="xref download myst">bin/post_deploy</span></a> sont exécutées :</p>
+<ol class="arabic simple">
+<li><p>Execution des migrations de la base de données</p></li>
+<li><p>Population des roles et des permissions</p></li>
+<li><p>Suppression des sessions expirées</p></li>
+</ol>
+<section id="deploiement-en-staging">
+<h3>Déploiement en staging<a class="headerlink" href="#deploiement-en-staging" title="Lien vers cette rubrique">¶</a></h3>
+<p>Le code est déployé en staging automatiquement via Github Actions quand il est poussé sur la branch <code class="docutils literal notranslate"><span class="pre">main</span></code> du repository <a class="reference external" href="https://github.com/MTES-MCT/apilos">Github</a></p>
+<p>Pour forcer le déploiement en staging, il est aussi possible de pousser la branche main sur le repo git du projet sur Scalingo</p>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">push</span> <span class="pre">git&#64;ssh.osc-fr1.scalingo.com:apilos-staging.git</span> <span class="pre">main:master</span></code></p>
+</section>
+<section id="deploiement-en-production">
+<h3>Déploiement en production<a class="headerlink" href="#deploiement-en-production" title="Lien vers cette rubrique">¶</a></h3>
+<p>Une nouvelle version de l’application est poussée en production à chaque ajout de <em>tag de version</em> (voir <a class="reference external" href="https://semver.org/">la documentation <em>semantic versioning</em></a>).</p>
+<p>Pour forcer la mise en production il est aussi possible de pousser la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> sur le repo git du projet sur Scalingo :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>push<span class="w"> </span>git@ssh.osc-fr1.scalingo.com:fabnum-apilos.git<span class="w"> </span>main:master
+</pre></div>
+</div>
+</section>
+</section>
+<section id="deployer-un-nouvel-environnement">
+<h2>Déployer un nouvel environnement<a class="headerlink" href="#deployer-un-nouvel-environnement" title="Lien vers cette rubrique">¶</a></h2>
+<ol class="arabic simple">
+<li><p>ajout d’une application dans scalingo</p></li>
+<li><p>Ajout d’addons : postgresql, redis</p></li>
+<li><p>Ajout des variable d’environnement (Scalingo &gt; Environnement)</p></li>
+<li><p>Ajout du nom de domaine dans scalingo (Scalingo &gt; Settings &gt; Domain/SSL)</p></li>
+<li><p>Ajout d’un enregistrement DNS CNAME vers l’APP Scalingo (Alwaysdata &gt; Domains &gt; DNS Records)</p></li>
+<li><p>Forcer HTTPS (Scalingo &gt; Settings &gt; Routing)</p></li>
+<li><p>Scale les APPs (Scalingo &gt; Resources)</p></li>
+<li><p>Créer le bucket sur scaleway</p></li>
+</ol>
+<p>Pour le SIAP,</p>
+<ol class="arabic simple" start="9">
+<li><p>Créer un utilisateur SIAP et transmettre son id à l’équipe du SIAP</p></li>
+</ol>
+</section>
+<section id="executer-une-commande-python-sur-un-scalingo">
+<h2>Executer une commande python sur un Scalingo<a class="headerlink" href="#executer-une-commande-python-sur-un-scalingo" title="Lien vers cette rubrique">¶</a></h2>
+<p>Il suffit d’ajouter avant <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">manage.py</span></code> le début de commande :</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>scalingo<span class="w"> </span>--app<span class="w"> </span>&lt;app_name&gt;<span class="w"> </span>run<span class="w"> </span>...
+</pre></div>
+</div>
+</section>
+<section id="modification-de-l-appartenance-d-un-programme-a-un-bailleur-ou-une-administration">
+<h2>Modification de l’appartenance d’un programme à un bailleur ou une administration<a class="headerlink" href="#modification-de-l-appartenance-d-un-programme-a-un-bailleur-ou-une-administration" title="Lien vers cette rubrique">¶</a></h2>
+<section id="modification-de-l-administration">
+<h3>Modification de l’administration<a class="headerlink" href="#modification-de-l-administration" title="Lien vers cette rubrique">¶</a></h3>
+<p>Récupérer au préalable les informations suivantes:</p>
+<ul class="simple">
+<li><p>UUID du programme</p></li>
+<li><p>Code de l’administration (cf. admin django)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$&gt; python manage.py programme_update_administration
+Quel est l&#39;identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le code de l&#39;administration à laquelle le programme doit être rattacher ? 13055
+le programme `Opération L9TQKLS6EC` va être attribué à l&#39;administration `Métropole d&#39;Aix-Marseille-Provence` de code `13055`
+Modifier l&#39;administration du programme (Non/oui)?oui
+l&#39;administration du programme `Opération L9TQKLS6EC` a été mise à jour avec l&#39;administration de code `13055`
+le programme `Opération L9TQKLS6EC` va être attribué à l&#39;administration `Métropole d&#39;Aix-Marseille-Provence` de code `13055`
+</pre></div>
+</div>
+</section>
+<section id="modification-du-bailleur">
+<h3>Modification du bailleur<a class="headerlink" href="#modification-du-bailleur" title="Lien vers cette rubrique">¶</a></h3>
+<p>Récupérer au préalable les informations suivantes:</p>
+<ul class="simple">
+<li><p>UUID du programme</p></li>
+<li><p>Numero siret du bailleur (cf. admin django)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$&gt; python manage.py programme_update_bailleur
+Quel est l&#39;identifiant UUID du programme à modifier ? 4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194
+le programme `4fa6ec1c-b89c-4a8e-ba2c-da18ad1bd194` : `Opération L9TQKLS6EC` va être modifié
+Quel est le siret du bailleur auquel le programme doit etre rattacher ? 48496369900026
+le programme `Opération L9TQKLS6EC` va être attribué au bailleur `6ème Sens Immobilier Investissement` de siret `48496369900026`
+Modifier le bailleur du programme (Non/oui)?oui
+le bailleur du programme `Opération L9TQKLS6EC` a été mise à jour avec le bailleur de siret `48496369900026`
+</pre></div>
+</div>
+</section>
+</section>
+<section id="remise-a-zero-des-elements-metiers-de-la-base-de-donnees-d-un-environnement">
+<h2>Remise à zéro des éléments métiers de la base de données d’un environnement<a class="headerlink" href="#remise-a-zero-des-elements-metiers-de-la-base-de-donnees-d-un-environnement" title="Lien vers cette rubrique">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$&gt; python manage.py clear_all_data
+</pre></div>
+</div>
+<p>Les bailleurs, administrations et tous les objets leur appartenant seront supprimé (programmes, lots, conventions, logements, annexes, type_stationnements… etc)
+ainsi que les utilisateurs qui sont ni <code class="docutils literal notranslate"><span class="pre">superuser</span></code> ni <code class="docutils literal notranslate"><span class="pre">staff</span></code></p>
+<p>⚠️ Cette commande n’est pas executable en production pour des raisons évidentes</p>
+</section>
+<section id="rechargement-des-fixtures-de-tests-en-staging">
+<h2>Rechargement des fixtures de tests en staging<a class="headerlink" href="#rechargement-des-fixtures-de-tests-en-staging" title="Lien vers cette rubrique">¶</a></h2>
+<p>Il est possible de déployer un jeu de donnée de tests en utilisant la commande <code class="docutils literal notranslate"><span class="pre">load_test_fixtures</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$&gt; python manage.py load_test_fixtures
+Do you want to truncate Conventions/Operations/Lots (N/y) ?
+Using default option: Operation won&#39;t be truncated
+Do you want to truncate Users (N/y) ?
+Using default option: Users won&#39;t be truncated
+</pre></div>
+</div>
+<p>⚠️ Cette commande n’est pas executable en production car il n’est pas souhaitable de mélanger données de test et production</p>
+</section>
+<section id="chargement-d-un-jeu-de-test">
+<h2>Chargement d’un jeu de test<a class="headerlink" href="#chargement-d-un-jeu-de-test" title="Lien vers cette rubrique">¶</a></h2>
+<p>Un jeu de données minimales est disponible dans le fichier dataset_staging.json. Il se déploie en utilisant la commande <code class="docutils literal notranslate"><span class="pre">loaddata</span> <span class="pre">dataset_staging.json</span></code>
+⚠️ Cette commande ne doit pas être exécutée en production car il n’est pas souhaitable de mélanger données de test et production</p>
+</section>
+<section id="deploiement-de-metabase">
+<h2>Déploiement de Metabase<a class="headerlink" href="#deploiement-de-metabase" title="Lien vers cette rubrique">¶</a></h2>
+<p>Suivre les instructions de la doc de l’incubateur :</p>
+<p>https://doc.incubateur.net/communaute/travailler-a-beta-gouv/jutilise-les-outils-de-la-communaute/metabase</p>
+<p>Pour mettre à jour</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">scalingo</span> <span class="o">--</span><span class="n">app</span> <span class="n">apilos</span><span class="o">-</span><span class="n">metabase</span><span class="o">-</span><span class="n">prod</span> <span class="n">deploy</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Scalingo</span><span class="o">/</span><span class="n">metabase</span><span class="o">-</span><span class="n">scalingo</span><span class="o">/</span><span class="n">archive</span><span class="o">/</span><span class="n">refs</span><span class="o">/</span><span class="n">heads</span><span class="o">/</span><span class="n">master</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Quelques informations complémentaires:</p>
+<ul class="simple">
+<li><p>Metabase est installé sur le projet <code class="docutils literal notranslate"><span class="pre">apilos-metabase-prod</span></code> sur scalingo</p></li>
+<li><p>L’installation de Metabase nécessite une base de données accessible en écriture. Nous avons doc fait le choix de créer une DB dédié à Métabase comme addon du projet <code class="docutils literal notranslate"><span class="pre">apilos-metabase-prod</span></code> sur scalingo, celle-ci sert à l’administration de Metabase, les infomations de connection à la base de données sont accessible sur scalingo e interprétant la variable d’environnement SCALINGO_POSTGRESQL_URL</p></li>
+<li><p>La base de données APiLos est configurée dans l’administration de Metabase et a un accès en Lecture seule</p></li>
+<li><p>Les données stockées par Metabase sont cryptées grâce à la variable d’environnement MB_ENCRYPTION_SECRET_KEY</p></li>
+</ul>
+<p>Metabase est accessible à l’adresse <a class="reference external" href="https://apilos-metabase-prod.osc-fr1.scalingo.io/">https://apilos-metabase-prod.osc-fr1.scalingo.io/</a></p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2025, Sylvain Delabye, Nicolas Oudard
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">DEPLOIEMENT DE LA PLATEFORME APILOS</a><ul>
+<li><a class="reference internal" href="#solution-d-hebergement">Solution d’hébergement</a></li>
+<li><a class="reference internal" href="#ci-cd-et-branch-git">CI/CD et branch git</a><ul>
+<li><a class="reference internal" href="#comment-release">Comment release</a></li>
+<li><a class="reference internal" href="#ci">CI</a></li>
+<li><a class="reference internal" href="#cd">CD</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deploiement">Déploiement</a><ul>
+<li><a class="reference internal" href="#deploiement-en-staging">Déploiement en staging</a></li>
+<li><a class="reference internal" href="#deploiement-en-production">Déploiement en production</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#deployer-un-nouvel-environnement">Déployer un nouvel environnement</a></li>
+<li><a class="reference internal" href="#executer-une-commande-python-sur-un-scalingo">Executer une commande python sur un Scalingo</a></li>
+<li><a class="reference internal" href="#modification-de-l-appartenance-d-un-programme-a-un-bailleur-ou-une-administration">Modification de l’appartenance d’un programme à un bailleur ou une administration</a><ul>
+<li><a class="reference internal" href="#modification-de-l-administration">Modification de l’administration</a></li>
+<li><a class="reference internal" href="#modification-du-bailleur">Modification du bailleur</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#remise-a-zero-des-elements-metiers-de-la-base-de-donnees-d-un-environnement">Remise à zéro des éléments métiers de la base de données d’un environnement</a></li>
+<li><a class="reference internal" href="#rechargement-des-fixtures-de-tests-en-staging">Rechargement des fixtures de tests en staging</a></li>
+<li><a class="reference internal" href="#chargement-d-un-jeu-de-test">Chargement d’un jeu de test</a></li>
+<li><a class="reference internal" href="#deploiement-de-metabase">Déploiement de Metabase</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=d1a510d7"></script>
+    <script src="_static/doctools.js?v=9bcbadda"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/scripts/furo.js?v=5fa4622c"></script>
+    <script src="_static/translations.js?v=e6b791cb"></script>
+    </body>
+</html>

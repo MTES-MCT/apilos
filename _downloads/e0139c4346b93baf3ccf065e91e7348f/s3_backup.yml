@@ -1,0 +1,35 @@
+name: Backup S3 Production Bucket
+
+on:
+  workflow_dispatch:
+  schedule:
+    # At 01:27 UTC every Monday
+    - cron: '27 1 * * 1'
+
+env:
+  S3_HOST: https://s3.fr-par.scw.cloud
+  S3_BUCKET_SOURCE: s3://apilos-prod
+  S3_BUCKET_DESTINATION: s3://apilos-glacier
+  AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_KEY }}
+  BACKUP_NAME: s3_production
+
+jobs:
+  backup-production:
+    name: Backup S3 in Production environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install AWS CLI dependencies
+        run: |
+          pip install awscli
+          pip install awscli-plugin-endpoint
+      - name: configure AWS CLI for Scaleway
+        run: | # Source : https://www.scaleway.com/en/docs/storage/object/api-cli/object-storage-aws-cli/
+          aws configure set plugins.endpoint awscli_plugin_endpoint
+          aws configure set s3.endpoint_url ${{ env.S3_HOST }}
+          aws configure set s3.max_concurrent_requests 100
+          aws configure set s3.max_queue_size 1000
+          aws configure set s3.multipart_threshold '50 MB'
+          aws configure set s3api.endpoint_url ${{ env.S3_HOST }}
+      - name: Backup
+        run: aws s3 sync --quiet ${{ env.S3_BUCKET_SOURCE }} ${{ env.S3_BUCKET_DESTINATION }} --storage-class GLACIER
