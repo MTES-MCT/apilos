@@ -296,11 +296,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
                     reverse("conventions:recapitulatif", args=[convention.uuid])
                 ),
             )
-            create_siap_alerte(
-                alerte=alerte,
-                user_login=request.user.cerbere_login,
-                habilitation_id=request.session["habilitation_id"],
-            )
+            create_siap_alerte(alerte=alerte, request=request)
 
         else:
             instructeur_emails, submitted = collect_instructeur_emails(
