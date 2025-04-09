@@ -124,7 +124,7 @@ class Alerte:
     def from_convention(cls, convention: "Convention", **kwargs) -> Self:
         return cls(
             code_commune=convention.programme.code_insee_commune,
-            code_gestion=convention.gestionnaire,
+            code_gestion=convention.programme.administration.code,
             id_convention=str(convention.uuid),
             num_convention=convention.numero,
             nom_operation=convention.programme.nom,
