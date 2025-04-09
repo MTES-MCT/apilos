@@ -29,3 +29,6 @@ celerybeat-schedule.dir
 celerybeat-schedule.bak
 celerybeat-schedule.db
 celerybeat-schedule
+
+# local scripts for dev purpose
+*_local.py
