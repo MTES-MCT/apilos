@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 
 from conventions.models import Convention
 from conventions.services.cadastre import ConventionCadastreService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_cadastre_step
 
 
 class ConventionCadastreView(ConventionView):
@@ -16,3 +16,7 @@ class ConventionCadastreView(ConventionView):
             ),
             uuid=convention_uuid,
         )
+
+
+class AvenantCadastreView(ConventionCadastreView):
+    form_steps = [avenant_cadastre_step]
