@@ -67,7 +67,7 @@ lot1 = {
 convention1 = {
     "date_fin_conventionnement": None,
     "fond_propre": None,
-    "lot": lot1,
+    "lots": [lot1],
     "numero": "0001",
     "statut": "1. Projet",
     "operation_version": programme1,
@@ -75,7 +75,7 @@ convention1 = {
 convention1signed = {
     "date_fin_conventionnement": None,
     "fond_propre": None,
-    "lot": lot1,
+    "lots": [lot1],
     "numero": "0001",
     "statut": "5. Signée",
     "operation_version": programme1,
@@ -143,7 +143,7 @@ lot2 = {
 convention2 = {
     "date_fin_conventionnement": None,
     "fond_propre": None,
-    "lot": lot2,
+    "lots": [lot2],
     "numero": "0002",
     "statut": "1. Projet",
     "operation_version": programme1,
@@ -151,7 +151,7 @@ convention2 = {
 convention2signed = {
     "date_fin_conventionnement": None,
     "fond_propre": None,
-    "lot": lot2,
+    "lots": [lot2],
     "numero": "0002",
     "statut": "5. Signée",
     "operation_version": programme1,
