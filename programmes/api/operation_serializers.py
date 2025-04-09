@@ -129,7 +129,7 @@ class OperationVersionSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ConventionSerializer(serializers.HyperlinkedModelSerializer):
-    lot = LotSerializer(read_only=True)
+    lots = LotSerializer(many=True)
     operation_version = OperationVersionSerializer(source="programme", read_only=True)
 
     class Meta:
@@ -137,7 +137,7 @@ class ConventionSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             "date_fin_conventionnement",
             "fond_propre",
-            "lot",
+            "lots",
             "operation_version",
             "numero",
             "statut",
@@ -215,7 +215,7 @@ class OperationInfoSIAPSerializer(serializers.ModelSerializer):
 
 
 class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
-    lot = LotSerializer(read_only=True)
+    lots = LotSerializer(many=True)
     operation = OperationInfoSIAPSerializer(source="programme", read_only=True)
     numero_avenant = serializers.SerializerMethodField()
     numero_convention = serializers.SerializerMethodField()
@@ -243,7 +243,7 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
         fields = (
             "date_fin_conventionnement",
             "fond_propre",
-            "lot",
+            "lots",
             "operation",
             "numero_convention",
             "numero_avenant",

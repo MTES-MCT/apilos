@@ -48,14 +48,16 @@ operation_response = {
         {
             "date_fin_conventionnement": None,
             "fond_propre": None,
-            "lot": {
-                "nb_logements": 1,
-                "financement": "PLUS",
-                "type_habitat": "COLLECTIF",
-                "logements": [],
-                "type_stationnements": [],
-                "prets": [],
-            },
+            "lots": [
+                {
+                    "nb_logements": 1,
+                    "financement": "PLUS",
+                    "type_habitat": "COLLECTIF",
+                    "logements": [],
+                    "type_stationnements": [],
+                    "prets": [],
+                }
+            ],
             "numero": None,
             "statut": "1. Projet",
             "operation_version": fixtures.programme2,
@@ -333,27 +335,29 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLUS",
-                    "type_habitat": "COLLECTIF",
-                    "logements": [
-                        {
-                            "designation": "PLUS 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        }
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLUS",
+                        "type_habitat": "COLLECTIF",
+                        "logements": [
+                            {
+                                "designation": "PLUS 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            }
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -374,64 +378,66 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLAI",
-                    "type_habitat": "MIXTE",
-                    "logements": [
-                        {
-                            "designation": "PLAI 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [
-                                {
-                                    "typologie": "COUR",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                                {
-                                    "typologie": "JARDIN",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                            ],
-                        },
-                        {
-                            "designation": "PLAI 2",
-                            "typologie": "T2",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                        {
-                            "designation": "PLAI 3",
-                            "typologie": "T3",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLAI",
+                        "type_habitat": "MIXTE",
+                        "logements": [
+                            {
+                                "designation": "PLAI 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [
+                                    {
+                                        "typologie": "COUR",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                    {
+                                        "typologie": "JARDIN",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                ],
+                            },
+                            {
+                                "designation": "PLAI 2",
+                                "typologie": "T2",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                            {
+                                "designation": "PLAI 3",
+                                "typologie": "T3",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -502,27 +508,29 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLUS",
-                    "type_habitat": "COLLECTIF",
-                    "logements": [
-                        {
-                            "designation": "PLUS 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        }
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLUS",
+                        "type_habitat": "COLLECTIF",
+                        "logements": [
+                            {
+                                "designation": "PLUS 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            }
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -543,64 +551,66 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLAI",
-                    "type_habitat": "MIXTE",
-                    "logements": [
-                        {
-                            "designation": "PLAI 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [
-                                {
-                                    "typologie": "COUR",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                                {
-                                    "typologie": "JARDIN",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                            ],
-                        },
-                        {
-                            "designation": "PLAI 2",
-                            "typologie": "T2",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                        {
-                            "designation": "PLAI 3",
-                            "typologie": "T3",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLAI",
+                        "type_habitat": "MIXTE",
+                        "logements": [
+                            {
+                                "designation": "PLAI 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [
+                                    {
+                                        "typologie": "COUR",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                    {
+                                        "typologie": "JARDIN",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                ],
+                            },
+                            {
+                                "designation": "PLAI 2",
+                                "typologie": "T2",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                            {
+                                "designation": "PLAI 3",
+                                "typologie": "T3",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -658,27 +668,29 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLUS",
-                    "type_habitat": "COLLECTIF",
-                    "logements": [
-                        {
-                            "designation": "PLUS 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        }
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLUS",
+                        "type_habitat": "COLLECTIF",
+                        "logements": [
+                            {
+                                "designation": "PLUS 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            }
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -699,64 +711,66 @@ class OperationClosedAPITest(APITestCase):
             {
                 "date_fin_conventionnement": None,
                 "fond_propre": None,
-                "lot": {
-                    "nb_logements": None,
-                    "financement": "PLAI",
-                    "type_habitat": "MIXTE",
-                    "logements": [
-                        {
-                            "designation": "PLAI 1",
-                            "typologie": "T1",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [
-                                {
-                                    "typologie": "COUR",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                                {
-                                    "typologie": "JARDIN",
-                                    "surface_hors_surface_retenue": "5.00",
-                                    "loyer_par_metre_carre": "0.10",
-                                    "loyer": "0.50",
-                                },
-                            ],
-                        },
-                        {
-                            "designation": "PLAI 2",
-                            "typologie": "T2",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                        {
-                            "designation": "PLAI 3",
-                            "typologie": "T3",
-                            "surface_habitable": "50.00",
-                            "surface_annexes": "20.00",
-                            "surface_annexes_retenue": "10.00",
-                            "surface_utile": "60.00",
-                            "loyer_par_metre_carre": "5.50",
-                            "coeficient": "0.9000",
-                            "loyer": "297.00",
-                            "annexes": [],
-                        },
-                    ],
-                    "type_stationnements": [],
-                    "prets": [],
-                },
+                "lots": [
+                    {
+                        "nb_logements": None,
+                        "financement": "PLAI",
+                        "type_habitat": "MIXTE",
+                        "logements": [
+                            {
+                                "designation": "PLAI 1",
+                                "typologie": "T1",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [
+                                    {
+                                        "typologie": "COUR",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                    {
+                                        "typologie": "JARDIN",
+                                        "surface_hors_surface_retenue": "5.00",
+                                        "loyer_par_metre_carre": "0.10",
+                                        "loyer": "0.50",
+                                    },
+                                ],
+                            },
+                            {
+                                "designation": "PLAI 2",
+                                "typologie": "T2",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                            {
+                                "designation": "PLAI 3",
+                                "typologie": "T3",
+                                "surface_habitable": "50.00",
+                                "surface_annexes": "20.00",
+                                "surface_annexes_retenue": "10.00",
+                                "surface_utile": "60.00",
+                                "loyer_par_metre_carre": "5.50",
+                                "coeficient": "0.9000",
+                                "loyer": "297.00",
+                                "annexes": [],
+                            },
+                        ],
+                        "type_stationnements": [],
+                        "prets": [],
+                    }
+                ],
                 "operation_version": {
                     "nom": "Programme 1",
                     "code_postal": "75007",
@@ -799,7 +813,7 @@ class OperationClosedAPITest(APITestCase):
                     lambda x: x["numero"] is None,
                     response.data["last_conventions_state"],
                 )
-            )[0]["lot"]["nb_logements"],
+            )[0]["lots"][0]["nb_logements"],
             10,
         )
 
