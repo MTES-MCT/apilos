@@ -2,8 +2,8 @@ from typing import Any
 
 from django.http import HttpRequest
 
-from .siap_client.client import SIAPClient
-from .siap_client.schemas import Alerte
+from .client import SIAPClient
+from .schemas import Alerte
 
 
 def create_siap_alerte(
@@ -13,8 +13,8 @@ def create_siap_alerte(
     habilitation_id: int | None = None,
 ) -> dict[str, Any]:
 
-    _user_login: str
-    _habilitation_id: int
+    _user_login = None
+    _habilitation_id = None
 
     if request:
         _user_login = request.user.cerbere_login

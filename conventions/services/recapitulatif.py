@@ -28,9 +28,9 @@ from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
-from siap.services import create_siap_alerte
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.schemas import Alerte, Destinataire
+from siap.siap_client.services import create_siap_alerte
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 

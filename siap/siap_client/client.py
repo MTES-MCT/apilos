@@ -380,7 +380,9 @@ class SIAPClientMock(SIAPClientInterface):
     def create_alerte(
         self, user_login: str, habilitation_id: int, payload: dict[str, Any]
     ) -> dict[str, Any]:
-        return {}
+        return {
+            "message": "alerte créée avec succès",
+        }
 
     def delete_alerte(self, user_login, habilitation_id) -> dict[str, Any]:
         return {}
