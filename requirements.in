@@ -4,6 +4,7 @@ celery<6.0
 dj-database-url
 dj-static
 dj-static
+Django
 django-anymail[sendinblue]
 django-cas-ng
 django-celery-results
@@ -14,7 +15,6 @@ django-simple-history
 django-sql-explorer[xls]
 django-storages
 django-waffle
-Django
 djangorestframework
 djangorestframework-simplejwt
 docxtpl

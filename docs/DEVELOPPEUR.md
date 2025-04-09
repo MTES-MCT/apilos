@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # DEVELOPPEMENT
 
 Cette documentation décrit toutes les étapes nécessaires à l'intallation et au développement de la plateforme APiLos.
@@ -23,7 +26,7 @@ Dans la plus part des cas la logique logicielle est découpée comme suit
 
 APiLos est un outils permettant de générer un document contractuel de convention APL.
 
-La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](./documents/)
+La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](../documents)
 
 Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
 
@@ -33,7 +36,7 @@ Lors de l'instruction des conventions, les bailleurs téléversent des tableaux 
 
 #### Javascript
 
-Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](./package.json)
+Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](../package.json)
 
 Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
 
@@ -72,7 +75,7 @@ docker-compose up -d
 
 ### Variables d'environnement
 
-Copier les [.env.template](.env.template) dans un fichier `.env` et [.env.test](.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
+Copier les [.env.template](../.env.template) dans un fichier `.env` et [.env.test](../.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
 
 ```sh
 cp .env.template .env
@@ -132,7 +135,7 @@ python manage.py createsuperuser
 
 ## Lancer de l'application
 
-On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](./Procfile.dev)
+On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](../Procfile.dev)
 
 ```sh
 honcho start -f Procfile.dev
@@ -259,7 +262,7 @@ scalingo --app my-app db-tunnel --identity ~/.ssh/my_ssh_key $DB_URL
 
 la commande retourne l'url d'accès à la base de données
 
-```txt
+```
 Building tunnel to apilos-stag-3603.postgresql.dbs.scalingo.com:37228
 You can access your database on:
 127.0.0.1:10000
@@ -340,3 +343,26 @@ python manage.py get_delivery_statistics --token $GITHUB_TOKEN --output DEV_STAT
 ```
 
 Les statistiques de développement par mois sont disponibles dans le fichier `DEV_STATISTICS.csv`
+
+## Mise à jour de la documentation technique
+
+La documentation technique est maintenue dans la dossiers [docs](./docs) et elle est publiée avec la librairie python [sphynx](https://www.sphinx-doc.org/en/master/index.html)
+
+les images sont stockées dans le répertoire [docs/_static](../docs/_static)
+
+### Installation des librairie de génération de la documentation
+
+```sh
+pip install -r doc-requirements.txt
+```
+
+### Visualiser la documentation localement
+
+Générer la documentation
+
+```sh
+rm -rf _build
+sphinx-build -M html docs _build
+```
+
+La documentation est viualisable avec un navigateur à partir du fichier [_build/html/README.html](_build/html/README.html)

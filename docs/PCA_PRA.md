@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # Plan de continuité d'activité / Plan de reprise d'activité
 
 ## Prérequis

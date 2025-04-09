@@ -22,10 +22,12 @@ node_modules/
 #temporaire
 /.tgitconfig
 
-
 # celery beat schedule files
 celerybeat-schedule.dat
 celerybeat-schedule.dir
 celerybeat-schedule.bak
 celerybeat-schedule.db
 celerybeat-schedule
+
+# docs
+_build/
