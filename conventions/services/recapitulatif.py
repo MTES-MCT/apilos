@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
-from waffle import switch_is_active
+from waffle import flag_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
@@ -281,7 +281,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
         convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
 
-        if switch_is_active(settings.SWITCH_SIAP_ALERTES):
+        if flag_is_active(request=request, flag_name=settings.FLAG_SIAP_ALERTES):
             alerte = Alerte.from_convention(
                 convention=convention,
                 categorie_information="CATEGORIE_ALERTE_ACTION",
