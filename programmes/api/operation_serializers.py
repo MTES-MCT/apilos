@@ -220,11 +220,25 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     numero_avenant = serializers.SerializerMethodField()
     numero_convention = serializers.SerializerMethodField()
     convention_date_signature = serializers.SerializerMethodField()
+    convention_parent_uuid = serializers.SerializerMethodField()
+    depuis_ecoloweb = serializers.SerializerMethodField()
+    avenant_types = serializers.SerializerMethodField()
+
+    def get_avenant_types(self, obj):
+        return [avenant_type.nom for avenant_type in obj.avenant_types.all()]
 
     def get_numero_convention(self, obj):
         if obj.parent:
             return obj.parent.numero
         return obj.numero
+
+    def get_convention_parent_uuid(self, obj):
+        if obj.parent:
+            return str(obj.parent.uuid)
+        return None
+
+    def get_depuis_ecoloweb(self, obj):
+        return bool(obj.ecolo_reference)
 
     def get_numero_avenant(self, obj):
         if obj.parent:
@@ -241,16 +255,20 @@ class ConventionInfoSIAPSerializer(serializers.ModelSerializer):
     class Meta:
         model = Convention
         fields = (
-            "date_fin_conventionnement",
-            "fond_propre",
-            "lots",
-            "operation",
+            "uuid",
+            "convention_parent_uuid",
             "numero_convention",
             "numero_avenant",
-            "gestionnaire",
+            "avenant_types",
+            "depuis_ecoloweb",
+            "date_fin_conventionnement",
             "convention_date_signature",
             "date_denonciation",
             "date_resiliation",
+            "fond_propre",
+            "gestionnaire",
             "statut",
+            "operation",
+            "lots",
         )
         ref_name = "ConventionInfoSIAP"
