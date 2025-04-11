@@ -56,7 +56,7 @@ operation_response = {
                     "logements": [],
                     "type_stationnements": [],
                     "prets": [],
-                }
+                },
             ],
             "numero": None,
             "statut": "1. Projet",
