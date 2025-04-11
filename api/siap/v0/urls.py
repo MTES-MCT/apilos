@@ -4,7 +4,6 @@ from drf_spectacular.views import (
     SpectacularRedocView,
     SpectacularSwaggerSplitView,
 )
-from rest_framework_simplejwt import views as jwt_views
 
 from apilos_settings.api.api_views import ApilosConfiguration, ConventionKPI
 from programmes.api.operation_api_views import (
@@ -40,6 +39,4 @@ urlpatterns = [
         SpectacularRedocView.as_view(url_name="api-siap:schema"),
         name="schema-redoc",
     ),
-    path("token/", jwt_views.TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("token/refresh/", jwt_views.TokenRefreshView.as_view(), name="token_refresh"),
 ]
