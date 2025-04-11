@@ -86,6 +86,8 @@ def _get_path_name_for_avenant_type(
             return "conventions:avenant_edd"
         case "duree":
             return "conventions:avenant_financement"
+        case "stationnement":
+            return "conventions:avenant_stationnement"
         case "champ_libre":
             return "conventions:avenant_champ_libre"
         case "commentaires":
