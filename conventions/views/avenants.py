@@ -71,29 +71,23 @@ def new_avenant(request: HttpRequest, convention_uuid: UUID) -> HttpResponse:
 def _get_path_name_for_avenant_type(
     avenant_type: AvenantType, convention: Convention
 ) -> str | None:
-    match avenant_type.nom:
-        case "logements":
-            if convention.programme.is_foyer or convention.programme.is_residence:
-                return "conventions:avenant_foyer_residence_logements"
-            return "conventions:avenant_logements"
-        case "bailleur":
-            return "conventions:avenant_bailleur"
-        case "programme":
-            return "conventions:avenant_programme"
-        case "cadastre":
-            return "conventions:avenant_cadastre"
-        case "edd":
-            return "conventions:avenant_edd"
-        case "duree":
-            return "conventions:avenant_financement"
-        case "stationnement":
-            return "conventions:avenant_stationnement"
-        case "champ_libre":
-            return "conventions:avenant_champ_libre"
-        case "commentaires":
-            return "conventions:avenant_commentaires"
-        case _:
-            return None
+
+    if avenant_type.nom == "duree":
+        return "conventions:avenant_financement"
+    if avenant_type.nom in [
+        "logements",
+        "bailleur",
+        "programme",
+        "programme",
+        "cadastre",
+        "edd",
+        "stationnement",
+        "champ_libre",
+        "commentaires",
+    ]:
+        return f"conventions:avenant_{avenant_type.nom}"
+    else:
+        return None
 
 
 @login_required
