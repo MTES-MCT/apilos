@@ -1,18 +1,18 @@
 {% load custom_filters %}
-
-{% if convention_form_steps|is_a_step:'ConventionTypeStationnementView' %}
+{% if convention_form_steps|is_a_step:'ConventionTypeStationnementView' or convention_form_steps|is_a_step:'AvenantTypeStationnementView' %}
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
             <div class="fr-card fr-card--no-arrow">
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Stationnements
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Stationnements" title_unchecked="Mettre à jour les stationnements" checked=checked id="stationnement" avenant_type="stationnement" description="" %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if not convention.is_avenant or checked %}
                     {% if stationnements %}
                         <div class="fr-table table--limited-height">
                             <div class="fr-table__wrapper">
@@ -63,6 +63,7 @@
                             <p class="fr-mb-0 notes"><em>Vous n'avez indiqué aucun stationnement.</em></p>
                             <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter un stationnement</a>
                         </div>
+                    {% endif %}
                     {% endif %}
                 </div>
             </div>

@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404
 
 from conventions.models import Convention
 from conventions.services.type_stationnement import ConventionTypeStationnementService
-from conventions.views.convention_form import ConventionView
+from conventions.views.convention_form import ConventionView, avenant_stationnement_step
 
 
 class ConventionTypeStationnementView(ConventionView):
@@ -17,3 +17,7 @@ class ConventionTypeStationnementView(ConventionView):
             # ),
             uuid=convention_uuid,
         )
+
+
+class AvenantTypeStationnementView(ConventionTypeStationnementView):
+    form_steps = [avenant_stationnement_step]
