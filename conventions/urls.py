@@ -177,6 +177,16 @@ urlpatterns = [
         name="avenant_collectif",
     ),
     path(
+        "avenant_foyer_attribution/<convention_uuid>",
+        views.AvenantFoyerAttributionView.as_view(),
+        name="avenant_foyer_attribution",
+    ),
+    path(
+        "avenant_variantes/<convention_uuid>",
+        views.AvenantFoyerVariantesView.as_view(),
+        name="avenant_variantes",
+    ),
+    path(
         "stationnements/<convention_uuid>",
         views.ConventionTypeStationnementView.as_view(),
         name="stationnements",

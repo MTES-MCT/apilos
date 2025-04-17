@@ -83,6 +83,8 @@ def _get_path_name_for_avenant_type(
         "edd",
         "stationnement",
         "champ_libre",
+        "foyer_attribution",
+        "variantes",
         "commentaires",
     ]:
         return f"conventions:avenant_{avenant_type.nom}"
