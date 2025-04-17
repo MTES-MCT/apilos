@@ -174,6 +174,18 @@ avenant_champ_libre_step = ConventionFormStep(
     classname="AvenantChampLibreView",
 )
 
+avenant_foyer_attribution_step = ConventionFormStep(
+    pathname="conventions:avenant_foyer_attribution",
+    label="Attribution",
+    classname="AvenantFoyerAttributionView",
+)
+
+avenant_variantes_step = ConventionFormStep(
+    pathname="conventions:avenant_variantes",
+    label="Variantes",
+    classname="AvenantFoyerVariantesView",
+)
+
 avenant_commentaires_step = ConventionFormStep(
     pathname="conventions:avenant_commentaires",
     label="Commentaires",
@@ -264,7 +276,11 @@ class ConventionFormSteps:
         if not self.steps:
             if convention.is_avenant():
                 varying_steps = (
-                    [avenant_foyer_residence_logements_step, avenant_collectif_step]
+                    [
+                        avenant_foyer_residence_logements_step,
+                        avenant_foyer_attribution_step,
+                        avenant_variantes_step,
+                    ]
                     if convention.programme.is_foyer
                     or convention.programme.is_residence
                     else [

@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'ConventionFoyerAttributionView' %}
+{% if convention_form_steps|is_a_step:'ConventionFoyerAttributionView' or convention_form_steps|is_a_step:'AvenantFoyerAttributionView' %}
 
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
@@ -9,19 +9,22 @@
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
                             <h4 class="fr-card__title">
-                                Attribution
+
                                 {% if convention.attribution_type == 'agees' %}
-                                    <strong>aux personnes âgées seules ou en ménage</strong>
+                                    {% include "conventions/common/avenants_checkboxes.html" with title="Attribution <strong>aux personnes âgées seules ou en ménage</strong>" title_unchecked="Modification des attributions" checked=checked id="foyer_attribution" avenant_type="foyer_attribution" description="" %}
                                 {% elif convention.attribution_type == 'handicapes' %}
-                                    <strong>aux personnes handicapées seules ou en ménage</strong>
+                                    {% include "conventions/common/avenants_checkboxes.html" with title="Attribution <strong>aux personnes handicapées seules ou en ménage</strong>" title_unchecked="Modification des attributions" checked=checked id="foyer_attribution" avenant_type="foyer_attribution" description="" %}
                                 {% else %}
-                                    <strong>aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage</strong>
+                                    {% include "conventions/common/avenants_checkboxes.html" with title="Attribution <strong>aux personnes en situation de perte d’autonomie liée à l’âge ou au handicap seules ou en ménage</strong>" title_unchecked="Modification des attributions" checked=checked id="foyer_attribution" avenant_type="foyer_attribution" description="" %}
                                 {% endif %}
 
                             </h4>
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
+                    {% if not convention.is_avenant or checked %}
                     {% if convention.attribution_type == 'agees' %}
                         <div class="fr-grid-row fr-grid-row--gutters fr-pl-1w fr-py-1w">
                             {% include "common/display_checkbox.html" with value=convention.attribution_agees_autonomie label="Résidence autonomie" object_field="convention__attribution_agees_autonomie__"|add:convention_uuid %}
@@ -77,6 +80,7 @@
                     {% include "common/display_textfield_if_exists.html" with label="Modalités de choix des personnes accueillies" value=convention.attribution_modalites_choix_personnes object_field="convention__attribution_modalites_choix_personnes__"|add:convention_uuid %}
                     {% include "common/display_listfield_if_exists.html" with label="Prestation intégrées dans la redevance (Liste)" value=convention.attribution_prestations_integrees object_field="convention__attribution_prestations_integrees__"|add:convention_uuid %}
                     {% include "common/display_listfield_if_exists.html" with label="Prestations facultatives (Liste)" value=convention.attribution_prestations_facultatives object_field="convention__attribution_prestations_facultatives__"|add:convention_uuid %}
+                    {% endif %}
                 </div>
             </div>
         </div>
