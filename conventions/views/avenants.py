@@ -84,6 +84,7 @@ def _get_path_name_for_avenant_type(
         "stationnement",
         "champ_libre",
         "foyer_attribution",
+        "residence_attribution",
         "variantes",
         "commentaires",
     ]:
