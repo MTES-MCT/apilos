@@ -105,6 +105,11 @@
                     {% else %}
                         {% include "conventions/recapitulatif/foyer_attribution.html" with target_url='conventions:avenant_foyer_attribution' checked=False %}
                     {% endif %}
+                    {% if 'residence_attribution' in avenant_list %}
+                        {% include "conventions/recapitulatif/residence_attribution.html" with target_url='conventions:avenant_residence_attribution' checked=True %}
+                    {% else %}
+                        {% include "conventions/recapitulatif/residence_attribution.html" with target_url='conventions:avenant_residence_attribution' checked=False %}
+                    {% endif %}
                     {% if 'variantes' in avenant_list %}
                         {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:avenant_variantes' checked=True %}
                     {% else %}

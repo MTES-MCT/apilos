@@ -182,6 +182,11 @@ urlpatterns = [
         name="avenant_foyer_attribution",
     ),
     path(
+        "avenant_residence_attribution/<convention_uuid>",
+        views.AvenantResidenceAttributionView.as_view(),
+        name="avenant_residence_attribution",
+    ),
+    path(
         "avenant_variantes/<convention_uuid>",
         views.AvenantFoyerVariantesView.as_view(),
         name="avenant_variantes",

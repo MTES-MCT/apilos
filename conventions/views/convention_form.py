@@ -180,6 +180,12 @@ avenant_foyer_attribution_step = ConventionFormStep(
     classname="AvenantFoyerAttributionView",
 )
 
+avenant_residence_attribution_step = ConventionFormStep(
+    pathname="conventions:avenant_residence_attribution",
+    label="Attribution",
+    classname="AvenantResidenceAttributionView",
+)
+
 avenant_variantes_step = ConventionFormStep(
     pathname="conventions:avenant_variantes",
     label="Variantes",
@@ -278,7 +284,12 @@ class ConventionFormSteps:
                 varying_steps = (
                     [
                         avenant_foyer_residence_logements_step,
-                        avenant_foyer_attribution_step,
+                        avenant_collectif_step,
+                        (
+                            avenant_foyer_attribution_step
+                            if convention.programme.is_foyer
+                            else avenant_residence_attribution_step
+                        ),
                         avenant_variantes_step,
                     ]
                     if convention.programme.is_foyer
