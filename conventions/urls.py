@@ -116,6 +116,11 @@ urlpatterns = [
         name="avenant_edd",
     ),
     path(
+        "avenant_stationnement/<convention_uuid>",
+        views.AvenantTypeStationnementView.as_view(),
+        name="avenant_stationnement",
+    ),
+    path(
         "cadastre/<convention_uuid>",
         views.ConventionCadastreView.as_view(),
         name="cadastre",
@@ -170,6 +175,21 @@ urlpatterns = [
         "avenant_collectif/<convention_uuid>",
         views.AvenantCollectifView.as_view(),
         name="avenant_collectif",
+    ),
+    path(
+        "avenant_foyer_attribution/<convention_uuid>",
+        views.AvenantFoyerAttributionView.as_view(),
+        name="avenant_foyer_attribution",
+    ),
+    path(
+        "avenant_residence_attribution/<convention_uuid>",
+        views.AvenantResidenceAttributionView.as_view(),
+        name="avenant_residence_attribution",
+    ),
+    path(
+        "avenant_variantes/<convention_uuid>",
+        views.AvenantFoyerVariantesView.as_view(),
+        name="avenant_variantes",
     ),
     path(
         "stationnements/<convention_uuid>",

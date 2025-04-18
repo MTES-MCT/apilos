@@ -1,6 +1,6 @@
 {% load custom_filters %}
 
-{% if convention_form_steps|is_a_step:'ConventionFoyerVariantesView' %}
+{% if convention_form_steps|is_a_step:'ConventionFoyerVariantesView' or convention_form_steps|is_a_step:'AvenantFoyerVariantesView' %}
 
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
@@ -8,16 +8,20 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">Variantes</h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Variantes" title_unchecked="Mettre à jour les variantes" checked=checked id="variantes" avenant_type="variantes" description="" %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
-                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_1 label="Variante 1" object_field="convention__foyer_residence_variante_1__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_2 label="Variante 2" object_field="convention__foyer_residence_variante_2__"|add:convention_uuid %}
-                    {% include "common/display_textfield_if_exists.html" with label="Description du programme des travaux " value=convention.foyer_residence_variante_2_travaux object_field="convention__foyer_residence_variante_2_travaux__"|add:convention_uuid %}
-                    {% include "common/display_field_if_exists.html" with label="Nombre de tranches" value=convention.foyer_residence_variante_2_nb_tranches object_field="convention__foyer_residence_variante_2_nb_tranches__"|add:convention_uuid %}
-                    {% include "common/display_field_if_exists.html" with label="Nombre d'années" value=convention.foyer_residence_variante_2_nb_annees object_field="convention__foyer_residence_variante_2_nb_annees__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_3 label="Variante 3" object_field="convention__foyer_residence_variante_3__"|add:convention_uuid %}
+                    {% if not convention.is_avenant or checked %}
+                        {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_1 label="Variante 1" object_field="convention__foyer_residence_variante_1__"|add:convention_uuid %}
+                        {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_2 label="Variante 2" object_field="convention__foyer_residence_variante_2__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Description du programme des travaux " value=convention.foyer_residence_variante_2_travaux object_field="convention__foyer_residence_variante_2_travaux__"|add:convention_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Nombre de tranches" value=convention.foyer_residence_variante_2_nb_tranches object_field="convention__foyer_residence_variante_2_nb_tranches__"|add:convention_uuid %}
+                        {% include "common/display_field_if_exists.html" with label="Nombre d'années" value=convention.foyer_residence_variante_2_nb_annees object_field="convention__foyer_residence_variante_2_nb_annees__"|add:convention_uuid %}
+                        {% include "common/display_checkbox.html" with value=convention.foyer_residence_variante_3 label="Variante 3" object_field="convention__foyer_residence_variante_3__"|add:convention_uuid %}
+                    {% endif %}
                 </div>
             </div>
         </div>

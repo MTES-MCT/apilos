@@ -162,10 +162,34 @@ avenant_financement_step = ConventionFormStep(
     classname="AvenantFinancementView",
 )
 
+avenant_stationnement_step = ConventionFormStep(
+    pathname="conventions:avenant_stationnement",
+    label="Stationnement",
+    classname="AvenantTypeStationnementView",
+)
+
 avenant_champ_libre_step = ConventionFormStep(
     pathname="conventions:avenant_champ_libre",
     label="Champ libre",
     classname="AvenantChampLibreView",
+)
+
+avenant_foyer_attribution_step = ConventionFormStep(
+    pathname="conventions:avenant_foyer_attribution",
+    label="Attribution",
+    classname="AvenantFoyerAttributionView",
+)
+
+avenant_residence_attribution_step = ConventionFormStep(
+    pathname="conventions:avenant_residence_attribution",
+    label="Attribution",
+    classname="AvenantResidenceAttributionView",
+)
+
+avenant_variantes_step = ConventionFormStep(
+    pathname="conventions:avenant_variantes",
+    label="Variantes",
+    classname="AvenantFoyerVariantesView",
 )
 
 avenant_commentaires_step = ConventionFormStep(
@@ -258,12 +282,22 @@ class ConventionFormSteps:
         if not self.steps:
             if convention.is_avenant():
                 varying_steps = (
-                    [avenant_foyer_residence_logements_step, avenant_collectif_step]
+                    [
+                        avenant_foyer_residence_logements_step,
+                        avenant_collectif_step,
+                        (
+                            avenant_foyer_attribution_step
+                            if convention.programme.is_foyer
+                            else avenant_residence_attribution_step
+                        ),
+                        avenant_variantes_step,
+                    ]
                     if convention.programme.is_foyer
                     or convention.programme.is_residence
                     else [
                         avenant_logements_step,
                         avenant_annexes_step,
+                        avenant_stationnement_step,
                     ]
                 )
                 self.steps = [
