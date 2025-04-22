@@ -44,7 +44,7 @@ Lors de chaque commit, un controle de qualité est exécuté sur tous les fichie
 
 - [git pre-commit](https://pre-commit.com/) avec les hooks de bases : trailing-whitespace, check-yaml, check-added-large-files
 - [ruff](https://github.com/astral-sh/ruff) comme linter intégré au pre-commit pour les fichiers python
-- [djhtml](https://pypi.org/project/djhtml/) comme prettier des fichiers html
+- [djabe](https://pypi.org/project/djade/) comme prettier des fichiers html
 - [black](https://pypi.org/project/black/) comme prettier des fichiers python
 
 #### Pull Request et processus de revue de code
