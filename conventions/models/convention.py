@@ -249,6 +249,13 @@ class Convention(models.Model):
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
     @property
+    def annee_convention(self) -> int | None:
+        date_convention = self.televersement_convention_signee_le or self.valide_le
+        if date_convention:
+            return date_convention.year
+        return None
+
+    @property
     def lot(self) -> Lot:
         return self.lots.first()
 
