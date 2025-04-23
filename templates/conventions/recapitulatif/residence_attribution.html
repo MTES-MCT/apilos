@@ -7,7 +7,7 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            {% include "conventions/common/avenants_checkboxes.html" with title="Attribution" title_unchecked="Modification des attributions" checked=checked id="foyer_attribution" avenant_type="residence_attribution" description="" %}
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Attribution" title_unchecked="Modification des attributions" checked=checked id="residence_attribution" avenant_type="residence_attribution" description="" %}
                         </div>
                         {% if not convention.is_avenant or checked %}
                             {% include "conventions/actions/goto.html" %}
