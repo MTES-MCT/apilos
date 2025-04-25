@@ -162,6 +162,12 @@ avenant_financement_step = ConventionFormStep(
     classname="AvenantFinancementView",
 )
 
+avenant_stationnement_step = ConventionFormStep(
+    pathname="conventions:avenant_stationnement",
+    label="Stationnement",
+    classname="AvenantTypeStationnementView",
+)
+
 avenant_champ_libre_step = ConventionFormStep(
     pathname="conventions:avenant_champ_libre",
     label="Champ libre",
@@ -264,6 +270,7 @@ class ConventionFormSteps:
                     else [
                         avenant_logements_step,
                         avenant_annexes_step,
+                        avenant_stationnement_step,
                     ]
                 )
                 self.steps = [
