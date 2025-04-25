@@ -26,7 +26,7 @@ Dans la plus part des cas la logique logicielle est découpée comme suit
 
 APiLos est un outils permettant de générer un document contractuel de convention APL.
 
-La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](../documents)
+La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](https://github.com/MTES-MCT/apilos/tree/main/documents)
 
 Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
 
@@ -36,7 +36,7 @@ Lors de l'instruction des conventions, les bailleurs téléversent des tableaux 
 
 #### Javascript
 
-Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](../package.json)
+Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](https://github.com/MTES-MCT/apilos/tree/main/package.json)
 
 Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
 
@@ -75,7 +75,7 @@ docker-compose up -d
 
 ### Variables d'environnement
 
-Copier les [.env.template](../.env.template) dans un fichier `.env` et [.env.test](../.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
+Copier les [.env.template](https://github.com/MTES-MCT/apilos/tree/main/.env.template) dans un fichier `.env` et [.env.test](https://github.com/MTES-MCT/apilos/tree/main/.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
 
 ```sh
 cp .env.template .env
@@ -135,7 +135,7 @@ python manage.py createsuperuser
 
 ## Lancer de l'application
 
-On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](../Procfile.dev)
+On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](https://github.com/MTES-MCT/apilos/tree/main/Procfile.dev)
 
 ```sh
 honcho start -f Procfile.dev
@@ -348,7 +348,7 @@ Les statistiques de développement par mois sont disponibles dans le fichier `DE
 
 La documentation technique est maintenue dans la dossiers [docs](./docs) et elle est publiée avec la librairie python [sphynx](https://www.sphinx-doc.org/en/master/index.html)
 
-les images sont stockées dans le répertoire [docs/_static](../docs/_static)
+les images sont stockées dans le répertoire [docs/_static](https://github.com/MTES-MCT/apilos/tree/main/docs/_static)
 
 ### Installation des librairie de génération de la documentation
 

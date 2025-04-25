@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Migration des données depuis Ecoloweb" href="ECOLOWEB.html" /><link rel="prev" title="DEPLOIEMENT DE LA PLATEFORME APILOS" href="DEPLOIEMENT.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEPLOIEMENT DE LA PLATEFORME APILOS" href="DEPLOIEMENT.html" /><link rel="prev" title="APiLos - documentation technique" href="README.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>DEVELOPPEMENT - Documentation APiLos</title>
@@ -199,9 +199,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
@@ -269,7 +268,7 @@
 <section id="generation-de-documents-xls-et-pdf">
 <h5>Génération de documents xls et pdf<a class="headerlink" href="#generation-de-documents-xls-et-pdf" title="Lien vers cette rubrique">¶</a></h5>
 <p>APiLos est un outils permettant de générer un document contractuel de convention APL.</p>
-<p>La génération de document de convention au format .docx est prise en charge par la librairie <a class="reference external" href="https://docxtpl.readthedocs.io/en/latest/">python-docx-template</a> qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier <a class="reference internal" href="#../documents"><span class="xref myst">./documents</span></a></p>
+<p>La génération de document de convention au format .docx est prise en charge par la librairie <a class="reference external" href="https://docxtpl.readthedocs.io/en/latest/">python-docx-template</a> qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/documents">./documents</a></p>
 <p>Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L’application <a class="reference external" href="https://https://fr.libreoffice.org/discover/libreoffice/">Libreoffice</a> est utilisée pour générer une version pdf du document docx.</p>
 </section>
 <section id="import-de-firchiers-excel">
@@ -279,7 +278,7 @@
 </section>
 <section id="javascript">
 <h4>Javascript<a class="headerlink" href="#javascript" title="Lien vers cette rubrique">¶</a></h4>
-<p>Peu de JS est utilisé dans l’application. Les dépendances sont déclarées dans le fichier <a class="reference download internal" download="" href="_downloads/107ae6f6a70591a8435722bf4be2e286/package.json"><span class="xref download myst">package.json</span></a></p>
+<p>Peu de JS est utilisé dans l’application. Les dépendances sont déclarées dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/package.json">package.json</a></p>
 <p>Avant de lancer l’application, il est nécessaire d’installer ces dépendances:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
 </pre></div>
@@ -318,7 +317,7 @@ docker-compose<span class="w"> </span>up<span class="w"> </span>-d
 </section>
 <section id="variables-d-environnement">
 <h3>Variables d’environnement<a class="headerlink" href="#variables-d-environnement" title="Lien vers cette rubrique">¶</a></h3>
-<p>Copier les <a class="reference download internal" download="" href="_downloads/076c3c84591bf93ec4d66f3c60b8f97a/.env.template"><span class="xref download myst">.env.template</span></a> dans un fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> et <a class="reference download internal" download="" href="_downloads/e28f130f1719e0574875616dfd2ecdf6/.env.test"><span class="xref download myst">.env.test</span></a> dans <code class="docutils literal notranslate"><span class="pre">.env.test.local</span></code> puis mettre à jour les variables d’environements.</p>
+<p>Copier les <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.template">.env.template</a> dans un fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> et <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.test">.env.test</a> dans <code class="docutils literal notranslate"><span class="pre">.env.test.local</span></code> puis mettre à jour les variables d’environements.</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>.env.template<span class="w"> </span>.env
 cp<span class="w"> </span>.env.test<span class="w"> </span>.env.test.local
 </pre></div>
@@ -374,7 +373,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </section>
 <section id="lancer-de-l-application">
 <h2>Lancer de l’application<a class="headerlink" href="#lancer-de-l-application" title="Lien vers cette rubrique">¶</a></h2>
-<p>On utilise la librairie  <code class="docutils literal notranslate"><span class="pre">honcho</span></code> en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier <a class="reference download internal" download="" href="_downloads/9d6b62a1a5bdfbe7c26b02cc0b6aa0ca/Procfile.dev"><span class="xref download myst">Procfile.dev</span></a></p>
+<p>On utilise la librairie  <code class="docutils literal notranslate"><span class="pre">honcho</span></code> en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/Procfile.dev">Procfile.dev</a></p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>honcho<span class="w"> </span>start<span class="w"> </span>-f<span class="w"> </span>Procfile.dev
 </pre></div>
 </div>
@@ -442,7 +441,7 @@ pre-commit<span class="w"> </span>install
 </section>
 <section id="les-api">
 <h2>Les API<a class="headerlink" href="#les-api" title="Lien vers cette rubrique">¶</a></h2>
-<p>Plus de détails sur la doc dédiée <a class="reference internal" href="API.html"><span class="std std-doc">API.md</span></a></p>
+<p>Plus de détails sur la doc dédiée <a class="reference internal" href="#API.md"><span class="xref myst">API.md</span></a></p>
 </section>
 <section id="ajouter-des-dependances-avec-pip-tools">
 <h2>Ajouter des dépendances avec pip-tools<a class="headerlink" href="#ajouter-des-dependances-avec-pip-tools" title="Lien vers cette rubrique">¶</a></h2>
@@ -562,7 +561,7 @@ python<span class="w"> </span>manage.py<span class="w"> </span>get_delivery_stat
 <section id="mise-a-jour-de-la-documentation-technique">
 <h2>Mise à jour de la documentation technique<a class="headerlink" href="#mise-a-jour-de-la-documentation-technique" title="Lien vers cette rubrique">¶</a></h2>
 <p>La documentation technique est maintenue dans la dossiers <a class="reference internal" href="#./docs"><span class="xref myst">docs</span></a> et elle est publiée avec la librairie python <a class="reference external" href="https://www.sphinx-doc.org/en/master/index.html">sphynx</a></p>
-<p>les images sont stockées dans le répertoire <a class="reference internal" href="#../docs/_static"><span class="xref myst">docs/_static</span></a></p>
+<p>les images sont stockées dans le répertoire <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/docs/_static">docs/_static</a></p>
 <section id="installation-des-librairie-de-generation-de-la-documentation">
 <h3>Installation des librairie de génération de la documentation<a class="headerlink" href="#installation-des-librairie-de-generation-de-la-documentation" title="Lien vers cette rubrique">¶</a></h3>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>doc-requirements.txt
@@ -586,23 +585,23 @@ sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="ECOLOWEB.html">
+          <a class="next-page" href="DEPLOIEMENT.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Migration des données depuis Ecoloweb</div>
+                <div class="title">DEPLOIEMENT DE LA PLATEFORME APILOS</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="DEPLOIEMENT.html">
+          <a class="prev-page" href="README.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">DEPLOIEMENT DE LA PLATEFORME APILOS</div>
+                <div class="title">Home</div>
                 
               </div>
             </a>

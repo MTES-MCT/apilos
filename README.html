@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="API de la plateforme APiLos" href="API.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>Documentation APiLos</title>
@@ -199,9 +199,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
@@ -250,9 +249,17 @@
 <h1>APiLos - documentation technique<a class="headerlink" href="#apilos-documentation-technique" title="Lien vers cette rubrique">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="API.html#api-pour-le-siap">API pour le SIAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="API.html#les-autres-api">Les autres API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#quelques-details-sur-la-stack-technique-utilisee">Quelques détails sur la stack technique utilisée</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#lancer-de-l-application">Lancer de l’application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#qualite-de-code">Qualité de code</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#les-api">Les API</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#ajouter-des-dependances-avec-pip-tools">Ajouter des dépendances avec pip-tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#manipulations-de-developpement">Manipulations de développement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#mock-cerbere">MOCK CERBERE</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#statistiques-de-developpement">Statistiques de développement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#mise-a-jour-de-la-documentation-technique">Mise à jour de la documentation technique</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a><ul>
@@ -267,19 +274,6 @@
 <li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#chargement-d-un-jeu-de-test">Chargement d’un jeu de test</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#deploiement-de-metabase">Déploiement de Metabase</a></li>
 <li class="toctree-l2"><a class="reference internal" href="DEPLOIEMENT.html#deploiement-de-la-documentation-technique">Deploiement de la documentation technique</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#quelques-details-sur-la-stack-technique-utilisee">Quelques détails sur la stack technique utilisée</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#installation">Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#lancer-de-l-application">Lancer de l’application</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#qualite-de-code">Qualité de code</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#les-api">Les API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#ajouter-des-dependances-avec-pip-tools">Ajouter des dépendances avec pip-tools</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#manipulations-de-developpement">Manipulations de développement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#mock-cerbere">MOCK CERBERE</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#statistiques-de-developpement">Statistiques de développement</a></li>
-<li class="toctree-l2"><a class="reference internal" href="DEVELOPPEUR.html#mise-a-jour-de-la-documentation-technique">Mise à jour de la documentation technique</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a><ul>
@@ -306,13 +300,13 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#environnements">Environnements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#api-meme-protocole">2 API, même protocole</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#responsabilite-des-plateformes">Responsabilité des plateformes</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#cas-d-utilisation">Cas d’utilisation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#interpretation-des-habilitations-siap">Interprétation des Habilitations SIAP</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#partage-d-objet-avec-le-siap">Partage d’objet avec le SIAP</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#questions-ouvertes-pour-plus-tard">Questions ouvertes pour plus tard</a></li>
-<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#comportement-apilos-lors-de-l-acces-a-une-operation-siap">Comportement APilos lors de l’accès à une opération SIAP</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#tests-des-api-siap-et-apilos">Tests des API SIAP et APiLos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="SIAP-APiLos.html#comportement-apilos-lors-de-l-acces-a-partir-d-une-operation-siap">Comportement APilos lors de l’accès à partir d’une opération SIAP</a></li>
 </ul>
 </li>
 </ul>
@@ -323,14 +317,14 @@
 <p>Les librairies Javascript nécessaires à l’application sont compilés par l’aplication <a class="reference external" href="https://parceljs.org/">Parcel.js</a></p>
 <p>Le design de l’interface suit le <a class="reference external" href="https://www.systeme-de-design.gouv.fr/">Système de design de l’état</a></p>
 <p>APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authentifier ses utilisateurs. Les habilitations (gestion des droits et périmètres) sont fournies par le SIAP.</p>
-<p><img alt="Architecture APilos" src="_images/architecture_apilos.jpg" /></p>
+<p><img alt="Architecture APilos" src="_images/ArchitectureAPilos.png" /></p>
 <p>Les solutions tierces utilisées par APiLos:</p>
 <ul class="simple">
 <li><p>SIAP : Système d’Information des Aides à la Pierre - Habilitations des utilisateurs</p></li>
 <li><p>CERBERE : SSO - Authentification des utilisateurs</p></li>
 <li><p>Scalingo : hébergement de la solution (cloud souverain)</p></li>
 <li><p>Scaleway : stockage de fichiers compatible avec le protocole S3</p></li>
-<li><p>Brevo : envoi de courriels transactionnels</p></li>
+<li><p>Brevo : envoi de courriels transactionnels (En cours de dépréciation)</p></li>
 <li><p>Sentry : monitoring logiciel</p></li>
 <li><p>Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)</p></li>
 </ul>
@@ -350,7 +344,7 @@
 <section id="pull-request-et-processus-de-revue-de-code">
 <h4>Pull Request et processus de revue de code<a class="headerlink" href="#pull-request-et-processus-de-revue-de-code" title="Lien vers cette rubrique">¶</a></h4>
 <p>La branche <code class="docutils literal notranslate"><span class="pre">main</span></code> est protégée : il n’est pas possible de la modifier autre que par une Pull Request.</p>
-<p>Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>. Grâce à la fonctionnalité <a class="reference download internal" download="" href="_downloads/e741ad84c9a4daa32c31d2ec731d8d56/CODEOWNERS"><span class="xref download myst">CODEOWNERS</span></a> de github, la revue de la PR est assignée à 2 membres de l’équipe de développeur d’APiLos.</p>
+<p>Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>. Grâce à la fonctionnalité <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/CODEOWNERS">CODEOWNERS</a> de github, la revue de la PR est assignée à 2 membres de l’équipe de développeur d’APiLos.</p>
 <p>Une Pull Request ne peut pas être « mergée » tant qu’elle n’a pas au moins une approbation d’un membre de l’équipe. Pour une Pull Request qui modifie l’architecture de l’application, qui modifie de manière importante le comportement de l’application ou qui met à jour une version majeur d’une dépendance, on préfèrera avoir 2 approbations.</p>
 <p>A chaque Pull Request, un certain nombre de controles sont exécutés.</p>
 <p>Les controles par des systèmes tiers:</p>
@@ -366,14 +360,14 @@
 <li><p>Coverage : test la couverture du code par les tests</p></li>
 </ul>
 <p>Ces mêmes controles sont exécutés à chaque modification de la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> (lors du « merge » de la Pull Request)</p>
-<p>En plus des controles de qualité éxécuté sur les Pull Request et la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>, les dépendances Python, Javascript et Github sont inspectées et les mise à jour sont proposées via Pull Request par l’application <a class="reference download internal" download="" href="_downloads/c05a5735ac569e496d7f733362ead567/dependabot.yml"><span class="xref download myst">dependabot</span></a></p>
+<p>En plus des controles de qualité éxécuté sur les Pull Request et la branche <code class="docutils literal notranslate"><span class="pre">main</span></code>, les dépendances Python, Javascript et Github sont inspectées et les mise à jour sont proposées via Pull Request par l’application <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/dependabot.yml">dependabot</a></p>
 </section>
 </section>
 <section id="deploiement-staging-et-production">
 <h3>Déploiement (Staging et Production)<a class="headerlink" href="#deploiement-staging-et-production" title="Lien vers cette rubrique">¶</a></h3>
 <p>Le déploiement de la plateforme APiLos est exécuté via la <a class="reference external" href="https://github.com/MTES-MCT/apilos/actions">CI/CD github action</a></p>
-<p>L’application est déployée sur les environnements d’intégration, recette et école quand la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> est mise à jour (à chaque merge de Pull Request) : <a class="reference download internal" download="" href="_downloads/1ef5e8619b2df418fbc124d4437ff9ed/push-branch-main.yml"><span class="xref download myst">github action</span></a></p>
-<p>L’application est déployée sur l’environnement de production quand un tag de la forme v*.<em>.</em> est poussé sur Git : <a class="reference download internal" download="" href="_downloads/cbabcf9bf20555440255dd1abdfbec85/push-version-tag.yml"><span class="xref download myst">github action</span></a></p>
+<p>L’application est déployée sur les environnements d’intégration, recette et école quand la branche <code class="docutils literal notranslate"><span class="pre">main</span></code> est mise à jour (à chaque merge de Pull Request) : <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/push-branch-main.yml">github action</a></p>
+<p>L’application est déployée sur l’environnement de production quand un tag de la forme v*.<em>.</em> est poussé sur Git : <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/push-version-tag.yml">github action</a></p>
 <p>Pour en plus de détails, merci de se référer à la documentation sur <a class="reference internal" href="DEPLOIEMENT.html"><span class="std std-doc">DEPLOIEMENT.md</span></a></p>
 </section>
 <section id="installation-de-la-plateforme-en-local-developpeurs">
@@ -467,7 +461,7 @@ flowchart RL
 <h3>Stockage de fichiers<a class="headerlink" href="#stockage-de-fichiers" title="Lien vers cette rubrique">¶</a></h3>
 <p>Les documents sont stockés sur un répertoire distant et souverain compatible avec le protocole S3 sur <a class="reference external" href="https://console.scaleway.com/object-storage/buckets">Scaleway</a> ce processus est géré via la librairie python boto en combinaison avec le package default_storage de Django</p>
 <p>Ce stockage est activé lorsque les variables d’environnement AWS… sont définits.</p>
-<p>Ce stockage s3 est sauvegardé toutes les semaine via une action <a class="reference download internal" download="" href="_downloads/e0139c4346b93baf3ccf065e91e7348f/s3_backup.yml"><span class="xref download myst">github action</span></a></p>
+<p>Ce stockage s3 est sauvegardé toutes les semaine via une action <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml">github action</a></p>
 </section>
 <section id="monitoring-et-alerting-de-l-application-apilos">
 <h3>Monitoring et alerting de l’application APiLos<a class="headerlink" href="#monitoring-et-alerting-de-l-application-apilos" title="Lien vers cette rubrique">¶</a></h3>
@@ -510,12 +504,12 @@ Le rapport d’accessibilité est publié <a class="reference external" href="ht
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="API.html">
+          <a class="next-page" href="DEVELOPPEUR.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">API de la plateforme APiLos</div>
+                <div class="title">DEVELOPPEMENT</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>

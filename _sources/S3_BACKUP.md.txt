@@ -17,6 +17,6 @@ Ajouter les `Repository secrets` :
 
 ## Execution
 
-Le backup est exécuté régulièrement selon la configuraton du [workflow](../.github/workflows/s3_backup.yml)
+Le backup est exécuté régulièrement selon la configuraton du [workflow](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml)
 
 Le résultat du backup est stocké dans les artefacts du workflow executé et est conservé 90 jours

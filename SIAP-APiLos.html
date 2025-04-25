@@ -199,9 +199,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
@@ -250,7 +249,7 @@
 </div>
 <section id="documentation-des-interactions-siap-apilos">
 <h1>Documentation des interactions SIAP APiLos<a class="headerlink" href="#documentation-des-interactions-siap-apilos" title="Lien vers cette rubrique">¶</a></h1>
-<p><a class="reference external" href="https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866">Tableau de bord des développements communs entre SIAP et APiLos</a></p>
+<p><a class="reference external" href="https://airtable.com/invite/l?inviteId=invjSqVR5SIISoGI3&amp;amp;inviteToken=5babfd0fd34037720159687a027598c3e25bda33d8ced8361dc1f9a3e18ba90f&amp;amp;utm_medium=email&amp;amp;utm_source=product_team&amp;amp;utm_content=transactional-alerts">Tableau de bord des développements communs entre SIAP et APiLos</a></p>
 <section id="environnements">
 <h2>Environnements<a class="headerlink" href="#environnements" title="Lien vers cette rubrique">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -268,27 +267,17 @@
 <td class="text-left"><p>https://apilos.logement.gouv.fr</p></td>
 <td class="text-left"><p>Partagé avec la version APiLos autonome de production</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>Pilote</p></td>
-<td class="text-left"><p>https://prehabilitation.siap.logement.gouv.fr (MTE)</p></td>
-<td class="text-left"><p>❌</p></td>
-<td class="text-left"><p>Préhabilitation et recette de la reprise de donnée, pas d’intérêt d’avoir une plateforme APiLos en mirroir</p></td>
-</tr>
-<tr class="row-even"><td class="text-left"><p>Ecole</p></td>
+<tr class="row-odd"><td class="text-left"><p>Ecole</p></td>
 <td class="text-left"><p>https://ecole.siap.logement.gouv.fr (MTE)</p></td>
 <td class="text-left"><p>https://siap-ecole.apilos.beta.gouv.fr</p></td>
 <td class="text-left"><p>Utilisé pour les formations</p></td>
-</tr>
-<tr class="row-odd"><td class="text-left"><p>Préproduction</p></td>
-<td class="text-left"><p>https://preprod.siap.logement.gouv.fr (MTE)</p></td>
-<td class="text-left"><p>❌</p></td>
-<td class="text-left"><p>Peu d’intérêt d’avoir un environnement mirroir APiLos puisse que ce cas est testé sur tous les autres environnements. Proposition : supprimer le lien avec la plateforme APiLos car l’environnement actuellement utilisé est déjà utilisé par la plateforme recette</p></td>
 </tr>
 <tr class="row-even"><td class="text-left"><p>Recette</p></td>
 <td class="text-left"><p>https://minlog-siap.gateway.recette.sully-group.fr (Sully)</p></td>
 <td class="text-left"><p>https://siap-recette.apilos.beta.gouv.fr</p></td>
 <td class="text-left"><p>Rectte métier</p></td>
 </tr>
-<tr class="row-odd"><td class="text-left"><p>IntAPI</p></td>
+<tr class="row-odd"><td class="text-left"><p>Integration</p></td>
 <td class="text-left"><p>https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully)</p></td>
 <td class="text-left"><p>https://siap-integration.apilos.beta.gouv.fr</p></td>
 <td class="text-left"><p>Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging</p></td>
@@ -297,11 +286,40 @@
 </table>
 </div>
 </section>
+<section id="api-meme-protocole">
+<h2>2 API, même protocole<a class="headerlink" href="#api-meme-protocole" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les 2 plateformes SIAP et APiLos mettent à disposition une API qui utilise le même processus d’authentification via JWT.</p>
+<p>l’API mise à disposition par APiLos est disponible dans le dossier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/api">./api</a>
+Le client d’API pour communiquer avec l’API SIAP est disponible dans le dossier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/siap">./siap</a></p>
+<p>Chaque requête de ces 2 APIs est authentifiée grâce à un JWT token qui contient l’identifiant et l’hailitatio courante de l’utilisateur. ce JWT est signé avec le protocole HS256 via une clé secrête partagée par les 2 plateformes</p>
+</section>
+<section id="responsabilite-des-plateformes">
+<h2>Responsabilité des plateformes<a class="headerlink" href="#responsabilite-des-plateformes" title="Lien vers cette rubrique">¶</a></h2>
+<p>3 plateformes sont mentionnées dans ce document.</p>
+<section id="cerbere">
+<h3>CERBERE<a class="headerlink" href="#cerbere" title="Lien vers cette rubrique">¶</a></h3>
+<p>Cerbere est responsable de garantir l’identité de l’utilisateur. Cette plateforme est utilisé par le SIAP et par APiLos comme un SSO (Single Sign On)</p>
+</section>
+<section id="siap">
+<h3>SIAP<a class="headerlink" href="#siap" title="Lien vers cette rubrique">¶</a></h3>
+<p>La plateforme SIAP est responsable de la partie financement des logements sociaux.
+Pour garantir la cohérente avec APiLos, la plateforme SIAP est responsable de :</p>
+<ul class="simple">
+<li><p>La gestion des habilitations : APiLos consomme les habilitations depuis L’API du SIAP et applique ces habilitations</p></li>
+<li><p>La gestion du menu : pour chaque couple utilisateur, habilitation, APiLos consomme l’API du SIAP et affiche le contenu du menu transmis par le SIAP</p></li>
+</ul>
+</section>
+<section id="apilos">
+<h3>APiLos<a class="headerlink" href="#apilos" title="Lien vers cette rubrique">¶</a></h3>
+<p>La plateforme APiLos est responsable de la partie conventionnement APL des logements sociaux.</p>
+<p>La plateforme est responsable des indicateurs affichés parle tableau de bord du SIAP : pour chaque couple utilisateur, habilitation le SIAP consomme les indicateurs de conventionnement via l’API d’APiLos et les affiche sur le tableau de bord de l’utilisateur</p>
+</section>
+</section>
 <section id="cas-d-utilisation">
 <h2>Cas d’utilisation<a class="headerlink" href="#cas-d-utilisation" title="Lien vers cette rubrique">¶</a></h2>
 <section id="autentification-au-siap-ou-apilos-via-cerbere">
 <h3>Autentification au SIAP ou APiLos via CERBERE<a class="headerlink" href="#autentification-au-siap-ou-apilos-via-cerbere" title="Lien vers cette rubrique">¶</a></h3>
-<p>L’authentification via CERBERE utilise le même protocole pour SIAP et APiLos</p>
+<p>L’authentification via CERBERE utilise le même protocole pour le SIAP et APiLos</p>
 <pre  class="mermaid">
         sequenceDiagram
     actor Client
@@ -318,10 +336,11 @@
     SIAP / APiLos-&gt;&gt;-Client: Accès identifié
     Note over Client, CERBERE : Client authentifié
 
-    </pre><p>Bloc nommé <code class="docutils literal notranslate"><span class="pre">Authentification</span> <span class="pre">via</span> <span class="pre">CERBERE</span></code> dans la suite du document</p>
+    </pre><p>Ce processus d’authentification est représenté par le bloc nommé <code class="docutils literal notranslate"><span class="pre">Authentification</span> <span class="pre">via</span> <span class="pre">CERBERE</span></code> dans la suite du document</p>
 </section>
 <section id="connexion-au-siap-et-redirection-apilos-siap-via-le-menu">
 <h3>Connexion au SIAP et redirection APiLos / SIAP via le menu<a class="headerlink" href="#connexion-au-siap-et-redirection-apilos-siap-via-le-menu" title="Lien vers cette rubrique">¶</a></h3>
+<p>Représentation de la bascule entre les 2 plateformes lorsque l’utilisateur clique sur les lien «Conventionnement» et «Financement» du menu.</p>
 <pre  class="mermaid">
         sequenceDiagram
     actor Client
@@ -346,6 +365,7 @@
     </pre></section>
 <section id="bascule-vers-le-conventionnement-a-partir-d-une-operation-siap">
 <h3>Bascule vers le conventionnement à partir d’une opération SIAP<a class="headerlink" href="#bascule-vers-le-conventionnement-a-partir-d-une-operation-siap" title="Lien vers cette rubrique">¶</a></h3>
+<p>Quand une opération est conventionnable, l’interface SIAP affiche un lien «Conventionnement» sur la page de convention qui redirige vers la page de conventionnement de l’opération.</p>
 <pre  class="mermaid">
         sequenceDiagram
     actor Client
@@ -366,8 +386,9 @@
     APiLos-&gt;&gt;-Client: Affichage des conventions de l'opération
 
     </pre></section>
-<section id="affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap">
-<h3>Affichage des indicateurs de conventionnement dans le ableau de bord du SIAP<a class="headerlink" href="#affichage-des-indicateurs-de-conventionnement-dans-le-ableau-de-bord-du-siap" title="Lien vers cette rubrique">¶</a></h3>
+<section id="affichage-des-indicateurs-de-conventionnement-dans-le-tableau-de-bord-du-siap">
+<h3>Affichage des indicateurs de conventionnement dans le tableau de bord du SIAP<a class="headerlink" href="#affichage-des-indicateurs-de-conventionnement-dans-le-tableau-de-bord-du-siap" title="Lien vers cette rubrique">¶</a></h3>
+<p>Le SIAP collecte les KPI concernant le conventionnement à afficher sur le tableau de bord du SIAP via l’API mise à disposition par APiLos</p>
 <pre  class="mermaid">
         sequenceDiagram
     actor Client
@@ -412,6 +433,7 @@
 <li><p>Administration centrale</p></li>
 </ul>
 <p>Les utilisateurs de type administrateur sont autoirisés à voir et modifier les opérations, conventions et objects associés selon la géographie du profile : le département, la région ou la france entièrte définit par l’habilitation active.</p>
+<p>Pour chacun de ces type, si l’habilitation est de type lecture seule, l’utilisateur n’a pas le droits de création ou modification des conventions.</p>
 </section>
 <section id="partage-d-objet-avec-le-siap">
 <h2>Partage d’objet avec le SIAP<a class="headerlink" href="#partage-d-objet-avec-le-siap" title="Lien vers cette rubrique">¶</a></h2>
@@ -529,8 +551,10 @@
 </section>
 </section>
 </section>
+<section id="tests-des-api-siap-et-apilos">
+<h2>Tests des API SIAP et APiLos<a class="headerlink" href="#tests-des-api-siap-et-apilos" title="Lien vers cette rubrique">¶</a></h2>
 <section id="pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos">
-<h2>Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)<a class="headerlink" href="#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos" title="Lien vers cette rubrique">¶</a></h2>
+<h3>Pour tester le Client de l’API du SIAP dans un shell (Appel de l’application SIAP à partir du backend de l’application APiLos)<a class="headerlink" href="#pour-tester-le-client-de-l-api-du-siap-dans-un-shell-appel-de-l-application-siap-a-partir-du-backend-de-l-application-apilos" title="Lien vers cette rubrique">¶</a></h3>
 <p>Récupérer l’email de l’utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
 Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d’habilitation en haut à droite de l’écran</p>
 <p>Ouvrir un shell django, puis tester quelques appels:</p>
@@ -543,7 +567,9 @@ Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont acc
 </div>
 </section>
 <section id="pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap">
-<h2>Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)<a class="headerlink" href="#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap" title="Lien vers cette rubrique">¶</a></h2>
+<h3>Pour tester le Client de l’API d’APiLos dans un shell (Appel de l’application APiLos à partir du backend de l’application SIAP)<a class="headerlink" href="#pour-tester-le-client-de-l-api-d-apilos-dans-un-shell-appel-de-l-application-apilos-a-partir-du-backend-de-l-application-siap" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les API pour dialoguer avec le SIAP sont disponibles sur le endpoint <code class="docutils literal notranslate"><span class="pre">api-siap/v0</span></code></p>
+<p>Une interface swagger est disponible sur la route <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/schema-ui/</span></code> et le contrat d’interface OpenAPI 3 sur la route <code class="docutils literal notranslate"><span class="pre">/api-siap/v0/schema/</span></code>.</p>
 <p>Récupérer l’email de l’utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
 Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d’habilitation en haut à droite de l’écran</p>
 <p>Ouvrir un shell django, pour générer un Token JWT :</p>
@@ -556,7 +582,7 @@ Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont acc
 <p>L’ensemble des fonctions de la page sont maintenant testables</p>
 <p>⚠️ Attention, le token JWT n’est valide que 5 minutes</p>
 <section id="exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt">
-<h3>Exemple du contenu du token JWT généré par la fonction build_jwt<a class="headerlink" href="#exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt" title="Lien vers cette rubrique">¶</a></h3>
+<h4>Exemple du contenu du token JWT généré par la fonction build_jwt<a class="headerlink" href="#exemple-du-contenu-du-token-jwt-genere-par-la-fonction-build-jwt" title="Lien vers cette rubrique">¶</a></h4>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;iat&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1555458148</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;exp&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">2655458448</span><span class="p">,</span>
@@ -570,15 +596,10 @@ Récupérer l’ID de l’habilitation utilisé pour les tests : les ID sont acc
 <p>Il est possible aussi de générer de token via un site tel que https://jwt.io/ et en utilisant la clé JWT_SIGN_KEY pour signer le token</p>
 </section>
 </section>
-<section id="questions-ouvertes-pour-plus-tard">
-<h2>Questions ouvertes pour plus tard<a class="headerlink" href="#questions-ouvertes-pour-plus-tard" title="Lien vers cette rubrique">¶</a></h2>
-<ul class="simple">
-<li><p>[ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP</p></li>
-<li><p>[ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes</p></li>
-</ul>
 </section>
-<section id="comportement-apilos-lors-de-l-acces-a-une-operation-siap">
-<h2>Comportement APilos lors de l’accès à une opération SIAP<a class="headerlink" href="#comportement-apilos-lors-de-l-acces-a-une-operation-siap" title="Lien vers cette rubrique">¶</a></h2>
+<section id="comportement-apilos-lors-de-l-acces-a-partir-d-une-operation-siap">
+<h2>Comportement APilos lors de l’accès à partir d’une opération SIAP<a class="headerlink" href="#comportement-apilos-lors-de-l-acces-a-partir-d-une-operation-siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Quand l’utilisateur accède à la page de conventionnement d’une operation, les conventions existantes sur APiLos sont collectées, si certains financement doivent-être conventionnés et que la convention n’existe pas, elle est créée, si des anomalies sont détectées toutes les conventions sont affiché et un message d’erreur indique à l’utilisateur qu’il a un conflit à résoudre.</p>
 <pre  class="mermaid">
         graph TD
     A[&quot;route /operations/num_op&quot;] --&gt; B[Collect Programmes, on collecte l'ensemble des programmes qui ont le numéro d'opération]

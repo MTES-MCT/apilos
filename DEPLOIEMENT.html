@@ -3,7 +3,7 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" /><link rel="prev" title="API de la plateforme APiLos" href="API.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Migration des données depuis Ecoloweb" href="ECOLOWEB.html" /><link rel="prev" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
         <title>DEPLOIEMENT DE LA PLATEFORME APILOS - Documentation APiLos</title>
@@ -199,9 +199,8 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="API.html">API de la plateforme APiLos</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
@@ -257,8 +256,9 @@
 <li><p>webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x</p></li>
 <li><p>worker : worker Celery pour déléguer des tâches longues qui s’executeront de manière asynchrone</p></li>
 <li><p>Une base de données postgres en version 12.11.0</p></li>
+<li><p>Une base de données Redis utilisé comme «message queue» pour passer les instructions au worker</p></li>
 </ul>
-<p>Les applications lancées sont configurées dans le fichier <a class="reference download internal" download="" href="_downloads/05eca1040a8f3bd4fb4fd238712c4700/Procfile"><span class="xref download myst">Procfile</span></a></p>
+<p>Les applications lancées sont configurées dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/Procfile">Procfile</a></p>
 <p>La base de données est sauvegardée toutes les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration.</p>
 </section>
 <section id="ci-cd-et-branch-git">
@@ -266,7 +266,7 @@
 <p>Les « User Stories » (US) sont développées sur des « feature branches » (convention de nommage sNUM-US_DESCRIPTION) à partir de la branch <code class="docutils literal notranslate"><span class="pre">main</span></code>.
 les <code class="docutils literal notranslate"><span class="pre">feature</span> <span class="pre">branches</span></code> font l’objet de <code class="docutils literal notranslate"><span class="pre">pull</span> <span class="pre">request</span></code> à merger sur <code class="docutils literal notranslate"><span class="pre">main</span></code>.</p>
 <p>La solution github actions est utilisée: <a class="reference external" href="https://github.com/MTES-MCT/apilos/actions">Github Actions</a>
-La config est ici : <a class="reference internal" href="#../.github/workflows"><span class="xref myst">.github/workflows</span></a></p>
+La config est ici : <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows">.github/workflows</a></p>
 <section id="comment-release">
 <h3>Comment release<a class="headerlink" href="#comment-release" title="Lien vers cette rubrique">¶</a></h3>
 <ul class="simple">
@@ -288,7 +288,7 @@ La config est ici : <a class="reference internal" href="#../.github/workflows"><
 </section>
 <section id="ci">
 <h3>CI<a class="headerlink" href="#ci" title="Lien vers cette rubrique">¶</a></h3>
-<p>A chaque push sur <a class="reference external" href="https://github.com/MTES-MCT/apilos">Github</a>, le projet est <em>buildé</em> et les tests sont passés</p>
+<p>A chaque push sur <a class="reference external" href="https://github.com/MTES-MCT/apilos">Github</a>, le projet est compilé et les tests sont passés</p>
 </section>
 <section id="cd">
 <h3>CD<a class="headerlink" href="#cd" title="Lien vers cette rubrique">¶</a></h3>
@@ -298,7 +298,7 @@ La config est ici : <a class="reference internal" href="#../.github/workflows"><
 </section>
 <section id="deploiement">
 <h2>Déploiement<a class="headerlink" href="#deploiement" title="Lien vers cette rubrique">¶</a></h2>
-<p>Lors du déploiement, les étapes définis dans le script <a class="reference download internal" download="" href="_downloads/13d418c896eac4114958e8f16d495641/post_deploy"><span class="xref download myst">bin/post_deploy</span></a> sont exécutées :</p>
+<p>Lors du déploiement, les étapes définis dans le script <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/bin/post_deploy">bin/post_deploy</a> sont exécutées :</p>
 <ol class="arabic simple">
 <li><p>Execution des migrations de la base de données</p></li>
 <li><p>Population des roles et des permissions</p></li>
@@ -426,8 +426,8 @@ Using default option: Users won&#39;t be truncated
 </section>
 <section id="deploiement-de-la-documentation-technique">
 <h2>Deploiement de la documentation technique<a class="headerlink" href="#deploiement-de-la-documentation-technique" title="Lien vers cette rubrique">¶</a></h2>
-<p>Les librairies nécessaires à la génération de la documentation sont maintenus dans le document <a class="reference download internal" download="" href="_downloads/182030b2b26454a85bff654ba1c6a74b/doc-requirements.txt"><span class="xref download myst">doc-requirements.txt</span></a>, généré avec pip-tools depuis <a class="reference download internal" download="" href="_downloads/71a51c6fefeeb3855469327eb9f7097f/doc-requirements.in"><span class="xref download myst">doc-requirements.in</span></a></p>
-<p>La publication est executé à chaque mise à jour de la branch main via l’action github <a class="reference download internal" download="" href="_downloads/7f228aa01a84c9f083d4f7d496bc76c8/publish-docs.yml"><span class="xref download myst">publish-docs.yml</span></a></p>
+<p>Les librairies nécessaires à la génération de la documentation sont maintenus dans le document <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/doc-requirements.txt">doc-requirements.txt</a>, généré avec pip-tools depuis <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/doc-requirements.in">doc-requirements.in</a></p>
+<p>La publication est executé à chaque mise à jour de la branch main via l’action github <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/publish-docs.yml">publish-docs.yml</a></p>
 <p>La configuration Github suivante est nécessaire :</p>
 <p><img alt="" src="_images/configuration_github_pages_apilos.png" /></p>
 </section>
@@ -438,23 +438,23 @@ Using default option: Users won&#39;t be truncated
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="DEVELOPPEUR.html">
+          <a class="next-page" href="ECOLOWEB.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">DEVELOPPEMENT</div>
+                <div class="title">Migration des données depuis Ecoloweb</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="API.html">
+          <a class="prev-page" href="DEVELOPPEUR.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">API de la plateforme APiLos</div>
+                <div class="title">DEVELOPPEMENT</div>
                 
               </div>
             </a>

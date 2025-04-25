@@ -1,3 +1,0 @@
-services: docker compose up
-web: python manage.py runserver 0.0.0.0:8001
-worker: python -m celery -A core.worker worker -B -l INFO

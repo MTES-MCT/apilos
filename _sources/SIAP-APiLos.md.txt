@@ -3,24 +3,53 @@
 
 # Documentation des interactions SIAP APiLos
 
-[Tableau de bord des développements communs entre SIAP et APiLos](https://airtable.com/shruWiCQNMkq6Wggk/tblNIOUJttSKoH866)
+[Tableau de bord des développements communs entre SIAP et APiLos](https://airtable.com/invite/l?inviteId=invjSqVR5SIISoGI3&inviteToken=5babfd0fd34037720159687a027598c3e25bda33d8ced8361dc1f9a3e18ba90f&utm_medium=email&utm_source=product_team&utm_content=transactional-alerts)
 
 ## Environnements
 
 | Environnement  | URL SIAP          | URL APiLos version SIAP | Propos de l'environement |
 | :--- | :--- |:--- |:--- |
 | Production | https://siap.logement.gouv.fr (MTE) | https://apilos.logement.gouv.fr | Partagé avec la version APiLos autonome de production |
-| Pilote | https://prehabilitation.siap.logement.gouv.fr (MTE) | ❌ | Préhabilitation et recette de la reprise de donnée, pas d'intérêt d'avoir une plateforme APiLos en mirroir |
 | Ecole | https://ecole.siap.logement.gouv.fr (MTE) | https://siap-ecole.apilos.beta.gouv.fr | Utilisé pour les formations |
-| Préproduction | https://preprod.siap.logement.gouv.fr (MTE) | ❌ | Peu d'intérêt d'avoir un environnement mirroir APiLos puisse que ce cas est testé sur tous les autres environnements. Proposition : supprimer le lien avec la plateforme APiLos car l'environnement actuellement utilisé est déjà utilisé par la plateforme recette |
 | Recette | https://minlog-siap.gateway.recette.sully-group.fr (Sully) | https://siap-recette.apilos.beta.gouv.fr | Rectte métier |
-| IntAPI | https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully) | https://siap-integration.apilos.beta.gouv.fr | Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging |
+| Integration | https://minlog-siap.gateway.intapi.recette.sully-group.fr (Sully) | https://siap-integration.apilos.beta.gouv.fr | Utilisé pour le développement et la validation des fonctionnalités impliquant les 2 plateformes Partagé avec la version APiLos autonome de staging |
+
+## 2 API, même protocole
+
+Les 2 plateformes SIAP et APiLos mettent à disposition une API qui utilise le même processus d'authentification via JWT.
+
+l'API mise à disposition par APiLos est disponible dans le dossier [./api](https://github.com/MTES-MCT/apilos/tree/main/api)
+Le client d'API pour communiquer avec l'API SIAP est disponible dans le dossier [./siap](https://github.com/MTES-MCT/apilos/tree/main/siap)
+
+Chaque requête de ces 2 APIs est authentifiée grâce à un JWT token qui contient l'identifiant et l'hailitatio courante de l'utilisateur. ce JWT est signé avec le protocole HS256 via une clé secrête partagée par les 2 plateformes
+
+## Responsabilité des plateformes
+
+3 plateformes sont mentionnées dans ce document.
+
+### CERBERE
+
+Cerbere est responsable de garantir l'identité de l'utilisateur. Cette plateforme est utilisé par le SIAP et par APiLos comme un SSO (Single Sign On)
+
+### SIAP
+
+La plateforme SIAP est responsable de la partie financement des logements sociaux.
+Pour garantir la cohérente avec APiLos, la plateforme SIAP est responsable de :
+
+- La gestion des habilitations : APiLos consomme les habilitations depuis L'API du SIAP et applique ces habilitations
+- La gestion du menu : pour chaque couple utilisateur, habilitation, APiLos consomme l'API du SIAP et affiche le contenu du menu transmis par le SIAP
+
+### APiLos
+
+La plateforme APiLos est responsable de la partie conventionnement APL des logements sociaux.
+
+La plateforme est responsable des indicateurs affichés parle tableau de bord du SIAP : pour chaque couple utilisateur, habilitation le SIAP consomme les indicateurs de conventionnement via l'API d'APiLos et les affiche sur le tableau de bord de l'utilisateur
 
 ## Cas d'utilisation
 
 ### Autentification au SIAP ou APiLos via CERBERE
 
-L'authentification via CERBERE utilise le même protocole pour SIAP et APiLos
+L'authentification via CERBERE utilise le même protocole pour le SIAP et APiLos
 
 ```mermaid
 
@@ -41,9 +70,11 @@ sequenceDiagram
 
 ```
 
-Bloc nommé `Authentification via CERBERE` dans la suite du document
+Ce processus d'authentification est représenté par le bloc nommé `Authentification via CERBERE` dans la suite du document
 
 ### Connexion au SIAP et redirection APiLos / SIAP via le menu
+
+Représentation de la bascule entre les 2 plateformes lorsque l'utilisateur clique sur les lien «Conventionnement» et «Financement» du menu.
 
 ```mermaid
 
@@ -69,8 +100,9 @@ sequenceDiagram
 
 ```
 
-
 ### Bascule vers le conventionnement à partir d'une opération SIAP
+
+Quand une opération est conventionnable, l'interface SIAP affiche un lien «Conventionnement» sur la page de convention qui redirige vers la page de conventionnement de l'opération.
 
 ```mermaid
 
@@ -94,8 +126,9 @@ sequenceDiagram
 
 ```
 
+### Affichage des indicateurs de conventionnement dans le tableau de bord du SIAP
 
-### Affichage des indicateurs de conventionnement dans le ableau de bord du SIAP
+Le SIAP collecte les KPI concernant le conventionnement à afficher sur le tableau de bord du SIAP via l'API mise à disposition par APiLos
 
 ```mermaid
 
@@ -139,6 +172,8 @@ Les utilisateurs de type instructeur sont autoirisés à voir et modifier les op
 * Administration centrale
 
 Les utilisateurs de type administrateur sont autoirisés à voir et modifier les opérations, conventions et objects associés selon la géographie du profile : le département, la région ou la france entièrte définit par l'habilitation active.
+
+Pour chacun de ces type, si l'habilitation est de type lecture seule, l'utilisateur n'a pas le droits de création ou modification des conventions.
 
 ## Partage d'objet avec le SIAP
 
@@ -227,7 +262,9 @@ On notera : `champ_siap` (`champ_apilos` details)
 
 Par défaut la valeur LOGEMENTSORDINAIRES est appliquée
 
-## Pour tester le Client de l'API du SIAP dans un shell (Appel de l'application SIAP à partir du backend de l'application APiLos)
+## Tests des API SIAP et APiLos
+
+### Pour tester le Client de l'API du SIAP dans un shell (Appel de l'application SIAP à partir du backend de l'application APiLos)
 
 Récupérer l'email de l'utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
 Récupérer l'ID de l'habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d'habilitation en haut à droite de l'écran
@@ -242,7 +279,11 @@ SIAPClient.get_instance().get_operation(user_login='user@domain.com', habilitati
 SIAPClient.get_instance().get_fusion(user_login='user@domain.com', habilitation_id=123, bailleur_siren="123456789")
 ```
 
-## Pour tester le Client de l'API d'APiLos dans un shell (Appel de l'application APiLos à partir du backend de l'application SIAP)
+### Pour tester le Client de l'API d'APiLos dans un shell (Appel de l'application APiLos à partir du backend de l'application SIAP)
+
+Les API pour dialoguer avec le SIAP sont disponibles sur le endpoint `api-siap/v0`
+
+Une interface swagger est disponible sur la route `/api-siap/v0/schema-ui/` et le contrat d'interface OpenAPI 3 sur la route `/api-siap/v0/schema/`.
 
 Récupérer l'email de l'utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
 Récupérer l'ID de l'habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d'habilitation en haut à droite de l'écran
@@ -262,7 +303,7 @@ L'ensemble des fonctions de la page sont maintenant testables
 
 ⚠️ Attention, le token JWT n'est valide que 5 minutes
 
-### Exemple du contenu du token JWT généré par la fonction build_jwt
+#### Exemple du contenu du token JWT généré par la fonction build_jwt
 
 ```json
 {
@@ -277,12 +318,9 @@ L'ensemble des fonctions de la page sont maintenant testables
 
 Il est possible aussi de générer de token via un site tel que https://jwt.io/ et en utilisant la clé JWT_SIGN_KEY pour signer le token
 
-## Questions ouvertes pour plus tard
+## Comportement APilos lors de l'accès à partir d'une opération SIAP
 
-* [ ] Comment retrouver les paramètres propres à APiLos dans la version SIAP
-* [ ] Deloguer sur le SIAP / Apilos doit délogguer des 2 plateformes
-
-## Comportement APilos lors de l'accès à une opération SIAP
+Quand l'utilisateur accède à la page de conventionnement d'une operation, les conventions existantes sur APiLos sont collectées, si certains financement doivent-être conventionnés et que la convention n'existe pas, elle est créée, si des anomalies sont détectées toutes les conventions sont affiché et un message d'erreur indique à l'utilisateur qu'il a un conflit à résoudre.
 
 ```mermaid
 
