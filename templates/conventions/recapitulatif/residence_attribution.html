@@ -1,6 +1,5 @@
 {% load custom_filters %}
-
-{% if convention_form_steps|is_a_step:'ConventionResidenceAttributionView' %}
+{% if convention_form_steps|is_a_step:'ConventionResidenceAttributionView' or convention_form_steps|is_a_step:'AvenantResidenceAttributionView' %}
 
     <div class="fr-grid-row fr-grid-row--gutters">
         <div class="fr-col-12 fr-col-lg-12">
@@ -8,21 +7,23 @@
                 <div class="fr-card__body fr-my-2w">
                     <div class="block--row-strech" id="{{ object_field }}_div">
                         <div class="block--row-strech-1">
-                            <h4 class="fr-card__title">
-                                Attribution
-                            </h4>
+                            {% include "conventions/common/avenants_checkboxes.html" with title="Attribution" title_unchecked="Modification des attributions" checked=checked id="residence_attribution" avenant_type="residence_attribution" description="" %}
                         </div>
-                        {% include "conventions/actions/goto.html" %}
+                        {% if not convention.is_avenant or checked %}
+                            {% include "conventions/actions/goto.html" %}
+                        {% endif %}
                     </div>
-                    {% include "common/display_checkbox.html" with value=convention.attribution_residence_sociale_ordinaire label="Résidence sociale ordinaire" object_field="convention__attribution_residence_sociale_ordinaire__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.attribution_pension_de_famille label="Pension de famille" object_field="convention__attribution_pension_de_famille__"|add:convention_uuid %}
-                    {% include "common/display_checkbox.html" with value=convention.attribution_residence_accueil label="Résidence accueil" object_field="convention__attribution_residence_accueil__"|add:convention_uuid %}
-                    <h4 class='fr-mt-3w'>Autres modalitées</h4>
-                    {% include "common/display_textfield_if_exists.html" with label="Les modalités de gestion des reservations sont obligatoires" value=convention.attribution_modalites_reservations object_field="convention__attribution_modalites_reservations__"|add:convention_uuid %}
-                    {% include "common/display_textfield_if_exists.html" with label="Modalités de choix des personnes accueillies" value=convention.attribution_modalites_choix_personnes object_field="convention__attribution_modalites_choix_personnes__"|add:convention_uuid %}
-                    {% include "common/display_listfield_if_exists.html" with label="Prestation intégrées dans la redevance (Liste)" value=convention.attribution_prestations_integrees object_field="convention__attribution_prestations_integrees__"|add:convention_uuid %}
-                    {% include "common/display_listfield_if_exists.html" with label="Prestations facultatives (Liste)" value=convention.attribution_prestations_facultatives object_field="convention__attribution_prestations_facultatives__"|add:convention_uuid %}
-                </div>
+                    {% if not convention.is_avenant or checked %}
+                        {% include "common/display_checkbox.html" with value=convention.attribution_residence_sociale_ordinaire label="Résidence sociale ordinaire" object_field="convention__attribution_residence_sociale_ordinaire__"|add:convention_uuid %}
+                        {% include "common/display_checkbox.html" with value=convention.attribution_pension_de_famille label="Pension de famille" object_field="convention__attribution_pension_de_famille__"|add:convention_uuid %}
+                        {% include "common/display_checkbox.html" with value=convention.attribution_residence_accueil label="Résidence accueil" object_field="convention__attribution_residence_accueil__"|add:convention_uuid %}
+                        <h4 class='fr-mt-3w'>Autres modalitées</h4>
+                        {% include "common/display_textfield_if_exists.html" with label="Les modalités de gestion des reservations sont obligatoires" value=convention.attribution_modalites_reservations object_field="convention__attribution_modalites_reservations__"|add:convention_uuid %}
+                        {% include "common/display_textfield_if_exists.html" with label="Modalités de choix des personnes accueillies" value=convention.attribution_modalites_choix_personnes object_field="convention__attribution_modalites_choix_personnes__"|add:convention_uuid %}
+                        {% include "common/display_listfield_if_exists.html" with label="Prestation intégrées dans la redevance (Liste)" value=convention.attribution_prestations_integrees object_field="convention__attribution_prestations_integrees__"|add:convention_uuid %}
+                        {% include "common/display_listfield_if_exists.html" with label="Prestations facultatives (Liste)" value=convention.attribution_prestations_facultatives object_field="convention__attribution_prestations_facultatives__"|add:convention_uuid %}
+                    {% endif %}
+               </div>
             </div>
         </div>
     </div>
