@@ -213,9 +213,9 @@ django-cas-ng==5.0.1 \
     --hash=sha256:76f400c1efc75511fbc8566cb376ece7178a922187c8e01bede257f5b405892a \
     --hash=sha256:e02ba35cc289e3478ca43185383ba24e4f690a41110927e87e92ac6675248541
     # via -r requirements.in
-django-celery-results==2.5.1 \
-    --hash=sha256:0da4cd5ecc049333e4524a23fcfc3460dfae91aa0a60f1fae4b6b2889c254e01 \
-    --hash=sha256:3ecb7147f773f34d0381bac6246337ce4cf88a2ea7b82774ed48e518b67bb8fd
+django-celery-results==2.6.0 \
+    --hash=sha256:9abcd836ae6b61063779244d8887a88fe80bbfaba143df36d3cb07034671277c \
+    --hash=sha256:b9ccdca2695b98c7cbbb8dea742311ba9a92773d71d7b4944a676e69a7df1c73
     # via -r requirements.in
 django-cryptography-django5==2.2 \
     --hash=sha256:73b5d4597d2fd4accca0c971dad7aacfcef24cb7322512f4f94b020cd55b57ff \
