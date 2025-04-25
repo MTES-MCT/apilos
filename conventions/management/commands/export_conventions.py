@@ -1,9 +1,7 @@
-import argparse
-
 from django.core.management.base import BaseCommand
 from rest_framework.renderers import JSONRenderer
 
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from programmes.api.operation_serializers import ConventionInfoSIAPSerializer
 
 # Accéder aux données sérialisées
@@ -20,28 +18,14 @@ class Command(BaseCommand):
             type=int,
             default=None,
         )
-        parser.add_argument(
-            "--with-ended",
-            help="Run command and write changes to the database",
-            action=argparse.BooleanOptionalAction,
-            default=False,
-        )
 
     def handle(self, *args, **options):
         nb_conventions = options.get("limit")
-        with_ended = options.get("with_ended")
-        status_to_export = [
-            ConventionStatut.A_SIGNER.label,
-            ConventionStatut.SIGNEE.label,
-        ]
-        if with_ended:
-            status_to_export.append(ConventionStatut.RESILIEE.label)
-            status_to_export.append(ConventionStatut.DENONCEE.label)
 
         conventions = (
-            Convention.objects.filter(statut__in=status_to_export)
-            .prefetch_related(
+            Convention.objects.prefetch_related(
                 "parent",
+                "avenant_types",
                 "programme",
                 "programme__bailleur",
                 "programme__administration",
@@ -49,7 +33,7 @@ class Command(BaseCommand):
                 "lots__logements__annexes",
                 "lots__prets",
             )
-            .order_by("uuid", "-cree_le")
+            .order_by("uuid")
             .distinct("uuid")
         )
         if nb_conventions:
