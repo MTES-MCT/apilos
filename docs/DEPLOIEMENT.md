@@ -6,11 +6,13 @@
 ## Solution d'hébergement
 
 La solution souveraine PaaS de [Scalingo](https://dashboard.scalingo.com/apps/osc-fr1/fabnum-apilos) est utilisée avec les composants suivants :
+
 * webapp : Application Django incluant interface et APIs, la webapp est déployé un système Ubunti 20.x
 * worker : worker Celery pour déléguer des tâches longues qui s'executeront de manière asynchrone
 * Une base de données postgres en version 12.11.0
+* Une base de données Redis utilisé comme «message queue» pour passer les instructions au worker
 
-Les applications lancées sont configurées dans le fichier [Procfile](../Procfile)
+Les applications lancées sont configurées dans le fichier [Procfile](https://github.com/MTES-MCT/apilos/tree/main/Procfile)
 
 La base de données est sauvegardée toutes les nuits et Scalingo propose une solution PITR (Point-in-time recovery) pour sa restauration.
 
@@ -20,7 +22,7 @@ Les "User Stories" (US) sont développées sur des "feature branches" (conventio
 les `feature branches` font l'objet de `pull request` à merger sur `main`.
 
 La solution github actions est utilisée: [Github Actions](https://github.com/MTES-MCT/apilos/actions)
-La config est ici : [.github/workflows](../.github/workflows)
+La config est ici : [.github/workflows](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows)
 
 ### Comment release
 
@@ -45,7 +47,7 @@ La CI va lancer les tests, déployer en production et créer une release.
 
 ### CI
 
-A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est _buildé_ et les tests sont passés
+A chaque push sur [Github](https://github.com/MTES-MCT/apilos), le projet est compilé et les tests sont passés
 
 ### CD
 
@@ -55,7 +57,7 @@ A chaque push de tag de la forme `v*.*.*`, le projet est déployé en production
 
 ## Déploiement
 
-Lors du déploiement, les étapes définis dans le script [bin/post_deploy](../bin/post_deploy) sont exécutées :
+Lors du déploiement, les étapes définis dans le script [bin/post_deploy](https://github.com/MTES-MCT/apilos/tree/main/bin/post_deploy) sont exécutées :
 
 1. Execution des migrations de la base de données
 2. Population des roles et des permissions
@@ -189,9 +191,9 @@ Metabase est accessible à l'adresse [https://apilos-metabase-prod.osc-fr1.scali
 
 ## Deploiement de la documentation technique
 
-Les librairies nécessaires à la génération de la documentation sont maintenus dans le document [doc-requirements.txt](../doc-requirements.txt), généré avec pip-tools depuis [doc-requirements.in](../doc-requirements.in)
+Les librairies nécessaires à la génération de la documentation sont maintenus dans le document [doc-requirements.txt](https://github.com/MTES-MCT/apilos/tree/main/doc-requirements.txt), généré avec pip-tools depuis [doc-requirements.in](https://github.com/MTES-MCT/apilos/tree/main/doc-requirements.in)
 
-La publication est executé à chaque mise à jour de la branch main via l'action github [publish-docs.yml](../.github/workflows/publish-docs.yml)
+La publication est executé à chaque mise à jour de la branch main via l'action github [publish-docs.yml](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/publish-docs.yml)
 
 La configuration Github suivante est nécessaire :
 

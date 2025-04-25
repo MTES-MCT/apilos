@@ -3,9 +3,8 @@
 ```{toctree}
 :maxdepth: 2
 
-API.md
-DEPLOIEMENT.md
 DEVELOPPEUR.md
+DEPLOIEMENT.md
 ECOLOWEB.md
 PCA_PRA.md
 S3_BACKUP.md
@@ -22,7 +21,7 @@ Le design de l'interface suit le [Système de design de l'état](https://www.sys
 
 APiLos utilise le SSO CERBERE du Minitère de la transition écologique pour authentifier ses utilisateurs. Les habilitations (gestion des droits et périmètres) sont fournies par le SIAP.
 
-![Architecture APilos](../static/img/architecture_apilos.jpg)
+![Architecture APilos](./_static/ArchitectureAPilos.png)
 
 Les solutions tierces utilisées par APiLos:
 
@@ -30,7 +29,7 @@ Les solutions tierces utilisées par APiLos:
 - CERBERE : SSO - Authentification des utilisateurs
 - Scalingo : hébergement de la solution (cloud souverain)
 - Scaleway : stockage de fichiers compatible avec le protocole S3
-- Brevo : envoi de courriels transactionnels
+- Brevo : envoi de courriels transactionnels (En cours de dépréciation)
 - Sentry : monitoring logiciel
 - Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)
 
@@ -51,7 +50,7 @@ Lors de chaque commit, un controle de qualité est exécuté sur tous les fichie
 
 La branche `main` est protégée : il n'est pas possible de la modifier autre que par une Pull Request.
 
-Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche `main`. Grâce à la fonctionnalité [CODEOWNERS](../.github/CODEOWNERS) de github, la revue de la PR est assignée à 2 membres de l'équipe de développeur d'APiLos.
+Pour chaque fonctionnalité, le développeur fait une Pull Request sur github de sa branche de développement vers la branche `main`. Grâce à la fonctionnalité [CODEOWNERS](https://github.com/MTES-MCT/apilos/tree/main/.github/CODEOWNERS) de github, la revue de la PR est assignée à 2 membres de l'équipe de développeur d'APiLos.
 
 Une Pull Request ne peut pas être "mergée" tant qu'elle n'a pas au moins une approbation d'un membre de l'équipe. Pour une Pull Request qui modifie l'architecture de l'application, qui modifie de manière importante le comportement de l'application ou qui met à jour une version majeur d'une dépendance, on préfèrera avoir 2 approbations.
 
@@ -71,15 +70,15 @@ Les controles implémentés par l'équipe :
 
 Ces mêmes controles sont exécutés à chaque modification de la branche `main` (lors du "merge" de la Pull Request)
 
-En plus des controles de qualité éxécuté sur les Pull Request et la branche `main`, les dépendances Python, Javascript et Github sont inspectées et les mise à jour sont proposées via Pull Request par l'application [dependabot](../.github/dependabot.yml)
+En plus des controles de qualité éxécuté sur les Pull Request et la branche `main`, les dépendances Python, Javascript et Github sont inspectées et les mise à jour sont proposées via Pull Request par l'application [dependabot](https://github.com/MTES-MCT/apilos/tree/main/.github/dependabot.yml)
 
 ### Déploiement (Staging et Production)
 
 Le déploiement de la plateforme APiLos est exécuté via la [CI/CD github action](https://github.com/MTES-MCT/apilos/actions)
 
-L'application est déployée sur les environnements d'intégration, recette et école quand la branche `main` est mise à jour (à chaque merge de Pull Request) : [github action](../.github/workflows/push-branch-main.yml)
+L'application est déployée sur les environnements d'intégration, recette et école quand la branche `main` est mise à jour (à chaque merge de Pull Request) : [github action](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/push-branch-main.yml)
 
-L'application est déployée sur l'environnement de production quand un tag de la forme v*.*.* est poussé sur Git : [github action](../.github/workflows/push-version-tag.yml)
+L'application est déployée sur l'environnement de production quand un tag de la forme v*.*.* est poussé sur Git : [github action](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/push-version-tag.yml)
 
 Pour en plus de détails, merci de se référer à la documentation sur [DEPLOIEMENT.md](DEPLOIEMENT.md)
 
@@ -185,7 +184,7 @@ Les documents sont stockés sur un répertoire distant et souverain compatible a
 
 Ce stockage est activé lorsque les variables d'environnement AWS… sont définits.
 
-Ce stockage s3 est sauvegardé toutes les semaine via une action [github action](../.github/workflows/s3_backup.yml)
+Ce stockage s3 est sauvegardé toutes les semaine via une action [github action](https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml)
 
 ### Monitoring et alerting de l'application APiLos
 
