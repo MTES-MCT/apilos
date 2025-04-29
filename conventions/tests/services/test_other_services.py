@@ -27,7 +27,7 @@ class EmailServiceTests(TestCase):
         )
 
     def test_send_transactional_email_no_emails_valid(self):
-        with pytest.raises(ValueError, match="recipient for email"):
+        with pytest.raises(ValueError, match="Pas de destinataire valide pour l'email"):
             EmailService(
                 to_emails=["wrong.to.email"],
                 email_template_id=EmailTemplateID.BtoI_CONVENTION_A_INSTRUIRE,

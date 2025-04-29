@@ -7,10 +7,7 @@ from bailleurs.tests.factories import BailleurFactory
 from instructeurs.models import Administration
 from instructeurs.tests.factories import AdministrationFactory
 from programmes.models.choices import NatureLogement, TypeOperation
-from siap.exceptions import (
-    InconsistentDataSIAPException,
-    NoConventionForOperationSIAPException,
-)
+from siap.exceptions import SIAPException
 from siap.siap_client import utils
 from users.models import User
 
@@ -168,7 +165,7 @@ class GetOrCreateProgrammeTest(TestCase):
         del data_from_siap["detailsOperation"]
 
         self.assertRaises(
-            NoConventionForOperationSIAPException,
+            SIAPException,
             utils.get_or_create_programme,
             data_from_siap,
             Bailleur.objects.first(),
@@ -198,7 +195,7 @@ class GetOrCreateProgrammeTest(TestCase):
             {"aide": {"code": "PLUS", "libelle": "PLUS"}},
         ]
         self.assertRaises(
-            InconsistentDataSIAPException,
+            SIAPException,
             utils.get_or_create_programme,
             self.data_from_siap,
             Bailleur.objects.first(),
@@ -214,7 +211,7 @@ class GetOrCreateProgrammeTest(TestCase):
             ],
         }
         self.assertRaises(
-            NoConventionForOperationSIAPException,
+            SIAPException,
             utils.get_or_create_programme,
             data_from_siap,
             Bailleur.objects.first(),
@@ -225,7 +222,7 @@ class GetOrCreateProgrammeTest(TestCase):
 class GetOrCreateConventionFromOperationTest(TestCase):
     def test_raises_when_unknown_aide(self):
         self.assertRaises(
-            NoConventionForOperationSIAPException,
+            SIAPException,
             utils.get_or_create_conventions_from_siap,
             {
                 "detailsOperation": [
@@ -237,7 +234,7 @@ class GetOrCreateConventionFromOperationTest(TestCase):
         )
 
     def test_dont_raises_when_known_aide(self):
-        # doesn't raise with NoConventionForOperationSIAPException
+        # doesn't raise with SIAPException
         try:
             utils.get_or_create_conventions_from_siap(
                 {
@@ -249,4 +246,4 @@ class GetOrCreateConventionFromOperationTest(TestCase):
                 User.objects.first(),
             )
         except Exception as exception:  # noqa: BLE001
-            self.assertNotEqual(exception, NoConventionForOperationSIAPException)
+            self.assertNotEqual(exception, SIAPException)

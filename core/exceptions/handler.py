@@ -7,7 +7,7 @@ from siap.exceptions import SIAPException
 
 
 def handle_error_500(request):
-    exception_type, exception, _ = sys.exc_info()
+    _, exception, _ = sys.exc_info()
 
     if request.path.startswith("/api-siap") and isinstance(exception, SIAPException):
         return JsonResponse(
@@ -22,7 +22,14 @@ def handle_error_500(request):
         request,
         "500.html",
         {
-            "exception_type": exception_type.__name__,
+            "is_siap_exception": isinstance(exception, SIAPException),
+            "message": exception.__str__() if exception else "",
+            "current_url": request.path,
+            "habilitation_id": (
+                request.session["habilitation_id"]
+                if "habilitation_id" in request.session
+                else None
+            ),
         },
         status=500,
     )

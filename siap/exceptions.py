@@ -1,39 +1,41 @@
 from typing import Any
 
+TIMEOUT_MESSAGE = (
+    "Le module conventionnement ne parvient pas à joindre la plateforme SIAP,"
+    " merci de réessayer plus tard"
+)
+
+HABILITATION_MESSAGE = (
+    "La plateforme SIAP n'a pas pu trouver d'habilitation associée"
+    " à votre votre profile"
+)
+
+FUSION_MESSAGE = (
+    "La plateforme SIAP a retourné une erreur lors de la récupération des bailleurs"
+    " fusionnés"
+)
+
+UNAUTHORIZED_MESSAGE = (
+    "La plateforme SIAP indique que vous n'êtes pas authorisé à accéder à cette"
+    " ressource"
+)
+
+NOT_FOUND_MESSAGE = "La plateforme SIAP n'a pas pu trouver la ressource demandée"
+
+CONVENTION_NOT_NEEDED_MESSAGE = "Aucune aide n'est à conventionner pour cette opération"
+
+NOT_COMPLETED_MESSAGE = (
+    "Les informations fournies par la plateforme SIAP ne sont pas suffisantes"
+    " pour permettre la conventionnement"
+)
+
+BAILLEUR_IDENTIFICATION_MESSAGE = (
+    "Impossible d'identifier le bailleur selon les"
+    " informations transmises par la plateforme SIAP"
+)
+
 
 class SIAPException(Exception):  # noqa: N818
-    pass
-
-
-class HabilitationSIAPException(SIAPException):
-    pass
-
-
-class TimeoutSIAPException(SIAPException):
-    pass
-
-
-class UnauthorizedSIAPException(SIAPException):
-    pass
-
-
-class UnavailableServiceSIAPException(SIAPException):
-    pass
-
-
-class NoConventionForOperationSIAPException(SIAPException):
-    pass
-
-
-class InconsistentDataSIAPException(SIAPException):
-    pass
-
-
-class NotHandledBailleurPriveSIAPException(SIAPException):
-    pass
-
-
-class FusionAPISIAPException(SIAPException):
     pass
 
 

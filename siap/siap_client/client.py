@@ -10,10 +10,11 @@ from django.core.exceptions import PermissionDenied
 from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from siap.exceptions import (
+    FUSION_MESSAGE,
+    NOT_FOUND_MESSAGE,
+    TIMEOUT_MESSAGE,
+    UNAUTHORIZED_MESSAGE,
     SIAPException,
-    TimeoutSIAPException,
-    UnauthorizedSIAPException,
-    UnavailableServiceSIAPException,
 )
 from siap.siap_client.mock_data import (
     config_mock,
@@ -52,7 +53,7 @@ def build_jwt(user_login: str = "", habilitation_id: int = 0) -> str:
 
 
 @retry(
-    retry=retry_if_exception_type(TimeoutSIAPException),
+    retry=retry_if_exception_type(SIAPException),
     stop=stop_after_attempt(3),
     reraise=True,
 )
@@ -73,18 +74,18 @@ def _call_siap_api(
             timeout=3,
         )
     except (requests.ReadTimeout, requests.ConnectTimeout) as e:
-        raise TimeoutSIAPException() from e
+        raise SIAPException(TIMEOUT_MESSAGE) from e
 
     if response.status_code == 401:
-        error_text = "Unauthorized"
+        error_text = UNAUTHORIZED_MESSAGE
         try:
-            error_text = str(response.content["detail"])
+            error_text += " : " + str(response.content["detail"])
         except KeyError:
             pass
-        raise UnauthorizedSIAPException(error_text)
+        raise SIAPException(error_text)
 
     if response.status_code == 503:
-        raise UnavailableServiceSIAPException()
+        raise SIAPException(TIMEOUT_MESSAGE)
 
     if response.status_code >= 400:
         logger.error(
@@ -196,7 +197,7 @@ class SIAPClientRemote(SIAPClientInterface):
             if k in ["racineUrlAccesWeb", "urlAccesWeb", "urlAccesWebOperation"] and v
         ] != ["racineUrlAccesWeb", "urlAccesWeb", "urlAccesWebOperation"]:
             raise SIAPException(
-                "SIAP configuration is not well formed"
+                "La configuration SIAP-APILOS n'est pas bien formatée"
                 ", racineUrlAccesWeb: {}"
                 ", urlAccesWeb: {}"
                 ", urlAccesWebOperation: {}".format(
@@ -248,9 +249,7 @@ class SIAPClientRemote(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise SIAPException(
-            f"user doesn't have enough rights to display operation {response}"
-        )
+        raise SIAPException(UNAUTHORIZED_MESSAGE)
 
     def get_fusion(
         self, user_login: str, habilitation_id: int, bailleur_siren: str
@@ -264,7 +263,7 @@ class SIAPClientRemote(SIAPClientInterface):
         )
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
-        raise SIAPException(f"SIAP error returned {response.content}")
+        raise SIAPException(FUSION_MESSAGE + f" : {response.content}")
 
 
 # Manage SiapClient as a Singleton
@@ -292,7 +291,7 @@ class SIAPClientMock(SIAPClientInterface):
             and operation_mock["donneesOperation"]["numeroOperation"]
             != operation_identifier
         ):
-            raise SIAPException("Operation not found")
+            raise SIAPException(NOT_FOUND_MESSAGE)
         return operation_mock
 
     def get_fusion(

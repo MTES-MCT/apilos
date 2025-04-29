@@ -5,9 +5,10 @@ from django.http import HttpRequest
 
 from bailleurs.models import Bailleur, NatureBailleur
 from siap.exceptions import (
-    FusionAPISIAPException,
-    HabilitationSIAPException,
-    TimeoutSIAPException,
+    FUSION_MESSAGE,
+    HABILITATION_MESSAGE,
+    TIMEOUT_MESSAGE,
+    SIAPException,
 )
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.utils import get_or_create_administration, get_or_create_bailleur
@@ -41,7 +42,7 @@ class CerbereSessionMiddleware:
                         request, request.user.cerbere_login, habilitation_id
                     )
                 except TimeoutError as exception:
-                    raise TimeoutSIAPException("SIAP API doesn't answer") from exception
+                    raise SIAPException(TIMEOUT_MESSAGE) from exception
 
                 if settings.NO_SIAP_MENU:
                     request.session["menu"] = None
@@ -82,7 +83,7 @@ def set_habilitation_in_session(
         request.session["habilitation_id"] = habilitations[0]["id"]
         request.session["habilitation"] = habilitations[0]
     else:
-        raise HabilitationSIAPException("Pas d'habilitation associéé à l'utilisateur")
+        raise SIAPException(HABILITATION_MESSAGE)
 
     # Set habilitation in session
     _find_or_create_entity(
@@ -100,7 +101,9 @@ def copy_session_habilitation_to_user(request):
         )
 
 
-def _get_perimetre_geographique(from_habilitation: dict) -> tuple[None, str]:
+def _get_perimetre_geographique(
+    from_habilitation: dict,
+) -> tuple[None | str, None | str]:
     perimetre_departement = perimetre_region = None
     if (
         "porteeTerritComp" in from_habilitation
@@ -249,9 +252,7 @@ def _find_or_create_entity(
             Bailleur.objects.filter(siren__in=chrildren_siren).update(parent=bailleur)
 
         except Exception as exc:  # noqa: BLE001
-            raise FusionAPISIAPException(
-                f"Error while get bailleur fusion : {str(exc)}"
-            ) from exc
+            raise SIAPException(FUSION_MESSAGE) from exc
 
     if from_habilitation["groupe"]["profil"]["code"] in [
         GroupProfile.SIAP_SER_GEST,
