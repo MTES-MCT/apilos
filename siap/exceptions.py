@@ -6,8 +6,7 @@ TIMEOUT_MESSAGE = (
 )
 
 HABILITATION_MESSAGE = (
-    "La plateforme SIAP n'a pas pu trouver d'habilitation associée"
-    " à votre votre profile"
+    "La plateforme SIAP n'a pas pu trouver d'habilitation associée" " à votre profil"
 )
 
 FUSION_MESSAGE = (
@@ -22,11 +21,12 @@ UNAUTHORIZED_MESSAGE = (
 
 NOT_FOUND_MESSAGE = "La plateforme SIAP n'a pas pu trouver la ressource demandée"
 
-CONVENTION_NOT_NEEDED_MESSAGE = "Aucune aide n'est à conventionner pour cette opération"
-
+CONVENTION_NOT_NEEDED_MESSAGE = (
+    "Aucune aide ne nécessite un conventionnement pour cette opération"
+)
 NOT_COMPLETED_MESSAGE = (
     "Les informations fournies par la plateforme SIAP ne sont pas suffisantes"
-    " pour permettre la conventionnement"
+    " pour permettre le conventionnement"
 )
 
 BAILLEUR_IDENTIFICATION_MESSAGE = (
