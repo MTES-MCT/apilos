@@ -86,7 +86,7 @@ def operation_conventions(request, numero_operation):
                 messages.WARNING,
                 "Il existe plusieurs conventions actives pour le financement"
                 f" {financement}, Merci d'annuler les conventions que vous ne"
-                " souhaitez pas conservées",
+                " souhaitez pas conserver",
             )
 
     service = OperationConventionSearchService(numero_operation)
