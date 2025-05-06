@@ -218,7 +218,10 @@ def validate_response(error_message: str = "SIAP error returned"):
         def wrapper(*args, **kwargs):
             response = func(*args, **kwargs)
             if response.status_code >= 200 and response.status_code < 300:
-                return response.json()
+                if response.content:
+                    return response.json()
+                else:
+                    return None
             raise SIAPException(f"{error_message}: {response.content}")
 
         return wrapper
