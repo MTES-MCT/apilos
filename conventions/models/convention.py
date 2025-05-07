@@ -305,6 +305,18 @@ class Convention(models.Model):
 
         return None
 
+    @property
+    def financement(self):
+        if self.lot:
+            return self.lot.financement
+        return None
+
+    @property
+    def nb_lgts(self):
+        if self.lot:
+            return self.lot.nb_logements
+        return None
+
     def __str__(self):
         str_compose = []
         if programme := self.programme:
