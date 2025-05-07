@@ -7,6 +7,7 @@ import requests
 from celery import shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
+from waffle import switch_is_active
 
 from core.services import EmailService, EmailTemplateID
 from upload.models import UploadedFile
@@ -47,16 +48,22 @@ def scan_uploaded_files(paths_to_scan, authenticated_user_id):
 
             if file_is_infected:
                 user = User.objects.get(id=authenticated_user_id)
-                EmailService(
-                    to_emails=[user.email],
-                    email_template_id=EmailTemplateID.VIRUS_WARNING,
-                ).send_transactional_email(
-                    email_data={
-                        "firstname": user.first_name,
-                        "lastname": user.last_name,
-                        "filename": Path(path).name,
-                    }
-                )
+
+                if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                    ...
+                    # TODO: add siap alert
+
+                if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+                    EmailService(
+                        to_emails=[user.email],
+                        email_template_id=EmailTemplateID.VIRUS_WARNING,
+                    ).send_transactional_email(
+                        email_data={
+                            "firstname": user.first_name,
+                            "lastname": user.last_name,
+                            "filename": Path(path).name,
+                        }
+                    )
 
                 default_storage.delete(path)
                 UploadedFile.objects.get(id=uploaded_file_id).delete()
