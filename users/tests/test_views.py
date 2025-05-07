@@ -37,8 +37,11 @@ class UserViewTests(TestCase):
             form=response.context["form"],
             field="password",
             errors=[],
-            msg_prefix="Saisissez un nom d’utilisateur et un mot de passe valides. Remarquez que chacun de"
-            + " ces champs est sensible à la casse (différenciation des majuscules/minuscules).",
+            msg_prefix=(
+                "Saisissez un nom d’utilisateur et un mot de passe valides. Remarquez"
+                " que chacun de ces champs est sensible à la casse (différenciation"
+                " des majuscules/minuscules)."
+            ),
         )
 
         response = self.client.post(

@@ -190,8 +190,8 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     except UnicodeDecodeError as e:
         if e.reason == "invalid continuation byte":
             raise DocxGenerationError(
-                "An error occured while generating the docx document. "
-                "This is probably related to an incomplete png file."
+                "Une erreur est survenue lors de la génération du document docx. "
+                "Cela est probablement dû à un fichier png incomplet."
             ) from e
         else:
             raise e
@@ -259,7 +259,8 @@ def _get_bailleur_and_signataire(convention: Convention) -> dict:
         convention_signataire = convention
     if convention_signataire is None:
         raise ValueError(
-            f"convention_signataire is None, pb in DB with convention {convention.id}"
+            f"le champ convention_signataire est null, il y a une erreur de"
+            f" configuration de la convention {convention}"
         )
     context_update.update(
         {
@@ -343,7 +344,7 @@ def _get_parent_data(convention: Convention, context: dict) -> dict:
                     context["parent_convention"][key] = context["parent_bailleur"][key]
         else:
             raise ValueError(
-                "get_last_avenant_or_parent is none but convention as parent !"
+                "get_last_avenant_or_parent est null mais la convention a un parent !"
             )
     return context
 

@@ -89,10 +89,10 @@ class EmailService:
         invalid_emails = set(self.to_emails) - set(valid_to_emails)
 
         if not valid_to_emails:
-            raise ValueError("No valid recipient for email")
+            raise ValueError("Pas de destinataire valide pour l'email")
 
         if invalid_emails:
-            logger.warning("Invalid email addresses: %s", ", ".join(invalid_emails))
+            logger.warning("Adresses email invalides: %s", ", ".join(invalid_emails))
 
         message = EmailMultiAlternatives(
             to=valid_to_emails,

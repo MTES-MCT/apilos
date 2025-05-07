@@ -6,32 +6,35 @@
             <div class="fr-grid-row fr-grid-row--gutters">
                 <div class="fr-col-lg-11 fr-col-offset-lg-1 fr-mb-2w">
 
-                    {% if exception_type == 'NotHandledBailleurPriveSIAPException' %}
-                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Cette fonctionnalité n'est pas encore prise en charge par la plateforme SIAP-APiLos</h2>
-                        <p class="fr-mb-3w">
-                            Le conventionnement des opérations portées par des bailleurs privés (personnes physiques sans SIREN) n'est pas pris en charge actuellement par la plateforme SIAP-APiLos.<br>
-                            Nos équipes techniques travaillent actuellement à la mise en place de cette fonctionnalité.
-                        </p>
-                        <p class="fr-mb-3w">
-                            Nous vous prions de nous excuser pour la gène occasionnée. Si votre besoin est urgent, merci de <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">contacter notre assistance</a>
-                        </p>
-                    {% elif exception_type == 'NoConventionForOperationSIAPException' %}
-                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Cette opération ne donne pas lieu à un conventionnement.</h2>
-                        <p class="fr-mb-3w">
-                            Les aides de l'opération ne donnent pas lieu à un conventionnement.
-                        </p>
+                    {% if is_siap_exception %}
+                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Une erreur est survenue sur la plateforme SIAP-APiLos</h2>
                     {% else %}
-                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Erreur serveur</h2>
-                        <p class="fr-mb-3w">
-                            Une erreur est survenue. Nous vous prions de nous excuser.
-                        </p>
-                        <p class="fr-mb-3w">
-                            Si le problème persiste merci de contacter l'équipe <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">APiLos</a>
+                        <h2 class="fr-mt-3w fr-mt-md-5w fr-mb-5w">Une erreur est survenue sur la plateforme APiLos</h2>
+                    {% endif %}
+                    <p class="fr-mb-3w">
+                        Nous vous prions de nous excuser pour la gène occasionnée.
+                    </p>
+                    {% if message %}
+                        <div class="fr-alert fr-alert--error">
+                            <h3 class="fr-alert__title">Détails de l'erreur</h3>
+                            <p>{{ message }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if is_siap_exception %}
+                        <p>
+                            <a class="fr-btn fr-btn--icon-left fr-icon-refresh-line fr-mt-3w" href="{{ current_url }}">
+                                Rafraichir la page
+                            </a>
+                            Cela permet parfois de résoudre le problème si celui-ci est temporaire.
                         </p>
                     {% endif %}
-                    {% if CERBERE_AUTH %}
-                        <a class="fr-btn fr-btn--secondary fr-mb-3w" value="Retour à l'accueil" href="{{ SIAP_CLIENT_HOST }}/tableau-bord">Retourner au tableau de bord</a>
-                    {% endif %}
+
+                    <p class="fr-my-3w">
+                        Si le problème persiste merci de contacter l'équipe <a href="{{ SIAP_ASSISTANCE_URL }}" target="_blank" rel="noreferrer">APiLos</a>
+                    </p>
+
+                    <a class="fr-btn fr-btn--secondary fr-btn--icon-left fr-icon-arrow-go-back-line fr-mb-3w" href="{{ SIAP_CLIENT_HOST }}?habilitation_id={{ habilitation_id }}">Retourner au tableau de bord SIAP</a>
                 </div>
             </div>
         </div>

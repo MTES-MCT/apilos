@@ -72,9 +72,9 @@ class RecapitulatifView(BaseConventionView):
             Convention.objects.prefetch_related("programme").prefetch_related(
                 "programme__referencecadastrales",
                 "programme__logementedds",
-                # "lot",
-                # "lot__type_stationnements",
-                # "lot__logements",
+                "lots",
+                "lots__type_stationnements",
+                "lots__logements",
                 "programme__administration",
             ),
             uuid=convention_uuid,

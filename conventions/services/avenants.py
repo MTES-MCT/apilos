@@ -20,7 +20,10 @@ logger = logging.getLogger(__name__)
 
 class OngoingAvenantError(Exception):
     def __init__(self):
-        super().__init__("Ongoing avenant already exists")
+        super().__init__(
+            "Un avenant est déjà en cours pour cette convention, il n'est pas possible"
+            " d'en créer un autre"
+        )
 
 
 def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any]:

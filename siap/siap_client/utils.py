@@ -16,11 +16,12 @@ from programmes.models import (
 )
 from programmes.utils import diff_programme_duplication
 from siap.exceptions import (
+    BAILLEUR_IDENTIFICATION_MESSAGE,
+    CONVENTION_NOT_NEEDED_MESSAGE,
+    NOT_COMPLETED_MESSAGE,
     ConflictedOperationSIAPException,
     DuplicatedOperationSIAPException,
-    InconsistentDataSIAPException,
-    NoConventionForOperationSIAPException,
-    NotHandledBailleurPriveSIAPException,
+    SIAPException,
 )
 from users.models import User
 
@@ -80,21 +81,22 @@ def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
         bailleur = get_or_create_bailleur(mo_data)
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            f"Operation not well formatted, related to `donneesMo` : {operation}"
+            f"L'opération n'est pas bien formatée, lié à `donneesMo` : {operation}"
         ) from ke
 
     try:
         administration = get_or_create_administration(operation["gestionnaire"])
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            f"Operation not well formatted, related to `gestionnaire` : {operation}"
+            f"L'opération n'est pas bien formatée, lié à `gestionnaire` : {operation}"
         ) from ke
 
     try:
         programme = get_or_create_programme(operation, bailleur, administration)
     except (KeyError, TypeError) as ke:
         raise KeyError(
-            f"Operation not well formatted, missing programme's informations : {operation}"
+            "L'opération n'est pas bien formatée, manque les informations du"
+            f" programme : {operation}"
         ) from ke
     return programme
 
@@ -111,7 +113,7 @@ def get_filtered_aides(operation: dict):
 def get_or_create_conventions_from_siap(operation: dict, user: User):
     filtered_op_aides = get_filtered_aides(operation)
     if len(filtered_op_aides) == 0:
-        raise NoConventionForOperationSIAPException()
+        raise SIAPException(CONVENTION_NOT_NEEDED_MESSAGE)
 
     programme = get_or_create_programme_from_siap_operation(operation)
 
@@ -120,9 +122,7 @@ def get_or_create_conventions_from_siap(operation: dict, user: User):
             operation, programme, user
         )
     except (KeyError, TypeError) as ke:
-        raise KeyError(
-            f"Operation not well formatted, missing lot and convention informations : {operation}"
-        ) from ke
+        raise SIAPException(NOT_COMPLETED_MESSAGE) from ke
 
     return (programme, lots, conventions)
 
@@ -143,17 +143,15 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
         elif bailleur_from_siap.get("siret"):
             bailleur_siren = bailleur_from_siap["siret"]
         else:
-            raise NotHandledBailleurPriveSIAPException(
-                "The « Bailleurs privés » type of bailleur is not handled yet"
+            raise SIAPException(
+                NOT_COMPLETED_MESSAGE + " ; " + BAILLEUR_IDENTIFICATION_MESSAGE
             )
     elif not (
         (bailleur_siren := bailleur_from_siap["siren"])
         if "siren" in bailleur_from_siap
         else None
     ):
-        raise InconsistentDataSIAPException(
-            "Missing Bailleur siren (can't be empty or null), bailleur can't be get or created"
-        )
+        raise SIAPException(BAILLEUR_IDENTIFICATION_MESSAGE + " ; SIREN manquant")
 
     if (
         bailleur_siret := (
@@ -165,9 +163,7 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
             else bailleur_siren
         )
     ) is None:
-        raise InconsistentDataSIAPException(
-            "Missing Bailleur siret, can't get or create it"
-        )
+        raise SIAPException(BAILLEUR_IDENTIFICATION_MESSAGE + " ; SIREN manquant")
 
     (bailleur, is_created) = Bailleur.objects.get_or_create(
         siren=bailleur_siren,
@@ -284,15 +280,7 @@ def get_or_create_programme(
         ]
         == []
     ):
-        aides = (
-            [aide["aide"]["code"] for aide in programme_from_siap["detailsOperation"]]
-            if "detailsOperation" in programme_from_siap
-            else []
-        )
-        raise NoConventionForOperationSIAPException(
-            "Les aides définies coté financement ne sont pas prises en charge par le"
-            f" conventionnement : {aides if aides else 'Pas de détails de l\'op'}"
-        )
+        raise SIAPException(CONVENTION_NOT_NEEDED_MESSAGE)
 
     nature_logement = _get_nature_logement(programme_from_siap["donneesOperation"])
     try:
@@ -529,8 +517,9 @@ def _nature_logement(nature_logement_from_siap: str) -> NatureLogement:
     elif nature_logement_from_siap in ["LOO", NatureLogement.LOGEMENTSORDINAIRES]:
         nature_logement = NatureLogement.LOGEMENTSORDINAIRES
     else:
-        raise InconsistentDataSIAPException(
-            f"The NatureLogement value coming from SIAP is missing or unexpected : {nature_logement_from_siap}"
+        raise SIAPException(
+            NOT_COMPLETED_MESSAGE
+            + f" ; nature des logement : {nature_logement_from_siap}"
         )
     return nature_logement
 

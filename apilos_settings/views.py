@@ -128,7 +128,9 @@ class DelegatairesFormView(LoginRequiredMixin, TemplateView):
             )
             return HttpResponseRedirect(reverse("conventions:index"))
         else:
-            raise ReassignationError("Error during reassignation")
+            raise ReassignationError(
+                "Une erreur est survenue lors de la réattribution des conventions"
+            )
 
 
 @require_http_methods(["GET", "POST"])
