@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
-from waffle import flag_is_active
+from waffle import switch_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
@@ -281,7 +281,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
         convention.statut = ConventionStatut.INSTRUCTION.label
         convention.save()
 
-        if flag_is_active(request=request, flag_name=settings.FLAG_SIAP_ALERTES):
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
             alerte = Alerte.from_convention(
                 convention=convention,
                 categorie_information="CATEGORIE_ALERTE_ACTION",
@@ -298,7 +298,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
             )
             create_siap_alerte(alerte=alerte, request=request)
 
-        else:
+        if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             instructeur_emails, submitted = collect_instructeur_emails(
                 request, convention, submitted
             )
@@ -416,20 +416,31 @@ def send_email_instruction(
 def convention_feedback(request: HttpRequest, convention: Convention):
     notification_form = NotificationForm(request.POST)
     if notification_form.is_valid():
-        cc = [request.user.email] if notification_form.cleaned_data["send_copy"] else []
-        send_email_correction(
-            request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid]),
-            ),
-            convention,
-            request.user,
-            cc,
-            notification_form.cleaned_data["from_instructeur"],
-            notification_form.cleaned_data["comment"],
-        )
+
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            ...
+            # TODO: add siap alert
+
+        if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+            send_email_correction(
+                request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid]),
+                ),
+                convention,
+                request.user,
+                (
+                    [request.user.email]
+                    if notification_form.cleaned_data["send_copy"]
+                    else []
+                ),
+                notification_form.cleaned_data["from_instructeur"],
+                notification_form.cleaned_data["comment"],
+            )
+
         target_status = ConventionStatut.INSTRUCTION.label
         if notification_form.cleaned_data["from_instructeur"]:
             target_status = ConventionStatut.CORRECTION.label
+
         ConventionHistory.objects.create(
             convention=convention,
             statut_convention=target_status,
@@ -437,6 +448,7 @@ def convention_feedback(request: HttpRequest, convention: Convention):
             user=request.user,
             commentaire=notification_form.cleaned_data["comment"],
         ).save()
+
         convention.statut = target_status
         convention.save()
 

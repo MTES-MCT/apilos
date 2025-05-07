@@ -5,6 +5,7 @@ from pathlib import Path
 from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
+from waffle import switch_is_active
 from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
@@ -56,7 +57,7 @@ def task_generate_pdf(convention_uuid: str) -> None:
     retry_backoff_max=3600,
     retry_jitter=True,
 )
-def task_send_email_to_bailleur(
+def task_send_email_to_bailleur(  # noqa: C901
     convention_uuid: str,
     convention_url: str,
     convention_email_validator: str,
@@ -129,26 +130,32 @@ def task_send_email_to_bailleur(
         )
         return
 
-    # Send a confirmation email to bailleurs
-    EmailService(
-        to_emails=destinataires_bailleur,
-        cc_emails=[convention_email_validator],
-        email_template_id=(
-            EmailTemplateID.ItoB_AVENANT_VALIDE
-            if convention.is_avenant()
-            else EmailTemplateID.ItoB_CONVENTION_VALIDEE
-        ),
-    ).send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-            "adresse": administration.adresse,
-            "code_postal": administration.code_postal,
-            "ville": administration.ville,
-            "nb_convention_exemplaires": administration.nb_convention_exemplaires,
-        },
-        filepath=email_file_path,
-    )
+    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+        ...
+        # TODO: add siap alert
+
+    if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+
+        # Send a confirmation email to bailleurs
+        EmailService(
+            to_emails=destinataires_bailleur,
+            cc_emails=[convention_email_validator],
+            email_template_id=(
+                EmailTemplateID.ItoB_AVENANT_VALIDE
+                if convention.is_avenant()
+                else EmailTemplateID.ItoB_CONVENTION_VALIDEE
+            ),
+        ).send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+                "adresse": administration.adresse,
+                "code_postal": administration.code_postal,
+                "ville": administration.ville,
+                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
+            },
+            filepath=email_file_path,
+        )
 
 
 @shared_task()

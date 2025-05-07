@@ -1,8 +1,10 @@
 from typing import Any
 
+from django.conf import settings
 from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
+from waffle import switch_is_active
 
 from conventions.models import Convention, Lot
 from conventions.models.avenant_type import AvenantType
@@ -88,40 +90,46 @@ def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention
     # or bailleur submit convention for the first time ?
 
-    # check if it is the first time the bailleur user submit a convention
-    if (
-        instance.statut_convention == ConventionStatut.INSTRUCTION.label
-        and not ConventionHistory.objects.filter(
-            user=instance.user, statut_convention=ConventionStatut.INSTRUCTION.label
-        ).exclude(id=instance.id)
-        and instance.user.is_bailleur()
-    ):
-        EmailService(
-            to_emails=[instance.user.email],
-            email_template_id=EmailTemplateID.B_SATISFACTION,
-        ).send_transactional_email(
-            email_data={
-                "email": instance.user.email,
-                "firstname": instance.user.first_name,
-                "lastname": instance.user.last_name,
-            }
-        )
+    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+        ...
+        # TODO: add siap alert
 
-    # check if it is the first time the instructeur user validate a convention
-    if (
-        instance.statut_convention == ConventionStatut.A_SIGNER.label
-        and not ConventionHistory.objects.filter(
-            user=instance.user, statut_convention=ConventionStatut.A_SIGNER.label
-        ).exclude(id=instance.id)
-        and instance.user.is_instructeur()
-    ):
-        EmailService(
-            to_emails=[instance.user.email],
-            email_template_id=EmailTemplateID.I_SATISFACTION,
-        ).send_transactional_email(
-            email_data={
-                "email": instance.user.email,
-                "firstname": instance.user.first_name,
-                "lastname": instance.user.last_name,
-            }
-        )
+    if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+
+        # check if it is the first time the bailleur user submit a convention
+        if (
+            instance.statut_convention == ConventionStatut.INSTRUCTION.label
+            and not ConventionHistory.objects.filter(
+                user=instance.user, statut_convention=ConventionStatut.INSTRUCTION.label
+            ).exclude(id=instance.id)
+            and instance.user.is_bailleur()
+        ):
+            EmailService(
+                to_emails=[instance.user.email],
+                email_template_id=EmailTemplateID.B_SATISFACTION,
+            ).send_transactional_email(
+                email_data={
+                    "email": instance.user.email,
+                    "firstname": instance.user.first_name,
+                    "lastname": instance.user.last_name,
+                }
+            )
+
+        # check if it is the first time the instructeur user validate a convention
+        if (
+            instance.statut_convention == ConventionStatut.A_SIGNER.label
+            and not ConventionHistory.objects.filter(
+                user=instance.user, statut_convention=ConventionStatut.A_SIGNER.label
+            ).exclude(id=instance.id)
+            and instance.user.is_instructeur()
+        ):
+            EmailService(
+                to_emails=[instance.user.email],
+                email_template_id=EmailTemplateID.I_SATISFACTION,
+            ).send_transactional_email(
+                email_data={
+                    "email": instance.user.email,
+                    "firstname": instance.user.first_name,
+                    "lastname": instance.user.last_name,
+                }
+            )
