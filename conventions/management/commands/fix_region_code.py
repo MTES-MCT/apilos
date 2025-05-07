@@ -106,24 +106,15 @@ dept_region_code = {
     "976": "6",
 }
 
-code_postal_dept = {
-    "20000": "2A",
-    "20200": "2B",
-    "20214": "2B",
-    "20213": "2B",
-    "20620": "2B",
-}
-
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for code_postal, dept in code_postal_dept.items():
-            Programme.objects.filter(code_postal=code_postal).update(
-                code_insee_departement=dept
-            )
-            self.stdout.write(f"Updated {code_postal} to {dept}")
         for dept, region in dept_region_code.items():
-            Programme.objects.filter(code_insee_departement=dept).update(
-                code_insee_region=region
+            rows = (
+                Programme.objects.filter(code_insee_departement=dept)
+                .exclude(code_insee_region=region)
+                .update(code_insee_region=region)
             )
-            self.stdout.write(f"Updated {dept} to {region}")
+            self.stdout.write(
+                f"Department {dept} to region {region} : {rows} rows updated."
+            )
