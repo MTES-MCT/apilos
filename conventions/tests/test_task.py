@@ -53,6 +53,10 @@ class GenerateAndSendTest(TestCase):
             "convention_uuid": str(self.convention.uuid),
             "convention_url": "https://target.to.convention.display",
             "convention_email_validator": "validator@apilos.fr",
+            "siap_credentials": {
+                "user_login": "anakin@jedi.com",
+                "habilitation_id": "123456",
+            },
         }
 
         task_generate_and_send(**task_kwargs)
@@ -120,6 +124,10 @@ class GenerateAndSendTest(TestCase):
             convention_uuid=str(self.convention.uuid),
             convention_url="https://target.to.convention.display",
             convention_email_validator="validator@apilos.fr",
+            siap_credentials={
+                "user_login": "anakin@jedi.com",
+                "habilitation_id": "123456",
+            },
         )
 
         mock_get_or_generate_convention_doc.assert_called_once_with(
@@ -160,6 +168,10 @@ class GenerateAndSendTest(TestCase):
             convention_uuid=str(self.convention.uuid),
             convention_url="https://target.to.convention.display",
             convention_email_validator="validator@apilos.fr",
+            siap_credentials={
+                "user_login": "anakin@jedi.com",
+                "habilitation_id": "123456",
+            },
         )
 
         mock_get_or_generate_convention_doc.assert_called_once_with(
@@ -197,14 +209,18 @@ class GenerateAndSendTest(TestCase):
         self.programme.save()
 
         avenant = self.convention.clone(None, convention_origin=self.convention)
-        args = {
+        task_kwargs = {
             "convention_uuid": str(avenant.uuid),
             "convention_url": "https://target.to.convention.display",
             "convention_email_validator": "validator@apilos.fr",
+            "siap_credentials": {
+                "user_login": "anakin@jedi.com",
+                "habilitation_id": "123456",
+            },
         }
         self._create_pdf_file_in_storage(convention_uuid=str(avenant.uuid))
 
-        task_generate_and_send(**args)
+        task_generate_and_send(**task_kwargs)
 
         mock_get_or_generate_convention_doc.assert_called_once_with(
             convention=avenant, save_data=True
