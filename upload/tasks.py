@@ -26,7 +26,7 @@ def get_clamav_auth_header(username, password):
 
 @shared_task()
 def scan_uploaded_files(
-    paths_to_scan, authenticated_user_id, siap_credentials: dict[str, Any]
+    paths_to_scan, authenticated_user_id, siap_credentials: dict[str, Any] | None = None
 ):
     if not settings.CLAMAV_SERVICE_URL:
         return
@@ -54,7 +54,10 @@ def scan_uploaded_files(
             if file_is_infected:
                 user = User.objects.get(id=authenticated_user_id)
 
-                if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                if (
+                    switch_is_active(settings.SWITCH_SIAP_ALERTS_ON)
+                    and siap_credentials
+                ):
                     # TODO: add siap alert
                     SIAPClient.get_instance().create_alerte(
                         payload=Alerte().to_json(), **siap_credentials
