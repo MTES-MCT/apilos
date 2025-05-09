@@ -638,7 +638,7 @@ def _update_convention_for_finalisation(
             reverse("conventions:preview", args=[convention.uuid])
         ),
         convention_email_validator=request.user.email,
-        # siap_credentials=get_siap_credentials_from_request(request),
+        siap_credentials=get_siap_credentials_from_request(request),
     )
 
     return {

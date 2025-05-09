@@ -40,7 +40,7 @@ def test_get_contributors():
         typologie=TypeRole.BAILLEUR,
         group=GroupFactory(name="bailleur"),
     )
-    user_instructeur = UserFactory(cerbere=True)
+    user_instructeur = UserFactory()
     RoleFactory(
         user=user_instructeur,
         administration=administration,
@@ -50,7 +50,7 @@ def test_get_contributors():
 
     # Submit the convention to instruction with a bailleur
     request = RequestFactory().post("/", {"SubmitConvention": True})
-    request.session = "session"
+    request.session = {}
     request.user = user_bailleur
     save_convention(request, convention.uuid)
 
@@ -65,7 +65,7 @@ def test_get_contributors():
     request = RequestFactory().post(
         "/", {"convention_numero": "1234", "finalisationform": True}
     )
-    request.session = {"habilitation_id": "1234"}
+    request.session = {}
     request.user = user_instructeur
     with patch("conventions.tasks.task_generate_and_send.delay", Mock()):
         validate_convention(request, convention.uuid)
