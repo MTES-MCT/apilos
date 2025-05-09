@@ -6,29 +6,32 @@ from .client import SIAPClient
 from .schemas import Alerte
 
 
-def create_siap_alerte(
-    alerte: Alerte,
-    request: HttpRequest | None = None,
-    user_login: str | None = None,
-    habilitation_id: int | None = None,
-) -> dict[str, Any]:
+def get_siap_credentials(request: HttpRequest) -> tuple[str, int]:
+    """
+    Get the user login and habilitation ID from the request.
+    """
+    user_login = request.user.cerbere_login
+    habilitation_id = request.session.get("habilitation_id")
 
-    _user_login = None
-    _habilitation_id = None
-
-    if request:
-        _user_login = request.user.cerbere_login
-        _habilitation_id = request.session.get("habilitation_id")
-    if user_login:
-        _user_login = user_login
-    if habilitation_id:
-        _habilitation_id = habilitation_id
-
-    if not _user_login or not _habilitation_id:
+    if not user_login or not habilitation_id:
         raise ValueError("user_login and habilitation_id are required")
 
+    return user_login, habilitation_id
+
+
+def create_siap_alerte(alerte: Alerte, request: HttpRequest) -> dict[str, Any]:
+    user_login, habilitation_id = get_siap_credentials(request)
     return SIAPClient.get_instance().create_alerte(
-        user_login=_user_login,
-        habilitation_id=_habilitation_id,
+        user_login=user_login,
+        habilitation_id=habilitation_id,
         payload=alerte.to_json(),
+    )
+
+
+def delete_siap_alerte(alerte_id: str, request: HttpRequest) -> dict[str, Any]:
+    user_login, habilitation_id = get_siap_credentials(request)
+    return SIAPClient.get_instance().delete_alerte(
+        user_login=user_login,
+        habilitation_id=habilitation_id,
+        alerte_id=alerte_id,
     )
