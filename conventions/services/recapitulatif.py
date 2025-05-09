@@ -420,6 +420,21 @@ def convention_feedback(request: HttpRequest, convention: Convention):
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
             ...
             # TODO: add siap alert
+            alerte = Alerte.from_convention(
+                convention=convention,
+                categorie_information="CATEGORIE_ALERTE_ACTION",
+                destinataires=[
+                    Destinataire(role="INSTRUCTEUR", service="MO"),
+                    Destinataire(role="INSTRUCTEUR", service="SG"),
+                ],
+                etiquette="CUSTOM",
+                etiquette_personnalisee="Convention à instruire",
+                type_alerte="Changement de statut",
+                url_direction=request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                ),
+            )
+            create_siap_alerte(alerte=alerte, request=request)
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             send_email_correction(

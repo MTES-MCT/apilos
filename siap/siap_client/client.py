@@ -395,4 +395,6 @@ class SIAPClientMock(SIAPClientInterface):
         }
 
     def delete_alerte(self, user_login, habilitation_id) -> dict[str, Any]:
-        return {}
+        return {
+            "message": "alerte supprimée avec succès",
+        }
