@@ -137,6 +137,8 @@ class ConventionAdmin(ApilosModelAdmin):
         "nom_fichier_signe",
         "televersement_convention_signee_le",
         "date_resiliation",
+        "date_envoi_spf",
+        "date_publication_spf",
         "desc_avenant",
         "champ_libre_avenant",
         "date_denonciation",
