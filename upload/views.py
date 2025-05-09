@@ -4,6 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from conventions.models import Convention
 from programmes.models import Lot, Programme
+from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile, UploadedFileSerializer
 from upload.services import UploadService
 from upload.tasks import scan_uploaded_files
@@ -68,5 +69,7 @@ def upload_file(request):
         paths_to_scan.append((upload_service.path, uploaded_file.pk))
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
-    scan_uploaded_files.delay(paths_to_scan, request.user.id)
+    scan_uploaded_files.delay(
+        paths_to_scan, request.user.id, get_siap_credentials_from_request(request)
+    )
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})
