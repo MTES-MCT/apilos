@@ -40,7 +40,7 @@ def test_get_contributors():
         typologie=TypeRole.BAILLEUR,
         group=GroupFactory(name="bailleur"),
     )
-    user_instructeur = UserFactory()
+    user_instructeur = UserFactory(cerbere=True)
     RoleFactory(
         user=user_instructeur,
         administration=administration,
@@ -65,7 +65,7 @@ def test_get_contributors():
     request = RequestFactory().post(
         "/", {"convention_numero": "1234", "finalisationform": True}
     )
-    request.session = "session"
+    request.session = {"habilitation_id": "1234"}
     request.user = user_instructeur
     with patch("conventions.tasks.task_generate_and_send.delay", Mock()):
         validate_convention(request, convention.uuid)
