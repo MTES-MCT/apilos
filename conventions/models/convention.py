@@ -138,9 +138,9 @@ class Convention(models.Model):
     signataire_bloc_signature = models.CharField(max_length=5000, null=True, blank=True)
 
     # Champs liés au SPF (Service de Publication Foncière))
-    date_publication_spf = models.DateField(null=True)
+    date_publication_spf = models.DateField(null=True, blank=True)
     reference_spf = models.CharField(max_length=50, null=True)
-    date_envoi_spf = models.DateField(null=True)
+    date_envoi_spf = models.DateField(null=True, blank=True)
     date_refus_spf = models.DateField(null=True)
     motif_refus_spf = models.CharField(max_length=1000, null=True)
     # Missing option for :
