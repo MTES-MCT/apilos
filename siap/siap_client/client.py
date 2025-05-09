@@ -10,6 +10,7 @@ import jwt
 import requests
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
 from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from siap.exceptions import (
@@ -121,6 +122,22 @@ def _call_siap_api(
         )
 
     return response
+
+
+def get_siap_credentials_from_request(request: HttpRequest) -> dict[str, Any]:
+    """
+    Get the user login and habilitation ID from the request.
+    """
+    user_login = request.user.cerbere_login
+    habilitation_id = request.session.get("habilitation_id")
+
+    if not user_login or not habilitation_id:
+        raise ValueError("user_login and habilitation_id are required")
+
+    return {
+        "user_login": user_login,
+        "habilitation_id": habilitation_id,
+    }
 
 
 class SIAPClient:

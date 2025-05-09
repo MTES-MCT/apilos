@@ -28,9 +28,8 @@ from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
-from siap.siap_client.client import SIAPClient
+from siap.siap_client.client import SIAPClient, get_siap_credentials_from_request
 from siap.siap_client.schemas import Alerte, Destinataire
-from siap.siap_client.services import create_siap_alerte
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
@@ -296,7 +295,10 @@ def convention_submit(request: HttpRequest, convention: Convention):
                     reverse("conventions:recapitulatif", args=[convention.uuid])
                 ),
             )
-            create_siap_alerte(alerte=alerte, request=request)
+            return SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **get_siap_credentials_from_request(request),
+            )
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             instructeur_emails, submitted = collect_instructeur_emails(
@@ -434,7 +436,10 @@ def convention_feedback(request: HttpRequest, convention: Convention):
                     reverse("conventions:recapitulatif", args=[convention.uuid])
                 ),
             )
-            create_siap_alerte(alerte=alerte, request=request)
+            return SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **get_siap_credentials_from_request(request),
+            )
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             send_email_correction(
@@ -633,6 +638,7 @@ def _update_convention_for_finalisation(
             reverse("conventions:preview", args=[convention.uuid])
         ),
         convention_email_validator=request.user.email,
+        siap_credentials=get_siap_credentials_from_request(request),
     )
 
     return {
