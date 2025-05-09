@@ -1,6 +1,7 @@
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 from celery import chain, shared_task
 from django.conf import settings
@@ -18,6 +19,8 @@ from conventions.services.convention_generator import (
 )
 from conventions.services.file import ConventionFileService
 from core.services import EmailService, EmailTemplateID
+from siap.siap_client.client import SIAPClient
+from siap.siap_client.schemas import Alerte
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +30,7 @@ def task_generate_and_send(
     convention_uuid: str,
     convention_url: str,
     convention_email_validator: str,
+    siap_credentials: dict[str, Any],
 ):
     chain(
         task_generate_pdf.s(convention_uuid),
@@ -34,6 +38,7 @@ def task_generate_and_send(
             convention_uuid,
             convention_url,
             convention_email_validator,
+            siap_credentials,
         ),
     )()
 
@@ -61,6 +66,7 @@ def task_send_email_to_bailleur(  # noqa: C901
     convention_uuid: str,
     convention_url: str,
     convention_email_validator: str,
+    siap_credentials: dict[str, Any],
 ) -> None:
     # Get the convention
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -131,8 +137,21 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        ...
-        # TODO: add siap alert
+        alerte = Alerte.from_convention(
+            convention=convention,
+            categorie_information="CATEGORIE_ALERTE_ACTION",
+            # destinataires=[
+            #     Alerte.Destinataire(role="INSTRUCTEUR", service="MO"),
+            # ],
+            etiquette="CUSTOM",
+            etiquette_personnalisee="Convention à instruire",
+            type_alerte="Changement de statut",
+            url_direction="/",
+        )
+        SIAPClient.get_instance().create_alerte(
+            payload=alerte.to_json(),
+            **siap_credentials,
+        )
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 

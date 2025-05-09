@@ -90,10 +90,6 @@ def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention
     # or bailleur submit convention for the first time ?
 
-    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        ...
-        # TODO: add siap alert
-
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
         return
 
