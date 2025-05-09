@@ -140,11 +140,15 @@ def task_send_email_to_bailleur(  # noqa: C901
         alerte = Alerte.from_convention(
             convention=convention,
             categorie_information="CATEGORIE_ALERTE_ACTION",
-            # destinataires=[
-            #     Alerte.Destinataire(role="INSTRUCTEUR", service="MO"),
-            # ],
+            destinataires=[
+                # bailleurs ???
+                # Destinataire(role="ADMINISTRATEUR", service="MO"),
+                # Destinataire(role="ADMINISTRATEUR", service="SG"),
+            ],
             etiquette="CUSTOM",
-            etiquette_personnalisee="Convention à instruire",
+            etiquette_personnalisee=(
+                "Avenant validé" if convention.is_avenant() else "Convention validée"
+            ),
             type_alerte="Changement de statut",
             url_direction="/",
         )
