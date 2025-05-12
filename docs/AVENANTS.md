@@ -3,7 +3,7 @@
 
 # Présentation générale
 
-Une convention APL, une fois signée par les deux parties, peut-être amenée à évoluer durant son cycle de vie pour des raisons variées (rachat d'un bailleur, modification de l'adresse suite au changement de nom d'une rue...).
+Une convention APL, une fois signée par les deux parties, peut-être amenée à évoluer durant son cycle de vie pour des raisons variées (rachat des logements par un autre bailleur, modification de l'adresse suite au changement de nom d'une rue…).
 
 La modification des conventions signées passent par des avenants.
 
