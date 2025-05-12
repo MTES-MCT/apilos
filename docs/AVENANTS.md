@@ -23,7 +23,7 @@ Le parent_id représente la convention d'origine de l'avenant.
 Exemple : Une convention a pour id (pk) 118. Son parent_id est NULL, comme pour toutes les conventions.
 Elle possède un premier avenant ayant pour id 223 et pour parent_id 118 et un second avenant ayant pour id 264 et parent_id 118.
 
-Attention : il n'est pas exlu qu'il existe en base de données des avenants dont le parent_id ne pointe pas vers la convention d'origine, mais vers le précédent avenant à cette convention, suite à des modifications manuelles via le back office.
+Attention : il n'est pas exclu qu'il existe en base de données des avenants dont le parent_id ne pointe pas vers la convention d'origine, mais vers le précédent avenant à cette convention, suite à des modifications manuelles via le back office.
 
 ## Types d'avenants
 
