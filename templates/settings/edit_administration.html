@@ -16,7 +16,7 @@
                     {% include "common/messages.html" %}
                     <form method="post" action="">
                         {% csrf_token %}
-                        {% include "common/form/input_text.html" with form_input=form.nom %}
+                        {% include "common/form/input_text.html" with form_input=form.nom editable=False %}
                         {% include "common/form/input_text.html" with form_input=form.ville_signature %}
                         {% include "common/form/input_text.html" with form_input=form.signataire_bloc_signature helptext_visible=True %}
 
