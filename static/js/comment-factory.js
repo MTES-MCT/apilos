@@ -409,9 +409,9 @@ class CommentFactory {
       // specific, pourrait être passé en callback
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
-        document.getElementById("download_upload_block") !== null
+        document.querySelectorAll('[id^="download_upload_block"]').length > 0
       ) {
-        document.getElementById("download_upload_block").hidden = false;
+        document.querySelectorAll('[id^="download_upload_block"]').forEach((e) => e.hidden = false);
       }
       if (document.getElementById("save_after_comments") !== null) {
         document.getElementById("save_after_comments").hidden = false;
@@ -439,8 +439,8 @@ class CommentFactory {
           }
         }
         if (this.empty_toggle_on.tagName == "TR") {
-          if (document.getElementById("download_upload_block") !== null) {
-            document.getElementById("download_upload_block").hidden = false;
+          if (document.querySelectorAll('[id^="download_upload_block"]').length > 0) {
+            document.querySelectorAll('[id^="download_upload_block"]').forEach((e) => e.hidden = false);
           }
         }
       }
@@ -454,9 +454,9 @@ class CommentFactory {
       comment_icon.hidden = false;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
-        document.getElementById("download_upload_block") !== null
+        document.querySelectorAll('[id^="download_upload_block"]').length > 0
       ) {
-        document.getElementById("download_upload_block").hidden = false;
+        document.querySelectorAll('[id^="download_upload_block"]').forEach((e) => e.hidden = false);
       }
       if (this.empty_toggle_on) {
         this.empty_toggle_on.onclick = null;
@@ -474,9 +474,9 @@ class CommentFactory {
       comment_icon.hidden = false;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
-        document.getElementById("download_upload_block") !== null
+        document.querySelectorAll('[id^="download_upload_block"]').length > 0
       ) {
-        document.getElementById("download_upload_block").hidden = false;
+        document.querySelectorAll('[id^="download_upload_block"]').forEach((e) => e.hidden = false);
       }
       // NOT APPLICABLE FOR GLOBAL COMMENT
       if (this.empty_toggle_on) {
