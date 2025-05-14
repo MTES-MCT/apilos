@@ -361,6 +361,10 @@ def create_alertes_instruction(
 ):
     siap_credentials = get_siap_credentials_from_request(request)
 
+    redirect_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+
     if len(convention.get_email_bailleur_users()):
         ...
         # TODO: add siap alert
@@ -380,9 +384,7 @@ def create_alertes_instruction(
                 else "Convention à corriger"
             ),
             type_alerte="Changement de statut",
-            url_direction=request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid])
-            ),
+            url_direction=redirect_url,
         )
 
         SIAPClient.get_instance().create_alerte(
@@ -438,17 +440,20 @@ def convention_feedback(request: HttpRequest, convention: Convention):
     if notification_form.is_valid():
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-            ...
-            # TODO: add siap alert
             alerte = Alerte.from_convention(
                 convention=convention,
                 categorie_information="CATEGORIE_ALERTE_ACTION",
                 destinataires=[
-                    Destinataire(role="INSTRUCTEUR", service="MO"),
-                    Destinataire(role="INSTRUCTEUR", service="SG"),
+                    # FIXME:
+                    # Destinataire(role="INSTRUCTEUR", service="MO"),
+                    # Destinataire(role="INSTRUCTEUR", service="SG"),
                 ],
                 etiquette="CUSTOM",
-                etiquette_personnalisee="Convention à instruire",
+                etiquette_personnalisee=(
+                    "Corrections faites - avenant à instruire à nouveau"
+                    if convention.is_avenant()
+                    else "Corrections faites - convention à instruire à nouveau"
+                ),
                 type_alerte="Changement de statut",
                 url_direction=request.build_absolute_uri(
                     reverse("conventions:recapitulatif", args=[convention.uuid])
