@@ -229,9 +229,9 @@ django-defender==0.9.8 \
     --hash=sha256:461c2d6eaee2c4cecf7a126ee272a0b2a7263b91ace7accf6c362947238fa1d3 \
     --hash=sha256:b75e001f0fa9912a79514ed29ecd2dd484319540b33ac909a88fd04ec5a4b16d
     # via -r requirements.in
-django-hijack==3.7.1 \
-    --hash=sha256:6a08a07dfe9b9b8c7a2118473f8bf50bcc5686d60b5577b9961b7e913a645f20 \
-    --hash=sha256:e2cbbe130d7ff90cec214326d151a2a7fc645bf7efdfba89c057161faf39436c
+django-hijack==3.7.2 \
+    --hash=sha256:dc834a015082dd2d49afd13da6cf6f571ce1a16894d6070887261a37633f8d06 \
+    --hash=sha256:eb02d285ec1564bfa77ac2e73b9bca28848caa7b04c1e1eef3d573353eb9efaa
     # via -r requirements.in
 django-simple-history==3.8.0 \
     --hash=sha256:7f8bbdaa5b2c4c1c9a48c89a95ff3389eda6c82cf9de9b09ae99b558205d132f \
