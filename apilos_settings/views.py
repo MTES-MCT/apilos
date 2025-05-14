@@ -311,7 +311,6 @@ class EditAdministrationView(FormView):
 
     def form_valid(self, form):
         administration = self._get_administration(self.kwargs["administration_uuid"])
-        administration.nom = form.cleaned_data["nom"]
         administration.code = form.cleaned_data["code"]
         administration.ville_signature = form.cleaned_data["ville_signature"]
         administration.adresse = form.cleaned_data["adresse"]

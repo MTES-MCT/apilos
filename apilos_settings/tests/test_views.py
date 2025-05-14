@@ -228,7 +228,9 @@ class TestEditAdministrationView:
 
     def test_edit_administration_view_post(self):
         # Setup
-        administration = AdministrationFactory()
+        administration = AdministrationFactory(
+            nom="ancien nom",
+        )
         form_data = {
             **model_to_dict(
                 administration,
@@ -271,7 +273,7 @@ class TestEditAdministrationView:
         assert response.url == url
 
         administration.refresh_from_db()
-        assert administration.nom == "nouveau nom"
+        assert administration.nom == "ancien nom"
 
     def test_edit_administration_view_get_permission_denied(self):
         administration1 = AdministrationFactory()
