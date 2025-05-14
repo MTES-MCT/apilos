@@ -42,7 +42,7 @@
                         <thead>
                             <tr>
                                 {% if convention|display_comments %}
-                                    {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' %}
+                                    {% include 'common/utils/comments_header.html' with object_name=file_type label=formset_title %}
                                 {% endif %}
                                 <th scope="col" class="col__width--200">
                                     Désignation
