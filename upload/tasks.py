@@ -11,8 +11,6 @@ from django.core.files.storage import default_storage
 from waffle import switch_is_active
 
 from core.services import EmailService, EmailTemplateID
-from siap.siap_client.client import SIAPClient
-from siap.siap_client.schemas import Alerte
 from upload.models import UploadedFile
 from users.models import User
 
@@ -58,10 +56,11 @@ def scan_uploaded_files(
                     switch_is_active(settings.SWITCH_SIAP_ALERTS_ON)
                     and siap_credentials
                 ):
-                    # TODO: add siap alert
-                    SIAPClient.get_instance().create_alerte(
-                        payload=Alerte().to_json(), **siap_credentials
-                    )
+                    ...
+                    # FIXME: add siap alert
+                    # SIAPClient.get_instance().create_alerte(
+                    #     payload=Alerte().to_json(), **siap_credentials
+                    # )
 
                 if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
                     EmailService(
