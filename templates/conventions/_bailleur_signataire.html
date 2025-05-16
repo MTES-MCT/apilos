@@ -7,14 +7,19 @@
 {% block content %}
     <div class="fr-col-12">
         {% if convention.programme.is_logements_ordinaires %}
-            <div class="fr-toggle fr-mb-2w">
-                <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{ form.identification_bailleur.html_name }}-messages" id="{{ form.identification_bailleur.html_name }}" name="{{ form.identification_bailleur.html_name }}"{% include "common/form/disable_form_input.html" %}>
-                <label class="fr-toggle__label" for="{{ form.identification_bailleur.html_name }}">{{ form.identification_bailleur.label }}</label>
-                <div class="fr-messages-group" id="{{ form.identification_bailleur.html_name }}-messages" aria-live="polite"></div>
-            </div>
-            <div class="identification_bailleur_detail_outer_div fr-mb-2w">
-                {% include "common/form/input_textarea.html" with mandatory_input=True form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
-            </div>
+            {% with convention_uuid=convention.uuid|slugify %}
+                {% with object_field="convention__identification_bailleur__"|add:convention_uuid %}
+                    <div class="fr-toggle fr-mb-2w">
+                        <input type="checkbox" {% if form.identification_bailleur.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="{{ form.identification_bailleur.html_name }}-messages" id="{{ form.identification_bailleur.html_name }}" name="{{ form.identification_bailleur.html_name }}"{% include "common/form/disable_form_input.html" %}>
+                        <label class="fr-toggle__label" for="{{ form.identification_bailleur.html_name }}">{{ form.identification_bailleur.label }}</label>
+                        <div class="fr-messages-group" id="{{ form.identification_bailleur.html_name }}-messages" aria-live="polite"></div>
+                    </div>
+                    <div class="identification_bailleur_detail_outer_div fr-mb-2w">
+                        {% include "common/form/input_textarea.html" with mandatory_input=True form_input=form.identification_bailleur_detail editable=True helptext_visible=True %}
+                    </div>
+                    {% include "common/utils/comments_field.html" %}
+                {% endwith %}
+            {% endwith %}
         {% endif %}
 
         <div class="signataire_infos">
