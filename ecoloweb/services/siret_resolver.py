@@ -1,6 +1,8 @@
 from datetime import date
 
-from api_insee import ApiInsee
+# Cette librairie n'est plus maintenue, elle est retirée des requirements
+# Je laisse ce code comme documentation de la reprise ecoloweb
+# from api_insee import ApiInsee
 from box import Box
 from box.exceptions import BoxKeyError
 
@@ -11,7 +13,7 @@ class SiretResolver:
     """
 
     def __init__(self, api_key: str, api_secret: str):
-        self._insee_api_client = ApiInsee(key=api_key, secret=api_secret)
+        # self._insee_api_client = ApiInsee(key=api_key, secret=api_secret)
         self._box = Box(box_dots=True)
 
     def resolve(self, siren: str, date_creation: date | None = None) -> str | None:
