@@ -1,6 +1,7 @@
+import json
 from datetime import date
 from unittest import mock
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 import time_machine
@@ -22,7 +23,68 @@ from programmes.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
+from users.tests.factories import UserFactory
 from users.type_models import EmailPreferences
+
+
+@pytest.mark.django_db
+def test_send_alerte_correction_from_instructeur():
+    convention = ConventionFactory()
+    avenant = ConventionFactory(parent_id=convention.id)
+    request = RequestFactory().get("/")
+    user = UserFactory()
+    request.user = user
+    user.cerbere_login = 1
+    request.session = {"habilitation_id": "001"}
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        recapitulatif.send_alerte_correction(
+            request=request, convention=convention, from_instructeur=True
+        )
+        mock_client.create_alerte.assert_called_once()
+        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
+        assert payload["destinataires"] == [{"role": "INSTRUCTEUR", "service": "MO"}]
+        assert payload["etiquettePersonnalisee"] == "Convention à corriger"
+
+        recapitulatif.send_alerte_correction(
+            request=request, convention=avenant, from_instructeur=True
+        )
+        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
+        assert payload["etiquettePersonnalisee"] == "Avenant à corriger"
+
+
+@pytest.mark.django_db
+def test_send_alerte_correction_from_bailleur():
+    convention = ConventionFactory()
+    avenant = ConventionFactory(parent_id=convention.id)
+    request = RequestFactory().get("/")
+    user = UserFactory()
+    request.user = user
+    user.cerbere_login = 1
+    request.session = {"habilitation_id": "001"}
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        recapitulatif.send_alerte_correction(
+            request=request, convention=convention, from_instructeur=False
+        )
+        mock_client.create_alerte.assert_called_once()
+        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
+        assert payload["destinataires"] == [{"role": "INSTRUCTEUR", "service": "SG"}]
+        assert (
+            payload["etiquettePersonnalisee"]
+            == "Corrections faites - convention à instruire à nouveau"
+        )
+
+        recapitulatif.send_alerte_correction(
+            request=request, convention=avenant, from_instructeur=False
+        )
+        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
+        assert (
+            payload["etiquettePersonnalisee"]
+            == "Corrections faites - avenant à instruire à nouveau"
+        )
 
 
 class ConventionRecapitulatifServiceTests(TestCase):
