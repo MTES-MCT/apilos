@@ -497,27 +497,55 @@ def convention_feedback(request: HttpRequest, convention: Convention):
 
 def create_alertes_correction(request, convention, from_instructeur):
     if from_instructeur:
-        destinataires = [Destinataire(role="INSTRUCTEUR", service="MO")]
-        etiquette_personnalisee = f"{display_kind(convention).capitalize()} à corriger"
+        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
+        etiquette_personnalisee_information = (
+            f"{display_kind(convention).capitalize()} en correction"
+        )
+        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="MO")]
+        etiquette_personnalisee_action = (
+            f"{display_kind(convention).capitalize()} à corriger"
+        )
 
     else:
-        destinataires = [Destinataire(role="INSTRUCTEUR", service="SG")]
-        etiquette_personnalisee = (
+        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="MO")]
+        etiquette_personnalisee_information = (
+            f"{display_kind(convention).capitalize()} en instruction"
+        )
+        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="SG")]
+        etiquette_personnalisee_action = (
             f"Corrections faites - {display_kind(convention)} à instruire à nouveau"
         )
 
+    # Send information notice
     alerte = Alerte.from_convention(
         convention=convention,
-        categorie_information="CATEGORIE_ALERTE_ACTION",
-        destinataires=destinataires,
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=destinataires_information,
         etiquette="CUSTOM",
-        etiquette_personnalisee=etiquette_personnalisee,
+        etiquette_personnalisee=etiquette_personnalisee_information,
         type_alerte="Changement de statut",
         url_direction=request.build_absolute_uri(
             reverse("conventions:recapitulatif", args=[convention.uuid])
         ),
     )
-    return SIAPClient.get_instance().create_alerte(
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **get_siap_credentials_from_request(request),
+    )
+
+    # Send action notice
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_ACTION",
+        destinataires=destinataires_action,
+        etiquette="CUSTOM",
+        etiquette_personnalisee=etiquette_personnalisee_action,
+        type_alerte="Changement de statut",
+        url_direction=request.build_absolute_uri(
+            reverse("conventions:recapitulatif", args=[convention.uuid])
+        ),
+    )
+    SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
         **get_siap_credentials_from_request(request),
     )

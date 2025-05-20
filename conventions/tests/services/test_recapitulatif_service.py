@@ -88,16 +88,42 @@ def test_create_alertes_correction_from_instructeur():
         recapitulatif.create_alertes_correction(
             request=request, convention=convention, from_instructeur=True
         )
-        mock_client.create_alerte.assert_called_once()
-        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
-        assert payload["destinataires"] == [{"role": "INSTRUCTEUR", "service": "MO"}]
-        assert payload["etiquettePersonnalisee"] == "Convention à corriger"
+        mock_client.create_alerte.assert_called()
+
+        payload_information = json.loads(
+            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
+        )
+        assert payload_information["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"}
+        ]
+        assert (
+            payload_information["etiquettePersonnalisee"] == "Convention en correction"
+        )
+        assert (
+            payload_information["categorieInformation"]
+            == "CATEGORIE_ALERTE_INFORMATION"
+        )
+
+        payload_action = json.loads(
+            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
+        )
+        assert payload_action["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "MO"}
+        ]
+        assert payload_action["etiquettePersonnalisee"] == "Convention à corriger"
+        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
         recapitulatif.create_alertes_correction(
             request=request, convention=avenant, from_instructeur=True
         )
-        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
-        assert payload["etiquettePersonnalisee"] == "Avenant à corriger"
+        payload_information = json.loads(
+            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
+        )
+        assert payload_information["etiquettePersonnalisee"] == "Avenant en correction"
+        payload_action = json.loads(
+            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
+        )
+        assert payload_action["etiquettePersonnalisee"] == "Avenant à corriger"
 
 
 @pytest.mark.django_db
@@ -115,20 +141,46 @@ def test_create_alertes_correction_from_bailleur():
         recapitulatif.create_alertes_correction(
             request=request, convention=convention, from_instructeur=False
         )
-        mock_client.create_alerte.assert_called_once()
-        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
-        assert payload["destinataires"] == [{"role": "INSTRUCTEUR", "service": "SG"}]
+        mock_client.create_alerte.assert_called()
+
+        payload_information = json.loads(
+            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
+        )
+        assert payload_information["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "MO"}
+        ]
         assert (
-            payload["etiquettePersonnalisee"]
+            payload_information["etiquettePersonnalisee"] == "Convention en instruction"
+        )
+        assert (
+            payload_information["categorieInformation"]
+            == "CATEGORIE_ALERTE_INFORMATION"
+        )
+
+        payload_action = json.loads(
+            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
+        )
+        assert payload_action["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"}
+        ]
+        assert (
+            payload_action["etiquettePersonnalisee"]
             == "Corrections faites - convention à instruire à nouveau"
         )
+        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
         recapitulatif.create_alertes_correction(
             request=request, convention=avenant, from_instructeur=False
         )
-        payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
+        payload_information = json.loads(
+            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
+        )
+        assert payload_information["etiquettePersonnalisee"] == "Avenant en instruction"
+        payload_action = json.loads(
+            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
+        )
         assert (
-            payload["etiquettePersonnalisee"]
+            payload_action["etiquettePersonnalisee"]
             == "Corrections faites - avenant à instruire à nouveau"
         )
 
