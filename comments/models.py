@@ -174,6 +174,9 @@ class Comment(models.Model):
             "convention__gestionnaire_signataire_bloc_signature": (
                 "Bloc signature du gestionnaire"
             ),
+            "convention__identification_bailleur": (
+                "Identification personalisée du bailleur"
+            ),
             "convention__attribution_inclusif_conditions_specifiques": (
                 "Conditions spécifiques d'accueil"
             ),
