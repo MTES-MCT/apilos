@@ -28,7 +28,53 @@ from users.type_models import EmailPreferences
 
 
 @pytest.mark.django_db
-def test_send_alerte_correction_from_instructeur():
+def test_create_alertes_instruction():
+    convention = ConventionFactory()
+    avenant = ConventionFactory(parent_id=convention.id)
+    request = RequestFactory().get("/")
+    user = UserFactory()
+    request.user = user
+    user.cerbere_login = 1
+    request.session = {"habilitation_id": "001"}
+
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        recapitulatif.create_alertes_instruction(request=request, convention=convention)
+        mock_client.create_alerte.assert_called()
+        payload_bailleur = json.loads(
+            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
+        )
+        assert payload_bailleur["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "MO"}
+        ]
+        assert payload_bailleur["etiquettePersonnalisee"] == "Convention en instruction"
+        assert (
+            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
+        )
+
+        payload_instructeur = json.loads(
+            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
+        )
+        assert payload_instructeur["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"}
+        ]
+        assert payload_instructeur["etiquettePersonnalisee"] == "Convention à instruire"
+        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+
+        recapitulatif.create_alertes_instruction(request=request, convention=avenant)
+        payload_bailleur = json.loads(
+            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
+        )
+        assert payload_bailleur["etiquettePersonnalisee"] == "Avenant en instruction"
+        payload_instructeur = json.loads(
+            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
+        )
+        assert payload_instructeur["etiquettePersonnalisee"] == "Avenant à instruire"
+
+
+@pytest.mark.django_db
+def test_create_alertes_correction_from_instructeur():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
     request = RequestFactory().get("/")
@@ -39,7 +85,7 @@ def test_send_alerte_correction_from_instructeur():
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
-        recapitulatif.send_alerte_correction(
+        recapitulatif.create_alertes_correction(
             request=request, convention=convention, from_instructeur=True
         )
         mock_client.create_alerte.assert_called_once()
@@ -47,7 +93,7 @@ def test_send_alerte_correction_from_instructeur():
         assert payload["destinataires"] == [{"role": "INSTRUCTEUR", "service": "MO"}]
         assert payload["etiquettePersonnalisee"] == "Convention à corriger"
 
-        recapitulatif.send_alerte_correction(
+        recapitulatif.create_alertes_correction(
             request=request, convention=avenant, from_instructeur=True
         )
         payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
@@ -55,7 +101,7 @@ def test_send_alerte_correction_from_instructeur():
 
 
 @pytest.mark.django_db
-def test_send_alerte_correction_from_bailleur():
+def test_create_alertes_correction_from_bailleur():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
     request = RequestFactory().get("/")
@@ -66,7 +112,7 @@ def test_send_alerte_correction_from_bailleur():
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
-        recapitulatif.send_alerte_correction(
+        recapitulatif.create_alertes_correction(
             request=request, convention=convention, from_instructeur=False
         )
         mock_client.create_alerte.assert_called_once()
@@ -77,7 +123,7 @@ def test_send_alerte_correction_from_bailleur():
             == "Corrections faites - convention à instruire à nouveau"
         )
 
-        recapitulatif.send_alerte_correction(
+        recapitulatif.create_alertes_correction(
             request=request, convention=avenant, from_instructeur=False
         )
         payload = json.loads(mock_client.create_alerte.call_args[1]["payload"])
