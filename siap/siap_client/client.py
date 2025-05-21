@@ -342,6 +342,17 @@ class SIAPClientRemote(SIAPClientInterface):
             habilitation_id=habilitation_id,
         )
 
+    @validate_response(error_message="user can't access alertes")
+    def list_convention_alertes(
+        self, convention_id: str, user_login: str, habilitation_id: int = 0
+    ) -> list[dict[str, Any]]:
+        return _call_siap_api(
+            f"/alertes/convention/{convention_id}",
+            base_route="/services/tableaubord",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+
     @validate_response(error_message="user can't create alertes")
     def create_alerte(
         self, user_login: str, habilitation_id: int, payload: dict[str, Any]
