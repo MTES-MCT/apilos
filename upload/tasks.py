@@ -11,6 +11,8 @@ from django.core.files.storage import default_storage
 from waffle import switch_is_active
 
 from core.services import EmailService, EmailTemplateID
+from siap.siap_client.client import SIAPClient
+from siap.siap_client.schemas import Alerte, Destinataire
 from upload.models import UploadedFile
 from users.models import User
 
@@ -24,7 +26,10 @@ def get_clamav_auth_header(username, password):
 
 @shared_task()
 def scan_uploaded_files(
-    paths_to_scan, authenticated_user_id, siap_credentials: dict[str, Any] | None = None
+    convention,
+    paths_to_scan,
+    authenticated_user_id,
+    siap_credentials: dict[str, Any] | None = None,
 ):
     if not settings.CLAMAV_SERVICE_URL:
         return
@@ -56,11 +61,25 @@ def scan_uploaded_files(
                     switch_is_active(settings.SWITCH_SIAP_ALERTS_ON)
                     and siap_credentials
                 ):
-                    ...
-                    # FIXME: add siap alert
-                    # SIAPClient.get_instance().create_alerte(
-                    #     payload=Alerte().to_json(), **siap_credentials
-                    # )
+
+                    alerte = Alerte.from_convention(
+                        convention=convention,
+                        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+                        destinataires=[
+                            Destinataire(role="INSTRUCTEUR", service="SG"),
+                            Destinataire(role="INSTRUCTEUR", service="MO"),
+                        ],
+                        etiquette="CUSTOM",
+                        etiquette_personnalisee=(
+                            "Virus détecté sur une document attaché au conventionnement"
+                        ),
+                        type_alerte="Détection de virus",
+                        url_direction="/",
+                    )
+                SIAPClient.get_instance().create_alerte(
+                    payload=alerte.to_json(),
+                    **siap_credentials,
+                )
 
                 if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
                     EmailService(

@@ -18,6 +18,7 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
+from conventions.tasks import create_alertes_valide
 from core.tests.factories import ConventionFactory, LotFactory, ProgrammeFactory
 from programmes.models import Programme
 from siap.exceptions import SIAPException
@@ -25,6 +26,55 @@ from siap.siap_client.client import SIAPClient
 from users.models import User
 from users.tests.factories import UserFactory
 from users.type_models import EmailPreferences
+
+
+@pytest.mark.django_db
+def test_create_alertes_valide():
+    convention = ConventionFactory()
+    avenant = ConventionFactory(parent_id=convention.id)
+    siap_credentials = {"habilitation_id": "001", "cerbere_login": 1}
+
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        create_alertes_valide(convention=convention, siap_credentials=siap_credentials)
+        mock_client.create_alerte.assert_called()
+        payload_bailleur = json.loads(
+            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
+        )
+        assert payload_bailleur["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "MO"}
+        ]
+        assert (
+            payload_bailleur["etiquettePersonnalisee"] == "Convention validée à signer"
+        )
+        assert (
+            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
+        )
+
+        payload_instructeur = json.loads(
+            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
+        )
+        assert payload_instructeur["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"}
+        ]
+        assert (
+            payload_instructeur["etiquettePersonnalisee"]
+            == "Convention validée à signer"
+        )
+        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+
+        create_alertes_valide(convention=avenant, siap_credentials=siap_credentials)
+        payload_bailleur = json.loads(
+            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
+        )
+        assert payload_bailleur["etiquettePersonnalisee"] == "Avenant validé à signer"
+        payload_instructeur = json.loads(
+            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
+        )
+        assert (
+            payload_instructeur["etiquettePersonnalisee"] == "Avenant validé à signer"
+        )
 
 
 @pytest.mark.django_db

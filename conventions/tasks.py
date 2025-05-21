@@ -18,9 +18,13 @@ from conventions.services.convention_generator import (
     get_tmp_local_path,
 )
 from conventions.services.file import ConventionFileService
+from conventions.templatetags.display_filters import (
+    display_gender_terminaison,
+    display_kind,
+)
 from core.services import EmailService, EmailTemplateID
 from siap.siap_client.client import SIAPClient
-from siap.siap_client.schemas import Alerte
+from siap.siap_client.schemas import Alerte, Destinataire
 
 logger = logging.getLogger(__name__)
 
@@ -137,25 +141,7 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        alerte = Alerte.from_convention(
-            convention=convention,
-            categorie_information="CATEGORIE_ALERTE_ACTION",
-            destinataires=[
-                # bailleurs ???
-                # Destinataire(role="ADMINISTRATEUR", service="MO"),
-                # Destinataire(role="ADMINISTRATEUR", service="SG"),
-            ],
-            etiquette="CUSTOM",
-            etiquette_personnalisee=(
-                "Avenant validé" if convention.is_avenant() else "Convention validée"
-            ),
-            type_alerte="Changement de statut",
-            url_direction="/",
-        )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **siap_credentials,
-        )
+        create_alertes_valide(convention)
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 
@@ -179,6 +165,47 @@ def task_send_email_to_bailleur(  # noqa: C901
             },
             filepath=email_file_path,
         )
+
+
+def create_alertes_valide(convention, siap_credentials):
+    # Information notice to bailleurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        # Pas sûr on a mis information / action sur le doc
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="MO"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=(
+            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
+        ),
+        type_alerte="Changement de statut",
+        url_direction="/",
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **siap_credentials,
+    )
+
+    # Action notice to instructeurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_ACTION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="SG"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=(
+            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
+        ),
+        type_alerte="Changement de statut",
+        url_direction="/",
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **siap_credentials,
+    )
 
 
 @shared_task()
