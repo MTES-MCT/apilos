@@ -24,7 +24,7 @@ class ConventionFileService:
             convention_dirpath=f"conventions/{convention.uuid}/convention_docs",
             filename=upload_filename,
         )
-        upload_service.upload_file(convention, file)
+        upload_service.upload_file(file)
 
         if update_statut and not convention.statut == ConventionStatut.DENONCEE.label:
             convention.statut = ConventionStatut.SIGNEE.label

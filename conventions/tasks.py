@@ -141,7 +141,7 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        create_alertes_valide(convention)
+        create_alertes_valide(convention=convention, siap_credentials=siap_credentials)
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 
