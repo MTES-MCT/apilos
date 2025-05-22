@@ -131,8 +131,8 @@ def get_siap_credentials_from_request(request: HttpRequest) -> dict[str, Any]:
     user_login = request.user.cerbere_login
     habilitation_id = request.session.get("habilitation_id")
 
-    # if not user_login or not habilitation_id:
-    #     raise ValueError("user_login and habilitation_id are required")
+    if not user_login or not habilitation_id:
+        raise ValueError("user_login and habilitation_id are required")
 
     return {
         "user_login": user_login,
