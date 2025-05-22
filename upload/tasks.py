@@ -76,10 +76,10 @@ def scan_uploaded_files(
                         type_alerte="Détection de virus",
                         url_direction="/",
                     )
-                SIAPClient.get_instance().create_alerte(
-                    payload=alerte.to_json(),
-                    **siap_credentials,
-                )
+                    SIAPClient.get_instance().create_alerte(
+                        payload=alerte.to_json(),
+                        **siap_credentials,
+                    )
 
                 if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
                     EmailService(
