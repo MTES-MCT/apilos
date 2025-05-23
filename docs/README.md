@@ -9,6 +9,7 @@ ECOLOWEB.md
 PCA_PRA.md
 S3_BACKUP.md
 SIAP-APiLos.md
+ADMIN.md
 ```
 
 ## Solution technique
