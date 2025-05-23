@@ -1,10 +1,12 @@
 import logging
 import os
 from pathlib import Path
+from typing import Any
 
 from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
+from waffle import switch_is_active
 from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
@@ -16,7 +18,13 @@ from conventions.services.convention_generator import (
     get_tmp_local_path,
 )
 from conventions.services.file import ConventionFileService
+from conventions.templatetags.display_filters import (
+    display_gender_terminaison,
+    display_kind,
+)
 from core.services import EmailService, EmailTemplateID
+from siap.siap_client.client import SIAPClient
+from siap.siap_client.schemas import Alerte, Destinataire
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +34,7 @@ def task_generate_and_send(
     convention_uuid: str,
     convention_url: str,
     convention_email_validator: str,
+    siap_credentials: dict[str, Any],
 ):
     chain(
         task_generate_pdf.s(convention_uuid),
@@ -33,6 +42,7 @@ def task_generate_and_send(
             convention_uuid,
             convention_url,
             convention_email_validator,
+            siap_credentials,
         ),
     )()
 
@@ -56,10 +66,11 @@ def task_generate_pdf(convention_uuid: str) -> None:
     retry_backoff_max=3600,
     retry_jitter=True,
 )
-def task_send_email_to_bailleur(
+def task_send_email_to_bailleur(  # noqa: C901
     convention_uuid: str,
     convention_url: str,
     convention_email_validator: str,
+    siap_credentials: dict[str, Any],
 ) -> None:
     # Get the convention
     convention = Convention.objects.get(uuid=convention_uuid)
@@ -129,25 +140,71 @@ def task_send_email_to_bailleur(
         )
         return
 
-    # Send a confirmation email to bailleurs
-    EmailService(
-        to_emails=destinataires_bailleur,
-        cc_emails=[convention_email_validator],
-        email_template_id=(
-            EmailTemplateID.ItoB_AVENANT_VALIDE
-            if convention.is_avenant()
-            else EmailTemplateID.ItoB_CONVENTION_VALIDEE
+    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+        create_alertes_valide(convention=convention, siap_credentials=siap_credentials)
+
+    if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+
+        # Send a confirmation email to bailleurs
+        EmailService(
+            to_emails=destinataires_bailleur,
+            cc_emails=[convention_email_validator],
+            email_template_id=(
+                EmailTemplateID.ItoB_AVENANT_VALIDE
+                if convention.is_avenant()
+                else EmailTemplateID.ItoB_CONVENTION_VALIDEE
+            ),
+        ).send_transactional_email(
+            email_data={
+                "convention_url": convention_url,
+                "convention": str(convention),
+                "adresse": administration.adresse,
+                "code_postal": administration.code_postal,
+                "ville": administration.ville,
+                "nb_convention_exemplaires": administration.nb_convention_exemplaires,
+            },
+            filepath=email_file_path,
+        )
+
+
+def create_alertes_valide(convention, siap_credentials):
+    # Information notice to bailleurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        # Pas sûr on a mis information / action sur le doc
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="MO"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=(
+            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
         ),
-    ).send_transactional_email(
-        email_data={
-            "convention_url": convention_url,
-            "convention": str(convention),
-            "adresse": administration.adresse,
-            "code_postal": administration.code_postal,
-            "ville": administration.ville,
-            "nb_convention_exemplaires": administration.nb_convention_exemplaires,
-        },
-        filepath=email_file_path,
+        type_alerte="Changement de statut",
+        url_direction="/",
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **siap_credentials,
+    )
+
+    # Action notice to instructeurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_ACTION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="SG"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=(
+            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
+        ),
+        type_alerte="Changement de statut",
+        url_direction="/",
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **siap_credentials,
     )
 
 

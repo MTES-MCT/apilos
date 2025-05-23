@@ -1,12 +1,16 @@
 import logging
 import threading
 import uuid
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
+from functools import wraps
+from typing import Any
 
 import jwt
 import requests
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
+from django.http import HttpRequest
 from tenacity import retry, retry_if_exception_type, stop_after_attempt
 
 from siap.exceptions import (
@@ -62,19 +66,32 @@ def _call_siap_api(
     base_route: str = "",
     user_login: str = "",
     habilitation_id: int = 0,
+    method: str = "GET",
+    data: dict[str, Any] | None = None,
 ) -> requests.Response:
-    siap_url_config = (
+    siap_url = (
         settings.SIAP_CLIENT_HOST + base_route + settings.SIAP_CLIENT_PATH + route
     )
-    myjwt = build_jwt(user_login=user_login, habilitation_id=habilitation_id)
+
+    jwt_token = build_jwt(user_login=user_login, habilitation_id=habilitation_id)
+
+    headers = {
+        "siap-Authorization": f"Bearer {jwt_token}",
+        "Content-Type": "application/json",
+    }
+
     try:
-        response = requests.get(
-            siap_url_config,
-            headers={"siap-Authorization": f"Bearer {myjwt}"},
-            timeout=3,
-        )
-    except (requests.ReadTimeout, requests.ConnectTimeout) as e:
-        raise SIAPException(TIMEOUT_MESSAGE) from e
+        match method:
+            case "GET":
+                response = requests.get(siap_url, headers=headers, timeout=3)
+            case "POST":
+                response = requests.post(siap_url, data=data, headers=headers)
+            case "DELETE":
+                response = requests.delete(siap_url, headers=headers)
+            case _:
+                raise ValueError(f"Unsupported HTTP method: {method}")
+    except (requests.ReadTimeout, requests.ConnectTimeout) as err:
+        raise SIAPException(TIMEOUT_MESSAGE) from err
 
     if response.status_code == 401:
         error_text = UNAUTHORIZED_MESSAGE
@@ -101,10 +118,26 @@ def _call_siap_api(
             "[Status code: %s] SIAP API : %s, WITH JWT  : %s",
             response.status_code,
             response.content,
-            myjwt,
+            jwt_token,
         )
 
     return response
+
+
+def get_siap_credentials_from_request(request: HttpRequest) -> dict[str, Any]:
+    """
+    Get the user login and habilitation ID from the request.
+    """
+    user_login = request.user.cerbere_login
+    habilitation_id = request.session.get("habilitation_id")
+
+    if not user_login or not habilitation_id:
+        raise ValueError("user_login and habilitation_id are required")
+
+    return {
+        "user_login": user_login,
+        "habilitation_id": habilitation_id,
+    }
 
 
 class SIAPClient:
@@ -137,26 +170,42 @@ class SIAPClient:
         return bool(cls.__singleton_instance)
 
 
-class SIAPClientInterface:
+class SIAPClientInterface(ABC):
     def __init__(self) -> None:
         self.update_siap_config()
 
-    def update_siap_config(self) -> None:
-        pass
+    @abstractmethod
+    def update_siap_config(self) -> None: ...
 
-    def get_siap_config(self) -> dict:
-        pass
+    @abstractmethod
+    def get_siap_config(self) -> dict: ...
 
-    def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict:
-        pass
+    @abstractmethod
+    def get_habilitations(self, user_login: str, habilitation_id: int = 0) -> dict: ...
 
-    def get_menu(self, user_login: str, habilitation_id: int) -> dict:
-        pass
+    @abstractmethod
+    def get_menu(self, user_login: str, habilitation_id: int) -> dict: ...
 
+    @abstractmethod
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
-    ) -> dict:
-        pass
+    ) -> dict: ...
+
+    @abstractmethod
+    def get_fusion(
+        self, user_login: str, habilitation_id: int, bailleur_siren: str
+    ) -> list: ...
+
+    @abstractmethod
+    def list_alertes(self, user_login: str, habilitation_id: int = 0) -> dict: ...
+
+    @abstractmethod
+    def create_alerte(
+        self, user_login: str, habilitation_id: int, payload: dict[str, Any]
+    ) -> dict: ...
+
+    @abstractmethod
+    def delete_alerte(self, user_login: str, habilitation_id: int) -> dict: ...
 
 
 def create_gestionnaire_if_not_exists(gestionnaire):
@@ -178,6 +227,23 @@ def create_entity_from_habilitation_if_not_exists(habilitation):
         raise KeyError("habilitation is not well formed") from e
 
     return entity
+
+
+def validate_response(error_message: str = "SIAP error returned"):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            response = func(*args, **kwargs)
+            if response.status_code >= 200 and response.status_code < 300:
+                if response.content:
+                    return response.json()
+                else:
+                    return None
+            raise SIAPException(f"{error_message}: {response.content}")
+
+        return wrapper
+
+    return decorator
 
 
 # Manage SiapClient as a Singleton
@@ -227,17 +293,17 @@ class SIAPClientRemote(SIAPClientInterface):
             f"user doesn't have SIAP habilitation, SIAP error returned {response.content}"
         )
 
+    @validate_response(error_message="user doesn't have SIAP habilitation")
     def get_menu(self, user_login: str, habilitation_id: int = 0) -> dict:
-        response = _call_siap_api(
+        return _call_siap_api(
             "/menu",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
-        if response.status_code >= 200 and response.status_code < 300:
-            return response.json()
-        raise Exception(f"user doesn't have SIAP habilitation {response}")
 
-    # /services/operation/api-int/v0/operation/{numeroOperation}
+    @validate_response(
+        error_message="user doesn't have enough rights to display operation"
+    )
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
@@ -251,10 +317,10 @@ class SIAPClientRemote(SIAPClientInterface):
             return response.json()
         raise SIAPException(UNAUTHORIZED_MESSAGE)
 
+    @validate_response()
     def get_fusion(
         self, user_login: str, habilitation_id: int, bailleur_siren: str
     ) -> list:
-        # /services/operation/api-int/v0/journalisation-fusion?siren=
         response = _call_siap_api(
             f"/journalisation-fusion?siren={bailleur_siren}",
             base_route="/services/operation",
@@ -264,6 +330,53 @@ class SIAPClientRemote(SIAPClientInterface):
         if response.status_code >= 200 and response.status_code < 300:
             return response.json()
         raise SIAPException(FUSION_MESSAGE + f" : {response.content}")
+
+    @validate_response(error_message="user can't access alertes")
+    def list_alertes(
+        self, user_login: str, habilitation_id: int = 0
+    ) -> list[dict[str, Any]]:
+        return _call_siap_api(
+            "/alertes",
+            base_route="/services/tableaubord",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+
+    @validate_response(error_message="user can't access alertes")
+    def list_convention_alertes(
+        self, convention_id: str, user_login: str, habilitation_id: int = 0
+    ) -> list[dict[str, Any]]:
+        return _call_siap_api(
+            f"/alertes/convention/{convention_id}",
+            base_route="/services/tableaubord",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+        )
+
+    @validate_response(error_message="user can't create alertes")
+    def create_alerte(
+        self, user_login: str, habilitation_id: int, payload: dict[str, Any]
+    ) -> dict:
+        return _call_siap_api(
+            "/alertes",
+            base_route="/services/tableaubord",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+            method="POST",
+            data=payload,
+        )
+
+    @validate_response(error_message="user can't update alertes")
+    def delete_alerte(
+        self, user_login: str, habilitation_id: int, alerte_id: str
+    ) -> dict:
+        return _call_siap_api(
+            f"/alertes/{alerte_id}",
+            base_route="/services/tableaubord",
+            user_login=user_login,
+            habilitation_id=habilitation_id,
+            method="DELETE",
+        )
 
 
 # Manage SiapClient as a Singleton
@@ -298,3 +411,18 @@ class SIAPClientMock(SIAPClientInterface):
         self, user_login: str, habilitation_id: int, bailleur_siren: str
     ) -> list:
         return fusion_mock
+
+    def list_alertes(self, user_login, habilitation_id=0) -> list[dict[str, Any]]:
+        return []
+
+    def create_alerte(
+        self, user_login: str, habilitation_id: int, payload: dict[str, Any]
+    ) -> dict[str, Any]:
+        return {
+            "message": "alerte créée avec succès",
+        }
+
+    def delete_alerte(self, user_login, habilitation_id) -> dict[str, Any]:
+        return {
+            "message": "alerte supprimée avec succès",
+        }

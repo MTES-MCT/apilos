@@ -4,6 +4,7 @@ from django.views.decorators.http import require_GET, require_POST
 
 from conventions.models import Convention
 from programmes.models import Lot, Programme
+from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile, UploadedFileSerializer
 from upload.services import UploadService
 from upload.tasks import scan_uploaded_files
@@ -27,6 +28,14 @@ def _compute_dirpath(request):
             "/upload path should be called with a programme, lot or convention parameter"
         )
     return f"{object_name}/{uuid}/media/"
+
+
+def _get_convention_from_request(request):
+    if "convention" in request.POST:
+        convention = Convention.objects.get(uuid=request.POST["convention"])
+    else:
+        raise Exception("/upload path should be called with a convention parameter")
+    return convention
 
 
 @require_GET
@@ -68,5 +77,10 @@ def upload_file(request):
         paths_to_scan.append((upload_service.path, uploaded_file.pk))
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
-    scan_uploaded_files.delay(paths_to_scan, request.user.id)
+    scan_uploaded_files.delay(
+        _get_convention_from_request(request),
+        paths_to_scan,
+        request.user.id,
+        get_siap_credentials_from_request(request),
+    )
     return JsonResponse({"success": "true", "uploaded_file": uploaded_files})

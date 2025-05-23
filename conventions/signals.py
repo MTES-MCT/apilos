@@ -1,8 +1,10 @@
 from typing import Any
 
+from django.conf import settings
 from django.db.models.fields.reverse_related import ManyToOneRel
 from django.db.models.signals import m2m_changed, post_save, pre_save
 from django.dispatch import receiver
+from waffle import switch_is_active
 
 from conventions.models import Convention, Lot
 from conventions.models.avenant_type import AvenantType
@@ -87,6 +89,9 @@ def compute_numero_for_search(sender, instance, *args, **kwargs):
 def send_survey_email(sender, instance, *args, **kwargs):
     # send email to get user satisfaction after instructeur validate convention
     # or bailleur submit convention for the first time ?
+
+    if switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+        return
 
     # check if it is the first time the bailleur user submit a convention
     if (

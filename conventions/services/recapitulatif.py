@@ -1,10 +1,12 @@
 import datetime
 from typing import Any, List
 
+from django.conf import settings
 from django.db.models import Q
 from django.http import HttpRequest
 from django.urls import reverse
 from django.utils import timezone
+from waffle import switch_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
@@ -21,12 +23,14 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import task_generate_and_send
+from conventions.templatetags.display_filters import display_kind
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
-from siap.siap_client.client import SIAPClient
+from siap.siap_client.client import SIAPClient, get_siap_credentials_from_request
+from siap.siap_client.schemas import Alerte, Destinataire
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
@@ -280,16 +284,23 @@ def convention_submit(request: HttpRequest, convention: Convention):
         instructeur_emails, submitted = collect_instructeur_emails(
             request, convention, submitted
         )
-        send_email_instruction(
-            request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid])
-            ),
-            convention,
-            request.user,
-            instructeur_emails,
-        )
+
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            create_alertes_instruction(convention, request)
+
+        if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+            send_email_instruction(
+                request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid])
+                ),
+                convention,
+                request.user,
+                instructeur_emails,
+            )
+
         if submitted != utils.ReturnStatus.WARNING:
             submitted = utils.ReturnStatus.SUCCESS
+
     return {
         "success": submitted,
         "convention": convention,
@@ -346,7 +357,54 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def send_email_instruction(convention_url, convention, user, instructeur_emails):
+def create_alertes_instruction(convention: Convention, request: HttpRequest):
+    siap_credentials = get_siap_credentials_from_request(request)
+
+    redirect_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
+
+    # Send an information notice to bailleurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="MO"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=f"{display_kind(convention).capitalize()} en instruction",
+        type_alerte="Changement de statut",
+        url_direction=redirect_url,
+    )
+
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(), **siap_credentials
+    )
+
+    # Send an action notice to instructeurs
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_ACTION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="SG"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=f"{display_kind(convention).capitalize()} à instruire",
+        type_alerte="Changement de statut",
+        url_direction=redirect_url,
+    )
+
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(), **siap_credentials
+    )
+
+
+def send_email_instruction(
+    convention_url: str,
+    convention: Convention,
+    user: User,
+    instructeur_emails: list[str],
+):
     """
     Send email "convention à instruire" when bailleur submit the convention
     Send an email to the bailleur who click and bailleur TOUS
@@ -387,20 +445,34 @@ def send_email_instruction(convention_url, convention, user, instructeur_emails)
 def convention_feedback(request: HttpRequest, convention: Convention):
     notification_form = NotificationForm(request.POST)
     if notification_form.is_valid():
-        cc = [request.user.email] if notification_form.cleaned_data["send_copy"] else []
-        send_email_correction(
-            request.build_absolute_uri(
-                reverse("conventions:recapitulatif", args=[convention.uuid]),
-            ),
-            convention,
-            request.user,
-            cc,
-            notification_form.cleaned_data["from_instructeur"],
-            notification_form.cleaned_data["comment"],
-        )
+
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            create_alertes_correction(
+                request=request,
+                convention=convention,
+                from_instructeur=notification_form.cleaned_data["from_instructeur"],
+            )
+
+        if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
+            send_email_correction(
+                request.build_absolute_uri(
+                    reverse("conventions:recapitulatif", args=[convention.uuid]),
+                ),
+                convention,
+                request.user,
+                (
+                    [request.user.email]
+                    if notification_form.cleaned_data["send_copy"]
+                    else []
+                ),
+                notification_form.cleaned_data["from_instructeur"],
+                notification_form.cleaned_data["comment"],
+            )
+
         target_status = ConventionStatut.INSTRUCTION.label
         if notification_form.cleaned_data["from_instructeur"]:
             target_status = ConventionStatut.CORRECTION.label
+
         ConventionHistory.objects.create(
             convention=convention,
             statut_convention=target_status,
@@ -408,6 +480,7 @@ def convention_feedback(request: HttpRequest, convention: Convention):
             user=request.user,
             commentaire=notification_form.cleaned_data["comment"],
         ).save()
+
         convention.statut = target_status
         convention.save()
 
@@ -420,6 +493,62 @@ def convention_feedback(request: HttpRequest, convention: Convention):
         **utils.base_convention_response_error(request, convention),
         "notificationForm": notification_form,
     }
+
+
+def create_alertes_correction(request, convention, from_instructeur):
+    if from_instructeur:
+        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
+        etiquette_personnalisee_information = (
+            f"{display_kind(convention).capitalize()} en correction"
+        )
+        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="MO")]
+        etiquette_personnalisee_action = (
+            f"{display_kind(convention).capitalize()} à corriger"
+        )
+
+    else:
+        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="MO")]
+        etiquette_personnalisee_information = (
+            f"{display_kind(convention).capitalize()} en instruction"
+        )
+        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="SG")]
+        etiquette_personnalisee_action = (
+            f"{display_kind(convention).capitalize()} à instruire à nouveau"
+        )
+
+    # Send information notice
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=destinataires_information,
+        etiquette="CUSTOM",
+        etiquette_personnalisee=etiquette_personnalisee_information,
+        type_alerte="Changement de statut",
+        url_direction=request.build_absolute_uri(
+            reverse("conventions:recapitulatif", args=[convention.uuid])
+        ),
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **get_siap_credentials_from_request(request),
+    )
+
+    # Send action notice
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_ACTION",
+        destinataires=destinataires_action,
+        etiquette="CUSTOM",
+        etiquette_personnalisee=etiquette_personnalisee_action,
+        type_alerte="Changement de statut",
+        url_direction=request.build_absolute_uri(
+            reverse("conventions:recapitulatif", args=[convention.uuid])
+        ),
+    )
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(),
+        **get_siap_credentials_from_request(request),
+    )
 
 
 def send_email_correction(
@@ -577,6 +706,7 @@ def _update_convention_for_finalisation(
             reverse("conventions:preview", args=[convention.uuid])
         ),
         convention_email_validator=request.user.email,
+        siap_credentials=get_siap_credentials_from_request(request),
     )
 
     return {
