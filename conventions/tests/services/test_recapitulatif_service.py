@@ -215,7 +215,7 @@ def test_create_alertes_correction_from_bailleur():
         ]
         assert (
             payload_action["etiquettePersonnalisee"]
-            == "Corrections faites - convention à instruire à nouveau"
+            == "Convention à instruire à nouveau"
         )
         assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
@@ -230,8 +230,7 @@ def test_create_alertes_correction_from_bailleur():
             mock_client.create_alerte.mock_calls[3].kwargs["payload"]
         )
         assert (
-            payload_action["etiquettePersonnalisee"]
-            == "Corrections faites - avenant à instruire à nouveau"
+            payload_action["etiquettePersonnalisee"] == "Avenant à instruire à nouveau"
         )
 
 

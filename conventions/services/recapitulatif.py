@@ -513,7 +513,7 @@ def create_alertes_correction(request, convention, from_instructeur):
         )
         destinataires_action = [Destinataire(role="INSTRUCTEUR", service="SG")]
         etiquette_personnalisee_action = (
-            f"Corrections faites - {display_kind(convention)} à instruire à nouveau"
+            f"{display_kind(convention).capitalize()} à instruire à nouveau"
         )
 
     # Send information notice
