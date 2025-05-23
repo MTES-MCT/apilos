@@ -126,7 +126,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention|display_comments %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='logements_sans_loyer' label='Logements sans loyer' callback_click="refresh_opened_comments" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
@@ -197,7 +197,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention|display_comments %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='logements_corrigee' label='Logements en surface corrigée' callback_click="refresh_opened_comments" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
@@ -275,7 +275,7 @@
                                                 <thead>
                                                     <tr>
                                                         {% if convention|display_comments %}
-                                                            {% include 'common/utils/comments_header.html' with object_name='logement' label='Logements' callback_click="refresh_opened_comments" %}
+                                                            {% include 'common/utils/comments_header.html' with object_name='logements_corrigee_sans_loyer' label='Logements en surface corrigée sans loyer' callback_click="refresh_opened_comments" %}
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
