@@ -7,7 +7,7 @@
 
 APiLos permet la communication entre intructeurs et bailleurs au niveau des conventions et avenants via des commentaires.
 
-Les commentaires concernent les conventions à instruire et en correction. Lorsqu'un instructeur instuit une convention, il peut laisser des commentaires sur des champs spécifiques du formulaire, auxquels le bailleur peut répondre. Quand la convention passe au statut en correction, le bailleur peut modifier les champs commentés.
+Les commentaires concernent les conventions à instruire et en correction. Lorsqu'un instructeur instruit une convention, il peut laisser des commentaires sur des champs spécifiques du formulaire, auxquels le bailleur peut répondre. Quand la convention passe au statut en correction, le bailleur peut modifier les champs commentés.
 
 Ainsi les commentaires servent à échanger de l'information entre instructeurs et bailleurs, mais aussi à donner la permission aux bailleurs d'éditer des champs au statut en correction.
 
@@ -27,9 +27,9 @@ Les commentaires sont intégrés dans les templates des formulaires de l'applica
 
 Les différents champs génériques utilisés inclus dans leur template la ligne suivante : `{% include "common/utils/comments_field.html" %}`
 
-Ce bout de code contient le javascript qui va créer instancier l'objet `CommentFactory`. Le code commence par tester sur la propriété `object_field` est présente dans le contexte, et si la convention est dans un état où l'on veut afficher les commentaires (en correction, en instruction, à signer, signée).
+Ce bout de code contient le javascript qui va instancier l'objet `CommentFactory`. Le code commence par tester sur la propriété `object_field` est présente dans le contexte, et si la convention est dans un état où l'on veut afficher les commentaires (en correction, en instruction, à signer, signée).
 
-L'object javascript `CommentFactory` permet de faire un apparaître une icône à côté du champ concerné. En cliquant sur l'icône on peut réaliser les différentes opérations liées aux commentaires sur ce champ (consultation, création, changement de statut).
+L'objet javascript `CommentFactory` permet de faire un apparaître une icône à côté du champ concerné. En cliquant sur l'icône on peut réaliser les différentes opérations liées aux commentaires sur ce champ (consultation, création, changement de statut).
 
 ## Permettre l'ajout de commentaire sur un nouveau champ
 
