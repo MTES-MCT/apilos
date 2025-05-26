@@ -496,6 +496,9 @@ def convention_feedback(request: HttpRequest, convention: Convention):
 
 
 def create_alertes_correction(request, convention, from_instructeur):
+    redirect_url = request.build_absolute_uri(
+        reverse("conventions:recapitulatif", args=[convention.uuid])
+    )
     if from_instructeur:
         destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
         etiquette_personnalisee_information = (
@@ -524,9 +527,7 @@ def create_alertes_correction(request, convention, from_instructeur):
         etiquette="CUSTOM",
         etiquette_personnalisee=etiquette_personnalisee_information,
         type_alerte="Changement de statut",
-        url_direction=request.build_absolute_uri(
-            reverse("conventions:recapitulatif", args=[convention.uuid])
-        ),
+        url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
@@ -541,9 +542,7 @@ def create_alertes_correction(request, convention, from_instructeur):
         etiquette="CUSTOM",
         etiquette_personnalisee=etiquette_personnalisee_action,
         type_alerte="Changement de statut",
-        url_direction=request.build_absolute_uri(
-            reverse("conventions:recapitulatif", args=[convention.uuid])
-        ),
+        url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
