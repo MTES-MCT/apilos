@@ -141,7 +141,11 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        create_alertes_valide(convention=convention, siap_credentials=siap_credentials)
+        create_alertes_valide(
+            convention=convention,
+            siap_credentials=siap_credentials,
+            redirect_url=convention_url,
+        )
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 
@@ -167,7 +171,7 @@ def task_send_email_to_bailleur(  # noqa: C901
         )
 
 
-def create_alertes_valide(convention, siap_credentials):
+def create_alertes_valide(convention, siap_credentials, redirect_url):
     # Information notice to bailleurs
     alerte = Alerte.from_convention(
         convention=convention,
@@ -181,7 +185,7 @@ def create_alertes_valide(convention, siap_credentials):
             f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
         ),
         type_alerte="Changement de statut",
-        url_direction="/",
+        url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
@@ -200,7 +204,7 @@ def create_alertes_valide(convention, siap_credentials):
             f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
         ),
         type_alerte="Changement de statut",
-        url_direction="/",
+        url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
