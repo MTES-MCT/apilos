@@ -317,19 +317,16 @@ class SIAPClientRemote(SIAPClientInterface):
             return response.json()
         raise SIAPException(UNAUTHORIZED_MESSAGE)
 
-    @validate_response()
+    @validate_response(error_message=FUSION_MESSAGE)
     def get_fusion(
         self, user_login: str, habilitation_id: int, bailleur_siren: str
     ) -> list:
-        response = _call_siap_api(
+        return _call_siap_api(
             f"/journalisation-fusion?siren={bailleur_siren}",
             base_route="/services/operation",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
-        if response.status_code >= 200 and response.status_code < 300:
-            return response.json()
-        raise SIAPException(FUSION_MESSAGE + f" : {response.content}")
 
     @validate_response(error_message="user can't access alertes")
     def list_alertes(
