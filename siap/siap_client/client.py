@@ -301,21 +301,16 @@ class SIAPClientRemote(SIAPClientInterface):
             habilitation_id=habilitation_id,
         )
 
-    @validate_response(
-        error_message="user doesn't have enough rights to display operation"
-    )
+    @validate_response(error_message=UNAUTHORIZED_MESSAGE)
     def get_operation(
         self, user_login: str, habilitation_id: int, operation_identifier: str
     ) -> dict:
-        response = _call_siap_api(
+        return _call_siap_api(
             f"/operation/{operation_identifier}",
             base_route="/services/operation",
             user_login=user_login,
             habilitation_id=habilitation_id,
         )
-        if response.status_code >= 200 and response.status_code < 300:
-            return response.json()
-        raise SIAPException(UNAUTHORIZED_MESSAGE)
 
     @validate_response(error_message=FUSION_MESSAGE)
     def get_fusion(
