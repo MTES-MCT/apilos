@@ -37,7 +37,11 @@ def test_create_alertes_valide():
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
-        create_alertes_valide(convention=convention, siap_credentials=siap_credentials)
+        create_alertes_valide(
+            convention=convention,
+            siap_credentials=siap_credentials,
+            redirect_url="test url",
+        )
         mock_client.create_alerte.assert_called()
         payload_bailleur = json.loads(
             mock_client.create_alerte.mock_calls[0].kwargs["payload"]
@@ -52,6 +56,8 @@ def test_create_alertes_valide():
             payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
         )
 
+        assert payload_bailleur["urlDirection"] == "test url"
+
         payload_instructeur = json.loads(
             mock_client.create_alerte.mock_calls[1].kwargs["payload"]
         )
@@ -63,8 +69,13 @@ def test_create_alertes_valide():
             == "Convention validée à signer"
         )
         assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert payload_instructeur["urlDirection"] == "test url"
 
-        create_alertes_valide(convention=avenant, siap_credentials=siap_credentials)
+        create_alertes_valide(
+            convention=avenant,
+            siap_credentials=siap_credentials,
+            redirect_url="test url",
+        )
         payload_bailleur = json.loads(
             mock_client.create_alerte.mock_calls[2].kwargs["payload"]
         )

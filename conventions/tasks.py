@@ -204,7 +204,7 @@ def create_alertes_valide(convention, siap_credentials, redirect_url):
             f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
         ),
         type_alerte="Changement de statut",
-        url_direction="/",
+        url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
