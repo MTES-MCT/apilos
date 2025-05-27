@@ -6,6 +6,7 @@ from typing import Any
 from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
+from django.urls import reverse
 from waffle import switch_is_active
 from zipfile import ZipFile
 
@@ -144,7 +145,6 @@ def task_send_email_to_bailleur(  # noqa: C901
         create_alertes_valide(
             convention=convention,
             siap_credentials=siap_credentials,
-            redirect_url=convention_url,
         )
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
@@ -171,7 +171,9 @@ def task_send_email_to_bailleur(  # noqa: C901
         )
 
 
-def create_alertes_valide(convention, siap_credentials, redirect_url):
+def create_alertes_valide(convention, siap_credentials):
+    redirect_url = reverse("conventions:preview", args=[convention.uuid])
+
     # Information notice to bailleurs
     alerte = Alerte.from_convention(
         convention=convention,

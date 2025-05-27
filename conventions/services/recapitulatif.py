@@ -360,9 +360,7 @@ def collect_instructeur_emails(
 def create_alertes_instruction(convention: Convention, request: HttpRequest):
     siap_credentials = get_siap_credentials_from_request(request)
 
-    redirect_url = request.build_absolute_uri(
-        reverse("conventions:recapitulatif", args=[convention.uuid])
-    )
+    redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
 
     # Send an information notice to bailleurs
     alerte = Alerte.from_convention(
@@ -496,9 +494,7 @@ def convention_feedback(request: HttpRequest, convention: Convention):
 
 
 def create_alertes_correction(request, convention, from_instructeur):
-    redirect_url = request.build_absolute_uri(
-        reverse("conventions:recapitulatif", args=[convention.uuid])
-    )
+    redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
     if from_instructeur:
         destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
         etiquette_personnalisee_information = (

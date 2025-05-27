@@ -8,6 +8,7 @@ import time_machine
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
+from django.urls import reverse
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.convention_form_dates import ConventionDateSignatureForm
@@ -40,7 +41,6 @@ def test_create_alertes_valide():
         create_alertes_valide(
             convention=convention,
             siap_credentials=siap_credentials,
-            redirect_url="test url",
         )
         mock_client.create_alerte.assert_called()
         payload_bailleur = json.loads(
@@ -56,7 +56,9 @@ def test_create_alertes_valide():
             payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
         )
 
-        assert payload_bailleur["urlDirection"] == "test url"
+        assert payload_bailleur["urlDirection"] == reverse(
+            "conventions:preview", args=[convention.uuid]
+        )
 
         payload_instructeur = json.loads(
             mock_client.create_alerte.mock_calls[1].kwargs["payload"]
@@ -69,12 +71,13 @@ def test_create_alertes_valide():
             == "Convention validée à signer"
         )
         assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-        assert payload_instructeur["urlDirection"] == "test url"
+        assert payload_instructeur["urlDirection"] == reverse(
+            "conventions:preview", args=[convention.uuid]
+        )
 
         create_alertes_valide(
             convention=avenant,
             siap_credentials=siap_credentials,
-            redirect_url="test url",
         )
         payload_bailleur = json.loads(
             mock_client.create_alerte.mock_calls[2].kwargs["payload"]
@@ -113,6 +116,9 @@ def test_create_alertes_instruction():
         assert (
             payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
         )
+        assert payload_bailleur["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[convention.uuid]
+        )
 
         payload_instructeur = json.loads(
             mock_client.create_alerte.mock_calls[1].kwargs["payload"]
@@ -122,6 +128,9 @@ def test_create_alertes_instruction():
         ]
         assert payload_instructeur["etiquettePersonnalisee"] == "Convention à instruire"
         assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert payload_instructeur["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[convention.uuid]
+        )
 
         recapitulatif.create_alertes_instruction(request=request, convention=avenant)
         payload_bailleur = json.loads(
@@ -164,6 +173,9 @@ def test_create_alertes_correction_from_instructeur():
             payload_information["categorieInformation"]
             == "CATEGORIE_ALERTE_INFORMATION"
         )
+        assert payload_information["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[convention.uuid]
+        )
 
         payload_action = json.loads(
             mock_client.create_alerte.mock_calls[1].kwargs["payload"]
@@ -173,6 +185,9 @@ def test_create_alertes_correction_from_instructeur():
         ]
         assert payload_action["etiquettePersonnalisee"] == "Convention à corriger"
         assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert payload_action["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[convention.uuid]
+        )
 
         recapitulatif.create_alertes_correction(
             request=request, convention=avenant, from_instructeur=True
