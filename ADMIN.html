@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Documentation des interactions SIAP APiLos" href="SIAP-APiLos.html" /><link rel="prev" title="Plan de continuité d’activité / Plan de reprise d’activité" href="PCA_PRA.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="prev" title="Documentation des interactions SIAP APiLos" href="SIAP-APiLos.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Backup des buckets S3 - Documentation APiLos</title>
+        <title>Administration et back office - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -204,9 +204,9 @@
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="COMMENTAIRES.html">Module commentaires</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Administration et back office</a></li>
 </ul>
 
 </div>
@@ -227,7 +227,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/S3_BACKUP.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/ADMIN.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -249,23 +249,47 @@
         <article role="main" id="furo-main-content">
           <div class="toctree-wrapper compound">
 </div>
-<section id="backup-des-buckets-s3">
-<h1>Backup des buckets S3<a class="headerlink" href="#backup-des-buckets-s3" title="Lien vers cette rubrique">¶</a></h1>
-<p>Chaque semaine, on souhaite faire un backup du contenu des buckets s3 de production.
-Pour executer ce back up on utilise github action</p>
-<section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Lien vers cette rubrique">¶</a></h2>
-<p>Pour s’exécuter, github action a besoin des identifiants s3 à configurer dans <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings">Settings</a> &gt; Secrete &gt; <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings/secrets/actions">Actions</a>.</p>
-<p>Ajouter les <code class="docutils literal notranslate"><span class="pre">Repository</span> <span class="pre">secrets</span></code> :</p>
-<ul class="simple">
-<li><p>S3_ACCESS_KEY</p></li>
-<li><p>S3_SECRET_KEY</p></li>
-</ul>
+<section id="administration-et-back-office">
+<h1>Administration et back office<a class="headerlink" href="#administration-et-back-office" title="Lien vers cette rubrique">¶</a></h1>
+<p>Différentes demandes au support nécessitent des interventions sur les données d’APiLos.</p>
+<section id="django-admin">
+<h2>Django admin<a class="headerlink" href="#django-admin" title="Lien vers cette rubrique">¶</a></h2>
+<p>L’interface d’admin django (back office) est accessible à tous les utilisateurs <code class="docutils literal notranslate"><span class="pre">staff</span></code>, via l’url <code class="docutils literal notranslate"><span class="pre">/admin</span></code> L’équipe support est autonome pour réaliser des modifications en base de données manuellement via ce back office.</p>
+<p>Si une modification demandée n’est pas possible dans l’admin, il faut arbitrer entre l’évolution de l’interface d’admin, ou la modification en shell de la donnée par un développeur</p>
+<p>Lorsque la modification via l’admin prendrait trop de temps à l’équipe support, par exemple lorsqu’il y a beaucoup de volume à modifier, on passe plutôt par un script (shell ou commande)</p>
 </section>
-<section id="execution">
-<h2>Execution<a class="headerlink" href="#execution" title="Lien vers cette rubrique">¶</a></h2>
-<p>Le backup est exécuté régulièrement selon la configuraton du <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml">workflow</a></p>
-<p>Le résultat du backup est stocké dans les artefacts du workflow executé et est conservé 90 jours</p>
+<section id="detournement-d-utilisateurs">
+<h2>Détournement d’utilisateurs<a class="headerlink" href="#detournement-d-utilisateurs" title="Lien vers cette rubrique">¶</a></h2>
+<p>La librairie <code class="docutils literal notranslate"><span class="pre">django-hijack</span></code> permet via l’admin de se connecter au site via le profil d’un utilisateur. C’est utile pour résoudre des problèmes liées aux habilitations des utilisateurs.</p>
+<p>Pour détourner un utilisateur, aller dans l’admin à l’adresse <code class="docutils literal notranslate"><span class="pre">admin/users/user/</span></code>, rechercher l’utilisateur concerné et cliquer sur <code class="docutils literal notranslate"><span class="pre">détourner</span></code></p>
+</section>
+<section id="django-shell">
+<h2>Django shell<a class="headerlink" href="#django-shell" title="Lien vers cette rubrique">¶</a></h2>
+<p>Pour une modification simple, on peut passer par un shell django via la commande :
+<code class="docutils literal notranslate"><span class="pre">scalingo</span> <span class="pre">--region</span> <span class="pre">osc-fr1</span> <span class="pre">-app</span> <span class="pre">apilos-siap-production</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">shell</span></code></p>
+<p>Exemple d’utilisations de shell :</p>
+<p>Le support transmet la demande « transférer toutes les conventions du bailleur x (siret 123) au bailleur y (siret 789) ».</p>
+<p>La modification sera la suivante :</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bailleurs.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bailleur</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">programmes.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Programme</span>
+
+<span class="n">old_bailleur</span> <span class="o">=</span> <span class="n">Bailleur</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">siret</span><span class="o">=</span><span class="s2">&quot;123&quot;</span><span class="p">)</span>
+<span class="n">old_bailleur</span>  <span class="c1"># Vérifier si le nom correspond</span>
+
+<span class="n">new_bailleur</span> <span class="o">=</span> <span class="n">Bailleur</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">siret</span><span class="o">=</span><span class="s2">&quot;789&quot;</span><span class="p">)</span>
+<span class="n">new_bailleur</span>  <span class="c1"># Vérifier si le nom correspond</span>
+
+<span class="n">programmes</span> <span class="o">=</span> <span class="n">Programme</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">bailleur</span><span class="o">=</span><span class="n">old_bailleur</span><span class="p">)</span>
+<span class="n">programmes</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>  <span class="c1"># Pour s&#39;assurer qu&#39;on a bien filtré</span>
+<span class="n">programmes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bailleur</span><span class="o">=</span><span class="n">new_bailleur</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="django-commands">
+<h2>Django commands<a class="headerlink" href="#django-commands" title="Lien vers cette rubrique">¶</a></h2>
+<p>Pour une opération plus complexe, on est amené à écrire une commande django qui sera lancée de la même manière qu’un shell, via <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">nom_de_la_commande</span></code></p>
+<p>Une commande permet de modifier un grand nombre d’entrées avec une gestion des erreurs. Par exemple pour réaliser l’update de status de conventions à partir d’un doc excel fourni par une DDT.</p>
+<p>Une commande passe par une pull request qui sera review, mergée et déployée en production. Ce processsus prend  plus de temps qu’une modification en shell, mais permet une revue par les autres développeurs. C’est la méthode provilégiée pour toute opération lourde sur les données, pour garantir une relecture.</p>
 </section>
 </section>
 
@@ -274,23 +298,15 @@ Pour executer ce back up on utilise github action</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SIAP-APiLos.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Documentation des interactions SIAP APiLos</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="PCA_PRA.html">
+          
+          <a class="prev-page" href="SIAP-APiLos.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Plan de continuité d’activité / Plan de reprise d’activité</div>
+                <div class="title">Documentation des interactions SIAP APiLos</div>
                 
               </div>
             </a>
