@@ -30,12 +30,12 @@ def _compute_dirpath(request):
     return f"{object_name}/{uuid}/media/"
 
 
-def _get_convention_from_request(request):
+def _get_convention_uuid_from_request(request):
     if "convention" in request.POST:
-        convention = Convention.objects.get(uuid=request.POST["convention"])
+        convention_uuid = request.POST["convention"]
     else:
         raise Exception("/upload path should be called with a convention parameter")
-    return convention
+    return convention_uuid
 
 
 @require_GET
@@ -78,7 +78,7 @@ def upload_file(request):
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
     scan_uploaded_files.delay(
-        _get_convention_from_request(request),
+        _get_convention_uuid_from_request(request),
         paths_to_scan,
         request.user.id,
         get_siap_credentials_from_request(request),
