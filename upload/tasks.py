@@ -10,6 +10,7 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from waffle import switch_is_active
 
+from conventions.models.convention import Convention
 from core.services import EmailService, EmailTemplateID
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.schemas import Alerte, Destinataire
@@ -26,7 +27,7 @@ def get_clamav_auth_header(username, password):
 
 @shared_task()
 def scan_uploaded_files(
-    convention,
+    convention_uuid,
     paths_to_scan,
     authenticated_user_id,
     siap_credentials: dict[str, Any] | None = None,
@@ -61,7 +62,7 @@ def scan_uploaded_files(
                     switch_is_active(settings.SWITCH_SIAP_ALERTS_ON)
                     and siap_credentials
                 ):
-
+                    convention = Convention.objects.get(uuid=convention_uuid)
                     alerte = Alerte.from_convention(
                         convention=convention,
                         categorie_information="CATEGORIE_ALERTE_INFORMATION",
