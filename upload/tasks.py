@@ -62,6 +62,10 @@ def scan_uploaded_files(
                     switch_is_active(settings.SWITCH_SIAP_ALERTS_ON)
                     and siap_credentials
                 ):
+                    if not convention_uuid:
+                        raise Exception(
+                            "/upload should be called with a convention parameter"
+                        )
                     convention = Convention.objects.get(uuid=convention_uuid)
                     alerte = Alerte.from_convention(
                         convention=convention,

@@ -34,7 +34,7 @@ def _get_convention_uuid_from_request(request):
     if "convention" in request.POST:
         convention_uuid = request.POST["convention"]
     else:
-        raise Exception("/upload path should be called with a convention parameter")
+        return None
     return convention_uuid
 
 
