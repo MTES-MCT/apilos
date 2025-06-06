@@ -114,15 +114,15 @@
                         <hr>
                         {% comment %} TODO: reverse relation convention lot {% endcomment %}
 
-                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
+                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_volumetrique form_input_files=form.edd_volumetrique_files object_name='lot' object_uuid=convention.lot.uuid convention_uuid=convention.uuid textarea=True image_only=True file_list=convention.lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:form.lot_uuid.value %}
 
                         {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:form.uuid.value %}
                         <hr>
-                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='lot' object_uuid=convention.lot.uuid textarea=True image_only=True file_list=convention.lot.edd_classique|get_files_from_textfiles object_field="lot__edd_classique__"|add:form.lot_uuid.value %}
+                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_classique form_input_files=form.edd_classique_files object_name='lot' object_uuid=convention.lot.uuid convention_uuid=convention.uuid textarea=True image_only=True file_list=convention.lot.edd_classique|get_files_from_textfiles object_field="lot__edd_classique__"|add:form.lot_uuid.value %}
 
                         {% include "common/form/input_textarea.html" with form_input=form.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:form.uuid.value %}
                         <hr>
-                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_stationnements form_input_files=form.edd_stationnements_files object_name='programme' object_uuid=convention.programme.uuid textarea=True image_only=True file_list=convention.programme.edd_stationnements|get_files_from_textfiles object_field="programme__edd_stationnements__"|add:form.uuid.value %}
+                        {% include "common/form/input_upload.html" with single_file=False form_input=form.edd_stationnements form_input_files=form.edd_stationnements_files object_name='programme' object_uuid=convention.programme.uuid convention_uuid=convention.uuid textarea=True image_only=True file_list=convention.programme.edd_stationnements|get_files_from_textfiles object_field="programme__edd_stationnements__"|add:form.uuid.value %}
                     </div>
                 </div>
 

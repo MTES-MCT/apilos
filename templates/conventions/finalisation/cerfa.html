@@ -42,7 +42,7 @@
                     </div>
                     <form id="cerfa-form" method="post" action="{% url 'conventions:finalisation_cerfa' convention_uuid=convention.uuid %}" data-turbo="false">
                         {% csrf_token %}
-                        {% include "common/form/input_upload.html" with form_input=form.fichier_override_cerfa form_input_files=form.fichier_override_cerfa_files object_name='convention' single_file=True override_cerfa=True no_title=True object_uuid=convention.uuid file_list=convention.fichier_override_cerfa|get_files_from_textfiles object_field="convention__fichier_override_cerfa__"|add:form.uuid.value %}
+                        {% include "common/form/input_upload.html" with form_input=form.fichier_override_cerfa form_input_files=form.fichier_override_cerfa_files object_name='convention' convention_uuid=convention.uuid single_file=True override_cerfa=True no_title=True object_uuid=convention.uuid file_list=convention.fichier_override_cerfa|get_files_from_textfiles object_field="convention__fichier_override_cerfa__"|add:form.uuid.value %}
                     </form>
                 </div>
             </section>

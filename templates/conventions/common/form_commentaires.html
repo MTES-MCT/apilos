@@ -4,7 +4,7 @@
     <div class="fr-col-md-12">
 
         {% if convention.programme.is_foyer or convention.programme.is_residence %}
-            {% include "common/form/input_upload.html" with single_file=False form_input=form.attached form_input_files=form.attached_files object_name='convention' object_uuid=convention.uuid file_list=convention.attached|get_files_from_textfiles textarea=False object_field="convention__attached__"|add:form.uuid.value %}
+            {% include "common/form/input_upload.html" with single_file=False form_input=form.attached form_input_files=form.attached_files object_name='convention' object_uuid=convention.uuid convention_uuid=convention.uuid file_list=convention.attached|get_files_from_textfiles textarea=False object_field="convention__attached__"|add:form.uuid.value %}
         {% endif %}
 
 
@@ -13,7 +13,7 @@
                 <em>Ces informations sont complémentaires et à destination de l’instructeur. Elles ne figureront pas dans le document final de la convention.</em>
             </p>
             {% with is_bailleur=request|is_bailleur %}
-                {% include "common/form/input_upload.html" with single_file=False form_input=form.commentaires form_input_files=form.commentaires_files object_name='convention' object_uuid=convention.uuid file_list=convention.commentaires|get_files_from_textfiles textarea=True verticalDisplay=True object_field="convention__commentaires__"|add:form.uuid.value editable=is_bailleur %}
+                {% include "common/form/input_upload.html" with single_file=False form_input=form.commentaires form_input_files=form.commentaires_files object_name='convention' object_uuid=convention.uuid convention_uuid=convention.uuid file_list=convention.commentaires|get_files_from_textfiles textarea=True verticalDisplay=True object_field="convention__commentaires__"|add:form.uuid.value editable=is_bailleur %}
             {% endwith %}
         </div>
     </div>
