@@ -3,9 +3,11 @@ function init_dropzone_from_file(form_id, accepted_files, singleFile = false) {
     csrf_token = document.getElementsByName('csrfmiddlewaretoken')[0].value
     object_name = document.getElementById(form_id + "_object_name").value
     object_uuid = document.getElementById(form_id + "_object_uuid").value
+    convention_uuid = document.getElementById(form_id + "_convention_uuid").value
 
     parameters = {}
     parameters[object_name] = object_uuid
+    parameters[convention_uuid] = convention_uuid
 
     let accepted_images = 'image/jpeg,image/png,image/gif,image/bmp,image/webp,image/tiff,image/heif,image/heic'
     let accepted_documents = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'

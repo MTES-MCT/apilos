@@ -91,7 +91,10 @@
                 type="hidden"
                 id="{{ form_input_files.id_for_label }}_object_uuid"
                 value="{{ object_uuid }}">
-
+            <input
+                type="hidden"
+                id="{{ form_input_files.id_for_label }}_convention_uuid"
+                value="{{ convention_uuid }}">
             <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                 {
                     let formId = "{{ form_input_files.id_for_label }}";

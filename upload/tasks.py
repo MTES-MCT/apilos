@@ -64,7 +64,7 @@ def scan_uploaded_files(
                 ):
                     if not convention_uuid:
                         raise Exception(
-                            "/upload should be called with a convention parameter"
+                            "/upload should be called with a convention_uuid parameter"
                         )
                     convention = Convention.objects.get(uuid=convention_uuid)
                     alerte = Alerte.from_convention(

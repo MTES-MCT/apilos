@@ -30,14 +30,6 @@ def _compute_dirpath(request):
     return f"{object_name}/{uuid}/media/"
 
 
-def _get_convention_uuid_from_request(request):
-    if "convention" in request.POST:
-        convention_uuid = request.POST["convention"]
-    else:
-        return None
-    return convention_uuid
-
-
 @require_GET
 def display_file(request, convention_uuid, uploaded_file_uuid):
     uploaded_file = UploadedFile.objects.get(uuid=uploaded_file_uuid)
@@ -78,7 +70,7 @@ def upload_file(request):
         uploaded_files.append(UploadedFileSerializer(uploaded_file).data)
 
     scan_uploaded_files.delay(
-        _get_convention_uuid_from_request(request),
+        request.POST.get("convention_uuid"),
         paths_to_scan,
         request.user.id,
         get_siap_credentials_from_request(request),
