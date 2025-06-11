@@ -286,6 +286,8 @@ def convention_submit(request: HttpRequest, convention: Convention):
         )
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            siap_credentials = get_siap_credentials_from_request(request)
+            utils.delete_action_alertes(convention, siap_credentials)
             create_alertes_instruction(convention, request)
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
@@ -445,6 +447,8 @@ def convention_feedback(request: HttpRequest, convention: Convention):
     if notification_form.is_valid():
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            siap_credentials = get_siap_credentials_from_request(request)
+            utils.delete_action_alertes(convention, siap_credentials)
             create_alertes_correction(
                 request=request,
                 convention=convention,

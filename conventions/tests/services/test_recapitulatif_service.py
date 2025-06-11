@@ -33,7 +33,7 @@ from users.type_models import EmailPreferences
 def test_create_alertes_valide():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "cerbere_login": 1}
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
 
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
@@ -52,9 +52,7 @@ def test_create_alertes_valide():
         assert (
             payload_bailleur["etiquettePersonnalisee"] == "Convention validée à signer"
         )
-        assert (
-            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
-        )
+        assert payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
         assert payload_bailleur["urlDirection"] == reverse(
             "conventions:preview", args=[convention.uuid]
