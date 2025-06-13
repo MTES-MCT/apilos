@@ -395,9 +395,6 @@ CSP_SCRIPT_SRC = (
     # Swagger UI
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
     "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
-    # Matomo
-    "https://stats.beta.gouv.fr/matomo.js",
-    "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
 )
 CSP_IMG_SRC = (
     "'self'",
@@ -422,9 +419,6 @@ CSP_FONT_SRC = (
 CSP_CONNECT_SRC = (
     "'self'",
     "https://stats.data.gouv.fr/piwik.php",
-    # Matomo
-    "https://stats.beta.gouv.fr/matomo.php",
-    "https://stats.beta.gouv.fr/plugins/HeatmapSessionRecording/configs.php",
 )
 CSP_STYLE_SRC = (
     "'self'",
