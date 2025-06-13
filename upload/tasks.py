@@ -75,9 +75,7 @@ def scan_uploaded_files(
                             Destinataire(role="INSTRUCTEUR", service="MO"),
                         ],
                         etiquette="CUSTOM",
-                        etiquette_personnalisee=(
-                            "Virus détecté sur une document attaché au conventionnement"
-                        ),
+                        etiquette_personnalisee=("Virus détecté sur un document"),
                         type_alerte="Détection de virus",
                         url_direction="/",
                     )
