@@ -1,4 +1,5 @@
 import json
+import logging
 from datetime import datetime
 from enum import Enum
 
@@ -7,7 +8,11 @@ from django.http import HttpRequest
 from conventions.models import Convention, ConventionStatut
 from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
 from core.utils import is_valid_uuid
+from siap.exceptions import SIAPException
+from siap.siap_client.client import SIAPClient
 from upload.models import UploadedFile
+
+logger = logging.getLogger(__name__)
 
 
 def format_date_for_form(date):
@@ -183,3 +188,41 @@ def convention_upload_filename(convention: Convention) -> str:
     parts.append(datetime.now().strftime("%Y-%m-%d_%H-%M"))
 
     return f"{'_'.join(parts)}.pdf"
+
+
+def _can_delete_action_alerte(alerte, destinataire):
+    if destinataire == "MO":
+        return any(
+            dest["codeProfil"] == "MO_PERS_MORALE" for dest in alerte["destinataires"]
+        )
+
+    if destinataire == "SG":
+        return any(dest["codeProfil"] == "SER_GEST" for dest in alerte["destinataires"])
+
+    return destinataire is None
+
+
+def delete_action_alertes(convention, siap_credentials, destinataire=None):
+    """
+    Delete all action alertes related to the convention
+    """
+    client = SIAPClient.get_instance()
+    alertes = client.list_convention_alertes(
+        convention_id=convention.uuid, **siap_credentials
+    )
+    for alerte in alertes:
+
+        if alerte["categorie"] != "CATEGORIE_ALERTE_ACTION":
+            continue
+
+        can_delete = _can_delete_action_alerte(alerte, destinataire)
+
+        if can_delete:
+            try:
+                client.delete_alerte(
+                    user_login=siap_credentials["user_login"],
+                    habilitation_id=siap_credentials["habilitation_id"],
+                    alerte_id=alerte["id"],
+                )
+            except SIAPException as e:
+                logger.warning(e)
