@@ -192,14 +192,12 @@ def convention_upload_filename(convention: Convention) -> str:
 
 def _can_delete_action_alerte(alerte, destinataire):
     if destinataire == "MO":
-        for dest in alerte["destinataires"]:
-            if dest["codeProfil"] == "MO_PERS_MORALE":
-                return True
+        return any(
+            dest["codeProfil"] == "MO_PERS_MORALE" for dest in alerte["destinataires"]
+        )
 
     if destinataire == "SG":
-        for dest in alerte["destinataires"]:
-            if dest["codeProfil"] == "SER_GEST":
-                return True
+        return any(dest["codeProfil"] == "SER_GEST" for dest in alerte["destinataires"])
 
     return destinataire is None
 
