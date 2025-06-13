@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Documentation des interactions SIAP APiLos" href="SIAP-APiLos.html" /><link rel="prev" title="Plan de continuité d’activité / Plan de reprise d’activité" href="PCA_PRA.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Plan de continuité d’activité / Plan de reprise d’activité" href="PCA_PRA.html" /><link rel="prev" title="Module commentaires" href="COMMENTAIRES.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Backup des buckets S3 - Documentation APiLos</title>
+        <title>Alertes SIAP - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -204,9 +204,9 @@
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="RECHERCHE.html">Recherche de conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="COMMENTAIRES.html">Module commentaires</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ALERTES.html">Alertes SIAP</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Alertes SIAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
 </ul>
@@ -229,7 +229,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/S3_BACKUP.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/ALERTES.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -251,23 +251,106 @@
         <article role="main" id="furo-main-content">
           <div class="toctree-wrapper compound">
 </div>
-<section id="backup-des-buckets-s3">
-<h1>Backup des buckets S3<a class="headerlink" href="#backup-des-buckets-s3" title="Lien vers cette rubrique">¶</a></h1>
-<p>Chaque semaine, on souhaite faire un backup du contenu des buckets s3 de production.
-Pour executer ce back up on utilise github action</p>
-<section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Lien vers cette rubrique">¶</a></h2>
-<p>Pour s’exécuter, github action a besoin des identifiants s3 à configurer dans <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings">Settings</a> &gt; Secrete &gt; <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings/secrets/actions">Actions</a>.</p>
-<p>Ajouter les <code class="docutils literal notranslate"><span class="pre">Repository</span> <span class="pre">secrets</span></code> :</p>
+<section id="alertes-siap">
+<h1>Alertes SIAP<a class="headerlink" href="#alertes-siap" title="Lien vers cette rubrique">¶</a></h1>
+<section id="contexte">
+<h2>Contexte<a class="headerlink" href="#contexte" title="Lien vers cette rubrique">¶</a></h2>
+<p>Historiquement, APiLos envoyait des emails aux bailleurs et instructeurs pour les informer des changements de statut sur les conventions.</p>
+<p>Ces emails sont remplacés par les alertes SIAP.</p>
+<p>APiLos crée et supprime des alertes dans le SIAP en appelant l’API du SIAP.</p>
+</section>
+<section id="presentation-des-alertes">
+<h2>Présentation des alertes<a class="headerlink" href="#presentation-des-alertes" title="Lien vers cette rubrique">¶</a></h2>
+<section id="etiquette">
+<h3>Etiquette<a class="headerlink" href="#etiquette" title="Lien vers cette rubrique">¶</a></h3>
+<p>L’étiquette de l’alerte doit faire moins de 50 caractères, sinon l’API SIAP refuse la création. Elle sera affichée à l’utilisateur dans la liste de ses alertes.</p>
+<p>Les étiquettes listées dans le tableau ci-après contiennent le terme « convention », il est en fait dépendant de l’objet manipulé, et deviendra « avenant » dans le cas d’un avenant.</p>
+</section>
+<section id="type">
+<h3>Type<a class="headerlink" href="#type" title="Lien vers cette rubrique">¶</a></h3>
+<p>Le type d’une alerte peut-être information ou action. Les alertes information n’ont pas besoin d’être supprimées. Celles de type action doivent être supprimées quand elles deviennent caduques. A un changement de statut de la convention, on supprime toutes les alertes de type action existentes.</p>
+</section>
+<section id="destinataire">
+<h3>Destinataire<a class="headerlink" href="#destinataire" title="Lien vers cette rubrique">¶</a></h3>
+<p>APiLos précise au SIAP à qui est destiné une alerte concernant une convention.
+Nous choisissons toujours d’envoyer les notifications aux instructeurs, côté bailleur comme côté administration.
+Les deux choix de destinataires sont :</p>
 <ul class="simple">
-<li><p>S3_ACCESS_KEY</p></li>
-<li><p>S3_SECRET_KEY</p></li>
+<li><p>MO : maitrise d’ouvrage, que nous appelons bailleur sur APiLos. La notification sera envoyée aux instructeurs du bailleur de la convention</p></li>
+<li><p>SG : service gestionnaire, que nous appelons administration sur APiLos. La notification sera envoyée aux instructeurs de l’administration de la convention.</p></li>
 </ul>
 </section>
-<section id="execution">
-<h2>Execution<a class="headerlink" href="#execution" title="Lien vers cette rubrique">¶</a></h2>
-<p>Le backup est exécuté régulièrement selon la configuraton du <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml">workflow</a></p>
-<p>Le résultat du backup est stocké dans les artefacts du workflow executé et est conservé 90 jours</p>
+<section id="url-de-redirection">
+<h3>URL de redirection<a class="headerlink" href="#url-de-redirection" title="Lien vers cette rubrique">¶</a></h3>
+<p>APiLos fournit aussi une url de redirection pour que l’utilisateur soit redirigé sur la convention lorsqu’il clique sur l’alerte. Les alertes renvoient au récapitulatif en général, ou en preview pour les conventions à signer.</p>
+</section>
+</section>
+<section id="liste-des-alertes-existantes">
+<h2>Liste des alertes existantes<a class="headerlink" href="#liste-des-alertes-existantes" title="Lien vers cette rubrique">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Etiquette</p></th>
+<th class="head"><p>Destinataire</p></th>
+<th class="head"><p>Déclencheur (statut de départ -&gt; statut final)</p></th>
+<th class="head"><p>Type (action / information)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Convention en instruction</p></td>
+<td><p>MO</p></td>
+<td><p>1. Projet -&gt; 2. Instruction requise</p></td>
+<td><p>Information</p></td>
+</tr>
+<tr class="row-odd"><td><p>Convention à instruire</p></td>
+<td><p>SG</p></td>
+<td><p>1. Projet -&gt; 2. Instruction requise</p></td>
+<td><p>Action</p></td>
+</tr>
+<tr class="row-even"><td><p>Convention à corriger</p></td>
+<td><p>MO</p></td>
+<td><p>2. Instruction requise -&gt; 3. Corrections requises</p></td>
+<td><p>Action</p></td>
+</tr>
+<tr class="row-odd"><td><p>Convention en correction</p></td>
+<td><p>SG</p></td>
+<td><p>2. Instruction requise -&gt; 3. Corrections requises</p></td>
+<td><p>Information</p></td>
+</tr>
+<tr class="row-even"><td><p>Convention validée à signer</p></td>
+<td><p>MO</p></td>
+<td><p>2. Instruction requise -&gt; 4. A signer</p></td>
+<td><p>Action</p></td>
+</tr>
+<tr class="row-odd"><td><p>Convention validée à signer</p></td>
+<td><p>SG</p></td>
+<td><p>2. Instruction requise -&gt; 4. A signer</p></td>
+<td><p>Action</p></td>
+</tr>
+<tr class="row-even"><td><p>Convention en instruction</p></td>
+<td><p>MO</p></td>
+<td><p>3. Corrections requises -&gt; 2. Instruction requise</p></td>
+<td><p>Information</p></td>
+</tr>
+<tr class="row-odd"><td><p>Convention à instruire à nouveau</p></td>
+<td><p>SG</p></td>
+<td><p>3. Corrections requises -&gt; 2. Instruction requise</p></td>
+<td><p>Action</p></td>
+</tr>
+<tr class="row-even"><td><p>Virus détecté sur un document</p></td>
+<td><p>MO et SG</p></td>
+<td><p>Téléversement d’un document vérollé</p></td>
+<td><p>Information</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="utilisation-de-l-api-du-siap">
+<h2>Utilisation de l’API du SIAP<a class="headerlink" href="#utilisation-de-l-api-du-siap" title="Lien vers cette rubrique">¶</a></h2>
+<p>Le <code class="docutils literal notranslate"><span class="pre">SIAPClient</span></code> contient le code qui permet d’appeler l’API du SIAP.
+Nous utilisons <code class="docutils literal notranslate"><span class="pre">create_alerte</span></code> pour la création d’alertes, et <code class="docutils literal notranslate"><span class="pre">list_convention_alertes</span></code> puis <code class="docutils literal notranslate"><span class="pre">delete_alerte</span></code> pour la suppression.</p>
+<p>Pour le debug, <code class="docutils literal notranslate"><span class="pre">list_convention_alertes</span></code> peut-être appelée via un shell pour vérifier les alertes existantes sur une convention.</p>
 </section>
 </section>
 
@@ -276,23 +359,23 @@ Pour executer ce back up on utilise github action</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SIAP-APiLos.html">
+          <a class="next-page" href="PCA_PRA.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Documentation des interactions SIAP APiLos</div>
+                <div class="title">Plan de continuité d’activité / Plan de reprise d’activité</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="PCA_PRA.html">
+          <a class="prev-page" href="COMMENTAIRES.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Plan de continuité d’activité / Plan de reprise d’activité</div>
+                <div class="title">Module commentaires</div>
                 
               </div>
             </a>
