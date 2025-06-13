@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Documentation des interactions SIAP APiLos" href="SIAP-APiLos.html" /><link rel="prev" title="Plan de continuité d’activité / Plan de reprise d’activité" href="PCA_PRA.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Module commentaires" href="COMMENTAIRES.html" /><link rel="prev" title="Migration des données depuis Ecoloweb" href="ECOLOWEB.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Backup des buckets S3 - Documentation APiLos</title>
+        <title>Recherche de conventions - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -202,10 +202,10 @@
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
-<li class="toctree-l1"><a class="reference internal" href="RECHERCHE.html">Recherche de conventions</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Recherche de conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="COMMENTAIRES.html">Module commentaires</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Backup des buckets S3</a></li>
+<li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
 </ul>
@@ -228,7 +228,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/S3_BACKUP.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/RECHERCHE.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -250,23 +250,68 @@
         <article role="main" id="furo-main-content">
           <div class="toctree-wrapper compound">
 </div>
-<section id="backup-des-buckets-s3">
-<h1>Backup des buckets S3<a class="headerlink" href="#backup-des-buckets-s3" title="Lien vers cette rubrique">¶</a></h1>
-<p>Chaque semaine, on souhaite faire un backup du contenu des buckets s3 de production.
-Pour executer ce back up on utilise github action</p>
-<section id="configuration">
-<h2>Configuration<a class="headerlink" href="#configuration" title="Lien vers cette rubrique">¶</a></h2>
-<p>Pour s’exécuter, github action a besoin des identifiants s3 à configurer dans <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings">Settings</a> &gt; Secrete &gt; <a class="reference external" href="https://github.com/MTES-MCT/apilos/settings/secrets/actions">Actions</a>.</p>
-<p>Ajouter les <code class="docutils literal notranslate"><span class="pre">Repository</span> <span class="pre">secrets</span></code> :</p>
-<ul class="simple">
-<li><p>S3_ACCESS_KEY</p></li>
-<li><p>S3_SECRET_KEY</p></li>
-</ul>
+<section id="recherche-de-conventions">
+<h1>Recherche de conventions<a class="headerlink" href="#recherche-de-conventions" title="Lien vers cette rubrique">¶</a></h1>
+<p>La recherche de conventions est la page d’accueil d’APiLos. Elle permet de retrouver une convention selon différents critères.</p>
+<section id="principe-de-la-recherche">
+<h2>Principe de la recherche<a class="headerlink" href="#principe-de-la-recherche" title="Lien vers cette rubrique">¶</a></h2>
+<p>Pour effectuer une recherche, l’utlisateur remplit le formulaire en haut de la page <code class="docutils literal notranslate"><span class="pre">/recherche</span></code>.</p>
+<p>Après avoir complété le formulaire, la page de recherche va se recharger avec des query params supplémentaires dans l’url. Ces params sont des filtres qui vont être appliqués sur l’ensemble des conventions visibles pour l’utilisateur pour ne conserver que le résultat de la recherche.</p>
+<p>Exemple si on recherche un numéro de convention <code class="docutils literal notranslate"><span class="pre">1234</span></code> en staging, l’url de la page devient <code class="docutils literal notranslate"><span class="pre">https://siap-integration.apilos.beta.gouv.fr/conventions/recherche?order_by=&amp;page=&amp;search_operation_nom=&amp;search_numero=1234&amp;bailleur=&amp;search_lieu=&amp;cstatut=&amp;financement=&amp;date_signature=&amp;nature_logement=</span></code>. La plupart des paramètres sont vides, mais on trouve <code class="docutils literal notranslate"><span class="pre">search_numero=1234</span></code>. Le résultat d’une recherche est ainsi matérialisé par une url, mais attention, les conventions sont préalablement filtrées selon les habilitations de l’utilisateur. Deux utilisateurs consultant la même url de recherche ne verront pas les mêmes résultats, mais les mêmes filtres seront appliqués à leurs conventions visibles.</p>
+<p>La logique de la recherche est située dans <code class="docutils literal notranslate"><span class="pre">conventions/services/search.py</span></code>.</p>
 </section>
-<section id="execution">
-<h2>Execution<a class="headerlink" href="#execution" title="Lien vers cette rubrique">¶</a></h2>
-<p>Le backup est exécuté régulièrement selon la configuraton du <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.github/workflows/s3_backup.yml">workflow</a></p>
-<p>Le résultat du backup est stocké dans les artefacts du workflow executé et est conservé 90 jours</p>
+<section id="liste-des-filtres-disponibles">
+<h2>Liste des filtres disponibles<a class="headerlink" href="#liste-des-filtres-disponibles" title="Lien vers cette rubrique">¶</a></h2>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Champ du formulaire</p></th>
+<th class="head"><p>Filtre (en query param)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Nom de l’opération</p></td>
+<td><p>search_operation_nom</p></td>
+</tr>
+<tr class="row-odd"><td><p>Numéro de l’opération ou de la convention</p></td>
+<td><p>search_numero</p></td>
+</tr>
+<tr class="row-even"><td><p>Bailleur (nom ou SIREN)</p></td>
+<td><p>bailleur</p></td>
+</tr>
+<tr class="row-odd"><td><p>Commune, code postal</p></td>
+<td><p>search_lieu</p></td>
+</tr>
+<tr class="row-even"><td><p>Statut convention ou avenant</p></td>
+<td><p>cstatut</p></td>
+</tr>
+<tr class="row-odd"><td><p>Type de financement</p></td>
+<td><p>financement</p></td>
+</tr>
+<tr class="row-even"><td><p>Année de signature</p></td>
+<td><p>date_signature</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nature des logements</p></td>
+<td><p>nature_logement</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="ordre-de-la-recherche">
+<h2>Ordre de la recherche<a class="headerlink" href="#ordre-de-la-recherche" title="Lien vers cette rubrique">¶</a></h2>
+<p>L’ordre présenté à l’utilisateur inclut deux paramètres : le score et la date de création de la convention. Le score est déterminé par <code class="docutils literal notranslate"><span class="pre">_build_scoring</span></code>, qui normalise le ranking déterminé par <code class="docutils literal notranslate"><span class="pre">_build_ranking</span></code>.</p>
+<p>Différentes méthodes ont été testées empiriquement pour déterminer le ranking, des champs utilisent <code class="docutils literal notranslate"><span class="pre">TrigramSimilarity</span></code>, d’autres <code class="docutils literal notranslate"><span class="pre">SearchRank</span></code>. Le scoring rend comparable ces rankings obtenus par des méthodes différentes.</p>
+</section>
+<section id="filtre-via-les-habilitations">
+<h2>Filtre via les habilitations<a class="headerlink" href="#filtre-via-les-habilitations" title="Lien vers cette rubrique">¶</a></h2>
+<p>L’échantillon de conventions sur lequel les filtres sont appliqués est obtenu par la méthode <code class="docutils literal notranslate"><span class="pre">conventions</span></code> du modèle User, qui se charge de réduire l’échantillon aux conventions visibles par l’utilisateur.</p>
+<p>En général quand un utilisateur se plaint de ne pas retrouver une convention dans la recherche, c’est lié à des données géographiques qui ne concordent pas entre la convention et les habilitations de l’utilisateur. (<code class="docutils literal notranslate"><span class="pre">code_insee_departement</span></code> incorrect sur la convention, par exemple)</p>
+</section>
+<section id="variables-d-environnement">
+<h2>Variables d’environnement<a class="headerlink" href="#variables-d-environnement" title="Lien vers cette rubrique">¶</a></h2>
+<p>La variable d’environnement <code class="docutils literal notranslate"><span class="pre">DEBUG_SEARCH_SCORING</span></code> permet d’avoir plus d’informations sur la manière dont est déterminée le score. Elle est utile localement et en staging, mais n’est pas adaptée à l’environnement de production car elle s’applique pour tous les utilisateurs, et affiche des logs sur la page de recherche.</p>
+<p><code class="docutils literal notranslate"><span class="pre">TRIGRAM_SIMILARITY_THRESHOLD</span></code> est une configuration qui permet de filtrer les résultats qui utilisent <code class="docutils literal notranslate"><span class="pre">TrigramSimilarity</span></code> qui ont un score trop faible. Si cette valeur est trop faible, la recherche affiche des résultats qui ont peu de pertinence, si elle est trop élevée elle n’autorise plus les fautes de frappes et imprécisions. La valeur par défaut a été expérimentalement placée à <code class="docutils literal notranslate"><span class="pre">0.3</span></code>.</p>
 </section>
 </section>
 
@@ -275,23 +320,23 @@ Pour executer ce back up on utilise github action</p>
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="SIAP-APiLos.html">
+          <a class="next-page" href="COMMENTAIRES.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Documentation des interactions SIAP APiLos</div>
+                <div class="title">Module commentaires</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="PCA_PRA.html">
+          <a class="prev-page" href="ECOLOWEB.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Plan de continuité d’activité / Plan de reprise d’activité</div>
+                <div class="title">Migration des données depuis Ecoloweb</div>
                 
               </div>
             </a>
