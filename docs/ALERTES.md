@@ -29,7 +29,7 @@ APiLos précise au SIAP à qui est destiné une alerte concernant une convention
 Nous choisissons toujours d'envoyer les notifications aux instructeurs, côté bailleur comme côté administration.
 Les deux choix de destinataires sont :
 - MO : maitrise d'ouvrage, que nous appelons bailleur sur APiLos. La notification sera envoyée aux instructeurs du bailleur de la convention
-- SG : service gestionnaire, que nous appelons administration sur APiLos. La notification sera envoyée aux instructeur de l'administration de la convention.
+- SG : service gestionnaire, que nous appelons administration sur APiLos. La notification sera envoyée aux instructeurs de l'administration de la convention.
 
 ### URL de redirection
 
