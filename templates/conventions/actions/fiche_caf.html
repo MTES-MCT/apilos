@@ -1,0 +1,19 @@
+<div class="fr-col-12">
+    <div class="fr-mb-2w block--row-strech">
+        <div class="block--row-strech-1 fr-my-2w">
+            <p class="fr-alert__title">
+                Générer la fiche CAF
+            </p>
+            <p class="fr-mb-0">
+                La fiche CAF sera générée en format docx et téléchargée automatiquement.
+            </p>
+        </div>
+        <form action="{% url 'conventions:fiche_caf' convention_uuid=convention.uuid %}">
+            {% csrf_token %}
+            <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left">
+                Générer la fiche CAF
+            </button>
+        </form>
+    </div>
+</div>
+<hr>
