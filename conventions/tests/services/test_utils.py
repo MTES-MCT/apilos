@@ -1,10 +1,95 @@
+from unittest import mock
+
+import pytest
 import time_machine
 from django.test import SimpleTestCase
 from unittest_parametrize import ParametrizedTestCase, parametrize
 
 from conventions.models import ConventionStatut
-from conventions.services.utils import convention_upload_filename
+from conventions.services.utils import convention_upload_filename, delete_action_alertes
 from core.tests.factories import ConventionFactory
+from siap.siap_client.client import SIAPClient
+
+
+@pytest.mark.django_db
+def test_delete_action_alertes():
+    convention = ConventionFactory()
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
+    with mock.patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = mock.MagicMock()
+        mock_get_instance.return_value = mock_client
+        mock_client.list_convention_alertes.return_value = [
+            {"id": 1, "categorie": "CATEGORIE_ALERTE_ACTION"},
+            {"id": 2, "categorie": "CATEGORIE_ALERTE_INFORMATION"},
+        ]
+        delete_action_alertes(convention, siap_credentials)
+
+        mock_client.delete_alerte.assert_called_once()
+        assert mock_client.delete_alerte.mock_calls[0].kwargs["alerte_id"] == 1
+
+
+@pytest.mark.django_db
+def test_delete_action_alertes_for_instructeur():
+    convention = ConventionFactory()
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
+    with mock.patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = mock.MagicMock()
+        mock_get_instance.return_value = mock_client
+        mock_client.list_convention_alertes.return_value = [
+            {
+                "id": 1,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "SER_GEST"}],
+            },
+            {
+                "id": 2,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "MO_PERS_MORALE"}],
+            },
+            {
+                "id": 3,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "SER_GEST"}],
+            },
+        ]
+        delete_action_alertes(convention, siap_credentials, "SG")
+
+        mock_client.delete_alerte.assert_called()
+        assert mock_client.delete_alerte.mock_calls[0].kwargs["alerte_id"] == 1
+        assert mock_client.delete_alerte.mock_calls[1].kwargs["alerte_id"] == 3
+
+
+@pytest.mark.django_db
+def test_delete_action_alertes_for_bailleur():
+    convention = ConventionFactory()
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
+    with mock.patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = mock.MagicMock()
+        mock_get_instance.return_value = mock_client
+        mock_client.list_convention_alertes.return_value = [
+            {
+                "id": 1,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "SER_GEST"}],
+            },
+            {
+                "id": 2,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "MO_PERS_MORALE"}],
+            },
+            {
+                "id": 3,
+                "categorie": "CATEGORIE_ALERTE_ACTION",
+                "destinataires": [{"codeProfil": "SER_GEST"}],
+            },
+        ]
+        delete_action_alertes(convention, siap_credentials, "MO")
+
+        mock_client.delete_alerte.assert_called_once()
+        assert mock_client.delete_alerte.mock_calls[0].kwargs["alerte_id"] == 2
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):
