@@ -279,6 +279,8 @@ SIAPClient.get_instance().get_operation(user_login='user@domain.com', habilitati
 SIAPClient.get_instance().get_fusion(user_login='user@domain.com', habilitation_id=123, bailleur_siren="123456789")
 ```
 
+L'ensemble des routes mises à disposition par l'API du SIAP sont disponible dans le fichier OpenAPI [siap/siap_client/api-siap-int.json](../siap/siap_client/api-siap-int.json)
+
 ### Pour tester le Client de l'API d'APiLos dans un shell (Appel de l'application APiLos à partir du backend de l'application SIAP)
 
 Les API pour dialoguer avec le SIAP sont disponibles sur le endpoint `api-siap/v0`
