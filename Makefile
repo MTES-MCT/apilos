@@ -39,3 +39,11 @@ db-restore:
 	pg_restore -d "$(DB_URL)" --clean --no-acl --no-owner --no-privileges "$$DUMP_FILE" || true
 	rm -rf tmpbackup
 	$(DJANGO_ADMIN) migrate
+
+init-dev:
+	cp .env.template .env
+	cp .env.test .env.test.local
+	pip install -r requirements.txt -r dev-requirements.txt
+	npm install
+	docker-compose up -d
+	make db-restore
