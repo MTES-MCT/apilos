@@ -28,21 +28,13 @@ APiLos est un outils permettant de générer un document contractuel de conventi
 
 La génération de document de convention au format .docx est prise en charge par la librairie [python-docx-template](https://docxtpl.readthedocs.io/en/latest/) qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier [./documents](https://github.com/MTES-MCT/apilos/tree/main/documents)
 
-Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
+Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur.
+L'application [Libreoffice](https://https://fr.libreoffice.org/discover/libreoffice/) est utilisée pour générer une version pdf du document docx.
 
 ##### Import de firchiers excel
 
-Lors de l'instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes. Le package openpyxl est utilisé pour l'interprétation des fichiers xlsx
-
-#### Javascript
-
-Peu de JS est utilisé dans l'application. Les dépendances sont déclarées dans le fichier [package.json](https://github.com/MTES-MCT/apilos/tree/main/package.json)
-
-Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
-
-```sh
-npm install
-```
+Lors de l'instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes.
+Le package openpyxl est utilisé pour l'interprétation des fichiers xlsx
 
 ## Installation
 
@@ -51,15 +43,33 @@ La plateforme APiLos est open source et la gestion de version est assuré via Gi
 ### Prérequis
 
 Les services Postgresql et Redis utilisés par APiLos sont dockerisés
-Python et Node sont nécessaires pour faire lancer l'application
+Python et Node sont nécessaires pour lancer l'application
 Il est conseillé d'installer un environnment virtuel pour isoler l'environnement python et node d'APiLos (asdf par exemple)
 
-- Python >=3.10
-- Node >=18.14
-- docker
-- docker-compose
+* Python >=3.12
+* Node >=18.14
+* docker
+* docker-compose
+* Client Scalingo nécessaire pour faire tourner certaine commande
+
+### Client Scalingo
+
+Installer et configurer le client Scalingo : https://doc.scalingo.com/platform/cli/start
+
+### Javascript
+
+Peu de JS est utilisé dans l'application.
+Les dépendances sont déclarées dans le fichier [package.json](https://github.com/MTES-MCT/apilos/tree/main/package.json)
+
+Avant de lancer l'application, il est nécessaire d'installer ces dépendances:
+
+```sh
+npm install
+```
 
 ### Environment virtuel python
+
+Générer votre environnement virtuel
 
 ```sh
 python -m venv .venv --prompt $(basename $(pwd))
@@ -68,6 +78,8 @@ source .venv/bin/activate
 
 ### Services docker
 
+Les services `Postgresql` et `Redis` sont lancés avec Docker Compose
+
 ```sh
 docker-compose build
 docker-compose up -d
@@ -75,14 +87,14 @@ docker-compose up -d
 
 ### Variables d'environnement
 
-Copier les [.env.template](https://github.com/MTES-MCT/apilos/tree/main/.env.template) dans un fichier `.env` et [.env.test](https://github.com/MTES-MCT/apilos/tree/main/.env.test) dans `.env.test.local` puis mettre à jour les variables d'environements.
+Copier les [.env.template](https://github.com/MTES-MCT/apilos/tree/main/.env.template) dans un fichier `.env` et [.env.test](https://github.com/MTES-MCT/apilos/tree/main/.env.test) dans `.env.test.local`.
 
 ```sh
 cp .env.template .env
 cp .env.test .env.test.local
 ```
 
-Par exemple:
+Puis mettre à jour les variables d'environements si nécessaire, par exemple:
 
 ```ini
 DB_USER=apilos
@@ -101,39 +113,17 @@ pip install pip-tools
 pip install -r requirements.txt -r dev-requirements.txt
 ```
 
-### Installer les dependances npm
+### Modifier ses DNS locaux
 
-```sh
-npm install
+Ajouter la ligne au ficher `/etc/hosts`
+
+```
+127.0.0.1	local.beta.gouv.fr
 ```
 
-### Executer les migrations
+⚠️ Pour les utilisateurs de Windows + WSL, la modification du `etc/hosts` doit aussi être faite sur Windows.
 
-```sh
-python manage.py migrate
-```
-
-### Populer les permissions et les roles et les departements
-
-```sh
-python manage.py loaddata auth.json departements.json
-```
-
-#### Modifier les permissions
-
-Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
-
-```sh
-python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json
-```
-
-### Créer un super utilisateur
-
-```sh
-python manage.py createsuperuser
-```
-
-## Lancer de l'application
+## Lancement de l'application
 
 On utilise la librairie  `honcho` en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier [Procfile.dev](https://github.com/MTES-MCT/apilos/tree/main/Procfile.dev)
 
@@ -145,10 +135,10 @@ L'application est désormais disponible à l'adresse [http://localhost:8001](htt
 
 ### Population de la base de donnnées en environnement de développement
 
-Ajout de bailleurs, administrations, programmes et lots de test
+Le plus simple est de récupérer un backup de la base de données de l'environnement d'integration via l'interface de Scalingo et de le restaurer localement
 
 ```sh
-python manage.py load_test_fixtures
+make db-restore
 ```
 
 ### ClamAV (optionnel)
@@ -167,11 +157,46 @@ make up
 
 Le service expose l'API sur le port 3310, celui-ci doit être défini dans le fichier `.env` de `APiLos`.
 Basé sur `.env.template`, définir la variable d'environnement `CLAMAV_SERVICE_URL` dans le fichier `.env` :
+
 ```sh
 # .env
 # other environment variables ...
 CLAMAV_SERVICE_URL=http://localhost:3310
 ```
+
+### Gestion des accès via CERBERE / SIAP
+
+Créer des accès en Integration (accès qui servent aussi pour l'environement local) et en production
+
+#### Denamde d'accès CERBERE
+
+Faire une demande via le lien `Créer un compte` des pages CERBERE :
+
+- Integration : [CERBERE RECETTE > point d'accès SIAP](https://authentification.recette.din.developpement-durable.gouv.fr/cas/576/login?service=https%3A%2F%2Fsiap-integration.apilos.beta.gouv.fr%2Faccounts%2Fcerbere-login%3Fnext%3D%252F)
+- Production : [CERBERE PROD > point d'accès SIAP](https://authentification.din.developpement-durable.gouv.fr/cas/700/login?service=https%3A%2F%2Fapilos.logement.gouv.fr%2Faccounts%2Fcerbere-login%3Fnext%3D%252F)
+
+Utiliser la demande par numéro de SIREN (initialement le numéro de SIREN de la DINUM était utilisé).
+
+Sur l'environnement CERBERE de Recette, il est nécessaire de faire valider son compte : voir avec le chef de projet du SIAP.
+
+#### Demande d'abilitation SIAP
+
+Après la création des accès CERBERE, il est nécessaire de demander des habilitations:
+
+- en Integration : Administration central /Administrateur nationnal
+- en Production : Administration central / Lecture seule
+
+Ces habilitations doivent être valider par un personne qui a les droits : voir avec le chef de projet du SIAP.
+
+### Accès à APiLos
+
+A partir du SIAP sur tous les evironnement, APiLos ets disponible dans le menu : `Mes Opération` > `Conventionnement`
+
+Ou en accédant directement à l'URL:
+
+* En local : http://local.beta.gouv.fr:8001/
+* En integration : https://siap-integration.apilos.beta.gouv.fr/
+* En Production : https://apilos.logement.gouv.fr/
 
 ## Qualité de code
 
@@ -186,7 +211,7 @@ Les tests sont organisés comme suit :
 * Tests unitaires : APPNAME/tests/models/…
 * Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…
 
-### Lancement des tests
+#### Lancement des tests
 
 L'application prend en charge des test unitaire et des tests d'intégration. Pour les lancer:
 
@@ -212,7 +237,7 @@ pre-commit install
 
 ## Les API
 
-Plus de détails sur la doc dédiée [API.md](API.md)
+Plus de détails sur la doc dédiée [SIAP-APiLos.md](./SIAP-APiLos.md)
 
 ## Ajouter des dépendances avec pip-tools
 
@@ -232,22 +257,28 @@ pip install -r requirements.txt -r dev-requirements.txt
 
 ## Manipulations de développement
 
+### Déclarer un superadmin
+
+En local, éditer l'utilistateur en base de données pour lui assigner la valeur `is_superadmin` = true
+
+Dans les autres environements, un superadmin a les droits pour déclarer les autres utilisateurs comme superadmin
+
+### Modifier les permissions
+
+Pour modifier les permissions, il suffit de modifier dans l'interface d'administration puis d'exporter les données d'authentification :
+
+```sh
+python manage.py dumpdata auth --natural-foreign --natural-primary > users/fixtures/auth.json
+```
+
 ### Restaurer un dump de base de données
 
 Afin de restaurer _proprement_ un fichier de dump de base de données, en supprimant au préalable les tables existantes,
 on peut jouer le script suivant :
 
 ```bash
-DUMP_FILE=</path/to/dump/file>
-DB_URL=postgres://apilos:apilos@localhost:5433/apilos
-
-for table in $(psql "${DB_URL}" -t -c "SELECT \"tablename\" FROM pg_tables WHERE schemaname='public'"); do
-     psql "${DB_URL}" -c "DROP TABLE IF EXISTS \"${table}\" CASCADE;"
-done
-pg_restore -d "${DB_URL}" --clean --no-acl --no-owner --no-privileges "${DUMP_FILE}"
+make db-restore
 ```
-
-Note : le fichier de dump est a l'extension `pgsql`
 
 ### Restaurer un dump sur un environnement Scalingo
 
@@ -286,6 +317,8 @@ MOCK_CERBERE_USER_ID=
 ```
 
 Si cette variable est définie, alors l'utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.
+
+⚠️ Ce mock est peu utilisé, il est possible qu'il ne soit pas fonctionnel
 
 ## Statistiques de développement
 
