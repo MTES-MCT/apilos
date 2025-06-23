@@ -19,6 +19,7 @@ from conventions.services.convention_generator import (
     get_tmp_local_path,
 )
 from conventions.services.file import ConventionFileService
+from conventions.services.utils import delete_action_alertes
 from conventions.templatetags.display_filters import (
     display_gender_terminaison,
     display_kind,
@@ -142,6 +143,7 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+        delete_action_alertes(convention, siap_credentials)
         create_alertes_valide(
             convention=convention,
             siap_credentials=siap_credentials,
@@ -178,7 +180,7 @@ def create_alertes_valide(convention, siap_credentials):
     alerte = Alerte.from_convention(
         convention=convention,
         # Pas sûr on a mis information / action sur le doc
-        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        categorie_information="CATEGORIE_ALERTE_ACTION",
         destinataires=[
             Destinataire(role="INSTRUCTEUR", service="MO"),
         ],

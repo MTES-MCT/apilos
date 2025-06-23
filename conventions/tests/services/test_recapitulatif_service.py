@@ -25,7 +25,6 @@ from programmes.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
-from users.tests.factories import UserFactory
 from users.type_models import EmailPreferences
 
 
@@ -33,7 +32,7 @@ from users.type_models import EmailPreferences
 def test_create_alertes_valide():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "cerbere_login": 1}
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
 
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
@@ -52,9 +51,7 @@ def test_create_alertes_valide():
         assert (
             payload_bailleur["etiquettePersonnalisee"] == "Convention validée à signer"
         )
-        assert (
-            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
-        )
+        assert payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
         assert payload_bailleur["urlDirection"] == reverse(
             "conventions:preview", args=[convention.uuid]
@@ -95,16 +92,14 @@ def test_create_alertes_valide():
 def test_create_alertes_instruction():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
-    request = RequestFactory().get("/")
-    user = UserFactory()
-    request.user = user
-    user.cerbere_login = 1
-    request.session = {"habilitation_id": "001"}
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
 
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
-        recapitulatif.create_alertes_instruction(request=request, convention=convention)
+        recapitulatif.create_alertes_instruction(
+            convention=convention, siap_credentials=siap_credentials
+        )
         mock_client.create_alerte.assert_called()
         payload_bailleur = json.loads(
             mock_client.create_alerte.mock_calls[0].kwargs["payload"]
@@ -132,7 +127,9 @@ def test_create_alertes_instruction():
             "conventions:recapitulatif", args=[convention.uuid]
         )
 
-        recapitulatif.create_alertes_instruction(request=request, convention=avenant)
+        recapitulatif.create_alertes_instruction(
+            convention=avenant, siap_credentials=siap_credentials
+        )
         payload_bailleur = json.loads(
             mock_client.create_alerte.mock_calls[2].kwargs["payload"]
         )
@@ -147,16 +144,15 @@ def test_create_alertes_instruction():
 def test_create_alertes_correction_from_instructeur():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
-    request = RequestFactory().get("/")
-    user = UserFactory()
-    request.user = user
-    user.cerbere_login = 1
-    request.session = {"habilitation_id": "001"}
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
         recapitulatif.create_alertes_correction(
-            request=request, convention=convention, from_instructeur=True
+            convention=convention,
+            siap_credentials=siap_credentials,
+            from_instructeur=True,
         )
         mock_client.create_alerte.assert_called()
 
@@ -190,7 +186,7 @@ def test_create_alertes_correction_from_instructeur():
         )
 
         recapitulatif.create_alertes_correction(
-            request=request, convention=avenant, from_instructeur=True
+            convention=avenant, siap_credentials=siap_credentials, from_instructeur=True
         )
         payload_information = json.loads(
             mock_client.create_alerte.mock_calls[2].kwargs["payload"]
@@ -206,16 +202,15 @@ def test_create_alertes_correction_from_instructeur():
 def test_create_alertes_correction_from_bailleur():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
-    request = RequestFactory().get("/")
-    user = UserFactory()
-    request.user = user
-    user.cerbere_login = 1
-    request.session = {"habilitation_id": "001"}
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
         recapitulatif.create_alertes_correction(
-            request=request, convention=convention, from_instructeur=False
+            convention=convention,
+            siap_credentials=siap_credentials,
+            from_instructeur=False,
         )
         mock_client.create_alerte.assert_called()
 
@@ -246,7 +241,9 @@ def test_create_alertes_correction_from_bailleur():
         assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
 
         recapitulatif.create_alertes_correction(
-            request=request, convention=avenant, from_instructeur=False
+            convention=avenant,
+            siap_credentials=siap_credentials,
+            from_instructeur=False,
         )
         payload_information = json.loads(
             mock_client.create_alerte.mock_calls[2].kwargs["payload"]

@@ -286,7 +286,9 @@ def convention_submit(request: HttpRequest, convention: Convention):
         )
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-            create_alertes_instruction(convention, request)
+            siap_credentials = get_siap_credentials_from_request(request)
+            utils.delete_action_alertes(convention, siap_credentials)
+            create_alertes_instruction(convention, siap_credentials)
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             send_email_instruction(
@@ -357,9 +359,9 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def create_alertes_instruction(convention: Convention, request: HttpRequest):
-    siap_credentials = get_siap_credentials_from_request(request)
-
+def create_alertes_instruction(
+    convention: Convention, siap_credentials: dict[str, Any]
+):
     redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
 
     # Send an information notice to bailleurs
@@ -445,9 +447,11 @@ def convention_feedback(request: HttpRequest, convention: Convention):
     if notification_form.is_valid():
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            siap_credentials = get_siap_credentials_from_request(request)
+            utils.delete_action_alertes(convention, siap_credentials)
             create_alertes_correction(
-                request=request,
                 convention=convention,
+                siap_credentials=siap_credentials,
                 from_instructeur=notification_form.cleaned_data["from_instructeur"],
             )
 
@@ -493,7 +497,9 @@ def convention_feedback(request: HttpRequest, convention: Convention):
     }
 
 
-def create_alertes_correction(request, convention, from_instructeur):
+def create_alertes_correction(
+    convention: Convention, siap_credentials: dict[str, Any], from_instructeur: bool
+):
     redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
     if from_instructeur:
         destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
@@ -527,7 +533,7 @@ def create_alertes_correction(request, convention, from_instructeur):
     )
     SIAPClient.get_instance().create_alerte(
         payload=alerte.to_json(),
-        **get_siap_credentials_from_request(request),
+        **siap_credentials,
     )
 
     # Send action notice
@@ -541,8 +547,7 @@ def create_alertes_correction(request, convention, from_instructeur):
         url_direction=redirect_url,
     )
     SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(),
-        **get_siap_credentials_from_request(request),
+        payload=alerte.to_json(), **siap_credentials
     )
 
 
