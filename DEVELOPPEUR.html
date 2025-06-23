@@ -273,20 +273,14 @@
 <h5>Génération de documents xls et pdf<a class="headerlink" href="#generation-de-documents-xls-et-pdf" title="Lien vers cette rubrique">¶</a></h5>
 <p>APiLos est un outils permettant de générer un document contractuel de convention APL.</p>
 <p>La génération de document de convention au format .docx est prise en charge par la librairie <a class="reference external" href="https://docxtpl.readthedocs.io/en/latest/">python-docx-template</a> qui utilise le moteur de template Jinja2 pour modifier le template des documents de conventions APL. Les templates de docuements sont dans le dossier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/documents">./documents</a></p>
-<p>Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur. L’application <a class="reference external" href="https://https://fr.libreoffice.org/discover/libreoffice/">Libreoffice</a> est utilisée pour générer une version pdf du document docx.</p>
+<p>Une fois la convention validée par les deux parties, celle-ci est envoyée au format pdf par email au bailleur.
+L’application <a class="reference external" href="https://https://fr.libreoffice.org/discover/libreoffice/">Libreoffice</a> est utilisée pour générer une version pdf du document docx.</p>
 </section>
 <section id="import-de-firchiers-excel">
 <h5>Import de firchiers excel<a class="headerlink" href="#import-de-firchiers-excel" title="Lien vers cette rubrique">¶</a></h5>
-<p>Lors de l’instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes. Le package openpyxl est utilisé pour l’interprétation des fichiers xlsx</p>
+<p>Lors de l’instruction des conventions, les bailleurs téléversent des tableaux de cadastres, financements, logements, annexes.
+Le package openpyxl est utilisé pour l’interprétation des fichiers xlsx</p>
 </section>
-</section>
-<section id="javascript">
-<h4>Javascript<a class="headerlink" href="#javascript" title="Lien vers cette rubrique">¶</a></h4>
-<p>Peu de JS est utilisé dans l’application. Les dépendances sont déclarées dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/package.json">package.json</a></p>
-<p>Avant de lancer l’application, il est nécessaire d’installer ces dépendances:</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
-</pre></div>
-</div>
 </section>
 </section>
 </section>
@@ -296,17 +290,32 @@
 <section id="prerequis">
 <h3>Prérequis<a class="headerlink" href="#prerequis" title="Lien vers cette rubrique">¶</a></h3>
 <p>Les services Postgresql et Redis utilisés par APiLos sont dockerisés
-Python et Node sont nécessaires pour faire lancer l’application
+Python et Node sont nécessaires pour lancer l’application
 Il est conseillé d’installer un environnment virtuel pour isoler l’environnement python et node d’APiLos (asdf par exemple)</p>
 <ul class="simple">
-<li><p>Python &gt;=3.10</p></li>
+<li><p>Python &gt;=3.12</p></li>
 <li><p>Node &gt;=18.14</p></li>
 <li><p>docker</p></li>
 <li><p>docker-compose</p></li>
+<li><p>Client Scalingo nécessaire pour faire tourner certaine commande</p></li>
 </ul>
+</section>
+<section id="client-scalingo">
+<h3>Client Scalingo<a class="headerlink" href="#client-scalingo" title="Lien vers cette rubrique">¶</a></h3>
+<p>Installer et configurer le client Scalingo : https://doc.scalingo.com/platform/cli/start</p>
+</section>
+<section id="javascript">
+<h3>Javascript<a class="headerlink" href="#javascript" title="Lien vers cette rubrique">¶</a></h3>
+<p>Peu de JS est utilisé dans l’application.
+Les dépendances sont déclarées dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/package.json">package.json</a></p>
+<p>Avant de lancer l’application, il est nécessaire d’installer ces dépendances:</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+</pre></div>
+</div>
 </section>
 <section id="environment-virtuel-python">
 <h3>Environment virtuel python<a class="headerlink" href="#environment-virtuel-python" title="Lien vers cette rubrique">¶</a></h3>
+<p>Générer votre environnement virtuel</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv<span class="w"> </span>--prompt<span class="w"> </span><span class="k">$(</span>basename<span class="w"> </span><span class="k">$(</span><span class="nb">pwd</span><span class="k">))</span>
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate
 </pre></div>
@@ -314,6 +323,7 @@ Il est conseillé d’installer un environnment virtuel pour isoler l’environn
 </section>
 <section id="services-docker">
 <h3>Services docker<a class="headerlink" href="#services-docker" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les services <code class="docutils literal notranslate"><span class="pre">Postgresql</span></code> et <code class="docutils literal notranslate"><span class="pre">Redis</span></code> sont lancés avec Docker Compose</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>docker-compose<span class="w"> </span>build
 docker-compose<span class="w"> </span>up<span class="w"> </span>-d
 </pre></div>
@@ -321,12 +331,12 @@ docker-compose<span class="w"> </span>up<span class="w"> </span>-d
 </section>
 <section id="variables-d-environnement">
 <h3>Variables d’environnement<a class="headerlink" href="#variables-d-environnement" title="Lien vers cette rubrique">¶</a></h3>
-<p>Copier les <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.template">.env.template</a> dans un fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> et <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.test">.env.test</a> dans <code class="docutils literal notranslate"><span class="pre">.env.test.local</span></code> puis mettre à jour les variables d’environements.</p>
+<p>Copier les <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.template">.env.template</a> dans un fichier <code class="docutils literal notranslate"><span class="pre">.env</span></code> et <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/.env.test">.env.test</a> dans <code class="docutils literal notranslate"><span class="pre">.env.test.local</span></code>.</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>.env.template<span class="w"> </span>.env
 cp<span class="w"> </span>.env.test<span class="w"> </span>.env.test.local
 </pre></div>
 </div>
-<p>Par exemple:</p>
+<p>Puis mettre à jour les variables d’environements si nécessaire, par exemple:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">DB_USER</span><span class="o">=</span><span class="s">apilos</span>
 <span class="na">DB_NAME</span><span class="o">=</span><span class="s">apilos</span>
 <span class="na">DB_HOST</span><span class="o">=</span><span class="s">localhost</span>
@@ -343,40 +353,17 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 </pre></div>
 </div>
 </section>
-<section id="installer-les-dependances-npm">
-<h3>Installer les dependances npm<a class="headerlink" href="#installer-les-dependances-npm" title="Lien vers cette rubrique">¶</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>npm<span class="w"> </span>install
+<section id="modifier-ses-dns-locaux">
+<h3>Modifier ses DNS locaux<a class="headerlink" href="#modifier-ses-dns-locaux" title="Lien vers cette rubrique">¶</a></h3>
+<p>Ajouter la ligne au ficher <code class="docutils literal notranslate"><span class="pre">/etc/hosts</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">127.0.0.1</span>	<span class="n">local</span><span class="o">.</span><span class="n">beta</span><span class="o">.</span><span class="n">gouv</span><span class="o">.</span><span class="n">fr</span>
 </pre></div>
 </div>
-</section>
-<section id="executer-les-migrations">
-<h3>Executer les migrations<a class="headerlink" href="#executer-les-migrations" title="Lien vers cette rubrique">¶</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>migrate
-</pre></div>
-</div>
-</section>
-<section id="populer-les-permissions-et-les-roles-et-les-departements">
-<h3>Populer les permissions et les roles et les departements<a class="headerlink" href="#populer-les-permissions-et-les-roles-et-les-departements" title="Lien vers cette rubrique">¶</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>loaddata<span class="w"> </span>auth.json<span class="w"> </span>departements.json
-</pre></div>
-</div>
-<section id="modifier-les-permissions">
-<h4>Modifier les permissions<a class="headerlink" href="#modifier-les-permissions" title="Lien vers cette rubrique">¶</a></h4>
-<p>Pour modifier les permissions, il suffit de modifier dans l’interface d’administration puis d’exporter les données d’authentification :</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>dumpdata<span class="w"> </span>auth<span class="w"> </span>--natural-foreign<span class="w"> </span>--natural-primary<span class="w"> </span>&gt;<span class="w"> </span>users/fixtures/auth.json
-</pre></div>
-</div>
+<p>⚠️ Pour les utilisateurs de Windows + WSL, la modification du <code class="docutils literal notranslate"><span class="pre">etc/hosts</span></code> doit aussi être faite sur Windows.</p>
 </section>
 </section>
-<section id="creer-un-super-utilisateur">
-<h3>Créer un super utilisateur<a class="headerlink" href="#creer-un-super-utilisateur" title="Lien vers cette rubrique">¶</a></h3>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>createsuperuser
-</pre></div>
-</div>
-</section>
-</section>
-<section id="lancer-de-l-application">
-<h2>Lancer de l’application<a class="headerlink" href="#lancer-de-l-application" title="Lien vers cette rubrique">¶</a></h2>
+<section id="lancement-de-l-application">
+<h2>Lancement de l’application<a class="headerlink" href="#lancement-de-l-application" title="Lien vers cette rubrique">¶</a></h2>
 <p>On utilise la librairie  <code class="docutils literal notranslate"><span class="pre">honcho</span></code> en environnement de développement pour lancer les services django server et celery workers dont les commandes sont définis dans le fichier <a class="reference external" href="https://github.com/MTES-MCT/apilos/tree/main/Procfile.dev">Procfile.dev</a></p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>honcho<span class="w"> </span>start<span class="w"> </span>-f<span class="w"> </span>Procfile.dev
 </pre></div>
@@ -384,8 +371,8 @@ pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </s
 <p>L’application est désormais disponible à l’adresse <a class="reference external" href="http://localhost:8001">http://localhost:8001</a></p>
 <section id="population-de-la-base-de-donnnees-en-environnement-de-developpement">
 <h3>Population de la base de donnnées en environnement de développement<a class="headerlink" href="#population-de-la-base-de-donnnees-en-environnement-de-developpement" title="Lien vers cette rubrique">¶</a></h3>
-<p>Ajout de bailleurs, administrations, programmes et lots de test</p>
-<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>load_test_fixtures
+<p>Le plus simple est de récupérer un backup de la base de données de l’environnement d’integration via l’interface de Scalingo et de le restaurer localement</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>db-restore
 </pre></div>
 </div>
 </section>
@@ -408,6 +395,39 @@ Basé sur <code class="docutils literal notranslate"><span class="pre">.env.temp
 </pre></div>
 </div>
 </section>
+<section id="gestion-des-acces-via-cerbere-siap">
+<h3>Gestion des accès via CERBERE / SIAP<a class="headerlink" href="#gestion-des-acces-via-cerbere-siap" title="Lien vers cette rubrique">¶</a></h3>
+<p>Créer des accès en Integration (accès qui servent aussi pour l’environement local) et en production</p>
+<section id="denamde-d-acces-cerbere">
+<h4>Denamde d’accès CERBERE<a class="headerlink" href="#denamde-d-acces-cerbere" title="Lien vers cette rubrique">¶</a></h4>
+<p>Faire une demande via le lien <code class="docutils literal notranslate"><span class="pre">Créer</span> <span class="pre">un</span> <span class="pre">compte</span></code> des pages CERBERE :</p>
+<ul class="simple">
+<li><p>Integration : <a class="reference external" href="https://authentification.recette.din.developpement-durable.gouv.fr/cas/576/login?service=https%3A%2F%2Fsiap-integration.apilos.beta.gouv.fr%2Faccounts%2Fcerbere-login%3Fnext%3D%252F">CERBERE RECETTE &gt; point d’accès SIAP</a></p></li>
+<li><p>Production : <a class="reference external" href="https://authentification.din.developpement-durable.gouv.fr/cas/700/login?service=https%3A%2F%2Fapilos.logement.gouv.fr%2Faccounts%2Fcerbere-login%3Fnext%3D%252F">CERBERE PROD &gt; point d’accès SIAP</a></p></li>
+</ul>
+<p>Utiliser la demande par numéro de SIREN (initialement le numéro de SIREN de la DINUM était utilisé).</p>
+<p>Sur l’environnement CERBERE de Recette, il est nécessaire de faire valider son compte : voir avec le chef de projet du SIAP.</p>
+</section>
+<section id="demande-d-abilitation-siap">
+<h4>Demande d’abilitation SIAP<a class="headerlink" href="#demande-d-abilitation-siap" title="Lien vers cette rubrique">¶</a></h4>
+<p>Après la création des accès CERBERE, il est nécessaire de demander des habilitations:</p>
+<ul class="simple">
+<li><p>en Integration : Administration central /Administrateur nationnal</p></li>
+<li><p>en Production : Administration central / Lecture seule</p></li>
+</ul>
+<p>Ces habilitations doivent être valider par un personne qui a les droits : voir avec le chef de projet du SIAP.</p>
+</section>
+</section>
+<section id="acces-a-apilos">
+<h3>Accès à APiLos<a class="headerlink" href="#acces-a-apilos" title="Lien vers cette rubrique">¶</a></h3>
+<p>A partir du SIAP sur tous les evironnement, APiLos ets disponible dans le menu : <code class="docutils literal notranslate"><span class="pre">Mes</span> <span class="pre">Opération</span></code> &gt; <code class="docutils literal notranslate"><span class="pre">Conventionnement</span></code></p>
+<p>Ou en accédant directement à l’URL:</p>
+<ul class="simple">
+<li><p>En local : http://local.beta.gouv.fr:8001/</p></li>
+<li><p>En integration : https://siap-integration.apilos.beta.gouv.fr/</p></li>
+<li><p>En Production : https://apilos.logement.gouv.fr/</p></li>
+</ul>
+</section>
 </section>
 <section id="qualite-de-code">
 <h2>Qualité de code<a class="headerlink" href="#qualite-de-code" title="Lien vers cette rubrique">¶</a></h2>
@@ -421,9 +441,8 @@ La librairie factory_boy est utilisé pour gérer des fixtures</p>
 <li><p>Tests unitaires : APPNAME/tests/models/…</p></li>
 <li><p>Tests integration : APPNAME/tests/views/… APPNAME/tests/services/…</p></li>
 </ul>
-</section>
 <section id="lancement-des-tests">
-<h3>Lancement des tests<a class="headerlink" href="#lancement-des-tests" title="Lien vers cette rubrique">¶</a></h3>
+<h4>Lancement des tests<a class="headerlink" href="#lancement-des-tests" title="Lien vers cette rubrique">¶</a></h4>
 <p>L’application prend en charge des test unitaire et des tests d’intégration. Pour les lancer:</p>
 <div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>pytest
 </pre></div>
@@ -433,6 +452,7 @@ La librairie factory_boy est utilisé pour gérer des fixtures</p>
 coverage<span class="w"> </span>report
 </pre></div>
 </div>
+</section>
 </section>
 <section id="installer-les-hooks-de-pre-commit">
 <h3>Installer les hooks de pre-commit<a class="headerlink" href="#installer-les-hooks-de-pre-commit" title="Lien vers cette rubrique">¶</a></h3>
@@ -445,7 +465,7 @@ pre-commit<span class="w"> </span>install
 </section>
 <section id="les-api">
 <h2>Les API<a class="headerlink" href="#les-api" title="Lien vers cette rubrique">¶</a></h2>
-<p>Plus de détails sur la doc dédiée <a class="reference internal" href="#API.md"><span class="xref myst">API.md</span></a></p>
+<p>Plus de détails sur la doc dédiée <a class="reference internal" href="SIAP-APiLos.html"><span class="std std-doc">SIAP-APiLos.md</span></a></p>
 </section>
 <section id="ajouter-des-dependances-avec-pip-tools">
 <h2>Ajouter des dépendances avec pip-tools<a class="headerlink" href="#ajouter-des-dependances-avec-pip-tools" title="Lien vers cette rubrique">¶</a></h2>
@@ -461,20 +481,25 @@ pre-commit<span class="w"> </span>install
 </section>
 <section id="manipulations-de-developpement">
 <h2>Manipulations de développement<a class="headerlink" href="#manipulations-de-developpement" title="Lien vers cette rubrique">¶</a></h2>
+<section id="declarer-un-superadmin">
+<h3>Déclarer un superadmin<a class="headerlink" href="#declarer-un-superadmin" title="Lien vers cette rubrique">¶</a></h3>
+<p>En local, éditer l’utilistateur en base de données pour lui assigner la valeur <code class="docutils literal notranslate"><span class="pre">is_superadmin</span></code> = true</p>
+<p>Dans les autres environements, un superadmin a les droits pour déclarer les autres utilisateurs comme superadmin</p>
+</section>
+<section id="modifier-les-permissions">
+<h3>Modifier les permissions<a class="headerlink" href="#modifier-les-permissions" title="Lien vers cette rubrique">¶</a></h3>
+<p>Pour modifier les permissions, il suffit de modifier dans l’interface d’administration puis d’exporter les données d’authentification :</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>dumpdata<span class="w"> </span>auth<span class="w"> </span>--natural-foreign<span class="w"> </span>--natural-primary<span class="w"> </span>&gt;<span class="w"> </span>users/fixtures/auth.json
+</pre></div>
+</div>
+</section>
 <section id="restaurer-un-dump-de-base-de-donnees">
 <h3>Restaurer un dump de base de données<a class="headerlink" href="#restaurer-un-dump-de-base-de-donnees" title="Lien vers cette rubrique">¶</a></h3>
 <p>Afin de restaurer <em>proprement</em> un fichier de dump de base de données, en supprimant au préalable les tables existantes,
 on peut jouer le script suivant :</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">DUMP_FILE</span><span class="o">=</span>&lt;/path/to/dump/file&gt;
-<span class="nv">DB_URL</span><span class="o">=</span>postgres://apilos:apilos@localhost:5433/apilos
-
-<span class="k">for</span><span class="w"> </span>table<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>psql<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-t<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;SELECT \&quot;tablename\&quot; FROM pg_tables WHERE schemaname=&#39;public&#39;&quot;</span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">     </span>psql<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;DROP TABLE IF EXISTS \&quot;</span><span class="si">${</span><span class="nv">table</span><span class="si">}</span><span class="s2">\&quot; CASCADE;&quot;</span>
-<span class="k">done</span>
-pg_restore<span class="w"> </span>-d<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DB_URL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>--clean<span class="w"> </span>--no-acl<span class="w"> </span>--no-owner<span class="w"> </span>--no-privileges<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">DUMP_FILE</span><span class="si">}</span><span class="s2">&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>make<span class="w"> </span>db-restore
 </pre></div>
 </div>
-<p>Note : le fichier de dump est a l’extension <code class="docutils literal notranslate"><span class="pre">pgsql</span></code></p>
 </section>
 <section id="restaurer-un-dump-sur-un-environnement-scalingo">
 <h3>Restaurer un dump sur un environnement Scalingo<a class="headerlink" href="#restaurer-un-dump-sur-un-environnement-scalingo" title="Lien vers cette rubrique">¶</a></h3>
@@ -506,6 +531,7 @@ pg_restore<span class="w"> </span>-d<span class="w"> </span><span class="s2">&qu
 </pre></div>
 </div>
 <p>Si cette variable est définie, alors l’utilisateur est directement considéré comme authentifié et est utilisé pour récupérer les habilitations fournies par le SIAP.</p>
+<p>⚠️ Ce mock est peu utilisé, il est possible qu’il ne soit pas fonctionnel</p>
 </section>
 <section id="statistiques-de-developpement">
 <h2>Statistiques de développement<a class="headerlink" href="#statistiques-de-developpement" title="Lien vers cette rubrique">¶</a></h2>
