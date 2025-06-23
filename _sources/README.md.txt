@@ -3,6 +3,7 @@
 ```{toctree}
 :maxdepth: 2
 
+THIRDPARTYSERVICES.md
 DEVELOPPEUR.md
 DEPLOIEMENT.md
 ECOLOWEB.md

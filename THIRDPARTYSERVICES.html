@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Alertes SIAP" href="ALERTES.html" /><link rel="prev" title="Recherche de conventions" href="RECHERCHE.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" /><link rel="prev" title="APiLos - documentation technique" href="README.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Module commentaires - Documentation APiLos</title>
+        <title>Services tiers utilisés par APiLos - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -199,12 +199,12 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="THIRDPARTYSERVICES.html">Services tiers utilisés par APiLos</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Services tiers utilisés par APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="RECHERCHE.html">Recherche de conventions</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Module commentaires</a></li>
+<li class="toctree-l1"><a class="reference internal" href="COMMENTAIRES.html">Module commentaires</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ALERTES.html">Alertes SIAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
@@ -230,7 +230,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/COMMENTAIRES.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/THIRDPARTYSERVICES.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -250,44 +250,27 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <div class="toctree-wrapper compound">
-</div>
-<section id="module-commentaires">
-<h1>Module commentaires<a class="headerlink" href="#module-commentaires" title="Lien vers cette rubrique">¶</a></h1>
-<section id="presentation-generale">
-<h2>Présentation générale<a class="headerlink" href="#presentation-generale" title="Lien vers cette rubrique">¶</a></h2>
-<p>APiLos permet la communication entre intructeurs et bailleurs au niveau des conventions et avenants via des commentaires.</p>
-<p>Les commentaires concernent les conventions à instruire et en correction. Lorsqu’un instructeur instruit une convention, il peut laisser des commentaires sur des champs spécifiques du formulaire, auxquels le bailleur peut répondre. Quand la convention passe au statut en correction, le bailleur peut modifier les champs commentés.</p>
-<p>Ainsi les commentaires servent à échanger de l’information entre instructeurs et bailleurs, mais aussi à donner la permission aux bailleurs d’éditer des champs au statut en correction.</p>
-</section>
-<section id="implementation-des-commentaires">
-<h2>Implémentation des commentaires<a class="headerlink" href="#implementation-des-commentaires" title="Lien vers cette rubrique">¶</a></h2>
-<p>L’application <code class="docutils literal notranslate"><span class="pre">comments</span></code> contient le coeur du code lié aux commentaires.</p>
-<p>La table <code class="docutils literal notranslate"><span class="pre">comments_comment</span></code> contient les commentaires en base de données. Une clé étrangère pointe vers la table <code class="docutils literal notranslate"><span class="pre">conventions_convention</span></code>, de sorte qu’une convention peut avoir entre zéro et plusieurs commentaires.</p>
-<p>Les commentaires sont représentés dans le code par le model <code class="docutils literal notranslate"><span class="pre">Comment</span></code>, parmis les différents champs, on note un statut, qui peut être <code class="docutils literal notranslate"><span class="pre">OUVERT</span></code>, <code class="docutils literal notranslate"><span class="pre">RESOLU</span></code> ou <code class="docutils literal notranslate"><span class="pre">CLOS</span></code>, un <code class="docutils literal notranslate"><span class="pre">message</span></code>qui contient le contenu du commentaire, et diverses champs permettant de savoir l’endroit exact du formulaire auquel se rattache ce commentaire.</p>
-<p>L’application comments contient également les vues permettant de créer, mettre à jour et supprimer des commentaires.</p>
-</section>
-<section id="lien-avec-le-formulaire">
-<h2>Lien avec le formulaire<a class="headerlink" href="#lien-avec-le-formulaire" title="Lien vers cette rubrique">¶</a></h2>
-<p>Les commentaires sont intégrés dans les templates des formulaires de l’application.</p>
-<p>Les différents champs génériques utilisés inclus dans leur template la ligne suivante : <code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">include</span> <span class="pre">&quot;common/utils/comments_field.html&quot;</span> <span class="pre">%}</span></code></p>
-<p>Ce bout de code contient le javascript qui va instancier l’objet <code class="docutils literal notranslate"><span class="pre">CommentFactory</span></code>. Le code commence par tester sur la propriété <code class="docutils literal notranslate"><span class="pre">object_field</span></code> est présente dans le contexte, et si la convention est dans un état où l’on veut afficher les commentaires (en correction, en instruction, à signer, signée).</p>
-<p>L’objet javascript <code class="docutils literal notranslate"><span class="pre">CommentFactory</span></code> permet de faire un apparaître une icône à côté du champ concerné. En cliquant sur l’icône on peut réaliser les différentes opérations liées aux commentaires sur ce champ (consultation, création, changement de statut).</p>
-</section>
-<section id="permettre-l-ajout-de-commentaire-sur-un-nouveau-champ">
-<h2>Permettre l’ajout de commentaire sur un nouveau champ<a class="headerlink" href="#permettre-l-ajout-de-commentaire-sur-un-nouveau-champ" title="Lien vers cette rubrique">¶</a></h2>
-<p>Quand on ajoute un champ à un formulaire de la convention, il suffit d’ajouter la propriété <code class="docutils literal notranslate"><span class="pre">object_field</span></code> pour faire apparaître l’icône des commentaires. Par exemple :</p>
-<p><code class="docutils literal notranslate"><span class="pre">{%</span> <span class="pre">include</span> <span class="pre">&quot;common/form/input_text.html&quot;</span> <span class="pre">with</span> <span class="pre">form_input=form.signataire_bloc_signature</span> <span class="pre">object_field=&quot;bailleur__signataire_bloc_signature__&quot;|add:form.uuid.value</span> <span class="pre">%}</span></code></p>
-<p>Cette ligne utilise le template <code class="docutils literal notranslate"><span class="pre">input_text</span></code>, qui lui même inclut <code class="docutils literal notranslate"><span class="pre">comments_field</span></code>, qui va instancier <code class="docutils literal notranslate"><span class="pre">CommentFactory</span></code> si le statut de la convention le permet.</p>
-</section>
-<section id="implementation-de-la-gestion-des-droits">
-<h2>Implémentation de la gestion des droits<a class="headerlink" href="#implementation-de-la-gestion-des-droits" title="Lien vers cette rubrique">¶</a></h2>
-<p>Le code qui permet de rendre un champ éditable ou non est situé dans le template <code class="docutils literal notranslate"><span class="pre">disable_form_input.html</span></code>, inclut par défaut dans les champs du formulaires. Ce template contient la logique pour rendre le champ éditable ou non selon la présence de commentaires.</p>
-</section>
-<section id="resume-des-commentaires">
-<h2>Résumé des commentaires<a class="headerlink" href="#resume-des-commentaires" title="Lien vers cette rubrique">¶</a></h2>
-<p>Ce résumé est visible uniquement dans les status à corriger et en instruction. Il regroupe les commentaires ouverts.</p>
-</section>
+          <section id="services-tiers-utilises-par-apilos">
+<h1>Services tiers utilisés par APiLos<a class="headerlink" href="#services-tiers-utilises-par-apilos" title="Lien vers cette rubrique">¶</a></h1>
+<p>APiLos utilise un certain nombre de servce tiers pour fonctionner.L’équipe technique d’APiLos doit avoir un compte pour chacun de ces services.</p>
+<ul class="simple">
+<li><p>Scalingo (hébergement) : PaaS souverain. Voir le responsable technique du service responsable du marché pour créer les accès aux développeurs. Les projets actifs sur Scalingo sont :</p>
+<ul>
+<li><p>apilos-ecolo (image de la base de données Ecoloweb, peu/pas utilisé)</p></li>
+<li><p>apilos-metabase-prod (metabase)</p></li>
+<li><p>clamav-service (Antovirus as a service)</p></li>
+<li><p>apilos-siap-integration (Plateforme d’intégration)</p></li>
+<li><p>apilos-siap-recette (Plateforme de recette - utilisée par l’équipe SIAP)</p></li>
+<li><p>apilos-siap-ecole (plateforme école - utilisée par l’équipe SIAP)</p></li>
+<li><p>apilos-siap-production (Plateforme de production)</p></li>
+</ul>
+</li>
+<li><p>GitHub (https://github.com/MtES-MCT/apilos/) - gestion par FabNum/DNUM : Gestion des versions du code d’APiLos. Publié en open-source.</p></li>
+<li><p>S3 sur Scaleway - Géré par Nicolas O. : Stockage des documents de convention et des documents attachés aux convention. Le stockage S3 sera prochainement migrée sur une solution s3 maîtrisé par la FabNum/DNUM</p></li>
+<li><p>Sentry (fournit par beta.gouv.fr) - géré par beta.gouv.fr et FabNum/DNUM : Monitoring logiciel d’APiLos</p></li>
+<li><p>Dashlord/UpDown.io géré FabNum/DNUM : Monitoring système et qualité de APiLos</p></li>
+<li><p>Alwaysdata (gestion des DNS - compte Nicolas Oudard) : tous les environnements sauf la production sont sous le domaine apilos.beta.gouv.fr. Les URLs de ces environnements seront prochainement modifiées pour ne plus dépendre du sous domaine beta.gouv.fr</p></li>
+</ul>
 </section>
 
         </article>
@@ -295,23 +278,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="ALERTES.html">
+          <a class="next-page" href="DEVELOPPEUR.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Alertes SIAP</div>
+                <div class="title">DEVELOPPEMENT</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="RECHERCHE.html">
+          <a class="prev-page" href="README.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Recherche de conventions</div>
+                <div class="title">Home</div>
                 
               </div>
             </a>
