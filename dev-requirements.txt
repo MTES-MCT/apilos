@@ -15,7 +15,6 @@ asgiref==3.8.1 \
     #   -c requirements.txt
     #   django
     #   django-browser-reload
-    #   django-stubs
 beautifulsoup4==4.13.4 \
     --hash=sha256:9bbbb14bfde9d79f38b8cd5f8c7c85f4b8f2523190ebed90e950a8dea4cb1c4b \
     --hash=sha256:dbb3c4e1ceae6aefebdaf2423247260cd062430a410e38c66f2baa50a8437195
@@ -171,13 +170,13 @@ django-extensions==4.1 \
     --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
     --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
     # via -r dev-requirements.in
-django-stubs==5.2.0 \
-    --hash=sha256:07e25c2d3cbff5be540227ff37719cc89f215dfaaaa5eb038a75b01bbfbb2722 \
-    --hash=sha256:cd52da033489afc1357d6245f49e3cc57bf49015877253fb8efc6722ea3d2d2b
+django-stubs==5.2.1 \
+    --hash=sha256:c0e170d70329c27e737a5b80c5518fb6161d0c4792321d11a4a93dcda120f4ef \
+    --hash=sha256:e58260958e58f7b6a8da6bba56d6b31d16c0414079a4aa6baa01c668bd08d39d
     # via -r dev-requirements.in
-django-stubs-ext==5.2.0 \
-    --hash=sha256:00c4ae307b538f5643af761a914c3f8e4e3f25f4e7c6d7098f1906c0d8f2aac9 \
-    --hash=sha256:b27ae0aab970af4894ba4e9b3fcd3e03421dc8731516669659ee56122d148b23
+django-stubs-ext==5.2.1 \
+    --hash=sha256:98fb0646f1a1ef07708eec5f6f7d27523f12c0c8714abae8db981571ff957588 \
+    --hash=sha256:fc0582cb3289306c43ce4a0a15af86922ce1dbec3c19eab80980ee70c04e0392
     # via django-stubs
 djhtml==3.0.8 \
     --hash=sha256:ec3b4cf25f0959474c7793da1becba654ca9587689ce143955bcbc2638eeabce
