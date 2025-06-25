@@ -3,7 +3,9 @@ import logging
 from datetime import datetime
 from enum import Enum
 
+import openpyxl
 from django.http import HttpRequest
+from openpyxl.styles import Font
 
 from conventions.models import Convention, ConventionStatut
 from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
@@ -226,3 +228,91 @@ def delete_action_alertes(convention, siap_credentials, destinataire=None):
                 )
             except SIAPException as e:
                 logger.warning(e)
+def get_convention_export_excel_header(request):
+    headers = [
+        "Année de gestion",
+        "Numéro d'opération SIAP",
+        "Numéro de convention",
+        "Commune",
+        "Code postal",
+        "Nom de l'opération",
+        "Instructeur" if request.user.is_instructeur else "Bailleur",
+        "Type de financement",
+        "Nombre de logements",
+        "Nature de l'opération",
+        "Date de signature",
+        "Montant du loyer au m2",
+        "Livraison",
+    ]
+
+    return headers
+
+
+def get_convention_export_excel_row(request, convention):
+    row = []
+    # 1. Année de gestion
+    row.append(
+        convention.programme.annee_gestion_programmation if convention.programme else ""
+    )
+    # 2. Numéro d'opération SIAP
+    row.append(convention.programme.numero_operation if convention.programme else "")
+    # 3. Numéro de convention
+    if convention.numero and not convention.parent:
+        row.append(convention.numero)
+    elif convention.parent:
+        row.append(convention.parent.numero)
+    else:
+        row.append("")
+    # 4. Si avenant : numéro
+    # 5. Commune
+    row.append(convention.programme.ville if convention.programme else "")
+    # 6. Code postal
+    row.append(convention.programme.code_postal if convention.programme else "")
+    # 7. Nom de l'opération
+    row.append(convention.programme.nom if convention.programme else "")
+    # 8. Bailleur OR instructeur
+    if request.user.is_instructeur:
+        row.append(
+            convention.programme.administration.nom
+            if convention.programme.administration
+            else ""
+        )
+    else:
+        row.append(
+            convention.programme.bailleur.nom if convention.programme.bailleur else ""
+        )
+    # 9. Type de financement
+    row.append(convention.lot.get_financement_display())
+    # 10. Nombre de logements
+    row.append(convention.lot.nb_logements)
+    # 11. Nature de l'opération dans programe
+    row.append(convention.programme.nature_logement if convention.programme else "")
+    # 12. Date de signature
+    signature = convention.televersement_convention_signee_le
+    formatted_signature_date = signature.strftime("%d/%m/%Y") if signature else "-"
+    row.append(formatted_signature_date)
+    # 13. Montant du loyer au m2
+    logement = convention.lot.logements.first()
+    row.append(logement.loyer_par_metre_carre if logement else 0)
+    # 14. Livraison
+    livraison = convention.programme.date_achevement_compile
+    row.append(livraison.strftime("%d/%m/%Y") if livraison else "-")
+
+    return row
+
+
+def create_convention_export_excel(request, conventions, filters=None):
+    import logging
+
+    logging.warning("Fetched %d conventions", conventions.count())
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Conventions"
+    ws.append(get_convention_export_excel_header(request))
+
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+    for convention in conventions[:1000]:
+        ws.append(get_convention_export_excel_row(request, convention))
+
+    return wb
