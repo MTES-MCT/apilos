@@ -234,9 +234,9 @@ django-hijack==3.7.2 \
     --hash=sha256:dc834a015082dd2d49afd13da6cf6f571ce1a16894d6070887261a37633f8d06 \
     --hash=sha256:eb02d285ec1564bfa77ac2e73b9bca28848caa7b04c1e1eef3d573353eb9efaa
     # via -r requirements.in
-django-simple-history==3.8.0 \
-    --hash=sha256:7f8bbdaa5b2c4c1c9a48c89a95ff3389eda6c82cf9de9b09ae99b558205d132f \
-    --hash=sha256:e70d70fb4cc2af60a50904f1420d5a6440d24efddceba3daeff8b02d269ebdf0
+django-simple-history==3.10.1 \
+    --hash=sha256:040f0c2286bed730312aa15f0acee9e7e6f839c4bcd721693251aa7ec5b65d95 \
+    --hash=sha256:e12c27abfcd7e801a9d274d94542549ce8c617b0b384ae69afb161b56cd02ba4
     # via -r requirements.in
 django-sql-explorer[xls]==5.3 \
     --hash=sha256:ce2da0e8c67eab0b22e0fa7dfc0caf189735029bdc83e33dceef009be787a08a \
