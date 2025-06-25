@@ -246,9 +246,9 @@ django-storages==1.14.3 \
     --hash=sha256:31f263389e95ce3a1b902fb5f739a7ed32895f7d8b80179fe7453ecc0dfe102e \
     --hash=sha256:95a12836cd998d4c7a4512347322331c662d9114c4344f932f5e9c0fce000608
     # via -r requirements.in
-django-waffle==4.2.0 \
-    --hash=sha256:774f45b929627c9d303620c85419ce1da54066f2082d741af014f5bbd747e372 \
-    --hash=sha256:97709550f4e75ce2a20b13e29f39777e1439a968569f2ee89398ca368afd586c
+django-waffle==5.0.0 \
+    --hash=sha256:3312851d9d926b76b9e90712355781700a383b82b5bf2b61e1f1be97532c0f3d \
+    --hash=sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509
     # via -r requirements.in
 djangorestframework==3.16.0 \
     --hash=sha256:bea7e9f6b96a8584c5224bfb2e4348dfb3f8b5e34edbecb98da258e892089361 \
