@@ -2,7 +2,7 @@ from django.urls import path
 from django.views.generic import RedirectView, TemplateView
 
 from . import views
-from .views import ConventionSearchView, LoyerSimulateurView
+from .views import ConventionExportXcelView, ConventionSearchView, LoyerSimulateurView
 
 urlpatterns = [
     # Pages de premier niveau : recherche et calculette de loyer
@@ -15,6 +15,11 @@ urlpatterns = [
         "recherche",
         ConventionSearchView.as_view(),
         name="search",
+    ),
+    path(
+        "export-excel",
+        ConventionExportXcelView.as_view(),
+        name="export_excel",
     ),
     path(
         "simulateur-de-loyer",

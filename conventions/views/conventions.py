@@ -53,7 +53,12 @@ from conventions.services.recapitulatif import (
     convention_validate,
 )
 from conventions.services.search import ConventionSearchService
-from conventions.services.utils import ReturnStatus, base_convention_response_error
+from conventions.services.utils import (
+    CONVENTION_EXPORT_MAX_ROWS,
+    ReturnStatus,
+    base_convention_response_error,
+    create_convention_export_excel,
+)
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.request import AuthenticatedHttpRequest
 from core.storage import client
@@ -139,7 +144,7 @@ class RecapitulatifView(BaseConventionView):
         )
 
 
-class ConventionSearchView(LoginRequiredMixin, View):
+class ConventionSearchMixin:
     def _get_non_empty_query_param(self, query_param: str, default=None) -> str | None:
         if value := self.request.GET.get(query_param):
             return value
@@ -153,11 +158,41 @@ class ConventionSearchView(LoginRequiredMixin, View):
             arg: self._get_non_empty_query_param(query_param)
             for arg, query_param in self.get_search_filters_mapping()
         }
-
         self.service = ConventionSearchService(
             user=self.request.user, search_filters=search_filters
         )
 
+    def get_search_filters_mapping(self) -> list[tuple[str, str]]:
+        return [
+            ("anru", "anru"),
+            ("avenant_seulement", "avenant_seulement"),
+            ("bailleur", "bailleur"),
+            ("date_signature", "date_signature"),
+            ("financement", "financement"),
+            ("nature_logement", "nature_logement"),
+            ("order_by", "order_by"),
+            ("search_lieu", "search_lieu"),
+            ("search_numero", "search_numero"),
+            ("search_operation_nom", "search_operation_nom"),
+            ("statuts", "cstatut"),
+        ]
+
+
+class ConventionExportXcelView(LoginRequiredMixin, ConventionSearchMixin, View):
+    def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
+        filters = request.GET
+        conventions = self.service.get_queryset()
+
+        wb = create_convention_export_excel(request, conventions, filters=filters)
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+        response["Content-Disposition"] = "attachment; filename=conventions.xlsx"
+        wb.save(response)
+        return response
+
+
+class ConventionSearchView(LoginRequiredMixin, ConventionSearchMixin, View):
     @property
     def bailleurs_queryset(self) -> QuerySet:
         return self.request.user.bailleurs(full_scope=True).exclude(nom__exact="")[
@@ -184,6 +219,7 @@ class ConventionSearchView(LoginRequiredMixin, View):
             ),
             "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
+            "convention_export_max_rows": CONVENTION_EXPORT_MAX_ROWS,
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (
@@ -193,21 +229,6 @@ class ConventionSearchView(LoginRequiredMixin, View):
                 "search_lieu",
             )
         }
-
-    def get_search_filters_mapping(self) -> list[tuple[str, str]]:
-        return [
-            ("anru", "anru"),
-            ("avenant_seulement", "avenant_seulement"),
-            ("bailleur", "bailleur"),
-            ("date_signature", "date_signature"),
-            ("financement", "financement"),
-            ("nature_logement", "nature_logement"),
-            ("order_by", "order_by"),
-            ("search_lieu", "search_lieu"),
-            ("search_numero", "search_numero"),
-            ("search_operation_nom", "search_operation_nom"),
-            ("statuts", "cstatut"),
-        ]
 
 
 class LoyerSimulateurView(LoginRequiredMixin, View):

@@ -2,13 +2,23 @@ from unittest import mock
 
 import pytest
 import time_machine
-from django.test import SimpleTestCase
+from django.test import RequestFactory, SimpleTestCase
 from unittest_parametrize import ParametrizedTestCase, parametrize
 
 from conventions.models import ConventionStatut
-from conventions.services.utils import convention_upload_filename, delete_action_alertes
-from core.tests.factories import ConventionFactory
+from conventions.services.utils import (
+    convention_upload_filename,
+    delete_action_alertes,
+    get_convention_export_excel_header,
+    get_convention_export_excel_row,
+)
+from core.tests.factories import (
+    ConventionFactory,
+    LogementFactory,
+    LotFactory,
+)
 from siap.siap_client.client import SIAPClient
+from users.tests.factories import UserFactory
 
 
 @pytest.mark.django_db
@@ -90,6 +100,85 @@ def test_delete_action_alertes_for_bailleur():
 
         mock_client.delete_alerte.assert_called_once()
         assert mock_client.delete_alerte.mock_calls[0].kwargs["alerte_id"] == 2
+
+
+@pytest.mark.django_db
+def test_get_convention_export_excel_header():
+    request = RequestFactory().get("/")
+    user = UserFactory()
+    user.is_instructeur = True
+    request.user = user
+
+    header = get_convention_export_excel_header(request)
+
+    expected_header_instructeur = [
+        "Année de gestion",
+        "Numéro d'opération SIAP",
+        "Numéro de convention",
+        "Numéro d'avenant",
+        "Commune",
+        "Code postal",
+        "Nom de l'opération",
+        "Instructeur",
+        "Type de financement",
+        "Nombre de logements",
+        "Nature de l'opération",
+        "Date de signature",
+        "Montant du loyer au m2",
+        "Livraison",
+    ]
+
+    assert header == expected_header_instructeur
+
+    user.is_instructeur = False
+    request.user = user
+    header = get_convention_export_excel_header(request)
+
+    assert header[7] == "Bailleur"
+    assert len(header) == 14
+
+
+@pytest.mark.django_db
+def test_get_convention_export_excel_row():
+    lot = LotFactory()
+    logement = LogementFactory(lot=lot)
+    convention = ConventionFactory()
+    convention.logements = [logement]
+    convention.save()
+    lot.convention = convention
+    lot.save()
+
+    request = RequestFactory().get("/")
+    user = UserFactory()
+    user.is_instructeur = True
+    request.user = user
+
+    row = get_convention_export_excel_row(request, convention)
+
+    assert row == [
+        convention.programme.annee_gestion_programmation,
+        convention.programme.numero_operation,
+        convention.numero,
+        "",
+        convention.programme.ville,
+        convention.programme.code_postal,
+        convention.programme.nom,
+        convention.programme.administration.nom,
+        convention.lot.get_financement_display(),
+        convention.lot.nb_logements,
+        convention.programme.nature_logement,
+        "-",
+        logement.loyer_par_metre_carre,
+        convention.programme.date_achevement_compile.strftime("%d/%m/%Y"),
+    ]
+
+    user.is_instructeur = False
+    request.user = user
+    row = get_convention_export_excel_row(request, convention)
+
+    assert len(row) == 14
+
+    assert row[7] == convention.programme.bailleur.nom
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):

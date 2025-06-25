@@ -1,5 +1,4 @@
 {% load custom_filters display_filters waffle_tags %}
-
 <div class="fr-container-fluid ds_banner">
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
@@ -8,7 +7,7 @@
                     <div class="fr-table table--vertical-lg fr-table--sm table--hover-animation">
                         {% if filtered_conventions_count != all_conventions_count %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                                <div class="fr-grid-row fr-col-12">
+                                <div class="fr-grid-row fr-col-6">
 
                                     <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
                                     <a href="/" class="fr-link">
@@ -16,6 +15,22 @@
                                         Réinitialiser la recherche
                                     </a>
                                 </div>
+                                <form action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
+                                    <div
+                                        title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
+                                        style="display: inline-block;"
+                                    >
+                                        <button
+                                            id="export-button"
+                                            type="submit"
+                                            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                            onsubmit="attachFilterParams()"
+                                            {% if filtered_conventions_count > convention_export_max_rows %} disabled {% endif %}
+                                        >
+                                            Exporter la liste
+                                        </button>
+                                    </div>
+                                </form>
                             </div>
                         {% endif %}
                         <div class="fr-table__wrapper">
