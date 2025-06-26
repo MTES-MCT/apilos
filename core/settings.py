@@ -585,7 +585,6 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 )
 
 # Waffle
-SWITCH_VISIBILITY_AVENANT_BAILLEUR = "switch_visibility_avenant_bailleur"
 SWITCH_SIAP_ALERTS_ON = "siap_alerte_on"
 SWITCH_TRANSACTIONAL_EMAILS_OFF = "transactional_emails_off"
 
