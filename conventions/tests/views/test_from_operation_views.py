@@ -1,11 +1,9 @@
 from unittest.mock import patch
 
-from django.conf import settings
 from django.test import RequestFactory, SimpleTestCase, TestCase, override_settings
 from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 from unittest_parametrize import ParametrizedTestCase, param, parametrize
-from waffle.testutils import override_flag
 
 from conventions.forms.convention_from_operation import AddAvenantForm
 from conventions.models import Convention, ConventionStatut
@@ -68,7 +66,6 @@ class StepperTest(ParametrizedTestCase, SimpleTestCase):
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
-@override_flag(settings.FLAG_ADD_CONVENTION, active=True)
 class SelectOperationViewTest(TestCase):
     fixtures = [
         "auth.json",
@@ -98,7 +95,6 @@ class SelectOperationViewTest(TestCase):
 
 
 @override_settings(USE_MOCKED_SIAP_CLIENT=True)
-@override_flag(settings.FLAG_ADD_CONVENTION, active=True)
 class AddConventionViewTest(TestCase):
     fixtures = [
         "auth.json",
@@ -130,7 +126,6 @@ class AddConventionViewTest(TestCase):
     # TODO: add tests
 
 
-@override_flag(settings.FLAG_ADD_CONVENTION, active=True)
 class AddAvenantsViewTest(TestCase):
     fixtures = [
         "auth.json",

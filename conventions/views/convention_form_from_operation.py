@@ -1,6 +1,5 @@
 from typing import Any
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
@@ -12,7 +11,6 @@ from django.views.generic.base import (
     TemplateView,
     View,
 )
-from waffle.mixins import WaffleFlagMixin
 
 from conventions.models import ConventionStatut
 from conventions.permissions import currentrole_permission_required_view_function
@@ -25,8 +23,7 @@ from conventions.services.from_operation import (
 from core.stepper import Stepper
 
 
-class FromOperationBaseView(WaffleFlagMixin, LoginRequiredMixin, View):
-    waffle_flag = settings.FLAG_ADD_CONVENTION
+class FromOperationBaseView(LoginRequiredMixin, View):
     stepper: Stepper
     step_number: int
 
