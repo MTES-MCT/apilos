@@ -6,11 +6,11 @@ from typing import Any
 from celery import chain, shared_task
 from django.conf import settings
 from django.core.files.storage import default_storage
-from django.urls import reverse
 from waffle import switch_is_active
 from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
+from conventions.services.alertes import AlerteService
 from conventions.services.convention_generator import (
     PDFConversionError,
     generate_pdf,
@@ -19,14 +19,7 @@ from conventions.services.convention_generator import (
     get_tmp_local_path,
 )
 from conventions.services.file import ConventionFileService
-from conventions.services.utils import delete_action_alertes
-from conventions.templatetags.display_filters import (
-    display_gender_terminaison,
-    display_kind,
-)
 from core.services import EmailService, EmailTemplateID
-from siap.siap_client.client import SIAPClient
-from siap.siap_client.schemas import Alerte, Destinataire
 
 logger = logging.getLogger(__name__)
 
@@ -143,11 +136,11 @@ def task_send_email_to_bailleur(  # noqa: C901
         return
 
     if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        delete_action_alertes(convention, siap_credentials)
-        create_alertes_valide(
-            convention=convention,
-            siap_credentials=siap_credentials,
+        service = AlerteService(
+            convention=convention, siap_credentials=siap_credentials
         )
+        service.delete_action_alertes()
+        service.create_alertes_valide()
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 
@@ -171,49 +164,6 @@ def task_send_email_to_bailleur(  # noqa: C901
             },
             filepath=email_file_path,
         )
-
-
-def create_alertes_valide(convention, siap_credentials):
-    redirect_url = reverse("conventions:preview", args=[convention.uuid])
-
-    # Information notice to bailleurs
-    alerte = Alerte.from_convention(
-        convention=convention,
-        # Pas sûr on a mis information / action sur le doc
-        categorie_information="CATEGORIE_ALERTE_ACTION",
-        destinataires=[
-            Destinataire(role="INSTRUCTEUR", service="MO"),
-        ],
-        etiquette="CUSTOM",
-        etiquette_personnalisee=(
-            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
-        ),
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(),
-        **siap_credentials,
-    )
-
-    # Action notice to instructeurs
-    alerte = Alerte.from_convention(
-        convention=convention,
-        categorie_information="CATEGORIE_ALERTE_ACTION",
-        destinataires=[
-            Destinataire(role="INSTRUCTEUR", service="SG"),
-        ],
-        etiquette="CUSTOM",
-        etiquette_personnalisee=(
-            f"{display_kind(convention).capitalize()} validé{display_gender_terminaison(convention)} à signer"
-        ),
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(),
-        **siap_credentials,
-    )
 
 
 @shared_task()
