@@ -1,14 +1,12 @@
-import json
 from datetime import date
 from unittest import mock
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 import time_machine
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
-from django.urls import reverse
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.convention_form_dates import ConventionDateSignatureForm
@@ -19,242 +17,12 @@ from conventions.models import Convention
 from conventions.models.choices import ConventionStatut
 from conventions.services import recapitulatif, utils
 from conventions.services.utils import ReturnStatus
-from conventions.tasks import create_alertes_valide
 from core.tests.factories import ConventionFactory, LotFactory, ProgrammeFactory
 from programmes.models import Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient
 from users.models import User
 from users.type_models import EmailPreferences
-
-
-@pytest.mark.django_db
-def test_create_alertes_valide():
-    convention = ConventionFactory()
-    avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "user_login": 1}
-
-    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
-        mock_client = MagicMock()
-        mock_get_instance.return_value = mock_client
-        create_alertes_valide(
-            convention=convention,
-            siap_credentials=siap_credentials,
-        )
-        mock_client.create_alerte.assert_called()
-        payload_bailleur = json.loads(
-            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
-        )
-        assert payload_bailleur["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "MO"}
-        ]
-        assert (
-            payload_bailleur["etiquettePersonnalisee"] == "Convention validée à signer"
-        )
-        assert payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-
-        assert payload_bailleur["urlDirection"] == reverse(
-            "conventions:preview", args=[convention.uuid]
-        )
-
-        payload_instructeur = json.loads(
-            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
-        )
-        assert payload_instructeur["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "SG"}
-        ]
-        assert (
-            payload_instructeur["etiquettePersonnalisee"]
-            == "Convention validée à signer"
-        )
-        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-        assert payload_instructeur["urlDirection"] == reverse(
-            "conventions:preview", args=[convention.uuid]
-        )
-
-        create_alertes_valide(
-            convention=avenant,
-            siap_credentials=siap_credentials,
-        )
-        payload_bailleur = json.loads(
-            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
-        )
-        assert payload_bailleur["etiquettePersonnalisee"] == "Avenant validé à signer"
-        payload_instructeur = json.loads(
-            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
-        )
-        assert (
-            payload_instructeur["etiquettePersonnalisee"] == "Avenant validé à signer"
-        )
-
-
-@pytest.mark.django_db
-def test_create_alertes_instruction():
-    convention = ConventionFactory()
-    avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "user_login": 1}
-
-    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
-        mock_client = MagicMock()
-        mock_get_instance.return_value = mock_client
-        recapitulatif.create_alertes_instruction(
-            convention=convention, siap_credentials=siap_credentials
-        )
-        mock_client.create_alerte.assert_called()
-        payload_bailleur = json.loads(
-            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
-        )
-        assert payload_bailleur["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "MO"}
-        ]
-        assert payload_bailleur["etiquettePersonnalisee"] == "Convention en instruction"
-        assert (
-            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
-        )
-        assert payload_bailleur["urlDirection"] == reverse(
-            "conventions:recapitulatif", args=[convention.uuid]
-        )
-
-        payload_instructeur = json.loads(
-            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
-        )
-        assert payload_instructeur["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "SG"}
-        ]
-        assert payload_instructeur["etiquettePersonnalisee"] == "Convention à instruire"
-        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-        assert payload_instructeur["urlDirection"] == reverse(
-            "conventions:recapitulatif", args=[convention.uuid]
-        )
-
-        recapitulatif.create_alertes_instruction(
-            convention=avenant, siap_credentials=siap_credentials
-        )
-        payload_bailleur = json.loads(
-            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
-        )
-        assert payload_bailleur["etiquettePersonnalisee"] == "Avenant en instruction"
-        payload_instructeur = json.loads(
-            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
-        )
-        assert payload_instructeur["etiquettePersonnalisee"] == "Avenant à instruire"
-
-
-@pytest.mark.django_db
-def test_create_alertes_correction_from_instructeur():
-    convention = ConventionFactory()
-    avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "user_login": 1}
-
-    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
-        mock_client = MagicMock()
-        mock_get_instance.return_value = mock_client
-        recapitulatif.create_alertes_correction(
-            convention=convention,
-            siap_credentials=siap_credentials,
-            from_instructeur=True,
-        )
-        mock_client.create_alerte.assert_called()
-
-        payload_information = json.loads(
-            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
-        )
-        assert payload_information["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "SG"}
-        ]
-        assert (
-            payload_information["etiquettePersonnalisee"] == "Convention en correction"
-        )
-        assert (
-            payload_information["categorieInformation"]
-            == "CATEGORIE_ALERTE_INFORMATION"
-        )
-        assert payload_information["urlDirection"] == reverse(
-            "conventions:recapitulatif", args=[convention.uuid]
-        )
-
-        payload_action = json.loads(
-            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
-        )
-        assert payload_action["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "MO"}
-        ]
-        assert payload_action["etiquettePersonnalisee"] == "Convention à corriger"
-        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-        assert payload_action["urlDirection"] == reverse(
-            "conventions:recapitulatif", args=[convention.uuid]
-        )
-
-        recapitulatif.create_alertes_correction(
-            convention=avenant, siap_credentials=siap_credentials, from_instructeur=True
-        )
-        payload_information = json.loads(
-            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
-        )
-        assert payload_information["etiquettePersonnalisee"] == "Avenant en correction"
-        payload_action = json.loads(
-            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
-        )
-        assert payload_action["etiquettePersonnalisee"] == "Avenant à corriger"
-
-
-@pytest.mark.django_db
-def test_create_alertes_correction_from_bailleur():
-    convention = ConventionFactory()
-    avenant = ConventionFactory(parent_id=convention.id)
-    siap_credentials = {"habilitation_id": "001", "user_login": 1}
-
-    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
-        mock_client = MagicMock()
-        mock_get_instance.return_value = mock_client
-        recapitulatif.create_alertes_correction(
-            convention=convention,
-            siap_credentials=siap_credentials,
-            from_instructeur=False,
-        )
-        mock_client.create_alerte.assert_called()
-
-        payload_information = json.loads(
-            mock_client.create_alerte.mock_calls[0].kwargs["payload"]
-        )
-        assert payload_information["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "MO"}
-        ]
-        assert (
-            payload_information["etiquettePersonnalisee"] == "Convention en instruction"
-        )
-        assert (
-            payload_information["categorieInformation"]
-            == "CATEGORIE_ALERTE_INFORMATION"
-        )
-
-        payload_action = json.loads(
-            mock_client.create_alerte.mock_calls[1].kwargs["payload"]
-        )
-        assert payload_action["destinataires"] == [
-            {"role": "INSTRUCTEUR", "service": "SG"}
-        ]
-        assert (
-            payload_action["etiquettePersonnalisee"]
-            == "Convention à instruire à nouveau"
-        )
-        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
-
-        recapitulatif.create_alertes_correction(
-            convention=avenant,
-            siap_credentials=siap_credentials,
-            from_instructeur=False,
-        )
-        payload_information = json.loads(
-            mock_client.create_alerte.mock_calls[2].kwargs["payload"]
-        )
-        assert payload_information["etiquettePersonnalisee"] == "Avenant en instruction"
-        payload_action = json.loads(
-            mock_client.create_alerte.mock_calls[3].kwargs["payload"]
-        )
-        assert (
-            payload_action["etiquettePersonnalisee"] == "Avenant à instruire à nouveau"
-        )
 
 
 class ConventionRecapitulatifServiceTests(TestCase):
