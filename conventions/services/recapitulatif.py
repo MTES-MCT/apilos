@@ -23,7 +23,10 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import task_generate_and_send
-from conventions.templatetags.display_filters import display_kind
+from conventions.templatetags.display_filters import (
+    display_gender_terminaison,
+    display_kind,
+)
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
@@ -357,6 +360,27 @@ def collect_instructeur_emails(
             include_partial=True
         )
     return instructeur_emails, submitted
+
+
+def create_alertes_signed(convention: Convention, siap_credentials: dict[str, Any]):
+    redirect_url = reverse("conventions:preview", args=[convention.uuid])
+    alerte = Alerte.from_convention(
+        convention=convention,
+        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+        destinataires=[
+            Destinataire(role="INSTRUCTEUR", service="MO"),
+            Destinataire(role="INSTRUCTEUR", service="SG"),
+        ],
+        etiquette="CUSTOM",
+        etiquette_personnalisee=f"{display_kind(convention).capitalize()} "
+        f"signé{display_gender_terminaison(convention)}",
+        type_alerte="Changement de statut",
+        url_direction=redirect_url,
+    )
+
+    SIAPClient.get_instance().create_alerte(
+        payload=alerte.to_json(), **siap_credentials
+    )
 
 
 def create_alertes_instruction(
@@ -823,6 +847,13 @@ class ConventionUploadSignedService(ConventionService):
             self.convention.statut = ConventionStatut.SIGNEE.label
             self.convention.save()
             self.return_status = utils.ReturnStatus.SUCCESS
+
+            if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                siap_credentials = get_siap_credentials_from_request(self.request)
+                utils.delete_action_alertes(self.convention, siap_credentials)
+                create_alertes_signed(
+                    convention=self.convention, siap_credentials=siap_credentials
+                )
 
         return {
             "success": self.return_status,

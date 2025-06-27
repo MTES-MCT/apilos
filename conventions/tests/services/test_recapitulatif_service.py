@@ -29,6 +29,39 @@ from users.type_models import EmailPreferences
 
 
 @pytest.mark.django_db
+def test_create_alertes_signed():
+    convention = ConventionFactory()
+    avenant = ConventionFactory(parent_id=convention.id)
+    siap_credentials = {"habilitation_id": "001", "user_login": 1}
+
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        recapitulatif.create_alertes_signed(
+            convention=convention,
+            siap_credentials=siap_credentials,
+        )
+        mock_client.create_alerte.assert_called_once()
+        payload = json.loads(mock_client.create_alerte.mock_calls[0].kwargs["payload"])
+        assert payload["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "MO"},
+            {"role": "INSTRUCTEUR", "service": "SG"},
+        ]
+        assert payload["etiquettePersonnalisee"] == "Convention signée"
+        assert payload["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
+
+        assert payload["urlDirection"] == reverse(
+            "conventions:preview", args=[convention.uuid]
+        )
+
+        recapitulatif.create_alertes_signed(
+            convention=avenant, siap_credentials=siap_credentials
+        )
+        payload = json.loads(mock_client.create_alerte.mock_calls[1].kwargs["payload"])
+        assert payload["etiquettePersonnalisee"] == "Avenant signé"
+
+
+@pytest.mark.django_db
 def test_create_alertes_valide():
     convention = ConventionFactory()
     avenant = ConventionFactory(parent_id=convention.id)
