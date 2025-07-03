@@ -228,6 +228,8 @@ def delete_action_alertes(convention, siap_credentials, destinataire=None):
                 )
             except SIAPException as e:
                 logger.warning(e)
+
+
 CONVENTION_EXPORT_MAX_ROWS = 5000
 
 
