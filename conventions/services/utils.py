@@ -236,6 +236,7 @@ def get_convention_export_excel_header(request):
         "Année de gestion",
         "Numéro d'opération SIAP",
         "Numéro de convention",
+        "Numéro d'avenant",
         "Commune",
         "Code postal",
         "Nom de l'opération",
@@ -252,62 +253,45 @@ def get_convention_export_excel_header(request):
 
 
 def get_convention_export_excel_row(request, convention):
-    row = []
-    # 1. Année de gestion
-    row.append(
-        convention.programme.annee_gestion_programmation if convention.programme else ""
-    )
-    # 2. Numéro d'opération SIAP
-    row.append(convention.programme.numero_operation if convention.programme else "")
-    # 3. Numéro de convention
-    if convention.numero and not convention.parent:
-        row.append(convention.numero)
-    elif convention.parent:
-        row.append(convention.parent.numero)
-    else:
-        row.append("")
-    # 4. Si avenant : numéro
-    # 5. Commune
-    row.append(convention.programme.ville if convention.programme else "")
-    # 6. Code postal
-    row.append(convention.programme.code_postal if convention.programme else "")
-    # 7. Nom de l'opération
-    row.append(convention.programme.nom if convention.programme else "")
-    # 8. Bailleur OR instructeur
-    if request.user.is_instructeur:
-        row.append(
+    return [
+        convention.programme.annee_gestion_programmation,  # 1. Année de gestion
+        convention.programme.numero_operation,  # 2. Numéro d'opération SIAP
+        (
+            convention.numero
+            if convention.numero and not convention.parent
+            else (convention.parent.numero if convention.parent else "")
+        ),  # 3. Numéro de convention
+        convention.numero if convention.parent else "",  # 4. Numéro d'avenant
+        convention.programme.ville,  # 5. Commune
+        convention.programme.code_postal,  # 6. Code postal
+        convention.programme.nom,  # 7. Nom de l'opération
+        (
             convention.programme.administration.nom
-            if convention.programme.administration
+            if request.user.is_instructeur
+            else convention.programme.bailleur.nom
+        ),  # 8. Instructeur or Bailleur
+        convention.lot.get_financement_display(),  # 9. Type de financement
+        convention.lot.nb_logements,  # 10. Nombre de logements
+        convention.programme.nature_logement,  # 11. Nature de l'opération dans programme
+        (
+            convention.televersement_convention_signee_le.strftime("%d/%m/%Y")
+            if convention.televersement_convention_signee_le
+            else "-"
+        ),  # 12. Date de signature
+        (
+            convention.lot.logements.first().loyer_par_metre_carre
+            if convention.lot.logements.first()
             else ""
-        )
-    else:
-        row.append(
-            convention.programme.bailleur.nom if convention.programme.bailleur else ""
-        )
-    # 9. Type de financement
-    row.append(convention.lot.get_financement_display())
-    # 10. Nombre de logements
-    row.append(convention.lot.nb_logements)
-    # 11. Nature de l'opération dans programe
-    row.append(convention.programme.nature_logement if convention.programme else "")
-    # 12. Date de signature
-    signature = convention.televersement_convention_signee_le
-    formatted_signature_date = signature.strftime("%d/%m/%Y") if signature else "-"
-    row.append(formatted_signature_date)
-    # 13. Montant du loyer au m2
-    logement = convention.lot.logements.first()
-    row.append(logement.loyer_par_metre_carre if logement else 0)
-    # 14. Livraison
-    livraison = convention.programme.date_achevement_compile
-    row.append(livraison.strftime("%d/%m/%Y") if livraison else "-")
-
-    return row
+        ),  # 13. Montant du loyer au m2
+        (
+            convention.programme.date_achevement_compile.strftime("%d/%m/%Y")
+            if convention.programme.date_achevement_compile
+            else "-"
+        ),  # 14. Livraison
+    ]
 
 
 def create_convention_export_excel(request, conventions, filters=None):
-    import logging
-
-    logging.warning("Fetched %d conventions", conventions.count())
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Conventions"

@@ -115,6 +115,7 @@ def test_get_convention_export_excel_header():
         "Année de gestion",
         "Numéro d'opération SIAP",
         "Numéro de convention",
+        "Numéro d'avenant",
         "Commune",
         "Code postal",
         "Nom de l'opération",
@@ -133,8 +134,8 @@ def test_get_convention_export_excel_header():
     request.user = user
     header = get_convention_export_excel_header(request)
 
-    assert header[6] == "Bailleur"
-    assert len(header) == 13
+    assert header[7] == "Bailleur"
+    assert len(header) == 14
 
 
 @pytest.mark.django_db
@@ -154,29 +155,30 @@ def test_get_convention_export_excel_row():
 
     row = get_convention_export_excel_row(request, convention)
 
-    assert len(row) == 13
-
-    assert row[0] == convention.programme.annee_gestion_programmation
-    assert row[1] == convention.programme.numero_operation
-    assert row[2] == convention.numero
-    assert row[3] == convention.programme.ville
-    assert row[4] == convention.programme.code_postal
-    assert row[5] == convention.programme.nom
-    assert row[6] == convention.programme.administration.nom
-    assert row[7] == convention.lot.get_financement_display()
-    assert row[8] == convention.lot.nb_logements
-    assert row[9] == convention.programme.nature_logement
-    assert convention.televersement_convention_signee_le is None and row[10] == "-"
-    assert row[11] == logement.loyer_par_metre_carre
-    assert row[12] == convention.programme.date_achevement_compile.strftime("%d/%m/%Y")
+    assert row == [
+        convention.programme.annee_gestion_programmation,
+        convention.programme.numero_operation,
+        convention.numero,
+        convention.numero if convention.parent else "",
+        convention.programme.ville,
+        convention.programme.code_postal,
+        convention.programme.nom,
+        convention.programme.administration.nom,
+        convention.lot.get_financement_display(),
+        convention.lot.nb_logements,
+        convention.programme.nature_logement,
+        "-",
+        logement.loyer_par_metre_carre,
+        convention.programme.date_achevement_compile.strftime("%d/%m/%Y"),
+    ]
 
     user.is_instructeur = False
     request.user = user
     row = get_convention_export_excel_row(request, convention)
 
-    assert len(row) == 13
+    assert len(row) == 14
 
-    assert row[6] == convention.programme.bailleur.nom
+    assert row[7] == convention.programme.bailleur.nom
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):
