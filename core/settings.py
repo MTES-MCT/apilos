@@ -20,6 +20,7 @@ from typing import cast
 import decouple
 import dj_database_url
 import sentry_sdk
+from csp.constants import NONCE, SELF
 from decouple import Config, RepositoryEnv
 from django.core.exceptions import PermissionDenied
 from sentry_sdk.integrations.celery import CeleryIntegration
@@ -156,6 +157,7 @@ INSTALLED_APPS = [
     "hijack.contrib.admin",
     "django_celery_results",
     "waffle",
+    "csp",
 ]
 
 if ENVIRONMENT == "development":
@@ -379,58 +381,53 @@ if ENVIRONMENT != "development":
 CSRF_COOKIE_SAMESITE = "Strict"
 SESSION_COOKIE_SAMESITE = "Lax"
 
-# https://django-csp.readthedocs.io/en/latest/configuration.html
-CSP_DEFAULT_SRC = "'none'"
-CSP_SCRIPT_SRC = (
-    "https://stats.data.gouv.fr/piwik.js",
-    "'self'",
-    "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
-    "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
-    "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
-    # Convention > récapitilatif > manage type I and type II options
-    "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
-    "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",  # ???
-    # Convention > Récapitulatif > Comment type1and2
-    "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
-    # Swagger UI
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
-)
-CSP_IMG_SRC = (
-    "'self'",
-    "data:",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
-)
-CSP_OBJECT_SRC = "'none'"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
-CSP_FRAME_SRC = (
-    "'self'",
-    "https://www.dailymotion.com/embed/video/x8fkp4y",
-    "https://www.dailymotion.com/embed/video/x8frr91",
-    # Metabase
-    "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
-)
 
-CSP_FONT_SRC = (
-    "'self'",
-    "data:",
-)
-CSP_CONNECT_SRC = (
-    "'self'",
-    "https://stats.data.gouv.fr/piwik.php",
-)
-CSP_STYLE_SRC = (
-    "'self'",
-    "https://code.highcharts.com/css/highcharts.css",
-    "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
-    "'unsafe-inline'",
-)
-CSP_MANIFEST_SRC = "'self'"
-CSP_INCLUDE_NONCE_IN = [
-    "script-src",
-]
-CSP_EXCLUDE_URL_PREFIXES = ("/explorer",)
+# https://django-csp.readthedocs.io/en/latest/configuration.html
+CONTENT_SECURITY_POLICY = {
+    "DIRECTIVES": {
+        "connect-src": (SELF, "https://stats.data.gouv.fr/piwik.php"),
+        "default-src": "'none'",
+        "font-src": (SELF, "data:"),
+        "frame-src": (
+            SELF,
+            "https://www.dailymotion.com/embed/video/x8fkp4y",
+            "https://www.dailymotion.com/embed/video/x8frr91",
+            "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
+        ),
+        "img-src": (
+            SELF,
+            "data:",
+            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
+        ),
+        "manifest-src": SELF,
+        "object-src": "'none'",
+        "script-src": (
+            "https://stats.data.gouv.fr/piwik.js",
+            SELF,
+            NONCE,
+            "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
+            "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
+            "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
+            # Convention > récapitilatif > manage type I and type II options
+            "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
+            "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",
+            # Convention > Récapitulatif > Comment type1and2
+            "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
+            # Swagger UI
+            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
+            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
+        ),
+        "style-src": (
+            SELF,
+            "https://code.highcharts.com/css/highcharts.css",
+            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
+            "'unsafe-inline'",
+        ),
+    },
+    "EXCLUDE_URL_PREFIXES": ("/explorer",),
+}
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
