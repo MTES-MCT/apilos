@@ -8,7 +8,6 @@ from django.db import models
 from django.db.models import OuterRef, Q, QuerySet, Subquery
 from django.db.models.functions import Coalesce, Substr
 from simple_history.models import HistoricalRecords
-from waffle import switch_is_active
 
 from apilos_settings.models import Departement
 from bailleurs.models import Bailleur
@@ -289,29 +288,26 @@ class User(AbstractUser):
             id=programme.bailleur_id
         )
 
-        if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
-            # This block aims to determine the effective bailleur_id for the conventions
-            # If there are no avenants, the effective bailleur_id is from the convention programme
-            # If there are avenants, the effective bailleur_id is the programme bailleur_id
-            # from the most recent avenant
-            avenants_bailleur_id = (
-                Convention.objects.filter(
-                    parent_id=Coalesce(obj.parent_id, obj.id),
-                    statut__in=[
-                        ConventionStatut.CORRECTION.label,
-                        ConventionStatut.A_SIGNER.label,
-                        ConventionStatut.SIGNEE.label,
-                    ],
-                )
-                .order_by("-cree_le")
-                .values("programme__bailleur_id")
-                .first()
+        # This block aims to determine the effective bailleur_id for the conventions
+        # If there are no avenants, the effective bailleur_id is from the convention programme
+        # If there are avenants, the effective bailleur_id is the programme bailleur_id
+        # from the most recent avenant
+        avenants_bailleur_id = (
+            Convention.objects.filter(
+                parent_id=Coalesce(obj.parent_id, obj.id),
+                statut__in=[
+                    ConventionStatut.CORRECTION.label,
+                    ConventionStatut.A_SIGNER.label,
+                    ConventionStatut.SIGNEE.label,
+                ],
             )
+            .order_by("-cree_le")
+            .values("programme__bailleur_id")
+            .first()
+        )
 
-            if avenants_bailleur_id is not None:
-                effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
-            else:
-                effective_bailleur_id = programme.bailleur_id
+        if avenants_bailleur_id is not None:
+            effective_bailleur_id = avenants_bailleur_id["programme__bailleur_id"]
         else:
             effective_bailleur_id = programme.bailleur_id
 
@@ -614,38 +610,35 @@ class User(AbstractUser):
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
 
-            if switch_is_active(settings.SWITCH_VISIBILITY_AVENANT_BAILLEUR):
-                # This block aims to determine the effective bailleur_id for the conventions
-                # If there are no avenants, the effective bailleur_id is from the convention programme
-                # If there are avenants, the effective bailleur_id is the programme bailleur_id
-                # from the most recent avenant
-                avenants_bailleur_id_subquery = (
-                    convs.filter(
-                        parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
-                        statut__in=[
-                            ConventionStatut.CORRECTION.label,
-                            ConventionStatut.A_SIGNER.label,
-                            ConventionStatut.SIGNEE.label,
-                        ],
-                    )
-                    .order_by("-cree_le")
-                    .values("programme__bailleur_id")
+            # This block aims to determine the effective bailleur_id for the conventions
+            # If there are no avenants, the effective bailleur_id is from the convention programme
+            # If there are avenants, the effective bailleur_id is the programme bailleur_id
+            # from the most recent avenant
+            avenants_bailleur_id_subquery = (
+                convs.filter(
+                    parent_id=Coalesce(OuterRef("parent_id"), OuterRef("id")),
+                    statut__in=[
+                        ConventionStatut.CORRECTION.label,
+                        ConventionStatut.A_SIGNER.label,
+                        ConventionStatut.SIGNEE.label,
+                    ],
                 )
-                bailleur_id_subquery = convs.filter(id=OuterRef("id")).values(
-                    "programme__bailleur_id"
+                .order_by("-cree_le")
+                .values("programme__bailleur_id")
+            )
+            bailleur_id_subquery = convs.filter(id=OuterRef("id")).values(
+                "programme__bailleur_id"
+            )
+            convs = convs.annotate(
+                effective_bailleur_id=Coalesce(
+                    Subquery(avenants_bailleur_id_subquery[:1]),
+                    Subquery(bailleur_id_subquery[:1]),
                 )
-                convs = convs.annotate(
-                    effective_bailleur_id=Coalesce(
-                        Subquery(avenants_bailleur_id_subquery[:1]),
-                        Subquery(bailleur_id_subquery[:1]),
-                    )
-                )
+            )
 
-                # Then we filter the conventions so the effective bailleur_id matches
-                # the bailleur ids this bailleur can see
-                convs = convs.filter(effective_bailleur_id__in=self._bailleur_ids())
-            else:
-                convs = convs.filter(programme__bailleur_id__in=self._bailleur_ids())
+            # Then we filter the conventions so the effective bailleur_id matches
+            # the bailleur ids this bailleur can see
+            convs = convs.filter(effective_bailleur_id__in=self._bailleur_ids())
 
             if self.id and self.filtre_departements.exists():
                 convs = convs.annotate(
