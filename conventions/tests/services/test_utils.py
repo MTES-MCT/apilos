@@ -6,11 +6,9 @@ from django.test import RequestFactory, SimpleTestCase
 from unittest_parametrize import ParametrizedTestCase, parametrize
 
 from conventions.models import ConventionStatut
-from conventions.services.utils import convention_upload_filename, delete_action_alertes
-from core.tests.factories import ConventionFactory
-from siap.siap_client.client import SIAPClient
 from conventions.services.utils import (
     convention_upload_filename,
+    delete_action_alertes,
     get_convention_export_excel_header,
     get_convention_export_excel_row,
 )
@@ -19,7 +17,9 @@ from core.tests.factories import (
     LogementFactory,
     LotFactory,
 )
+from siap.siap_client.client import SIAPClient
 from users.tests.factories import UserFactory
+
 
 @pytest.mark.django_db
 def test_delete_action_alertes():
@@ -159,7 +159,7 @@ def test_get_convention_export_excel_row():
         convention.programme.annee_gestion_programmation,
         convention.programme.numero_operation,
         convention.numero,
-        convention.numero if convention.parent else "",
+        "",
         convention.programme.ville,
         convention.programme.code_postal,
         convention.programme.nom,
