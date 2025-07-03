@@ -15,16 +15,21 @@
                                         Réinitialiser la recherche
                                     </a>
                                 </div>
-                                <form  action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
-                                    <button
-                                        id="export-button"
-                                        type="submit"
-                                        class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
-                                        onsubmit="attachFilterParams()"
-                                        {% if filtered_conventions_count > 1000 %} disabled {% endif %}
+                                <form action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
+                                    <div
+                                        title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
+                                        style="display: inline-block;"
                                     >
-                                        Exporter la liste
-                                    </button>
+                                        <button
+                                            id="export-button"
+                                            type="submit"
+                                            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                            onsubmit="attachFilterParams()"
+                                            {% if filtered_conventions_count > convention_export_max_rows %} disabled {% endif %}
+                                        >
+                                            Exporter la liste
+                                        </button>
+                                    </div>
                                 </form>
                             </div>
                         {% endif %}

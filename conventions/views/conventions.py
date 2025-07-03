@@ -54,6 +54,7 @@ from conventions.services.recapitulatif import (
 )
 from conventions.services.search import ConventionSearchService
 from conventions.services.utils import (
+    CONVENTION_EXPORT_MAX_ROWS,
     ReturnStatus,
     base_convention_response_error,
     create_convention_export_excel,
@@ -218,6 +219,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionSearchMixin, View):
             ),
             "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
+            "convention_export_max_rows": CONVENTION_EXPORT_MAX_ROWS,
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (

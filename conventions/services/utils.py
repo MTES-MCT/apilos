@@ -228,6 +228,9 @@ def delete_action_alertes(convention, siap_credentials, destinataire=None):
                 )
             except SIAPException as e:
                 logger.warning(e)
+CONVENTION_EXPORT_MAX_ROWS = 5000
+
+
 def get_convention_export_excel_header(request):
     headers = [
         "Année de gestion",
@@ -312,7 +315,7 @@ def create_convention_export_excel(request, conventions, filters=None):
 
     for cell in ws[1]:
         cell.font = Font(bold=True)
-    for convention in conventions[:1000]:
+    for convention in conventions[:CONVENTION_EXPORT_MAX_ROWS]:
         ws.append(get_convention_export_excel_row(request, convention))
 
     return wb
