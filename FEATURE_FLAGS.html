@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Plan de continuité d’activité / Plan de reprise d’activité" href="PCA_PRA.html" /><link rel="prev" title="Module commentaires" href="COMMENTAIRES.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="prev" title="Administration et back office" href="ADMIN.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Alertes SIAP - Documentation APiLos</title>
+        <title>Utilisation des feature flags par APiLos - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -178,7 +178,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -205,12 +205,12 @@
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
 <li class="toctree-l1"><a class="reference internal" href="RECHERCHE.html">Recherche de conventions</a></li>
 <li class="toctree-l1"><a class="reference internal" href="COMMENTAIRES.html">Module commentaires</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Alertes SIAP</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ALERTES.html">Alertes SIAP</a></li>
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
-<li class="toctree-l1"><a class="reference internal" href="FEATURE_FLAGS.html">Utilisation des feature flags par APiLos</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Utilisation des feature flags par APiLos</a></li>
 </ul>
 
 </div>
@@ -231,7 +231,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/ALERTES.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/FEATURE_FLAGS.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -245,114 +245,72 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <div class="toctree-wrapper compound">
-</div>
-<section id="alertes-siap">
-<h1>Alertes SIAP<a class="headerlink" href="#alertes-siap" title="Lien vers cette rubrique">¶</a></h1>
-<section id="contexte">
-<h2>Contexte<a class="headerlink" href="#contexte" title="Lien vers cette rubrique">¶</a></h2>
-<p>Historiquement, APiLos envoyait des emails aux bailleurs et instructeurs pour les informer des changements de statut sur les conventions.</p>
-<p>Ces emails sont remplacés par les alertes SIAP.</p>
-<p>APiLos crée et supprime des alertes dans le SIAP en appelant l’API du SIAP.</p>
+          <section id="utilisation-des-feature-flags-par-apilos">
+<h1>Utilisation des feature flags par APiLos<a class="headerlink" href="#utilisation-des-feature-flags-par-apilos" title="Lien vers cette rubrique">¶</a></h1>
+<p>Les feature flags permettent d’activer ou de désactiver des fonctionnalités du projet directement en production sans avoir à faire un nouveau déploiement.</p>
+<section id="cas-d-utilisation">
+<h2>Cas d’utilisation<a class="headerlink" href="#cas-d-utilisation" title="Lien vers cette rubrique">¶</a></h2>
+<section id="integration-progressive">
+<h3>Intégration progressive<a class="headerlink" href="#integration-progressive" title="Lien vers cette rubrique">¶</a></h3>
+<p>Les feature flags permettent des mises en production régulières lors du développement d’une grosse fonctionnalité, sans attendre que celle-ci soit terminée.</p>
+<p>Cela permet une intégration du code progressive et évite les mises en production risquées.</p>
 </section>
-<section id="presentation-des-alertes">
-<h2>Présentation des alertes<a class="headerlink" href="#presentation-des-alertes" title="Lien vers cette rubrique">¶</a></h2>
-<section id="etiquette">
-<h3>Etiquette<a class="headerlink" href="#etiquette" title="Lien vers cette rubrique">¶</a></h3>
-<p>L’étiquette de l’alerte doit faire moins de 50 caractères, sinon l’API SIAP refuse la création. Elle sera affichée à l’utilisateur dans la liste de ses alertes.</p>
-<p>Les étiquettes listées dans le tableau ci-après contiennent le terme « convention », il est en fait dépendant de l’objet manipulé, et deviendra « avenant » dans le cas d’un avenant.</p>
+<section id="fonctionnalite-risquee">
+<h3>Fonctionnalité risquée<a class="headerlink" href="#fonctionnalite-risquee" title="Lien vers cette rubrique">¶</a></h3>
+<p>Certaines nouvelles fonctionalités sont difficiles à tester hors conditions réelles, par exemple la modification de requêtes SQL pouvant entraîner des problèmes de performance.</p>
+<p>Un feature flag permet de diminuer le risque d’interruption de service, grâce au contrôle du moment exact d’activation et la possibilité d’une désactivation immédiate.</p>
 </section>
-<section id="type">
-<h3>Type<a class="headerlink" href="#type" title="Lien vers cette rubrique">¶</a></h3>
-<p>Le type d’une alerte peut-être information ou action. Les alertes information n’ont pas besoin d’être supprimées. Celles de type action doivent être supprimées quand elles deviennent caduques. A un changement de statut de la convention, on supprime toutes les alertes de type action existentes.</p>
-</section>
-<section id="destinataire">
-<h3>Destinataire<a class="headerlink" href="#destinataire" title="Lien vers cette rubrique">¶</a></h3>
-<p>APiLos précise au SIAP à qui est destiné une alerte concernant une convention.
-Nous choisissons toujours d’envoyer les notifications aux instructeurs, côté bailleur comme côté administration.
-Les deux choix de destinataires sont :</p>
-<ul class="simple">
-<li><p>MO : maitrise d’ouvrage, que nous appelons bailleur sur APiLos. La notification sera envoyée aux instructeurs du bailleur de la convention</p></li>
-<li><p>SG : service gestionnaire, que nous appelons administration sur APiLos. La notification sera envoyée aux instructeurs de l’administration de la convention.</p></li>
-</ul>
-</section>
-<section id="url-de-redirection">
-<h3>URL de redirection<a class="headerlink" href="#url-de-redirection" title="Lien vers cette rubrique">¶</a></h3>
-<p>APiLos fournit aussi une url de redirection pour que l’utilisateur soit redirigé sur la convention lorsqu’il clique sur l’alerte. Les alertes renvoient au récapitulatif en général, ou en preview pour les conventions à signer.</p>
+<section id="beta-testing">
+<h3>Beta testing<a class="headerlink" href="#beta-testing" title="Lien vers cette rubrique">¶</a></h3>
+<p>Un flag peut-être activé pour un sous-ensemble des utilisateurs, permettant de tester des fonctionnalités avant de les ouvrir à l’ensemble des utilisateurs.</p>
 </section>
 </section>
-<section id="liste-des-alertes-existantes">
-<h2>Liste des alertes existantes<a class="headerlink" href="#liste-des-alertes-existantes" title="Lien vers cette rubrique">¶</a></h2>
+<section id="implementation">
+<h2>Implémentation<a class="headerlink" href="#implementation" title="Lien vers cette rubrique">¶</a></h2>
+<p>Nous utilisons la librairie <code class="docutils literal notranslate"><span class="pre">django-waffle</span></code> pour l’implémentation des feature flags. Elle propose des switchs activables pour l’ensemble du site via l’admin, ou des flags activables pour des utilisateurs en particulier.</p>
+<p>https://waffle.readthedocs.io/en/stable</p>
+</section>
+<section id="cycle-de-vie-des-flags">
+<h2>Cycle de vie des flags<a class="headerlink" href="#cycle-de-vie-des-flags" title="Lien vers cette rubrique">¶</a></h2>
+<p>Nous n’avons pas de protocole en place pour supprimer un feature flag. Il peut être intéressant de créer un ticket de suppression du flag dans le backlog à chaque fois qu’on crée un nouveau flag, pour anticiper sa suppression.</p>
+<p>Un flag n’a pas vocation à rester dans le code après son activation, il peut être supprimé quelques jours ou semaines après.</p>
+</section>
+<section id="feature-flags-du-projet">
+<h2>Feature flags du projet<a class="headerlink" href="#feature-flags-du-projet" title="Lien vers cette rubrique">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Etiquette</p></th>
-<th class="head"><p>Destinataire</p></th>
-<th class="head"><p>Déclencheur (statut de départ -&gt; statut final)</p></th>
-<th class="head"><p>Type (action / information)</p></th>
+<tr class="row-odd"><th class="head"><p>Nom</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p></p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Convention en instruction</p></td>
-<td><p>MO</p></td>
-<td><p>1. Projet -&gt; 2. Instruction requise</p></td>
-<td><p>Information</p></td>
+<tr class="row-even"><td><p>SWITCH_VISIBILITY_AVENANT_BAILLEUR</p></td>
+<td><p>Switch</p></td>
+<td><p>Détermine la visiblité des conventions en fonction des avenants bailleur</p></td>
 </tr>
-<tr class="row-odd"><td><p>Convention à instruire</p></td>
-<td><p>SG</p></td>
-<td><p>1. Projet -&gt; 2. Instruction requise</p></td>
-<td><p>Action</p></td>
+<tr class="row-odd"><td><p>FLAG_ADD_CONVENTION</p></td>
+<td><p>Flag</p></td>
+<td><p>Active l’ajout simplifié de convention</p></td>
 </tr>
-<tr class="row-even"><td><p>Convention à corriger</p></td>
-<td><p>MO</p></td>
-<td><p>2. Instruction requise -&gt; 3. Corrections requises</p></td>
-<td><p>Action</p></td>
+<tr class="row-even"><td><p>SWITCH_SIAP_ALERTS_ON</p></td>
+<td><p>Switch</p></td>
+<td><p>Active la création d’alertes lors des changements de statuts de convention</p></td>
 </tr>
-<tr class="row-odd"><td><p>Convention en correction</p></td>
-<td><p>SG</p></td>
-<td><p>2. Instruction requise -&gt; 3. Corrections requises</p></td>
-<td><p>Information</p></td>
-</tr>
-<tr class="row-even"><td><p>Convention validée à signer</p></td>
-<td><p>MO</p></td>
-<td><p>2. Instruction requise -&gt; 4. A signer</p></td>
-<td><p>Action</p></td>
-</tr>
-<tr class="row-odd"><td><p>Convention validée à signer</p></td>
-<td><p>SG</p></td>
-<td><p>2. Instruction requise -&gt; 4. A signer</p></td>
-<td><p>Action</p></td>
-</tr>
-<tr class="row-even"><td><p>Convention en instruction</p></td>
-<td><p>MO</p></td>
-<td><p>3. Corrections requises -&gt; 2. Instruction requise</p></td>
-<td><p>Information</p></td>
-</tr>
-<tr class="row-odd"><td><p>Convention à instruire à nouveau</p></td>
-<td><p>SG</p></td>
-<td><p>3. Corrections requises -&gt; 2. Instruction requise</p></td>
-<td><p>Action</p></td>
-</tr>
-<tr class="row-even"><td><p>Virus détecté sur un document</p></td>
-<td><p>MO et SG</p></td>
-<td><p>Téléversement d’un document vérollé</p></td>
-<td><p>Information</p></td>
+<tr class="row-odd"><td><p>SWITCH_TRANSACTIONAL_EMAILS_OFF</p></td>
+<td><p>Switch</p></td>
+<td><p>Désactive l’envoi d’emails lors des changements de statuts de convention</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-</section>
-<section id="utilisation-de-l-api-du-siap">
-<h2>Utilisation de l’API du SIAP<a class="headerlink" href="#utilisation-de-l-api-du-siap" title="Lien vers cette rubrique">¶</a></h2>
-<p>Le <code class="docutils literal notranslate"><span class="pre">SIAPClient</span></code> contient le code qui permet d’appeler l’API du SIAP.
-Nous utilisons <code class="docutils literal notranslate"><span class="pre">create_alerte</span></code> pour la création d’alertes, et <code class="docutils literal notranslate"><span class="pre">list_convention_alertes</span></code> puis <code class="docutils literal notranslate"><span class="pre">delete_alerte</span></code> pour la suppression.</p>
-<p>Pour le debug, <code class="docutils literal notranslate"><span class="pre">list_convention_alertes</span></code> peut-être appelée via un shell pour vérifier les alertes existantes sur une convention.</p>
 </section>
 </section>
 
@@ -361,23 +319,15 @@ Nous utilisons <code class="docutils literal notranslate"><span class="pre">crea
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="PCA_PRA.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Plan de continuité d’activité / Plan de reprise d’activité</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="COMMENTAIRES.html">
+          
+          <a class="prev-page" href="ADMIN.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Module commentaires</div>
+                <div class="title">Administration et back office</div>
                 
               </div>
             </a>
@@ -399,8 +349,35 @@ Nous utilisons <code class="docutils literal notranslate"><span class="pre">crea
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Utilisation des feature flags par APiLos</a><ul>
+<li><a class="reference internal" href="#cas-d-utilisation">Cas d’utilisation</a><ul>
+<li><a class="reference internal" href="#integration-progressive">Intégration progressive</a></li>
+<li><a class="reference internal" href="#fonctionnalite-risquee">Fonctionnalité risquée</a></li>
+<li><a class="reference internal" href="#beta-testing">Beta testing</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#implementation">Implémentation</a></li>
+<li><a class="reference internal" href="#cycle-de-vie-des-flags">Cycle de vie des flags</a></li>
+<li><a class="reference internal" href="#feature-flags-du-projet">Feature flags du projet</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
