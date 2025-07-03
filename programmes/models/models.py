@@ -407,6 +407,24 @@ class ReferenceCadastrale(models.Model):
     def __str__(self):
         return f"{self.section} - {self.numero} - {self.lieudit}"
 
+    def clone(
+        self, programme: Programme, **kwargs: dict[str, Any]
+    ) -> "ReferenceCadastrale":
+        ref_cadatrale_fields = (
+            model_to_dict(
+                self,
+                exclude=[
+                    "uuid",
+                    "id",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            | {"programme": programme}
+            | kwargs
+        )
+        return ReferenceCadastrale.objects.create(**ref_cadatrale_fields)
+
 
 class RepartitionSurface(models.Model):
     """
