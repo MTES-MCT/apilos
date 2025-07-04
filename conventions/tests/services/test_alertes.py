@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from django.urls import reverse
 
-from conventions.services.alertes import AlerteService
+from conventions.services.alertes import ALERTE_CATEGORY_MAPPING, AlerteService
 from core.tests.factories import ConventionFactory
 from siap.siap_client.client import SIAPClient
 
@@ -42,7 +42,8 @@ def test_create_alertes_instruction(alerte_service, avenant_alerte_service):
         ]
         assert payload_bailleur["etiquettePersonnalisee"] == "Convention en instruction"
         assert (
-            payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
+            payload_bailleur["categorieInformation"]
+            == ALERTE_CATEGORY_MAPPING["information"]
         )
         assert payload_bailleur["urlDirection"] == reverse(
             "conventions:recapitulatif", args=[alerte_service.convention.uuid]
@@ -55,7 +56,10 @@ def test_create_alertes_instruction(alerte_service, avenant_alerte_service):
             {"role": "INSTRUCTEUR", "service": "SG"}
         ]
         assert payload_instructeur["etiquettePersonnalisee"] == "Convention à instruire"
-        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert (
+            payload_instructeur["categorieInformation"]
+            == ALERTE_CATEGORY_MAPPING["action"]
+        )
         assert payload_instructeur["urlDirection"] == reverse(
             "conventions:recapitulatif", args=[alerte_service.convention.uuid]
         )
@@ -92,7 +96,7 @@ def test_create_alertes_correction_from_instructeur(
         )
         assert (
             payload_information["categorieInformation"]
-            == "CATEGORIE_ALERTE_INFORMATION"
+            == ALERTE_CATEGORY_MAPPING["information"]
         )
         assert payload_information["urlDirection"] == reverse(
             "conventions:recapitulatif", args=[alerte_service.convention.uuid]
@@ -105,7 +109,9 @@ def test_create_alertes_correction_from_instructeur(
             {"role": "INSTRUCTEUR", "service": "MO"}
         ]
         assert payload_action["etiquettePersonnalisee"] == "Convention à corriger"
-        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert (
+            payload_action["categorieInformation"] == ALERTE_CATEGORY_MAPPING["action"]
+        )
         assert payload_action["urlDirection"] == reverse(
             "conventions:recapitulatif", args=[alerte_service.convention.uuid]
         )
@@ -142,7 +148,7 @@ def test_create_alertes_correction_from_bailleur(
         )
         assert (
             payload_information["categorieInformation"]
-            == "CATEGORIE_ALERTE_INFORMATION"
+            == ALERTE_CATEGORY_MAPPING["information"]
         )
 
         payload_action = json.loads(
@@ -155,7 +161,9 @@ def test_create_alertes_correction_from_bailleur(
             payload_action["etiquettePersonnalisee"]
             == "Convention à instruire à nouveau"
         )
-        assert payload_action["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert (
+            payload_action["categorieInformation"] == ALERTE_CATEGORY_MAPPING["action"]
+        )
 
         avenant_alerte_service.create_alertes_correction(from_instructeur=False)
         payload_information = json.loads(
@@ -186,7 +194,10 @@ def test_create_alertes_valide(alerte_service, avenant_alerte_service):
         assert (
             payload_bailleur["etiquettePersonnalisee"] == "Convention validée à signer"
         )
-        assert payload_bailleur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert (
+            payload_bailleur["categorieInformation"]
+            == ALERTE_CATEGORY_MAPPING["action"]
+        )
 
         assert payload_bailleur["urlDirection"] == reverse(
             "conventions:preview", args=[alerte_service.convention.uuid]
@@ -202,7 +213,10 @@ def test_create_alertes_valide(alerte_service, avenant_alerte_service):
             payload_instructeur["etiquettePersonnalisee"]
             == "Convention validée à signer"
         )
-        assert payload_instructeur["categorieInformation"] == "CATEGORIE_ALERTE_ACTION"
+        assert (
+            payload_instructeur["categorieInformation"]
+            == ALERTE_CATEGORY_MAPPING["action"]
+        )
         assert payload_instructeur["urlDirection"] == reverse(
             "conventions:preview", args=[alerte_service.convention.uuid]
         )
@@ -233,7 +247,7 @@ def test_create_alertes_signed(alerte_service, avenant_alerte_service):
             {"role": "INSTRUCTEUR", "service": "SG"},
         ]
         assert payload["etiquettePersonnalisee"] == "Convention signée"
-        assert payload["categorieInformation"] == "CATEGORIE_ALERTE_INFORMATION"
+        assert payload["categorieInformation"] == ALERTE_CATEGORY_MAPPING["information"]
 
         assert payload["urlDirection"] == reverse(
             "conventions:preview", args=[alerte_service.convention.uuid]
@@ -250,8 +264,8 @@ def test_delete_action_alertes(alerte_service):
         mock_client = MagicMock()
         mock_get_instance.return_value = mock_client
         mock_client.list_convention_alertes.return_value = [
-            {"id": 1, "categorie": "CATEGORIE_ALERTE_ACTION"},
-            {"id": 2, "categorie": "CATEGORIE_ALERTE_INFORMATION"},
+            {"id": 1, "categorie": ALERTE_CATEGORY_MAPPING["action"]},
+            {"id": 2, "categorie": ALERTE_CATEGORY_MAPPING["information"]},
         ]
         alerte_service.delete_action_alertes()
 
