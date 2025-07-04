@@ -207,3 +207,10 @@ class TypologieStationnement(models.TextChoices):
         "PLACE_PARKING_ACCOLEE",
         "Place de parking accolée à chaque garage",
     )
+    PARKING_SUPERSTRUCTURE = "PARKING_SUPERSTRUCTURE", "Parking en Superstructure"
+
+
+MAPPING_GARAGE_TYPE_TO_TYPOLOGIE = {
+    "Enterrés / Sous-sol": TypologieStationnement.GARAGE_ENTERRE,
+    "Superstructure": TypologieStationnement.PARKING_SUPERSTRUCTURE,
+}

@@ -14,6 +14,8 @@ from programmes.models import (
     TypeHabitat,
     TypeOperation,
 )
+from programmes.models.choices import MAPPING_GARAGE_TYPE_TO_TYPOLOGIE
+from programmes.models.models import TypeStationnement
 from programmes.utils import diff_programme_duplication
 from siap.exceptions import (
     BAILLEUR_IDENTIFICATION_MESSAGE,
@@ -366,12 +368,26 @@ def get_or_create_lots_and_conventions_by_financement(
             programme=programme,
             cree_par=user,
         )
-        Lot.objects.create(
+        lot = Lot.objects.create(
             financement=financement,
             convention=convention,
             type_habitat=_type_habitat(aide_details),
             nb_logements=_nb_logements(aide_details),
         )
+        loyer_by_type = {
+            loyer_garages["type"]: loyer_garages["loyer"]
+            for loyer_garages in aide_details["loyers"][0]["loyerGarages"]
+        }
+        for garage in aide_details["garages"]:
+            nb_stationnements = (garage["nbGaragesIndividuels"] or 0) + (
+                garage["nbGaragesCollectifs"] or 0
+            )
+            TypeStationnement.objects.create(
+                lot=lot,
+                typologie=MAPPING_GARAGE_TYPE_TO_TYPOLOGIE.get(garage["type"]),
+                nb_stationnements=nb_stationnements,
+                loyer=loyer_by_type.get(garage["type"], 0),
+            )
 
 
 def get_or_create_lots_and_conventions(
