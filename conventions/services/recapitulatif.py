@@ -20,17 +20,16 @@ from conventions.models.choices import ConventionStatut
 from conventions.models.convention import Convention
 from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
+from conventions.services.alertes import AlerteService
 from conventions.services.conventions import ConventionService
 from conventions.services.file import ConventionFileService
 from conventions.tasks import task_generate_and_send
-from conventions.templatetags.display_filters import display_kind
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
 from core.stepper import Stepper
 from programmes.models import Annexe, Lot, Programme
 from siap.exceptions import SIAPException
 from siap.siap_client.client import SIAPClient, get_siap_credentials_from_request
-from siap.siap_client.schemas import Alerte, Destinataire
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
@@ -287,8 +286,9 @@ def convention_submit(request: HttpRequest, convention: Convention):
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
             siap_credentials = get_siap_credentials_from_request(request)
-            utils.delete_action_alertes(convention, siap_credentials)
-            create_alertes_instruction(convention, siap_credentials)
+            service = AlerteService(convention, siap_credentials)
+            service.delete_action_alertes()
+            service.create_alertes_instruction()
 
         if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
             send_email_instruction(
@@ -359,46 +359,6 @@ def collect_instructeur_emails(
     return instructeur_emails, submitted
 
 
-def create_alertes_instruction(
-    convention: Convention, siap_credentials: dict[str, Any]
-):
-    redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
-
-    # Send an information notice to bailleurs
-    alerte = Alerte.from_convention(
-        convention=convention,
-        categorie_information="CATEGORIE_ALERTE_INFORMATION",
-        destinataires=[
-            Destinataire(role="INSTRUCTEUR", service="MO"),
-        ],
-        etiquette="CUSTOM",
-        etiquette_personnalisee=f"{display_kind(convention).capitalize()} en instruction",
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(), **siap_credentials
-    )
-
-    # Send an action notice to instructeurs
-    alerte = Alerte.from_convention(
-        convention=convention,
-        categorie_information="CATEGORIE_ALERTE_ACTION",
-        destinataires=[
-            Destinataire(role="INSTRUCTEUR", service="SG"),
-        ],
-        etiquette="CUSTOM",
-        etiquette_personnalisee=f"{display_kind(convention).capitalize()} à instruire",
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(), **siap_credentials
-    )
-
-
 def send_email_instruction(
     convention_url: str,
     convention: Convention,
@@ -448,10 +408,11 @@ def convention_feedback(request: HttpRequest, convention: Convention):
 
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
             siap_credentials = get_siap_credentials_from_request(request)
-            utils.delete_action_alertes(convention, siap_credentials)
-            create_alertes_correction(
-                convention=convention,
-                siap_credentials=siap_credentials,
+            service = AlerteService(
+                convention=convention, siap_credentials=siap_credentials
+            )
+            service.delete_action_alertes()
+            service.create_alertes_correction(
                 from_instructeur=notification_form.cleaned_data["from_instructeur"],
             )
 
@@ -495,60 +456,6 @@ def convention_feedback(request: HttpRequest, convention: Convention):
         **utils.base_convention_response_error(request, convention),
         "notificationForm": notification_form,
     }
-
-
-def create_alertes_correction(
-    convention: Convention, siap_credentials: dict[str, Any], from_instructeur: bool
-):
-    redirect_url = reverse("conventions:recapitulatif", args=[convention.uuid])
-    if from_instructeur:
-        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="SG")]
-        etiquette_personnalisee_information = (
-            f"{display_kind(convention).capitalize()} en correction"
-        )
-        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="MO")]
-        etiquette_personnalisee_action = (
-            f"{display_kind(convention).capitalize()} à corriger"
-        )
-
-    else:
-        destinataires_information = [Destinataire(role="INSTRUCTEUR", service="MO")]
-        etiquette_personnalisee_information = (
-            f"{display_kind(convention).capitalize()} en instruction"
-        )
-        destinataires_action = [Destinataire(role="INSTRUCTEUR", service="SG")]
-        etiquette_personnalisee_action = (
-            f"{display_kind(convention).capitalize()} à instruire à nouveau"
-        )
-
-    # Send information notice
-    alerte = Alerte.from_convention(
-        convention=convention,
-        categorie_information="CATEGORIE_ALERTE_INFORMATION",
-        destinataires=destinataires_information,
-        etiquette="CUSTOM",
-        etiquette_personnalisee=etiquette_personnalisee_information,
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(),
-        **siap_credentials,
-    )
-
-    # Send action notice
-    alerte = Alerte.from_convention(
-        convention=convention,
-        categorie_information="CATEGORIE_ALERTE_ACTION",
-        destinataires=destinataires_action,
-        etiquette="CUSTOM",
-        etiquette_personnalisee=etiquette_personnalisee_action,
-        type_alerte="Changement de statut",
-        url_direction=redirect_url,
-    )
-    SIAPClient.get_instance().create_alerte(
-        payload=alerte.to_json(), **siap_credentials
-    )
 
 
 def send_email_correction(
@@ -823,6 +730,14 @@ class ConventionUploadSignedService(ConventionService):
             self.convention.statut = ConventionStatut.SIGNEE.label
             self.convention.save()
             self.return_status = utils.ReturnStatus.SUCCESS
+
+            if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                siap_credentials = get_siap_credentials_from_request(self.request)
+                service = AlerteService(
+                    convention=self.convention, siap_credentials=siap_credentials
+                )
+                service.delete_action_alertes()
+                service.create_alertes_signed()
 
         return {
             "success": self.return_status,

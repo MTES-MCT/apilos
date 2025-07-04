@@ -11,6 +11,7 @@ from django.core.files.storage import default_storage
 from waffle import switch_is_active
 
 from conventions.models.convention import Convention
+from conventions.services.alertes import ALERTE_CATEGORY_MAPPING
 from core.services import EmailService, EmailTemplateID
 from siap.siap_client.client import SIAPClient
 from siap.siap_client.schemas import Alerte, Destinataire
@@ -69,7 +70,7 @@ def scan_uploaded_files(
                     convention = Convention.objects.get(uuid=convention_uuid)
                     alerte = Alerte.from_convention(
                         convention=convention,
-                        categorie_information="CATEGORIE_ALERTE_INFORMATION",
+                        categorie_information=ALERTE_CATEGORY_MAPPING["information"],
                         destinataires=[
                             Destinataire(role="INSTRUCTEUR", service="SG"),
                             Destinataire(role="INSTRUCTEUR", service="MO"),
