@@ -1,5 +1,27 @@
-{% load custom_filters display_filters waffle_tags %}
+{% load custom_filters display_filters static waffle_tags %}
 <div class="fr-container-fluid ds_banner">
+    <dialog id="modal" class="fr-modal" aria-labelledby="modal-title" aria-modal="true">
+        <div class="fr-container fr-container--fluid fr-container-md">
+            <div class="fr-grid-row fr-grid-row--center">
+                <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
+                    <div class="fr-modal__body">
+                        <div class="fr-modal__header">
+                            <button aria-controls="modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                        </div>
+                        <div class="fr-modal__content">
+                            <h2 id="modal-title" class="fr-modal__title">
+                                <span class="fr-icon-arrow-right-line fr-icon--lg" aria-hidden="true"></span>
+                                Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires
+                            </h2>
+                            <p>
+                            <!-- contenu de la modale -->
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </dialog>
     <div class="fr-container fr-px-3w fr-mb-3w">
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
@@ -8,14 +30,13 @@
                         {% if filtered_conventions_count != all_conventions_count %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
                                 <div class="fr-grid-row fr-col-6">
-
                                     <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
                                     <a href="/" class="fr-link">
                                         <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                                         Réinitialiser la recherche
                                     </a>
                                 </div>
-                                <form action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
+                                <form id='export-form' action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
                                     <div
                                         title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
                                         style="display: inline-block;"
@@ -25,13 +46,35 @@
                                             type="submit"
                                             class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
                                             onsubmit="attachFilterParams()"
-                                            {% if filtered_conventions_count > convention_export_max_rows %} disabled {% endif %}
+                                            {% if filtered_conventions_count > convention_export_max_rows %} data-fr-opened="false" aria-controls="modal" {% endif %}
                                         >
                                             Exporter la liste
                                         </button>
                                     </div>
                                 </form>
                             </div>
+                        {% endif %}
+                        {% if filtered_conventions_count < convention_export_max_rows %}
+                            <div class="spinner" id="spinner"></div>
+                            <script  type="text/javascript" nonce="{{ request.csp_nonce }}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const exportButton = document.getElementById('export-button');
+                                    exportForm = document.getElementById('export-form');
+                                    const spinner = document.getElementById('spinner');
+                                    exportForm.addEventListener('click', function () {
+                                    spinner.style.display = 'block';
+                                    exportButton.disabled = true;
+                                    const iframe = document.createElement('iframe');
+                                    iframe.style.display = 'none';
+                                    iframe.onload = function () {
+                                        spinner.style.display = 'none';
+                                    };
+                                    iframe.src = exportForm.action + "?{{ request.GET.urlencode }}";
+                                    document.body.appendChild(iframe);
+                                    return false;
+                                });
+                            });
+                            </script>
                         {% endif %}
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
