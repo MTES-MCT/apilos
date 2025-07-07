@@ -1,6 +1,6 @@
 import json
 import logging
-from datetime import datetime
+from datetime import date, datetime
 from enum import Enum
 
 import openpyxl
@@ -192,12 +192,21 @@ def convention_upload_filename(convention: Convention) -> str:
     return f"{'_'.join(parts)}.pdf"
 
 
+def stringify_date(date_value, format="%d/%m/%Y"):
+    """
+    Convertit les dates en chaînes de caractères formatées.
+    """
+    if date_value and isinstance(date_value, date):
+        return date_value.strftime(format)
+    return "-"
+
+
 def get_convention_export_excel_header(request):
     headers = [
-        "Année de gestion",
         "Numéro d'opération SIAP",
         "Numéro de convention",
         "Numéro d'avenant",
+        "Statut de la convention",
         "Commune",
         "Code postal",
         "Nom de l'opération",
@@ -208,6 +217,7 @@ def get_convention_export_excel_header(request):
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
+        "date de fin de conventionnement",
     ]
 
     return headers
@@ -215,14 +225,14 @@ def get_convention_export_excel_header(request):
 
 def get_convention_export_excel_row(request, convention):
     return [
-        convention.programme.annee_gestion_programmation,  # 1. Année de gestion
-        convention.programme.numero_operation,  # 2. Numéro d'opération SIAP
+        convention.programme.numero_operation,  # 1. Numéro d'opération SIAP
         (
             convention.numero
             if convention.numero and not convention.parent
             else (convention.parent.numero if convention.parent else "")
-        ),  # 3. Numéro de convention
-        convention.numero if convention.parent else "",  # 4. Numéro d'avenant
+        ),  # 1. Numéro de convention
+        convention.numero if convention.parent else "",  # 3. Numéro d'avenant
+        convention.statut,  # 4. statut de la convention
         convention.programme.ville,  # 5. Commune
         convention.programme.code_postal,  # 6. Code postal
         convention.programme.nom,  # 7. Nom de l'opération
@@ -234,21 +244,18 @@ def get_convention_export_excel_row(request, convention):
         convention.lot.get_financement_display(),  # 9. Type de financement
         convention.lot.nb_logements,  # 10. Nombre de logements
         convention.programme.nature_logement,  # 11. Nature de l'opération dans programme
-        (
-            convention.televersement_convention_signee_le.strftime("%d/%m/%Y")
-            if convention.televersement_convention_signee_le
-            else "-"
+        stringify_date(
+            convention.televersement_convention_signee_le
         ),  # 12. Date de signature
         (
             convention.lot.logements.first().loyer_par_metre_carre
             if convention.lot.logements.first()
             else ""
         ),  # 13. Montant du loyer au m2
-        (
-            convention.programme.date_achevement_compile.strftime("%d/%m/%Y")
-            if convention.programme.date_achevement_compile
-            else "-"
-        ),  # 14. Livraison
+        stringify_date(convention.programme.date_achevement_compile),  # 14. Livraison
+        stringify_date(
+            convention.date_fin_conventionnement
+        ),  # 15. Date de fin de conventionnement
     ]
 
 
