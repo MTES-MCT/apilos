@@ -56,25 +56,38 @@
                         {% endif %}
                         {% if filtered_conventions_count < convention_export_max_rows %}
                             <div class="spinner" id="spinner"></div>
-                            <script  type="text/javascript" nonce="{{ request.csp_nonce }}">
+                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                                function attachFilterParams() {
+                                    const form = document.getElementById("search_table");
+                                    const params = new URLSearchParams(new FormData(form)).toString();
+                                    const exportUrl = `{% url 'conventions:export_list' %}?` + params;
+                                    window.location.href = exportUrl;
+                                    return exportUrl;
+                                }
                                 document.addEventListener('DOMContentLoaded', function () {
                                     const exportButton = document.getElementById('export-button');
-                                    exportForm = document.getElementById('export-form');
+                                    const exportForm = document.getElementById('export-form');
                                     const spinner = document.getElementById('spinner');
-                                    exportForm.addEventListener('click', function () {
-                                    spinner.style.display = 'block';
-                                    exportButton.disabled = true;
-                                    const iframe = document.createElement('iframe');
-                                    iframe.style.display = 'none';
-                                    iframe.onload = function () {
-                                        spinner.style.display = 'none';
-                                    };
-                                    iframe.src = exportForm.action + "?{{ request.GET.urlencode }}";
-                                    document.body.appendChild(iframe);
-                                    return false;
+
+                                    exportForm.addEventListener('submit', function (e) {
+                                        e.preventDefault();
+                                        spinner.style.display = 'block';
+                                        exportButton.disabled = true;
+                                        const exportUrl = attachFilterParams();
+                                        const iframe = document.createElement('iframe');
+                                        iframe.style.display = 'none';
+                                        iframe.src = exportUrl;
+
+                                        iframe.onload = function () {
+                                            spinner.style.display = 'none';
+                                            exportButton.disabled = false;
+                                            setTimeout(() => iframe.remove(), 1000);
+                                        };
+
+                                        document.body.appendChild(iframe);
+                                    });
                                 });
-                            });
-                            </script>
+                                </script>
                         {% endif %}
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
