@@ -63,7 +63,7 @@
             event.preventDefault();
             const form = document.getElementById("search_table");
             const params = new URLSearchParams(new FormData(form)).toString();
-            const exportUrl = `{% url 'conventions:export_excel' %}?` + params;
+            const exportUrl = `{% url 'conventions:export_list' %}?` + params;
             window.location.href = exportUrl;
             });
         }

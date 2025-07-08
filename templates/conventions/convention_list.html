@@ -36,7 +36,7 @@
                                         Réinitialiser la recherche
                                     </a>
                                 </div>
-                                <form id='export-form' action="{% url 'conventions:export_excel' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
+                                <form id='export-form' action="{% url 'conventions:export_list' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
                                     <div
                                         title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
                                         style="display: inline-block;"
