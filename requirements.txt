@@ -770,9 +770,9 @@ tqdm==4.67.1 \
     --hash=sha256:26445eca388f82e72884e0d580d5464cd801a3ea01e63e5601bdff9ba6a48de2 \
     --hash=sha256:f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2
     # via -r requirements.in
-typing-extensions==4.14.0 \
-    --hash=sha256:8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4 \
-    --hash=sha256:a1514509136dd0b477638fc68d6a91497af5076466ad0fa6c338e44e359944af
+typing-extensions==4.14.1 \
+    --hash=sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36 \
+    --hash=sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76
     # via
     #   -r requirements.in
     #   psycopg
