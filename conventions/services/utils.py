@@ -217,7 +217,7 @@ def get_convention_export_excel_header(request):
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
-        "date de fin de conventionnement",
+        "Date de fin de conventionnement",
     ]
 
     return headers

@@ -41,7 +41,7 @@ def test_get_convention_export_excel_header():
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
-        "date de fin de conventionnement",
+        "Date de fin de conventionnement",
     ]
 
     assert header == expected_header_instructeur
