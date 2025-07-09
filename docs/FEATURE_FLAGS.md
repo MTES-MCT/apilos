@@ -1,3 +1,6 @@
+```{toctree}
+```
+
 # Utilisation des feature flags par APiLos
 
 Les feature flags permettent d'activer ou de désactiver des fonctionnalités du projet directement en production sans avoir à faire un nouveau déploiement.
