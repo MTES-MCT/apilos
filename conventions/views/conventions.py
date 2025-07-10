@@ -178,7 +178,7 @@ class ConventionSearchMixin:
         ]
 
 
-class ConventionExportXcelView(LoginRequiredMixin, ConventionSearchMixin, View):
+class ConventionExportListView(LoginRequiredMixin, ConventionSearchMixin, View):
     def get(self, request: AuthenticatedHttpRequest) -> HttpResponse:
         filters = request.GET
         conventions = self.service.get_queryset()

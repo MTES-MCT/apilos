@@ -27,10 +27,10 @@ def test_get_convention_export_excel_header():
     header = get_convention_export_excel_header(request)
 
     expected_header_instructeur = [
-        "Année de gestion",
         "Numéro d'opération SIAP",
         "Numéro de convention",
         "Numéro d'avenant",
+        "Statut de la convention",
         "Commune",
         "Code postal",
         "Nom de l'opération",
@@ -41,6 +41,7 @@ def test_get_convention_export_excel_header():
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
+        "Date de fin de conventionnement",
     ]
 
     assert header == expected_header_instructeur
@@ -50,7 +51,7 @@ def test_get_convention_export_excel_header():
     header = get_convention_export_excel_header(request)
 
     assert header[7] == "Bailleur"
-    assert len(header) == 14
+    assert len(header) == 15
 
 
 @pytest.mark.django_db
@@ -71,10 +72,10 @@ def test_get_convention_export_excel_row():
     row = get_convention_export_excel_row(request, convention)
 
     assert row == [
-        convention.programme.annee_gestion_programmation,
         convention.programme.numero_operation,
         convention.numero,
         "",
+        convention.statut,
         convention.programme.ville,
         convention.programme.code_postal,
         convention.programme.nom,
@@ -84,14 +85,15 @@ def test_get_convention_export_excel_row():
         convention.programme.nature_logement,
         "-",
         logement.loyer_par_metre_carre,
-        convention.programme.date_achevement_compile.strftime("%d/%m/%Y"),
+        "11/04/2024",
+        "-",
     ]
 
     user.is_instructeur = False
     request.user = user
     row = get_convention_export_excel_row(request, convention)
 
-    assert len(row) == 14
+    assert len(row) == 15
 
     assert row[7] == convention.programme.bailleur.nom
 

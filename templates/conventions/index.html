@@ -39,20 +39,4 @@
             {% include "conventions/home/bailleur_no_convention.html" %}
         {% endif %}
     {% endif %}
-    {% if filtered_conventions_count < 1000 %}
-    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-        function attachFilterParams() {
-            const exportButton = document.getElementById("export-button");
-            exportButton.addEventListener("click", function(event) {
-            event.preventDefault();
-            const form = document.getElementById("search_table");
-            const params = new URLSearchParams(new FormData(form)).toString();
-            const exportUrl = `{% url 'conventions:export_excel' %}?` + params;
-            window.location.href = exportUrl;
-            });
-        }
-
-        document.addEventListener("DOMContentLoaded", attachFilterParams);
-    </script>
-    {% endif %}
 {% endblock content %}
