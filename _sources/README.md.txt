@@ -15,6 +15,7 @@ S3_BACKUP.md
 SIAP-APiLos.md
 ADMIN.md
 FEATURE_FLAGS.md
+DOC_GENERATION.md
 ```
 
 ## Solution technique

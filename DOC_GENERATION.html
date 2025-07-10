@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Utilisation des feature flags par APiLos" href="FEATURE_FLAGS.html" /><link rel="prev" title="Documentation des interactions SIAP APiLos" href="SIAP-APiLos.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="prev" title="Utilisation des feature flags par APiLos" href="FEATURE_FLAGS.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2024.08.06 -->
-        <title>Administration et back office - Documentation APiLos</title>
+        <title>Génération de docx et pdf - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=354aac6f" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=302659d7" />
@@ -209,9 +209,9 @@
 <li class="toctree-l1"><a class="reference internal" href="PCA_PRA.html">Plan de continuité d’activité / Plan de reprise d’activité</a></li>
 <li class="toctree-l1"><a class="reference internal" href="S3_BACKUP.html">Backup des buckets S3</a></li>
 <li class="toctree-l1"><a class="reference internal" href="SIAP-APiLos.html">Documentation des interactions SIAP APiLos</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Administration et back office</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="FEATURE_FLAGS.html">Utilisation des feature flags par APiLos</a></li>
-<li class="toctree-l1"><a class="reference internal" href="DOC_GENERATION.html">Génération de docx et pdf</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Génération de docx et pdf</a></li>
 </ul>
 
 </div>
@@ -232,7 +232,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/ADMIN.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/DOC_GENERATION.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -254,47 +254,89 @@
         <article role="main" id="furo-main-content">
           <div class="toctree-wrapper compound">
 </div>
-<section id="administration-et-back-office">
-<h1>Administration et back office<a class="headerlink" href="#administration-et-back-office" title="Lien vers cette rubrique">¶</a></h1>
-<p>Différentes demandes au support nécessitent des interventions sur les données d’APiLos.</p>
-<section id="django-admin">
-<h2>Django admin<a class="headerlink" href="#django-admin" title="Lien vers cette rubrique">¶</a></h2>
-<p>L’interface d’admin django (back office) est accessible à tous les utilisateurs <code class="docutils literal notranslate"><span class="pre">staff</span></code>, via l’url <code class="docutils literal notranslate"><span class="pre">/admin</span></code> L’équipe support est autonome pour réaliser des modifications en base de données manuellement via ce back office.</p>
-<p>Si une modification demandée n’est pas possible dans l’admin, il faut arbitrer entre l’évolution de l’interface d’admin, ou la modification en shell de la donnée par un développeur</p>
-<p>Lorsque la modification via l’admin prendrait trop de temps à l’équipe support, par exemple lorsqu’il y a beaucoup de volume à modifier, on passe plutôt par un script (shell ou commande)</p>
+<section id="generation-de-docx-et-pdf">
+<h1>Génération de docx et pdf<a class="headerlink" href="#generation-de-docx-et-pdf" title="Lien vers cette rubrique">¶</a></h1>
+<section id="librairie-docxtpl">
+<h2>Librairie docxtpl<a class="headerlink" href="#librairie-docxtpl" title="Lien vers cette rubrique">¶</a></h2>
+<p>Cette librairie utilise jinja2 et python-docx pour permettre de réaliser du templating jinja à l’intérieur de fichiers docx.</p>
+<p><code class="docutils literal notranslate"><span class="pre">https://docxtpl.readthedocs.io/en/latest/</span></code></p>
+<p>Nous utilisons cette librairie pour générer les différents documents.</p>
 </section>
-<section id="detournement-d-utilisateurs">
-<h2>Détournement d’utilisateurs<a class="headerlink" href="#detournement-d-utilisateurs" title="Lien vers cette rubrique">¶</a></h2>
-<p>La librairie <code class="docutils literal notranslate"><span class="pre">django-hijack</span></code> permet via l’admin de se connecter au site via le profil d’un utilisateur. C’est utile pour résoudre des problèmes liées aux habilitations des utilisateurs.</p>
-<p>Pour détourner un utilisateur, aller dans l’admin à l’adresse <code class="docutils literal notranslate"><span class="pre">admin/users/user/</span></code>, rechercher l’utilisateur concerné et cliquer sur <code class="docutils literal notranslate"><span class="pre">détourner</span></code></p>
-</section>
-<section id="django-shell">
-<h2>Django shell<a class="headerlink" href="#django-shell" title="Lien vers cette rubrique">¶</a></h2>
-<p>Pour une modification simple, on peut passer par un shell django via la commande :
-<code class="docutils literal notranslate"><span class="pre">scalingo</span> <span class="pre">--region</span> <span class="pre">osc-fr1</span> <span class="pre">-app</span> <span class="pre">apilos-siap-production</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">shell</span></code></p>
-<p>Exemple d’utilisations de shell :</p>
-<p>Le support transmet la demande « transférer toutes les conventions du bailleur x (siret 123) au bailleur y (siret 789) ».</p>
-<p>La modification sera la suivante :</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">bailleurs.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Bailleur</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">programmes.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Programme</span>
-
-<span class="n">old_bailleur</span> <span class="o">=</span> <span class="n">Bailleur</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">siret</span><span class="o">=</span><span class="s2">&quot;123&quot;</span><span class="p">)</span>
-<span class="n">old_bailleur</span>  <span class="c1"># Vérifier si le nom correspond</span>
-
-<span class="n">new_bailleur</span> <span class="o">=</span> <span class="n">Bailleur</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">siret</span><span class="o">=</span><span class="s2">&quot;789&quot;</span><span class="p">)</span>
-<span class="n">new_bailleur</span>  <span class="c1"># Vérifier si le nom correspond</span>
-
-<span class="n">programmes</span> <span class="o">=</span> <span class="n">Programme</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">bailleur</span><span class="o">=</span><span class="n">old_bailleur</span><span class="p">)</span>
-<span class="n">programmes</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>  <span class="c1"># Pour s&#39;assurer qu&#39;on a bien filtré</span>
-<span class="n">programmes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bailleur</span><span class="o">=</span><span class="n">new_bailleur</span><span class="p">)</span>
-</pre></div>
+<section id="templates-docx">
+<h2>Templates docx<a class="headerlink" href="#templates-docx" title="Lien vers cette rubrique">¶</a></h2>
+<p>Le dossier <code class="docutils literal notranslate"><span class="pre">documents</span></code> contient des fichiers docx utilisés pour générer les documents de conventions, d’avenants et la fiche caf.</p>
+<p>Le contenu suit la syntaxe de templating Jinja, permettant aux documents d’être complétés avec les informations entrés sur APiLos.</p>
+<p>Ce tableau liste les templates existants.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Nom</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Nature</p></th>
+<th class="head"><p>Bailleur</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Avenant-template</p></td>
+<td><p>Avenant</p></td>
+<td><p>Logements ordinaires</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>FicheCAF-template</p></td>
+<td><p>Fiche CAF</p></td>
+<td><p>x</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p>Foyer-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Foyers</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-odd"><td><p>FoyerResidence-Avenant-template</p></td>
+<td><p>Avenant</p></td>
+<td><p>Foyers et résidences</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p>HLM-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Logements ordinaires</p></td>
+<td><p>HLM</p></td>
+</tr>
+<tr class="row-odd"><td><p>Residence-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Residences</p></td>
+<td><p>x</p></td>
+</tr>
+<tr class="row-even"><td><p>SEM-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Logements ordinaires</p></td>
+<td><p>SEM</p></td>
+</tr>
+<tr class="row-odd"><td><p>Type1-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Logements ordinaires</p></td>
+<td><p>Type 1</p></td>
+</tr>
+<tr class="row-even"><td><p>Type2-template</p></td>
+<td><p>Convention</p></td>
+<td><p>Logements ordinaires</p></td>
+<td><p>Type 2</p></td>
+</tr>
+</tbody>
+</table>
 </div>
+<p>Ce tableau permet de retrouver quels documents sont utilisés pour quelles conventions. C’est utile pour prendre en compte les modifications apportées aux formulaires APILos dans les templates de documents.</p>
+<p>Par exemple un nouveau champ est ajouté aux conventions logements ordinaires sur le site APiLos. Il faut alors mettre à jour les documents relatifs aux logements ordinaires pour y ajouter ce champ à l’endroit convenu avec le métier. Cela implique pour le cas des logements ordinaires la modification de 5 templates.</p>
 </section>
-<section id="django-commands">
-<h2>Django commands<a class="headerlink" href="#django-commands" title="Lien vers cette rubrique">¶</a></h2>
-<p>Pour une opération plus complexe, on est amené à écrire une commande django qui sera lancée de la même manière qu’un shell, via <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">manage.py</span> <span class="pre">nom_de_la_commande</span></code></p>
-<p>Une commande permet de modifier un grand nombre d’entrées avec une gestion des erreurs. Par exemple pour réaliser l’update de status de conventions à partir d’un doc excel fourni par une DDT.</p>
-<p>Une commande passe par une pull request qui sera review, mergée et déployée en production. Ce processsus prend  plus de temps qu’une modification en shell, mais permet une revue par les autres développeurs. C’est la méthode provilégiée pour toute opération lourde sur les données, pour garantir une relecture.</p>
+<section id="generation-de-docx">
+<h2>Génération de docx<a class="headerlink" href="#generation-de-docx" title="Lien vers cette rubrique">¶</a></h2>
+<p>Le code responsable de la génération des documents est situé dans <code class="docutils literal notranslate"><span class="pre">conventions/services/convention_generator.py</span></code></p>
+<p>La fonction <code class="docutils literal notranslate"><span class="pre">generate_convention_doc</span></code> génère le document de convention ou d’avenant. Elle construit le contexte qui va être utilisé pour générer le document à partir du templating.</p>
+</section>
+<section id="conversion-en-pdf">
+<h2>Conversion en pdf<a class="headerlink" href="#conversion-en-pdf" title="Lien vers cette rubrique">¶</a></h2>
+<p>Toujours dans le fichier <code class="docutils literal notranslate"><span class="pre">conventions/services/convention_generator.py</span></code>, la fonction <code class="docutils literal notranslate"><span class="pre">generate_pdf</span></code> a pour rôle de convertir un fichier docx en pdf, en utilisant libreoffice.</p>
+<p>La variable d’environnement <code class="docutils literal notranslate"><span class="pre">LIBREOFFICE_EXEC</span></code> contient le chemin vers l’executable de libreoffice.</p>
 </section>
 </section>
 
@@ -303,23 +345,15 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="FEATURE_FLAGS.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Utilisation des feature flags par APiLos</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="SIAP-APiLos.html">
+          
+          <a class="prev-page" href="FEATURE_FLAGS.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Documentation des interactions SIAP APiLos</div>
+                <div class="title">Utilisation des feature flags par APiLos</div>
                 
               </div>
             </a>
