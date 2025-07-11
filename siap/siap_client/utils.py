@@ -105,6 +105,9 @@ def get_or_create_programme_from_siap_operation(operation: dict) -> Programme:
 
 
 def get_filtered_aides(operation: dict):
+    if "donneesOperation" in operation and operation["donneesOperation"]["sansTravaux"]:
+        return [Financement.SANS_FINANCEMENT]
+
     op_aides = [
         aide["aide"]["code"]
         for aide in operation["detailsOperation"]
