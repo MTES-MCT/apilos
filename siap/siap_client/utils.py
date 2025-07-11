@@ -5,6 +5,7 @@ from django.db import transaction
 
 from bailleurs.models import Bailleur, NatureBailleur
 from conventions.models import Convention
+from conventions.models.pret import Pret
 from instructeurs.models import Administration
 from programmes.models import (
     Financement,
@@ -14,6 +15,8 @@ from programmes.models import (
     TypeHabitat,
     TypeOperation,
 )
+from programmes.models.choices import MAPPING_GARAGE_TYPE_TO_TYPOLOGIE
+from programmes.models.models import TypeStationnement
 from programmes.utils import diff_programme_duplication
 from siap.exceptions import (
     BAILLEUR_IDENTIFICATION_MESSAGE,
@@ -330,6 +333,42 @@ def get_or_create_programme(
     return programme
 
 
+def create_subventions(subventions, financement, lot):
+    for subvention in subventions:
+        if subvention["type"] == financement:
+            Pret.objects.create(lot=lot, montant=subvention["montant"], autre="")
+
+
+def create_prets(prets, lot):
+    for pret in prets:
+        Pret.objects.create(lot=lot, montant=pret["montant"], autre="")
+
+
+def create_financements(operation, financement, lot):
+    if "plansFinancement" in operation and operation["plansFinancement"]:
+        for plan_financement in operation["plansFinancement"]:
+            if plan_financement["codeAide"] == financement:
+                create_prets(plan_financement["prets"], lot)
+                create_subventions(plan_financement["subventions"], financement, lot)
+
+
+def create_stationnements(aide_details, lot):
+    loyer_by_type = {
+        loyer_garages["type"]: loyer_garages["loyer"]
+        for loyer_garages in aide_details["loyers"][0]["loyerGarages"]
+    }
+    for garage in aide_details["garages"]:
+        nb_stationnements = (garage["nbGaragesIndividuels"] or 0) + (
+            garage["nbGaragesCollectifs"] or 0
+        )
+        TypeStationnement.objects.create(
+            lot=lot,
+            typologie=MAPPING_GARAGE_TYPE_TO_TYPOLOGIE.get(garage["type"]),
+            nb_stationnements=nb_stationnements,
+            loyer=loyer_by_type.get(garage["type"], 0),
+        )
+
+
 def get_or_create_lots_and_conventions_by_financement(
     operation: dict, programme: Programme, user: User, financement: Financement
 ):
@@ -366,12 +405,16 @@ def get_or_create_lots_and_conventions_by_financement(
             programme=programme,
             cree_par=user,
         )
-        Lot.objects.create(
+        lot = Lot.objects.create(
             financement=financement,
             convention=convention,
             type_habitat=_type_habitat(aide_details),
             nb_logements=_nb_logements(aide_details),
         )
+        # create financement
+        create_financements(operation, financement, lot)
+        # Create garages if they exist in the aide_details
+        create_stationnements(aide_details, lot)
 
 
 def get_or_create_lots_and_conventions(
