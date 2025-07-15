@@ -137,7 +137,7 @@
                                         <tbody>
                                             {% for convention in conventions %}
                                                 <tr id="convention_redirect_{{ convention.uuid }}"
-                                                    class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                                                    class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% elif convention|display_redirect_poste and not convention.is_avenant %}poste_in_progress{% elif convention|display_redirect_posted and not convention.is_avenant %}posted{% endif %}">
 
                                                     {% if debug_search_scoring %}
                                                         <td>
@@ -178,6 +178,12 @@
                                                                     }
                                                                     else if (this.classList.contains("project")) {
                                                                         location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                                                    }
+                                                                    else if (this.classList.contains("poste_in_progress")){
+                                                                        location.href="{% url 'conventions:post' convention_uuid=convention.uuid %}"
+                                                                    }
+                                                                    else if (this.classList.contains("posted")){
+                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
                                                                     }
                                                                     else {
                                                                         location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"

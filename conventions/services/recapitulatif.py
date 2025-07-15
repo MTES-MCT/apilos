@@ -10,7 +10,10 @@ from waffle import switch_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
-from conventions.forms.convention_form_dates import ConventionDateSignatureForm
+from conventions.forms.convention_form_dates import (
+    ConventionDatePostForm,
+    ConventionDateSignatureForm,
+)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -750,3 +753,64 @@ class ConventionUploadSignedService(ConventionService):
             "%d/%m/%Y"
         )
         return f"Convention signée avec succès le {date_signature}"
+
+
+class ConventionUploadPostdService(ConventionService):
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: AuthenticatedHttpRequest,
+        step_number: int = 1,
+    ):
+        super().__init__(convention, request)
+        self.stepper = Stepper(
+            steps=[
+                "Prévisualiser le document",
+                "Indiquer la date de publication ",
+            ]
+        )
+        self.step_number = step_number
+
+    def get(self):
+        return {
+            "convention": self.convention,
+            "publication_date_form": ConventionDatePostForm(
+                initial={
+                    "televersement_publication_acte_le": datetime.date.today().strftime(
+                        "%Y-%m-%d"
+                    )
+                }
+            ),
+            "form_step": self.stepper.get_form_step(step_number=self.step_number),
+        }
+
+    def save(self):
+        form = ConventionDatePostForm(self.request.POST)
+        if form.is_valid():
+            self.convention.televersement_publication_acte_le = form.cleaned_data[
+                "televersement_publication_acte_le"
+            ]
+            self.convention.statut = ConventionStatut.PUBLIE.label
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+            if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                siap_credentials = get_siap_credentials_from_request(self.request)
+                service = AlerteService(
+                    convention=self.convention, siap_credentials=siap_credentials
+                )
+                service.delete_action_alertes()
+                service.create_alertes_signed()
+
+        return {
+            "success": self.return_status,
+            "convention": self.convention,
+            "form": form,
+        }
+
+    def get_success_message(self):
+        date_publication = self.convention.televersement_publication_acte_le.strftime(
+            "%d/%m/%Y"
+        )
+        return f"Convention publié avec succès le {date_publication}"

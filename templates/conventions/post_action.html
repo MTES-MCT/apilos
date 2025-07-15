@@ -181,6 +181,14 @@
                     </div>
                 </div>
             {% endif %}
+            {% if convention|display_publication_button %}
+                <hr>
+                <div class="fr-col-12">
+                    <div class="fr-mb-2w fr-pt-2w block--row-strech">
+                        {% include "conventions/actions/send_to_post.html" %}
+                    </div>
+                </div>
+            {% endif %}
             <div class="fr-col-12">
                 <hr>
                 {% if convention|display_is_not_resiliated_or_denonciated %}

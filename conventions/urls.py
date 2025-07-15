@@ -322,6 +322,26 @@ urlpatterns = [
         name="date_upload_signed",
     ),
     path(
+        "send_for_publication/<convention_uuid>",
+        views.ConventionSendForPublicationView.as_view(),
+        name="send_for_publication",
+    ),
+    path(
+        "post/<convention_uuid>",
+        views.ConventionPostView.as_view(),
+        name="post",
+    ),
+    path(
+        "upload_posted/preview/<convention_uuid>",
+        views.ConventionPreviewUploadPostedView.as_view(),
+        name="preview_upload_posted",
+    ),
+    path(
+        "upload_posted/date/<convention_uuid>",
+        views.ConventionDateUploadPostedView.as_view(),
+        name="date_upload_signed",
+    ),
+    path(
         "display_pdf/<convention_uuid>",
         views.display_pdf,
         name="display_pdf",

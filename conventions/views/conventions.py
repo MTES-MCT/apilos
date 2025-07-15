@@ -45,6 +45,7 @@ from conventions.services.file import ConventionFileService
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
+    ConventionUploadPostdService,
     ConventionUploadSignedService,
     convention_denonciation_validate,
     convention_feedback,
@@ -525,6 +526,37 @@ def preview(request, convention_uuid):
     )
 
 
+class ConventionPostView(BaseConventionView):
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.get()
+        return render(
+            request,
+            "conventions/post.html",
+            {
+                **result,
+            },
+        )
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.save()
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse("conventions:preview_upload_posted", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            "conventions/post.html",
+            {
+                **result,
+            },
+        )
+
+
 # FIXME : to be tested
 class ConventionSentView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
@@ -574,6 +606,73 @@ class ConventionBaseUploadSignedView(BaseConventionView):
                 **result,
             },
         )
+
+
+class ConventionBaseUploadPostededView(BaseConventionView):
+    step_number: int
+    template_path: str
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionUploadPostdService(
+            convention=self.convention, request=request, step_number=self.step_number
+        )
+        result = service.get()
+        return render(
+            request,
+            self.template_path,
+            {
+                **result,
+            },
+        )
+
+
+class ConventionPreviewUploadPostedView(ConventionBaseUploadPostededView):
+    step_number: int = 1
+    template_path: str = "conventions/upload_posted/preview_document.html"
+
+
+class ConventionDateUploadPostedView(ConventionBaseUploadPostededView):
+    step_number: int = 2
+    template_path: str = "conventions/upload_posted/posted_date.html"
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionUploadPostdService(
+            convention=self.convention, request=request, step_number=2
+        )
+        result = service.save()
+        if result["success"] == ReturnStatus.SUCCESS:
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                service.get_success_message(),
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            "conventions/post.html",
+            {
+                **result,
+            },
+        )
+
+
+class ConventionSendForPublicationView(BaseConventionView):
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COUR.label
+        self.convention.save()
+        messages.add_message(
+            request,
+            messages.SUCCESS,
+            "Convention envoiyer en publication avec succès le",
+        )
+        return HttpResponseRedirect(reverse("conventions:post", args=[convention_uuid]))
 
 
 class ConventionPreviewUploadSignedView(ConventionBaseUploadSignedView):

@@ -136,6 +136,20 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         "Valide",
         "success",
     )
+    PUBLICATION_EN_COUR = Definition(
+        "5. Publication en cours",
+        StatutByRole("En publication"),
+        StatutByRole("En publication"),
+        "En publication",
+        "success",
+    )
+    PUBLIE = Definition(
+        "7. Publié",
+        StatutByRole("Publié"),
+        StatutByRole("Publié"),
+        "Publié",
+        "success",
+    )
     RESILIEE = Definition(
         "6. Résiliée",
         StatutByRole(

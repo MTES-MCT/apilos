@@ -11,6 +11,16 @@ class ConventionDateSignatureForm(forms.Form):
     )
 
 
+class ConventionDatePostForm(forms.Form):
+    televersement_publication_acte_le = forms.DateField(
+        required=True,
+        label="Indiquez la date de publication.",
+        error_messages={
+            "required": "Vous devez saisir une date de publication",
+        },
+    )
+
+
 class ConventionDateResiliationForm(forms.Form):
     date_resiliation = forms.DateField(
         required=True,
