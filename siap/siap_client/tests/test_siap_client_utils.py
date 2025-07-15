@@ -6,10 +6,35 @@ from bailleurs.models import Bailleur
 from bailleurs.tests.factories import BailleurFactory
 from instructeurs.models import Administration
 from instructeurs.tests.factories import AdministrationFactory
-from programmes.models.choices import NatureLogement, TypeOperation
+from programmes.models.choices import Financement, NatureLogement, TypeOperation
 from siap.exceptions import SIAPException
 from siap.siap_client import utils
 from users.models import User
+
+
+def test_get_filtered_aides_avec_travaux():
+    operation_avec_travaux = {
+        "donneesOperation": {"sansTravaux": False},
+        "detailsOperation": [
+            {
+                "aide": {"code": "PLUS", "libelle": "PLUS"},
+            },
+            {
+                "aide": {"code": "PLAI", "libelle": "PLAI"},
+            },
+        ],
+    }
+    assert utils.get_filtered_aides(operation_avec_travaux) == [
+        Financement.PLUS,
+        Financement.PLAI,
+    ]
+
+
+def test_get_filtered_aides_sans_travaux():
+    operation_sans_travaux = {"donneesOperation": {"sansTravaux": True}}
+    assert utils.get_filtered_aides(operation_sans_travaux) == [
+        Financement.SANS_FINANCEMENT
+    ]
 
 
 class GetAddressFromLocdataTest(TestCase):
