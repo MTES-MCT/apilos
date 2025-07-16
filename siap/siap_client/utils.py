@@ -339,12 +339,18 @@ def get_or_create_programme(
 def create_subventions(subventions, financement, lot):
     for subvention in subventions:
         if subvention["type"] == financement:
-            Pret.objects.create(lot=lot, montant=subvention["montant"], autre="")
+            Pret.objects.create(
+                lot=lot,
+                montant=subvention["montant"] if subvention["montant"] else 0,
+                autre="",
+            )
 
 
 def create_prets(prets, lot):
     for pret in prets:
-        Pret.objects.create(lot=lot, montant=pret["montant"], autre="")
+        Pret.objects.create(
+            lot=lot, montant=pret["montant"] if pret["montant"] else 0, autre=""
+        )
 
 
 def create_financements(operation, financement, lot):
