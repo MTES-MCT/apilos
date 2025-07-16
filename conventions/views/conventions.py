@@ -3,7 +3,7 @@ import json
 import mimetypes
 import os
 import time
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 
 from django.conf import settings
@@ -187,7 +187,9 @@ class ConventionExportListView(LoginRequiredMixin, ConventionSearchMixin, View):
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
-        response["Content-Disposition"] = "attachment; filename=conventions.xlsx"
+        response["Content-Disposition"] = (
+            f"attachment; filename=conventions_{datetime.today().strftime('%d-%m-%Y')}.xlsx"
+        )
         wb.save(response)
         return response
 
