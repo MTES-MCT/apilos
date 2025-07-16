@@ -16,6 +16,7 @@ SIAP-APiLos.md
 ADMIN.md
 FEATURE_FLAGS.md
 DOC_GENERATION.md
+ETAPES.md
 ```
 
 ## Solution technique
