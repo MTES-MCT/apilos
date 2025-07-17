@@ -362,19 +362,20 @@ def create_financements(operation, financement, lot):
 
 
 def create_stationnements(aide_details, lot):
-    loyer_by_type = {
-        loyer_garages["type"]: loyer_garages["loyer"]
-        for loyer_garages in aide_details["loyers"][0]["loyerGarages"]
-    }
-    for garage in aide_details["garages"]:
-        nb_stationnements = (garage["nbGaragesIndividuels"] or 0) + (
-            garage["nbGaragesCollectifs"] or 0
+    loyers = aide_details.get("loyers", [])
+    loyer_garages = loyers[0].get("loyerGarages", []) if loyers else []
+
+    loyer_by_type = {garage["type"]: garage["loyer"] for garage in loyer_garages}
+
+    for garage in aide_details.get("garages", []):
+        nb_stationnements = (garage.get("nbGaragesIndividuels") or 0) + (
+            garage.get("nbGaragesCollectifs") or 0
         )
         TypeStationnement.objects.create(
             lot=lot,
-            typologie=MAPPING_GARAGE_TYPE_TO_TYPOLOGIE.get(garage["type"]),
+            typologie=MAPPING_GARAGE_TYPE_TO_TYPOLOGIE.get(garage.get("type")),
             nb_stationnements=nb_stationnements,
-            loyer=loyer_by_type.get(garage["type"], 0),
+            loyer=loyer_by_type.get(garage.get("type"), 0),
         )
 
 
