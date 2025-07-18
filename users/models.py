@@ -283,11 +283,6 @@ class User(AbstractUser):
                 )
             return True
 
-        # Get bailleur and its parent to know if the user has rights on one of those
-        bailleur = Bailleur.objects.prefetch_related("parent").get(
-            id=programme.bailleur_id
-        )
-
         # This block aims to determine the effective bailleur_id for the conventions
         # If there are no avenants, the effective bailleur_id is from the convention programme
         # If there are avenants, the effective bailleur_id is the programme bailleur_id
@@ -312,8 +307,13 @@ class User(AbstractUser):
             effective_bailleur_id = programme.bailleur_id
 
         bailleur_ids = [effective_bailleur_id]
-        if bailleur.parent:
-            bailleur_ids.append(bailleur.parent.id)
+
+        # Get effective baileur's parent if exists
+        effective_bailleur = Bailleur.objects.prefetch_related("parent").get(
+            id=effective_bailleur_id
+        )
+        if effective_bailleur.parent:
+            bailleur_ids.append(effective_bailleur.parent.id)
         # is bailleur of the convention or is instructeur of the convention
         return self.roles.filter(bailleur_id__in=bailleur_ids).count() > 0 or (
             programme.administration_id is not None
