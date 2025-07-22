@@ -11,8 +11,8 @@ from waffle import switch_is_active
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
 from conventions.forms.convention_form_dates import (
-    ConventionDatePublicationForm,
     ConventionDateSignatureForm,
+    ConventionInfoPublicationForm,
 )
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
@@ -266,6 +266,17 @@ def convention_submit(request: HttpRequest, convention: Convention):
             user=request.user,
         ).save()
         convention.statut = ConventionStatut.INSTRUCTION.label
+        convention.save()
+        submitted = utils.ReturnStatus.ERROR
+        # Set back the onvention to the signée
+    if request.POST.get("BackToSigned", False):
+        ConventionHistory.objects.create(
+            convention=convention,
+            statut_convention=ConventionStatut.SIGNEE.label,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
+        convention.statut = ConventionStatut.SIGNEE.label
         convention.save()
         submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
@@ -758,7 +769,7 @@ class ConventionUploadSignedService(ConventionService):
         return f"Convention signée avec succès le {date_signature}"
 
 
-class ConventionUploadPostdService(ConventionService):
+class ConventionUploadPublicationService(ConventionService):
 
     def __init__(
         self,
@@ -778,16 +789,21 @@ class ConventionUploadPostdService(ConventionService):
     def get(self):
         return {
             "convention": self.convention,
-            "publication_date_form": ConventionDatePublicationForm(
+            "publication_info_form": ConventionInfoPublicationForm(
                 initial={
-                    "date_publication_spf": datetime.date.today().strftime("%Y-%m-%d")
+                    "reference_spf": (
+                        self.convention.reference_spf
+                        if self.convention.reference_spf
+                        else ""
+                    ),
+                    "date_publication_spf": datetime.date.today().strftime("%Y-%m-%d"),
                 }
             ),
             "form_step": self.stepper.get_form_step(step_number=self.step_number),
         }
 
     def save(self):
-        form = ConventionDatePublicationForm(self.request.POST)
+        form = ConventionInfoPublicationForm(self.request.POST)
         if (
             form.is_valid()
             and self.convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
@@ -795,14 +811,17 @@ class ConventionUploadPostdService(ConventionService):
             self.convention.date_publication_spf = form.cleaned_data[
                 "date_publication_spf"
             ]
+            self.convention.reference_spf = form.cleaned_data["reference_spf"]
             self.convention.statut = ConventionStatut.PUBLIE.label
             self.convention.save()
             self.return_status = utils.ReturnStatus.SUCCESS
-
+        else:
+            self.return_status = utils.ReturnStatus.ERROR
         return {
             "success": self.return_status,
             "convention": self.convention,
             "form": form,
+            "publication_info_form": form,
         }
 
     def get_success_message(self):

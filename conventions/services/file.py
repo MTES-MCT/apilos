@@ -46,8 +46,11 @@ class ConventionFileService:
         upload_filename = bordereau_publication_upload_filename(convention)
 
         upload_service = UploadService(
-            convention_dirpath=f" spf/{convention.uuid}/publication",
+            convention_dirpath=f"spf/{convention.uuid}/publication",
             filename=upload_filename,
+        )
+        logger.error(
+            f"Publication file uploaded for convention {convention.uuid} with filename {upload_filename}"
         )
         upload_service.upload_file(file)
 
@@ -58,7 +61,7 @@ class ConventionFileService:
             convention.statut = ConventionStatut.PUBLIE.label
             convention.date_publication_spf = datetime.date.today()
 
-        convention.nom_fichier_bordereau_publication = upload_filename
+        convention.nom_fichier_publication_spf = upload_filename
         convention.save()
 
     @classmethod

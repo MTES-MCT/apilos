@@ -1,0 +1,26 @@
+<div class="fr-input-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
+    {% if form_input.label %}
+        <label class="fr-label fr-mb-1w" for="{{ form_input.id_for_label }}">
+            {{ form_input.label }}
+            {% include "common/form/required_field.html" with form_input=form_input %}
+            {% include "common/help_field.html" with form_input=form_input %}
+        </label>
+    {% endif %}
+    <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
+        <div class="fr-input-wrap block--row-strech-1">
+            <input
+                class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
+                type="text"
+                id="{{ form_input.id_for_label }}"
+                name="{{ form_input.html_name }}"
+                value="{{ form_input.value }}"
+                {% include "common/form/disable_form_input.html" %}>
+        </div>
+        {% include "common/utils/comments_field.html" %}
+    </div>
+    {% for error in form_input.errors %}
+        <p id="text-input-error-desc-error" class="fr-error-text">
+            {{ error }}
+        </p>
+    {% endfor %}
+</div>

@@ -10,10 +10,6 @@
                 <p>
                     {{ convention|display_kind_with_demonstratif|capfirst }} est finalisé{{ convention|display_gender_terminaison }}. Vous pouvez maintenant transmettre l'acte au Service de la publicité foncière pour publication.
                 </p>
-                <p>
-                    <span class="fr-icon-information-line" aria-hidden="true"></span>
-                    Une fois {{ convention|display_kind_with_pronom }} envoyé{{ convention|display_gender_terminaison }} pour publication, vous ne pourrez plus le modifier. Assurez-vous que toutes les informations sont correctes avant l'envoi.
-                </p>
             </div>
             <form method="post" action="{% url 'conventions:send_for_publication' convention_uuid=convention.uuid %}" data-turbo="false">
                 {% csrf_token %}

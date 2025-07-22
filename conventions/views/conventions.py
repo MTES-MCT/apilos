@@ -45,7 +45,7 @@ from conventions.services.file import ConventionFileService, FileType
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
-    ConventionUploadPostdService,
+    ConventionUploadPublicationService,
     ConventionUploadSignedService,
     convention_denonciation_validate,
     convention_feedback,
@@ -616,7 +616,7 @@ class ConventionBaseUploadPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        service = ConventionUploadPostdService(
+        service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
         result = service.get()
@@ -637,13 +637,12 @@ class ConventionPreviewUploadPublicationView(ConventionBaseUploadPublicationView
 
 class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
     step_number: int = 2
-    # FIXME: rename the directory upload_posted to publication
     template_path: str = "conventions/upload_posted/posted_date.html"
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        service = ConventionUploadPostdService(
-            convention=self.convention, request=request, step_number=2
+        service = ConventionUploadPublicationService(
+            convention=self.convention, request=request, step_number=self.step_number
         )
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
@@ -658,9 +657,10 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
 
         return render(
             request,
-            "conventions/post.html",
+            self.template_path,
             {
                 **result,
+                "convention": self.convention,
             },
         )
 
