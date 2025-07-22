@@ -138,6 +138,7 @@ class Convention(models.Model):
     signataire_bloc_signature = models.CharField(max_length=5000, null=True, blank=True)
 
     # Champs liés au SPF (Service de Publication Foncière))
+    # TODO use date_publication_spf instead of televersement_publication_acte_le
     date_publication_spf = models.DateField(null=True, blank=True)
     reference_spf = models.CharField(max_length=50, null=True)
     date_envoi_spf = models.DateField(null=True, blank=True)
@@ -163,6 +164,10 @@ class Convention(models.Model):
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
+    # #TODO : rename nom_fichier_bordereau_publication to nom_fichier_publication_spf
+    nom_fichier_bordereau_publication = models.CharField(
+        max_length=255, null=True, blank=True
+    )
     televersement_convention_signee_le = models.DateField(null=True, blank=True)
     desc_avenant = models.TextField(null=True, blank=True)
 

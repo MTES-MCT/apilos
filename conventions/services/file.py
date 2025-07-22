@@ -1,5 +1,6 @@
 import datetime
 import logging
+from enum import Enum
 
 from django.conf import settings
 from django.core.files import File
@@ -8,9 +9,15 @@ from conventions.models import Convention, ConventionStatut, PieceJointe
 from core.storage import client
 from upload.services import UploadService
 
-from .utils import convention_upload_filename
+from .utils import bordereau_publication_upload_filename, convention_upload_filename
 
 logger = logging.getLogger(__name__)
+
+
+class FileType(Enum):
+    CONVENTION = "Convention"
+    # TODO: rename Bordereau de publication to PUBLICATION
+    BORDEREAU_PUBLICATION = "Bordereau de publication"
 
 
 class ConventionFileService:
@@ -32,6 +39,43 @@ class ConventionFileService:
 
         convention.nom_fichier_signe = upload_filename
         convention.save()
+
+    @classmethod
+    def upload_bordereau_publication_file(
+        cls, convention: Convention, file: File, update_statut: bool = True
+    ):
+        upload_filename = bordereau_publication_upload_filename(convention)
+
+        upload_service = UploadService(
+            # TODO: rename publicite_fonciere to spf
+            convention_dirpath=f" publicite_fonciere/{convention.uuid}/bordereau_publication",
+            filename=upload_filename,
+        )
+        upload_service.upload_file(file)
+
+        if (
+            update_statut
+            and convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
+        ):
+            convention.statut = ConventionStatut.PUBLIE.label
+            convention.date_publication_spf = datetime.date.today()
+
+        convention.nom_fichier_bordereau_publication = upload_filename
+        convention.save()
+
+    @classmethod
+    def upload_file(
+        cls,
+        convention: Convention,
+        file: File,
+        as_type: FileType,
+        update_statut: bool = True,
+    ):
+        if as_type == FileType.BORDEREAU_PUBLICATION:
+            cls.upload_bordereau_publication_file(convention, file, update_statut)
+            return
+
+        cls.upload_convention_file(convention, file, update_statut)
 
     @classmethod
     def promote_piece_jointe(cls, piece_jointe: PieceJointe):

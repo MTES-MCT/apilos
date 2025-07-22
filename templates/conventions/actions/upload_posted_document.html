@@ -1,0 +1,21 @@
+{% load display_filters %}
+
+<div class="fr-col-12 fr-my-2w">
+    <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-draft-line">
+        <p class="fr-alert__title">
+            Déposer le bordereau de publication de l'acte
+        </p>
+        <p class="fr-mb-2w">
+            Ici, vous pouvez déposer le bordereau de publication de l'acte de votre convention publié.
+        </p>
+
+        <div class="block--row-strech">
+            {% include "conventions/common/form_upload_posted_document.html" %}
+
+            <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                Consulter le récapitulatif
+            </a>
+        </div>
+    </div>
+</div>
+<hr>

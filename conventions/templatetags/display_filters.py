@@ -1,6 +1,7 @@
 from django import template
 
 from conventions.models import Convention
+from conventions.models.choices import ConventionStatut
 
 register = template.Library()
 
@@ -44,6 +45,9 @@ def display_kind_with_demonstratif(convention: Convention) -> str:
         return "cette dénonciation"
     if convention.is_resiliation:
         return "cette résiliation"
+    # TODO: on laisse "cette convention", nous pouvons supprimer cette vérification
+    if convention.statut == ConventionStatut.SIGNEE.label:
+        return "l'acte"
     if convention.is_avenant():
         return "cet avenant"
     return "cette convention"

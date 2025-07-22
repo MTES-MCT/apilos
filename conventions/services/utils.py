@@ -192,6 +192,11 @@ def convention_upload_filename(convention: Convention) -> str:
     return f"{'_'.join(parts)}.pdf"
 
 
+def bordereau_publication_upload_filename(convention: Convention) -> str:
+    # TODO : rename bordereau-de-publication to publication
+    return f"bordereau-de-publication_{convention_upload_filename(convention)}"
+
+
 def stringify_date(date_value, format="%d/%m/%Y"):
     """
     Convertit les dates en chaînes de caractères formatées.

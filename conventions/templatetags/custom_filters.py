@@ -362,6 +362,22 @@ def display_redirect_post_action(convention):
         ConventionStatut.SIGNEE.label,
         ConventionStatut.DENONCEE.label,
         ConventionStatut.RESILIEE.label,
+        # TODO; Sylvain il propose d'ajouter les deux nouveaux statuts juste ici,
+        # et enlever les deux filtres suivants display_redirect_acte_posted et display_redirect_acte_post
+    ]
+
+
+@register.filter
+def display_redirect_acte_posted(convention):
+    return convention.statut in [
+        ConventionStatut.PUBLIE.label,
+    ]
+
+
+@register.filter
+def display_redirect_acte_post(convention):
+    return convention.statut in [
+        ConventionStatut.PUBLICATION_EN_COUR.label,
     ]
 
 
@@ -426,6 +442,11 @@ def display_back_to_instruction(convention, request):
         ConventionStatut.A_SIGNER.label,
         ConventionStatut.SIGNEE.label,
     ] and is_instructeur(request)
+
+
+@register.filter
+def display_publication_button(convention):
+    return convention.statut == ConventionStatut.SIGNEE.label
 
 
 @register.filter

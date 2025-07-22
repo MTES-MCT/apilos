@@ -10,7 +10,10 @@ from waffle import switch_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
-from conventions.forms.convention_form_dates import ConventionDateSignatureForm
+from conventions.forms.convention_form_dates import (
+    ConventionDatePublicationForm,
+    ConventionDateSignatureForm,
+)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -22,7 +25,7 @@ from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
 from conventions.services.alertes import AlerteService
 from conventions.services.conventions import ConventionService
-from conventions.services.file import ConventionFileService
+from conventions.services.file import ConventionFileService, FileType
 from conventions.tasks import task_generate_and_send
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
@@ -674,11 +677,14 @@ class ConventionSentService(ConventionService):
             },
         }
 
-    def save(self):
+    def save(self, as_type: FileType = FileType.CONVENTION):
         upform = UploadForm(self.request.POST, self.request.FILES)
         if upform.is_valid():
-            ConventionFileService.upload_convention_file(
-                self.convention, self.request.FILES["file"], update_statut=False
+            ConventionFileService.upload_file(
+                convention=self.convention,
+                file=self.request.FILES["file"],
+                as_type=as_type,
+                update_statut=False,
             )
             self.return_status = utils.ReturnStatus.SUCCESS
         return {
@@ -750,3 +756,56 @@ class ConventionUploadSignedService(ConventionService):
             "%d/%m/%Y"
         )
         return f"Convention signée avec succès le {date_signature}"
+
+
+class ConventionUploadPostdService(ConventionService):
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: AuthenticatedHttpRequest,
+        step_number: int = 1,
+    ):
+        super().__init__(convention, request)
+        self.stepper = Stepper(
+            steps=[
+                "Prévisualiser le document",
+                "Indiquer la date de publication ",
+            ]
+        )
+        self.step_number = step_number
+
+    def get(self):
+        return {
+            "convention": self.convention,
+            "publication_date_form": ConventionDatePublicationForm(
+                initial={
+                    "date_publication_spf": datetime.date.today().strftime("%Y-%m-%d")
+                }
+            ),
+            "form_step": self.stepper.get_form_step(step_number=self.step_number),
+        }
+
+    def save(self):
+        form = ConventionDatePublicationForm(self.request.POST)
+        if (
+            form.is_valid()
+            and self.convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
+        ):
+            self.convention.date_publication_spf = form.cleaned_data[
+                "date_publication_spf"
+            ]
+            self.convention.statut = ConventionStatut.PUBLIE.label
+            self.convention.save()
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+        return {
+            "success": self.return_status,
+            "convention": self.convention,
+            "form": form,
+        }
+
+    def get_success_message(self):
+        date_publication = self.convention.date_publication_spf.strftime("%d/%m/%Y")
+        # TODO: change the message to be more generic : l'acte de publication à été ajouté sur Apilos
+        return f"L'acte de convention publié avec succès le {date_publication}"
