@@ -445,6 +445,13 @@ def display_back_to_instruction(convention, request):
 
 
 @register.filter
+def display_back_to_en_publication(convention):
+    return convention.statut in [
+        ConventionStatut.PUBLIE.label,
+    ]
+
+
+@register.filter
 def display_publication_button(convention):
     return convention.statut == ConventionStatut.SIGNEE.label
 

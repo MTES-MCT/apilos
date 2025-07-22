@@ -49,9 +49,6 @@ class ConventionFileService:
             convention_dirpath=f"spf/{convention.uuid}/publication",
             filename=upload_filename,
         )
-        logger.error(
-            f"Publication file uploaded for convention {convention.uuid} with filename {upload_filename}"
-        )
         upload_service.upload_file(file)
 
         if (

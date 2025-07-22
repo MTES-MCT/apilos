@@ -526,6 +526,46 @@ def preview(request, convention_uuid):
     )
 
 
+class ActionsPostPublication(BaseConventionView):
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        result = convention_post_action(request, convention_uuid)
+        if result["success"] == ReturnStatus.SUCCESS:
+            if result["form_posted"] == "resiliation":
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention_uuid])
+                )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+        return render(
+            request,
+            "conventions/post_action_publication.html",
+            {
+                **result,
+            },
+        )
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        result = convention_post_action(request, convention_uuid)
+        if result["success"] == ReturnStatus.SUCCESS:
+            if result["form_posted"] == "resiliation":
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[convention_uuid])
+                )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+        return render(
+            request,
+            "conventions/post_action.html",
+            {
+                **result,
+            },
+        )
+
+
 class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
@@ -652,7 +692,7 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
                 service.get_success_message(),
             )
             return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
+                reverse("conventions:post_action_publication", args=[convention_uuid])
             )
 
         return render(

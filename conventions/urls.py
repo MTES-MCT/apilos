@@ -321,13 +321,11 @@ urlpatterns = [
         views.ConventionDateUploadSignedView.as_view(),
         name="date_upload_signed",
     ),
-    # TODO change the url logic send_for_publication/<convention_uuid> to publication/<convention_uuid>/send
     path(
         "publication/<convention_uuid>/send",
         views.ConventionSendForPublicationView.as_view(),
         name="send_for_publication",
     ),
-    # FIXME: rename all 'post' to 'publication'
     path(
         "publication/<convention_uuid>",
         views.ConventionPublicationView.as_view(),
@@ -342,6 +340,11 @@ urlpatterns = [
         "publication/<convention_uuid>/date",
         views.ConventionDateUploadPublicationView.as_view(),
         name="date_publication",
+    ),
+    path(
+        "publication/<convention_uuid>/post_action",
+        views.ActionsPostPublication.as_view(),
+        name="post_action_publication",
     ),
     path(
         "display_pdf/<convention_uuid>",

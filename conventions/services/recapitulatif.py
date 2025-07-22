@@ -279,6 +279,16 @@ def convention_submit(request: HttpRequest, convention: Convention):
         convention.statut = ConventionStatut.SIGNEE.label
         convention.save()
         submitted = utils.ReturnStatus.ERROR
+    if request.POST.get("BackToPublicationEnCours", False):
+        ConventionHistory.objects.create(
+            convention=convention,
+            statut_convention=ConventionStatut.PUBLICATION_EN_COUR.label,
+            statut_convention_precedent=convention.statut,
+            user=request.user,
+        ).save()
+        convention.statut = ConventionStatut.PUBLICATION_EN_COUR.label
+        convention.save()
+        submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
     if request.POST.get("SubmitConvention", False):
         ConventionHistory.objects.create(

@@ -145,9 +145,9 @@
                                                     {% elif convention|display_redirect_post_action and not convention.is_avenant %}
                                                         signed
                                                     {% elif convention|display_redirect_acte_post and not convention.is_avenant %}
-                                                        poste_in_progress
+                                                        publication_en_cours
                                                     {% elif convention|display_redirect_acte_posted and not convention.is_avenant %}
-                                                        posted
+                                                        publie
                                                     {% endif %}">
 
                                                     {% if debug_search_scoring %}
@@ -190,11 +190,11 @@
                                                                     else if (this.classList.contains("project")) {
                                                                         location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
                                                                     }
-                                                                    else if (this.classList.contains("poste_in_progress")){
+                                                                    else if (this.classList.contains("publication_en_cours")){
                                                                         location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
                                                                     }
-                                                                    else if (this.classList.contains("posted")){
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
+                                                                    else if (this.classList.contains("publie")){
+                                                                        location.href="{% url 'conventions:post_action_publication' convention_uuid=convention.uuid %}"
                                                                     }
                                                                     else {
                                                                         location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
