@@ -14,7 +14,7 @@
         <div>
             <button id="{{ upform.file.id_for_label }}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button"
                 {% if request|is_readonly %}disabled{% endif %}>
-                Déposer la publication de l'acte
+                Déposer la publication de la convention
             </button>
             {% for error in upform.file.errors %}
                 <p id="text-input-error-desc-error" class="fr-error-text">

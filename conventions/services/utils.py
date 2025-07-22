@@ -193,8 +193,7 @@ def convention_upload_filename(convention: Convention) -> str:
 
 
 def bordereau_publication_upload_filename(convention: Convention) -> str:
-    # TODO : rename bordereau-de-publication to publication
-    return f"bordereau-de-publication_{convention_upload_filename(convention)}"
+    return f"publication_{convention_upload_filename(convention)}"
 
 
 def stringify_date(date_value, format="%d/%m/%Y"):

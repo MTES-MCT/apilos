@@ -16,8 +16,7 @@ logger = logging.getLogger(__name__)
 
 class FileType(Enum):
     CONVENTION = "Convention"
-    # TODO: rename Bordereau de publication to PUBLICATION
-    BORDEREAU_PUBLICATION = "Bordereau de publication"
+    PUBLICATION = "Publication"
 
 
 class ConventionFileService:
@@ -47,8 +46,7 @@ class ConventionFileService:
         upload_filename = bordereau_publication_upload_filename(convention)
 
         upload_service = UploadService(
-            # TODO: rename publicite_fonciere to spf
-            convention_dirpath=f" publicite_fonciere/{convention.uuid}/bordereau_publication",
+            convention_dirpath=f" spf/{convention.uuid}/publication",
             filename=upload_filename,
         )
         upload_service.upload_file(file)
@@ -71,7 +69,7 @@ class ConventionFileService:
         as_type: FileType,
         update_statut: bool = True,
     ):
-        if as_type == FileType.BORDEREAU_PUBLICATION:
+        if as_type == FileType.PUBLICATION:
             cls.upload_bordereau_publication_file(convention, file, update_statut)
             return
 

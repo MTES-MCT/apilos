@@ -526,10 +526,7 @@ def preview(request, convention_uuid):
     )
 
 
-# TODO: rename ConventionPostView to
-
-
-class ConventionPostView(BaseConventionView):
+class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         service = ConventionSentService(convention=self.convention, request=request)
@@ -545,10 +542,12 @@ class ConventionPostView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
         service = ConventionSentService(convention=self.convention, request=request)
-        result = service.save(as_type=FileType.BORDEREAU_PUBLICATION)
+        result = service.save(as_type=FileType.PUBLICATION)
         if result["success"] == ReturnStatus.SUCCESS:
             return HttpResponseRedirect(
-                reverse("conventions:preview_upload_posted", args=[convention_uuid])
+                reverse(
+                    "conventions:preview_upload_publication", args=[convention_uuid]
+                )
             )
 
         return render(
@@ -611,8 +610,7 @@ class ConventionBaseUploadSignedView(BaseConventionView):
         )
 
 
-# TODO: rename ConventionBaseUploadPostededView to ConventionBaseUploadPublicationView
-class ConventionBaseUploadPostededView(BaseConventionView):
+class ConventionBaseUploadPublicationView(BaseConventionView):
     step_number: int
     template_path: str
 
@@ -631,15 +629,13 @@ class ConventionBaseUploadPostededView(BaseConventionView):
         )
 
 
-# TODO: rename ConventionPreviewUploadPostedView to ConventionPreviewUploadPublicationView
-class ConventionPreviewUploadPostedView(ConventionBaseUploadPostededView):
+class ConventionPreviewUploadPublicationView(ConventionBaseUploadPublicationView):
     step_number: int = 1
     # FIXME: rename the directory upload_posted to publication
     template_path: str = "conventions/upload_posted/preview_document.html"
 
 
-# TODO: rename ConventionDateUploadPostedView to ConventionDateUploadPublicationView
-class ConventionDateUploadPostedView(ConventionBaseUploadPostededView):
+class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
     step_number: int = 2
     # FIXME: rename the directory upload_posted to publication
     template_path: str = "conventions/upload_posted/posted_date.html"
@@ -680,7 +676,9 @@ class ConventionSendForPublicationView(BaseConventionView):
             messages.SUCCESS,
             "Convention envoyée en publication",
         )
-        return HttpResponseRedirect(reverse("conventions:post", args=[convention_uuid]))
+        return HttpResponseRedirect(
+            reverse("conventions:publication", args=[convention_uuid])
+        )
 
 
 class ConventionPreviewUploadSignedView(ConventionBaseUploadSignedView):

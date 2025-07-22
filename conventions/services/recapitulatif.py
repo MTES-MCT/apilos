@@ -806,6 +806,4 @@ class ConventionUploadPostdService(ConventionService):
         }
 
     def get_success_message(self):
-        date_publication = self.convention.date_publication_spf.strftime("%d/%m/%Y")
-        # TODO: change the message to be more generic : l'acte de publication à été ajouté sur Apilos
-        return f"L'acte de convention publié avec succès le {date_publication}"
+        return "le document de publication à été ajouté sur Apilos "

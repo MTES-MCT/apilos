@@ -191,7 +191,7 @@
                                                                         location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
                                                                     }
                                                                     else if (this.classList.contains("poste_in_progress")){
-                                                                        location.href="{% url 'conventions:post' convention_uuid=convention.uuid %}"
+                                                                        location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
                                                                     }
                                                                     else if (this.classList.contains("posted")){
                                                                         location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
