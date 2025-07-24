@@ -263,6 +263,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
             user=request.user,
         ).save()
         convention.statut = ConventionStatut.INSTRUCTION.label
+        convention.nom_fichier_signe = None
         convention.save()
         submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
