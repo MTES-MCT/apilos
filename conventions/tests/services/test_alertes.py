@@ -5,7 +5,8 @@ import pytest
 from django.urls import reverse
 
 from conventions.services.alertes import ALERTE_CATEGORY_MAPPING, AlerteService
-from core.tests.factories import ConventionFactory
+from core.tests.factories import ConventionFactory, ProgrammeFactory
+from instructeurs.tests.factories import AdministrationFactory
 from siap.siap_client.client import SIAPClient
 
 
@@ -271,3 +272,17 @@ def test_delete_action_alertes(alerte_service):
 
         mock_client.delete_alerte.assert_called_once()
         assert mock_client.delete_alerte.mock_calls[0].kwargs["alerte_id"] == 1
+
+
+@pytest.mark.parametrize(
+    "admin_code, expected",
+    [("DD068", True), ("DDI068", False), ("69123", False), ("CG031", False)],
+)
+@pytest.mark.django_db
+def test_is_ddt(siap_credentials, admin_code, expected):
+    admin = AdministrationFactory(code=admin_code)
+    programme = ProgrammeFactory(administration=admin)
+    convention = ConventionFactory(programme=programme)
+    service = AlerteService(convention=convention, siap_credentials=siap_credentials)
+
+    assert service._is_ddt() == expected
