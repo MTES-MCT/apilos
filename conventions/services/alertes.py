@@ -1,4 +1,5 @@
 import logging
+import re
 from typing import Any
 
 from django.urls import reverse
@@ -37,6 +38,9 @@ class AlerteService:
         self.convention = convention
         self.siap_credentials = siap_credentials
 
+    def _is_ddt(self):
+        return bool(re.match(r"^DD\d+$", self.convention.programme.administration.code))
+
     def delete_action_alertes(self):
         """
         Delete all action alertes related to the convention
@@ -60,6 +64,8 @@ class AlerteService:
                 logger.warning(e)
 
     def create_alertes_instruction(self):
+        if self._is_ddt():
+            return
         redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
 
         # Send an information notice to bailleurs
@@ -97,6 +103,8 @@ class AlerteService:
         )
 
     def create_alertes_correction(self, from_instructeur: bool):
+        if self._is_ddt():
+            return
         redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
         if from_instructeur:
             destinataires_information = [ALERTE_DESTINATAIRE_SG]
@@ -148,6 +156,8 @@ class AlerteService:
         )
 
     def create_alertes_valide(self):
+        if self._is_ddt():
+            return
         redirect_url = reverse("conventions:preview", args=[self.convention.uuid])
 
         # Information notice to bailleurs
@@ -188,6 +198,8 @@ class AlerteService:
         )
 
     def create_alertes_signed(self):
+        if self._is_ddt():
+            return
         redirect_url = reverse("conventions:preview", args=[self.convention.uuid])
         alerte = Alerte.from_convention(
             convention=self.convention,
