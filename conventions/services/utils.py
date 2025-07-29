@@ -170,7 +170,7 @@ def convention_upload_filename(convention: Convention) -> str:
 
     def _normalize(numero: str | None) -> str | None:
         if numero:
-            return numero.replace(" ", "_")
+            return numero.replace(" ", "_").replace("/", "-")
 
     parts = []
 
@@ -190,6 +190,10 @@ def convention_upload_filename(convention: Convention) -> str:
     parts.append(datetime.now().strftime("%Y-%m-%d_%H-%M"))
 
     return f"{'_'.join(parts)}.pdf"
+
+
+def document_publication_upload_filename(convention: Convention) -> str:
+    return f"publication_{convention_upload_filename(convention)}"
 
 
 def stringify_date(date_value, format="%d/%m/%Y"):

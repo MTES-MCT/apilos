@@ -218,3 +218,44 @@ class AlerteService:
         SIAPClient.get_instance().create_alerte(
             payload=alerte.to_json(), **self.siap_credentials
         )
+
+    def create_alertes_publication_en_cours(self):
+        redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
+
+        alerte = Alerte.from_convention(
+            convention=self.convention,
+            categorie_information=ALERTE_CATEGORY_MAPPING["information"],
+            destinataires=[ALERTE_DESTINATAIRE_SG],
+            etiquette=ALERTE_ETIQUETTE_CUSTOM,
+            etiquette_personnalisee=(
+                f"{display_kind(self.convention).capitalize()} "
+                f"en cours de publication"
+            ),
+            type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
+            url_direction=redirect_url,
+        )
+
+        SIAPClient.get_instance().create_alerte(
+            payload=alerte.to_json(),
+            **self.siap_credentials,
+        )
+
+    def create_alertes_publie(self):
+        redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
+
+        alerte = Alerte.from_convention(
+            convention=self.convention,
+            categorie_information=ALERTE_CATEGORY_MAPPING["information"],
+            destinataires=[ALERTE_DESTINATAIRE_SG],
+            etiquette=ALERTE_ETIQUETTE_CUSTOM,
+            etiquette_personnalisee=(
+                f"{display_kind(self.convention).capitalize()} "
+                f"publié{display_gender_terminaison(self.convention)}"
+            ),
+            type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
+            url_direction=redirect_url,
+        )
+        SIAPClient.get_instance().create_alerte(
+            payload=alerte.to_json(),
+            **self.siap_credentials,
+        )

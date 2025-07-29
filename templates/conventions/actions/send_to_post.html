@@ -1,0 +1,26 @@
+{% load custom_filters display_filters %}
+
+{% if convention|display_publication_button and not request|is_readonly %}
+    <div class="fr-col-12">
+        <div class="block--row-strech">
+            <div class="block--row-strech-1 fr-mr-6w">
+                <p class="fr-alert__title">
+                    Envoyer {{ convention|display_kind_with_demonstratif }} pour publication
+                </p>
+                <p>
+                    {{ convention|display_kind_with_demonstratif|capfirst }} est finalisé{{ convention|display_gender_terminaison }}. Vous pouvez maintenant transmettre la convention au service de la publicité foncière pour publication.
+                </p>
+            </div>
+            <form method="post" action="{% url 'conventions:send_for_publication' convention_uuid=convention.uuid %}" data-turbo="false">
+                {% csrf_token %}
+                <button name="SendForPublication"
+                        value=True
+                        class="fr-btn apilos-btn--primary fr-my-1w"
+                >
+                    Envoyer pour publication
+                </button>
+            </form>
+        </div>
+    </div>
+    <hr>
+{% endif %}

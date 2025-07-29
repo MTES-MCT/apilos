@@ -43,6 +43,11 @@ urlpatterns = [
         name="preview",
     ),
     path(
+        "preview/<convention_uuid>/<doc_type>",
+        views.preview,
+        name="preview",
+    ),
+    path(
         "journal/<convention_uuid>",
         views.journal,
         name="journal",
@@ -307,6 +312,11 @@ urlpatterns = [
         name="sent",
     ),
     path(
+        "sent/<convention_uuid>/<type_doc>",
+        views.ConventionSentView.as_view(),
+        name="sent",
+    ),
+    path(
         "upload_signed/preview/<convention_uuid>",
         views.ConventionPreviewUploadSignedView.as_view(),
         name="preview_upload_signed",
@@ -320,6 +330,36 @@ urlpatterns = [
         "upload_signed/date/<convention_uuid>",
         views.ConventionDateUploadSignedView.as_view(),
         name="date_upload_signed",
+    ),
+    path(
+        "publication/<convention_uuid>/send",
+        views.ConventionSendForPublicationView.as_view(),
+        name="send_for_publication",
+    ),
+    path(
+        "publication/<convention_uuid>",
+        views.ConventionPublicationView.as_view(),
+        name="publication",
+    ),
+    path(
+        "publication/<convention_uuid>/upload-preview",
+        views.ConventionPreviewUploadPublicationView.as_view(),
+        name="preview_upload_publication",
+    ),
+    path(
+        "publication/<convention_uuid>/date",
+        views.ConventionDateUploadPublicationView.as_view(),
+        name="date_publication",
+    ),
+    path(
+        "publication/<convention_uuid>/upload/cancel",
+        views.ConventionCancelUploadPublicationView.as_view(),
+        name="cancel_upload_publication",
+    ),
+    path(
+        "display_convention_publie/<convention_uuid>",
+        views.display_convention_publie,
+        name="display_convention_publie",
     ),
     path(
         "display_pdf/<convention_uuid>",

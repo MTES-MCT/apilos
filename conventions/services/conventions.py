@@ -4,6 +4,7 @@ from django.forms import Form
 
 from conventions.forms import UploadForm
 from conventions.forms.convention_form_dates import (
+    ConventionDatePublicationForm,
     ConventionDateResiliationForm,
     ConventionDateSignatureForm,
 )
@@ -54,6 +55,7 @@ def convention_post_action(request, convention_uuid):
         resiliation_form = ConventionResiliationForm(request.POST)
         signature_date_form = ConventionDateSignatureForm(request.POST)
         resiliation_date_form = ConventionDateResiliationForm(request.POST)
+        publication_spf_date_form = ConventionDatePublicationForm(request.POST)
         is_resiliation = request.POST.get("resiliation", False)
         if is_resiliation:
             if resiliation_form.is_valid():
@@ -82,6 +84,13 @@ def convention_post_action(request, convention_uuid):
                 convention.save()
                 result_status = utils.ReturnStatus.SUCCESS
                 form_posted = "date_resiliation"
+            elif publication_spf_date_form.is_valid():
+                convention.date_publication_spf = (
+                    publication_spf_date_form.cleaned_data["date_publication_spf"]
+                )
+                convention.save()
+                result_status = utils.ReturnStatus.SUCCESS
+                form_posted = "publication_spf_date"
 
     else:
         resiliation_form = ConventionResiliationForm()
@@ -113,4 +122,13 @@ def convention_post_action(request, convention_uuid):
         "signature_date_form": signature_date_form,
         "resiliation_date_form": resiliation_date_form,
         "form_posted": form_posted,
+        "publication_spf_date_form": ConventionDatePublicationForm(
+            initial={
+                "date_publication_spf": (
+                    convention.date_publication_spf.strftime("%Y-%m-%d")
+                    if convention.date_publication_spf
+                    else ""
+                ),
+            }
+        ),
     }

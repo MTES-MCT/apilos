@@ -10,7 +10,10 @@ from waffle import switch_is_active
 
 from comments.models import Comment, CommentStatut
 from conventions.forms.avenant import CompleteforavenantForm
-from conventions.forms.convention_form_dates import ConventionDateSignatureForm
+from conventions.forms.convention_form_dates import (
+    ConventionDateSignatureForm,
+    ConventionInfoPublicationForm,
+)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.notification import NotificationForm
 from conventions.forms.programme_number import ProgrammeNumberForm
@@ -22,7 +25,7 @@ from conventions.models.convention_history import ConventionHistory
 from conventions.services import utils
 from conventions.services.alertes import AlerteService
 from conventions.services.conventions import ConventionService
-from conventions.services.file import ConventionFileService
+from conventions.services.file import ConventionFileService, FileType
 from conventions.tasks import task_generate_and_send
 from core.request import AuthenticatedHttpRequest
 from core.services import EmailService, EmailTemplateID
@@ -252,34 +255,57 @@ class ConventionRecapitulatifService(ConventionService):
         )
 
 
+def convention_step_submit(
+    request, convention, statut_convention, check_premiere_soumission=False
+):
+    ConventionHistory.objects.create(
+        convention=convention,
+        statut_convention=statut_convention,
+        statut_convention_precedent=convention.statut,
+        user=request.user,
+    ).save()
+    convention.statut = statut_convention
+
+    if check_premiere_soumission and convention.premiere_soumission_le is None:
+        convention.premiere_soumission_le = timezone.now()
+        convention.soumis_le = timezone.now()
+    convention.save()
+
+
 def convention_submit(request: HttpRequest, convention: Convention):
     submitted = utils.ReturnStatus.REFRESH
     # Set back the onvention to the instruction
     if request.POST.get("BackToInstruction", False):
-        ConventionHistory.objects.create(
-            convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION.label,
-            statut_convention_precedent=convention.statut,
-            user=request.user,
-        ).save()
-        convention.statut = ConventionStatut.INSTRUCTION.label
+        convention_step_submit(request, convention, ConventionStatut.INSTRUCTION.label)
         convention.nom_fichier_signe = None
-        convention.save()
+        submitted = utils.ReturnStatus.ERROR
+        # Set back the onvention to the signée
+    if request.POST.get("BackToSigned", False):
+        convention_step_submit(request, convention, ConventionStatut.SIGNEE.label)
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            siap_credentials = get_siap_credentials_from_request(request)
+            service = AlerteService(convention, siap_credentials)
+            service.delete_action_alertes()
+            service.create_alertes_signed()
+        submitted = utils.ReturnStatus.ERROR
+    if request.POST.get("BackToPublicationEnCours", False):
+        convention_step_submit(
+            request, convention, ConventionStatut.PUBLICATION_EN_COUR.label
+        )
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+            siap_credentials = get_siap_credentials_from_request(request)
+            service = AlerteService(convention, siap_credentials)
+            service.delete_action_alertes()
+            service.create_alertes_publication_en_cours()
         submitted = utils.ReturnStatus.ERROR
     # Submit the convention to the instruction
     if request.POST.get("SubmitConvention", False):
-        ConventionHistory.objects.create(
-            convention=convention,
-            statut_convention=ConventionStatut.INSTRUCTION.label,
-            statut_convention_precedent=convention.statut,
-            user=request.user,
-        ).save()
-
-        if convention.premiere_soumission_le is None:
-            convention.premiere_soumission_le = timezone.now()
-        convention.soumis_le = timezone.now()
-        convention.statut = ConventionStatut.INSTRUCTION.label
-        convention.save()
+        convention_step_submit(
+            request,
+            convention,
+            ConventionStatut.INSTRUCTION.label,
+            check_premiere_soumission=True,
+        )
 
         instructeur_emails, submitted = collect_instructeur_emails(
             request, convention, submitted
@@ -675,11 +701,14 @@ class ConventionSentService(ConventionService):
             },
         }
 
-    def save(self):
+    def save(self, as_type: FileType = FileType.CONVENTION):
         upform = UploadForm(self.request.POST, self.request.FILES)
         if upform.is_valid():
-            ConventionFileService.upload_convention_file(
-                self.convention, self.request.FILES["file"], update_statut=False
+            ConventionFileService.upload_file(
+                convention=self.convention,
+                file=self.request.FILES["file"],
+                as_type=as_type,
+                update_statut=False,
             )
             self.return_status = utils.ReturnStatus.SUCCESS
         return {
@@ -751,3 +780,71 @@ class ConventionUploadSignedService(ConventionService):
             "%d/%m/%Y"
         )
         return f"Convention signée avec succès le {date_signature}"
+
+
+class ConventionUploadPublicationService(ConventionService):
+
+    def __init__(
+        self,
+        convention: Convention,
+        request: AuthenticatedHttpRequest,
+        step_number: int = 1,
+    ):
+        super().__init__(convention, request)
+        self.stepper = Stepper(
+            steps=[
+                "Prévisualiser le document",
+                "Indiquer la date de publication ",
+            ]
+        )
+        self.step_number = step_number
+
+    def get(self):
+        return {
+            "convention": self.convention,
+            "publication_info_form": ConventionInfoPublicationForm(
+                initial={
+                    "reference_spf": (
+                        self.convention.reference_spf
+                        if self.convention.reference_spf
+                        else ""
+                    ),
+                    "date_publication_spf": (
+                        self.convention.date_publication_spf.strftime("%Y-%m-%d")
+                        if self.convention.date_publication_spf
+                        else datetime.date.today().strftime("%Y-%m-%d")
+                    ),
+                }
+            ),
+            "form_step": self.stepper.get_form_step(step_number=self.step_number),
+        }
+
+    def save(self):
+        form = ConventionInfoPublicationForm(self.request.POST)
+        if form.is_valid() and self.convention.statut in [
+            ConventionStatut.PUBLICATION_EN_COUR.label,
+            ConventionStatut.PUBLIE.label,
+        ]:
+            self.convention.date_publication_spf = form.cleaned_data[
+                "date_publication_spf"
+            ]
+            self.convention.reference_spf = form.cleaned_data["reference_spf"]
+            self.convention.statut = ConventionStatut.PUBLIE.label
+            self.convention.save()
+            if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+                siap_credentials = get_siap_credentials_from_request(self.request)
+                service = AlerteService(self.convention, siap_credentials)
+                service.delete_action_alertes()
+                service.create_alertes_publie()
+            self.return_status = utils.ReturnStatus.SUCCESS
+        else:
+            self.return_status = utils.ReturnStatus.ERROR
+        return {
+            "success": self.return_status,
+            "convention": self.convention,
+            "form": form,
+            "publication_info_form": form,
+        }
+
+    def get_success_message(self):
+        return "le document de publication à été ajouté sur Apilos"

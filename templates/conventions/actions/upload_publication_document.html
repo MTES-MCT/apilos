@@ -1,0 +1,18 @@
+{% load display_filters %}
+
+<div class="fr-col-12 fr-my-2w">
+    <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-draft-line">
+        <p class="fr-alert__title">
+            Déposer la convention publiée
+        </p>
+
+        <div class="block--row-strech">
+            {% include "conventions/common/form_upload_publication_document.html" %}
+
+            <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
+                Consulter le récapitulatif
+            </a>
+        </div>
+    </div>
+</div>
+<hr>

@@ -876,6 +876,17 @@ table .apilos-badge {
   background-color: #B8FEC9;
   color: #18753C;
 }
+
+.apilos-badge-Publication_en_cours {
+  background-color: #E9EDFE;
+  color: #2F4077;
+}
+
+.apilos-badge-Publie {
+  background-color: #D8F8E5;
+  color: #007A33;
+}
+
 .apilos-badge-Denoncee,
 .apilos-badge-Resiliee,
 .apilos-badge-Annulee_en_suivi {

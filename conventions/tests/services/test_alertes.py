@@ -236,6 +236,44 @@ def test_create_alertes_valide(alerte_service, avenant_alerte_service):
 
 
 @pytest.mark.django_db
+def test_create_alertes_publication_en_cours(alerte_service):
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        alerte_service.create_alertes_publication_en_cours()
+        mock_client.create_alerte.assert_called_once()
+        payload = json.loads(mock_client.create_alerte.mock_calls[0].kwargs["payload"])
+        assert payload["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"},
+        ]
+        assert payload["etiquettePersonnalisee"] == "Convention en cours de publication"
+        assert payload["categorieInformation"] == ALERTE_CATEGORY_MAPPING["information"]
+
+        assert payload["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[alerte_service.convention.uuid]
+        )
+
+
+@pytest.mark.django_db
+def test_create_alertes_publie(alerte_service):
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_client = MagicMock()
+        mock_get_instance.return_value = mock_client
+        alerte_service.create_alertes_publie()
+        mock_client.create_alerte.assert_called_once()
+        payload = json.loads(mock_client.create_alerte.mock_calls[0].kwargs["payload"])
+        assert payload["destinataires"] == [
+            {"role": "INSTRUCTEUR", "service": "SG"},
+        ]
+        assert payload["etiquettePersonnalisee"] == "Convention publiée"
+        assert payload["categorieInformation"] == ALERTE_CATEGORY_MAPPING["information"]
+
+        assert payload["urlDirection"] == reverse(
+            "conventions:recapitulatif", args=[alerte_service.convention.uuid]
+        )
+
+
+@pytest.mark.django_db
 def test_create_alertes_signed(alerte_service, avenant_alerte_service):
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_client = MagicMock()

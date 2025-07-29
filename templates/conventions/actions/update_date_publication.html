@@ -1,0 +1,17 @@
+{% load display_filters %}
+<form method="post" action="" data-turbo="false">
+    {% csrf_token %}
+    <input id="update_date_signature" type="hidden" name="update_date_signature" value="true">
+    <div class="fr-col-12 fr-my-2w block--row-strech">
+        <div class="block--row-strech-1 fr-mr-6w">
+            <p>
+                Votre {{ convention|display_kind }} a été publié{{ convention|display_gender_terminaison }} le {{ convention.date_publication_spf|date:"d F Y"|default_if_none:'-' }}.<br/>
+                Ce n'est pas la bonne date ?
+            </p>
+            {% include "common/form/input_date.html" with form_input=publication_spf_date_form.date_publication_spf editable=True %}
+        </div>
+        <button class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %}>
+            Mettre à jour la date
+        </button>
+    </div>
+</form>
