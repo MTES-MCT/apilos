@@ -170,7 +170,7 @@ def convention_upload_filename(convention: Convention) -> str:
 
     def _normalize(numero: str | None) -> str | None:
         if numero:
-            return numero.replace(" ", "_").replace("/", "-")
+            return numero.replace(" ", "_")
 
     parts = []
 
