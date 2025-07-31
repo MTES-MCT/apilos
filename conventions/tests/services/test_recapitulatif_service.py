@@ -157,10 +157,10 @@ class ConventionRecapitulatifServiceTests(TestCase):
         recapitulatif.convention_step_submit(
             self.request,
             self.convention,
-            ConventionStatut.PUBLICATION_EN_COUR.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
             check_premiere_soumission=True,
         )
-        assert self.convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
+        assert self.convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
         assert self.convention.premiere_soumission_le is not None
         assert self.convention.soumis_le is not None
 
@@ -596,7 +596,7 @@ class TestConventionUploadPublicationService:
 
     def test_save(self):
         convention = ConventionFactory()
-        convention.statut = ConventionStatut.PUBLICATION_EN_COUR.label
+        convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
 
         assert convention.reference_spf is None
         assert convention.date_publication_spf is None

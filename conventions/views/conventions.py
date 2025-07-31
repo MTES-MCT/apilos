@@ -567,7 +567,6 @@ class ConventionPublicationView(BaseConventionView):
         )
 
 
-# FIXME : to be tested
 class ConventionSentView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid, type_doc=0):
@@ -713,7 +712,7 @@ class ConventionSendForPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        self.convention.statut = ConventionStatut.PUBLICATION_EN_COUR.label
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
         self.convention.save()
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
 
@@ -875,6 +874,8 @@ def display_pdf(request, convention_uuid):
         in [
             ConventionStatut.A_SIGNER.label,
             ConventionStatut.SIGNEE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            ConventionStatut.PUBLIE.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,

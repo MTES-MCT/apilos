@@ -372,7 +372,7 @@ def display_redirect_convention_publie(convention):
 
 @register.filter
 def display_redirect_convention_en_publication(convention):
-    return convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
+    return convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
 
 
 @register.filter

@@ -294,6 +294,8 @@ class User(AbstractUser):
                     ConventionStatut.CORRECTION.label,
                     ConventionStatut.A_SIGNER.label,
                     ConventionStatut.SIGNEE.label,
+                    ConventionStatut.PUBLICATION_EN_COURS.label,
+                    ConventionStatut.PUBLIE.label,
                 ],
             )
             .order_by("-cree_le")
@@ -621,6 +623,8 @@ class User(AbstractUser):
                         ConventionStatut.CORRECTION.label,
                         ConventionStatut.A_SIGNER.label,
                         ConventionStatut.SIGNEE.label,
+                        ConventionStatut.PUBLICATION_EN_COURS.label,
+                        ConventionStatut.PUBLIE.label,
                     ],
                 )
                 .order_by("-cree_le")

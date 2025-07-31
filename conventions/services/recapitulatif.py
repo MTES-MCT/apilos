@@ -290,7 +290,7 @@ def convention_submit(request: HttpRequest, convention: Convention):
         submitted = utils.ReturnStatus.ERROR
     if request.POST.get("BackToPublicationEnCours", False):
         convention_step_submit(
-            request, convention, ConventionStatut.PUBLICATION_EN_COUR.label
+            request, convention, ConventionStatut.PUBLICATION_EN_COURS.label
         )
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
             siap_credentials = get_siap_credentials_from_request(request)
@@ -822,7 +822,7 @@ class ConventionUploadPublicationService(ConventionService):
     def save(self):
         form = ConventionInfoPublicationForm(self.request.POST)
         if form.is_valid() and self.convention.statut in [
-            ConventionStatut.PUBLICATION_EN_COUR.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
             ConventionStatut.PUBLIE.label,
         ]:
             self.convention.date_publication_spf = form.cleaned_data[

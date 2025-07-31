@@ -198,7 +198,7 @@ class CustomFiltersTest(TestCase):
             ConventionStatut.CORRECTION.label,
             ConventionStatut.A_SIGNER.label,
             ConventionStatut.SIGNEE.label,
-            ConventionStatut.PUBLICATION_EN_COUR.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,
@@ -209,7 +209,7 @@ class CustomFiltersTest(TestCase):
             )
 
     def test_display_redirect_convention_en_publication(self):
-        self.convention.statut = ConventionStatut.PUBLICATION_EN_COUR.label
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
         self.assertTrue(
             custom_filters.display_redirect_convention_en_publication(self.convention)
         )
@@ -242,7 +242,7 @@ class CustomFiltersTest(TestCase):
             ConventionStatut.CORRECTION.label,
             ConventionStatut.A_SIGNER.label,
             ConventionStatut.PUBLIE.label,
-            ConventionStatut.PUBLICATION_EN_COUR.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,

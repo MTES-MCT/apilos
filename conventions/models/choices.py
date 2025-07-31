@@ -136,7 +136,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         "Valide",
         "checkbox-circle",
     )
-    PUBLICATION_EN_COUR = Definition(
+    PUBLICATION_EN_COURS = Definition(
         "5. Publication en cours",
         StatutByRole("Publication en cours"),
         StatutByRole("Publication en cours"),

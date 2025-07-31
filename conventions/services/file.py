@@ -53,7 +53,7 @@ class ConventionFileService:
 
         if (
             update_statut
-            and convention.statut == ConventionStatut.PUBLICATION_EN_COUR.label
+            and convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
         ):
             convention.statut = ConventionStatut.PUBLIE.label
             convention.date_publication_spf = datetime.date.today()
