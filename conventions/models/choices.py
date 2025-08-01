@@ -134,6 +134,20 @@ class ConventionStatut(ReverseEnumMixin, Enum):
             "Un {autre} avenant devra désormais être créé pour mettre à jour une information",
         ),
         "Valide",
+        "checkbox-circle",
+    )
+    PUBLICATION_EN_COURS = Definition(
+        "5. Publication en cours",
+        StatutByRole("Publication en cours"),
+        StatutByRole("Publication en cours"),
+        "Publication en cours",
+        "time",
+    )
+    PUBLIE = Definition(
+        "7. Publié",
+        StatutByRole("Publié"),
+        StatutByRole("Publié"),
+        "Publié",
         "success",
     )
     RESILIEE = Definition(

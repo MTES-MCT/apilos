@@ -1,0 +1,31 @@
+{% load custom_filters display_filters %}
+
+{% if convention|display_redirect_convention_en_publication and not request|is_readonly %}
+    <div class="fr-col-12">
+        <div class="block--row-strech">
+            <div class="block--row-strech-1 fr-mr-6w">
+                <p class="fr-alert__title">
+                    Repasser {{ convention|display_kind_with_demonstratif }} au statut VALIDE
+                </p>
+                <p>
+                    {{ convention|display_kind_with_demonstratif|capfirst }} est actuellement en cours de publication. Cependant, si des modifications doivent être apportées - par exemple à la suite d'un retour du Service de la publicité foncière - vous avez la possibilité de {{ convention|display_pronom }} repasser au statut VALIDE en cliquant sur le bouton ci-dessous.
+                </p>
+                <p>
+                    <span class="fr-icon-warning-line" aria-hidden="true"></span>
+                    Une fois {{ convention|display_kind_with_pronom }} repassé{{ convention|display_gender_terminaison }} en statut VALIDE, vous pourrez de nouveau modifier les éléments nécessaires.
+                    Lorsque les ajustements seront terminés, vous pourrez relancer la publication.
+                </p>
+            </div>
+            <form method="post" action="{% url 'conventions:save' convention_uuid=convention.uuid %}" data-turbo="false">
+                {% csrf_token %}
+                <button name="BackToSigned"
+                        value=True
+                        class="fr-btn apilos-btn--secondary--red fr-my-1w"
+                >
+                    Annuler la publication
+                </button>
+            </form>
+        </div>
+    </div>
+    <hr>
+{% endif %}

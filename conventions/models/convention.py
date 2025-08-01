@@ -163,6 +163,9 @@ class Convention(models.Model):
 
     donnees_validees = models.TextField(null=True, blank=True)
     nom_fichier_signe = models.CharField(max_length=255, null=True, blank=True)
+    nom_fichier_publication_spf = models.CharField(
+        max_length=255, null=True, blank=True
+    )
     televersement_convention_signee_le = models.DateField(null=True, blank=True)
     desc_avenant = models.TextField(null=True, blank=True)
 

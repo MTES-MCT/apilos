@@ -14,7 +14,7 @@
                                 Nombre de conventions trop élevé pour l'export
                             </h2>
                             <p>
-                             L'export de la liste a échoué car le nombre de conventions dépasse la limite autorisée ({{ convention_export_max_rows }}).
+                            L'export de la liste a échoué car le nombre de conventions dépasse la limite autorisée ({{ convention_export_max_rows }}).
                             <br>
                             Pour continuer, veuillez affiner votre recherche en ajoutant un ou plusieurs filtres afin de réduire le nombre de lignes à exporter.
 
@@ -137,7 +137,18 @@
                                         <tbody>
                                             {% for convention in conventions %}
                                                 <tr id="convention_redirect_{{ convention.uuid }}"
-                                                    class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                                                    class="clickable
+                                                    {% if convention|display_redirect_project and not convention.is_avenant %}
+                                                        project
+                                                    {% elif convention|display_redirect_sent %}
+                                                        sent
+                                                    {% elif convention|display_redirect_post_action and not convention.is_avenant %}
+                                                        signed
+                                                    {% elif convention|display_redirect_convention_en_publication and not convention.is_avenant %}
+                                                        publication_en_cours
+                                                    {% elif convention|display_redirect_convention_publie and not convention.is_avenant %}
+                                                        publie
+                                                    {% endif %}">
 
                                                     {% if debug_search_scoring %}
                                                         <td>
@@ -178,6 +189,12 @@
                                                                     }
                                                                     else if (this.classList.contains("project")) {
                                                                         location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
+                                                                    }
+                                                                    else if (this.classList.contains("publication_en_cours")){
+                                                                        location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
+                                                                    }
+                                                                    else if (this.classList.contains("publie")){
+                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
                                                                     }
                                                                     else {
                                                                         location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"

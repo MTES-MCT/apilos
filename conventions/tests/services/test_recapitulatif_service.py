@@ -9,7 +9,10 @@ from django.http import HttpRequest
 from django.test import RequestFactory, TestCase
 
 from comments.models import Comment, CommentStatut
-from conventions.forms.convention_form_dates import ConventionDateSignatureForm
+from conventions.forms.convention_form_dates import (
+    ConventionDateSignatureForm,
+    ConventionInfoPublicationForm,
+)
 from conventions.forms.convention_number import ConventionNumberForm
 from conventions.forms.programme_number import ProgrammeNumberForm
 from conventions.forms.upload import UploadForm
@@ -140,12 +143,41 @@ class ConventionRecapitulatifServiceTests(TestCase):
 
         self.assertFalse(result["conventionNumberForm"].has_error("convention_numero"))
 
+    def test_convention_step_submit(self):
+        assert self.convention.statut == ConventionStatut.PROJET.label
+        assert self.convention.premiere_soumission_le is None
+        assert self.convention.soumis_le is None
+        recapitulatif.convention_step_submit(
+            self.request, self.convention, ConventionStatut.INSTRUCTION.label
+        )
+        assert self.convention.statut == ConventionStatut.INSTRUCTION.label
+        assert self.convention.premiere_soumission_le is None
+        assert self.convention.soumis_le is None
+
+        recapitulatif.convention_step_submit(
+            self.request,
+            self.convention,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            check_premiere_soumission=True,
+        )
+        assert self.convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
+        assert self.convention.premiere_soumission_le is not None
+        assert self.convention.soumis_le is not None
+
     def test_convention_submit(self):
         result = recapitulatif.convention_submit(self.request, self.convention)
         self.assertEqual(result["success"], utils.ReturnStatus.REFRESH)
         self.assertEqual(result["convention"], self.convention)
 
         self.request.POST = {"BackToInstruction": True}
+        result = recapitulatif.convention_submit(self.request, self.convention)
+        self.assertEqual(result["success"], utils.ReturnStatus.ERROR)
+
+        self.request.POST = {"BackToSigned": True}
+        result = recapitulatif.convention_submit(self.request, self.convention)
+        self.assertEqual(result["success"], utils.ReturnStatus.ERROR)
+
+        self.request.POST = {"BackToPublicationEnCours": True}
         result = recapitulatif.convention_submit(self.request, self.convention)
         self.assertEqual(result["success"], utils.ReturnStatus.ERROR)
 
@@ -517,3 +549,91 @@ class TestConventionUploadSignedService:
         message = service.get_success_message()
 
         assert message == "Convention signée avec succès le 15/04/2023"
+
+
+@pytest.mark.django_db
+class TestConventionUploadPublicationService:
+    def test_get(self):
+        convention = ConventionFactory()
+        request = RequestFactory().get("/")
+        service = recapitulatif.ConventionUploadPublicationService(
+            convention=convention, request=request
+        )
+        with time_machine.travel("2024-06-21"):
+            result = service.get()
+
+            assert len(result) == 3
+            assert "convention" in result
+            assert "publication_info_form" in result
+            assert "form_step" in result
+
+            assert result["convention"] == convention
+            assert isinstance(result["form_step"], dict)
+            assert isinstance(
+                result["publication_info_form"], ConventionInfoPublicationForm
+            )
+            assert convention.reference_spf is None
+            assert convention.date_publication_spf is None
+            assert result["publication_info_form"].initial == {
+                "reference_spf": "",
+                "date_publication_spf": "2024-06-21",
+            }
+
+        convention.reference_spf = "REF-12345"
+        convention.date_publication_spf = date(2025, 2, 15)
+        service = recapitulatif.ConventionUploadPublicationService(
+            convention=convention, request=request
+        )
+
+        with time_machine.travel("2024-06-21"):
+            result = service.get()
+            assert convention.reference_spf == "REF-12345"
+            assert convention.date_publication_spf == date(2025, 2, 15)
+            assert result["publication_info_form"].initial == {
+                "reference_spf": "REF-12345",
+                "date_publication_spf": "2025-02-15",
+            }
+
+    def test_save(self):
+        convention = ConventionFactory()
+        convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+
+        assert convention.reference_spf is None
+        assert convention.date_publication_spf is None
+
+        request = RequestFactory().post(
+            "/",
+            data={"reference_spf": "REF-54321", "date_publication_spf": "25/07/2025"},
+        )
+        service = recapitulatif.ConventionUploadPublicationService(
+            convention=convention, request=request
+        )
+
+        result = service.save()
+        assert convention.reference_spf == "REF-54321"
+        assert convention.date_publication_spf == date(2025, 7, 25)
+        assert len(result) == 4
+        assert "success" in result
+        assert "convention" in result
+        assert "form" in result
+        assert "publication_info_form" in result
+
+        assert result["convention"] == convention
+        assert isinstance(result["form"], ConventionInfoPublicationForm)
+        assert result["success"] == ReturnStatus.SUCCESS
+
+    def test_get_success_message(self):
+        convention = ConventionFactory()
+        convention.statut = ConventionStatut.PUBLIE.label
+        request = RequestFactory().post(
+            "/",
+            data={"reference_spf": "REF-54321", "date_publication_spf": "25/07/2025"},
+        )
+        service = recapitulatif.ConventionUploadPublicationService(
+            convention=convention, request=request
+        )
+
+        service.save()
+        message = service.get_success_message()
+
+        assert message == "le document de publication à été ajouté sur Apilos"

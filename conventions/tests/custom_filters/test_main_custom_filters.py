@@ -186,6 +186,70 @@ class CustomFiltersTest(TestCase):
             self.convention.statut = statut
             self.assertFalse(custom_filters.display_redirect_project(self.convention))
 
+    def test_display_redirect_convention_publie(self):
+        self.convention.statut = ConventionStatut.PUBLIE.label
+        self.assertTrue(
+            custom_filters.display_redirect_convention_publie(self.convention)
+        )
+
+        for statut in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.SIGNEE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(
+                custom_filters.display_redirect_convention_publie(self.convention)
+            )
+
+    def test_display_redirect_convention_en_publication(self):
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+        self.assertTrue(
+            custom_filters.display_redirect_convention_en_publication(self.convention)
+        )
+
+        for statut in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.SIGNEE.label,
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(
+                custom_filters.display_redirect_convention_en_publication(
+                    self.convention
+                )
+            )
+
+    def test_display_publication_button(self):
+        self.convention.statut = ConventionStatut.SIGNEE.label
+        self.assertTrue(custom_filters.display_publication_button(self.convention))
+
+        for statut in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
+        ]:
+            self.convention.statut = statut
+            self.assertFalse(custom_filters.display_publication_button(self.convention))
+
     def test_display_redirect_post_action(self):
         self.convention.statut = ConventionStatut.PROJET.label
         self.assertFalse(custom_filters.display_redirect_post_action(self.convention))

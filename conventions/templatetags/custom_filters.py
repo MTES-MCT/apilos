@@ -366,6 +366,16 @@ def display_redirect_post_action(convention):
 
 
 @register.filter
+def display_redirect_convention_publie(convention):
+    return convention.statut == ConventionStatut.PUBLIE.label
+
+
+@register.filter
+def display_redirect_convention_en_publication(convention):
+    return convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
+
+
+@register.filter
 def display_convention_form_progressbar(convention):
     return convention.statut in [
         ConventionStatut.PROJET.label,
@@ -426,6 +436,11 @@ def display_back_to_instruction(convention, request):
         ConventionStatut.A_SIGNER.label,
         ConventionStatut.SIGNEE.label,
     ] and is_instructeur(request)
+
+
+@register.filter
+def display_publication_button(convention):
+    return convention.statut == ConventionStatut.SIGNEE.label
 
 
 @register.filter

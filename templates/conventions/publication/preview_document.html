@@ -1,0 +1,42 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %} Envoi - APiLos{% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner">
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/nav_bar.html" with nav_bar_step="sent" %}
+
+        <div class="fr-container fr-py-5w">
+            {% include "conventions/common/stepper.html" %}
+            <h4>Assurez-vous d'avoir téléversé le bon document</h4>
+
+            <div class="fr-mb-7w h-80vh">
+                <iframe title="Prévisualiser le document téléversé" src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
+            </div>
+            {% if convention.attached|get_files_from_textfiles %}
+                <div class="fr-container fr-my-6w">
+                    {% include "common/display_text_and_files_if_exists.html" with text=convention.attached|get_text_from_textfiles label="Fichiers à joindre à la convention" file_list=convention.attached|get_files_from_textfiles %}
+                </div>
+            {% endif %}
+
+            <ul class="fr-mb-7w fr-btns-group fr-btns-group--inline-md fr-btns-group--right">
+                <li>
+                    <form action="{% url 'conventions:cancel_upload_publication' convention_uuid=convention.uuid %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="fr-btn fr-btn--secondary">
+                            Annuler
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <a class="fr-btn" href="{% url 'conventions:date_publication' convention_uuid=convention.uuid %}">
+                        Etape suivante
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+{% endblock content %}

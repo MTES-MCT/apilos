@@ -27,6 +27,7 @@ from django.urls import resolve, reverse
 from django.views import View
 from django.views.decorators.http import require_GET, require_POST, require_http_methods
 from unidecode import unidecode
+from waffle import switch_is_active
 from zipfile import ZipFile
 
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
@@ -38,13 +39,15 @@ from conventions.permissions import (
     currentrole_permission_required,
 )
 from conventions.services import convention_generator, utils
+from conventions.services.alertes import AlerteService
 from conventions.services.avenants import create_avenant
 from conventions.services.convention_generator import fiche_caf_doc
 from conventions.services.conventions import convention_post_action
-from conventions.services.file import ConventionFileService
+from conventions.services.file import ConventionFileService, FileType
 from conventions.services.recapitulatif import (
     ConventionRecapitulatifService,
     ConventionSentService,
+    ConventionUploadPublicationService,
     ConventionUploadSignedService,
     convention_denonciation_validate,
     convention_feedback,
@@ -64,6 +67,7 @@ from core.request import AuthenticatedHttpRequest
 from core.storage import client
 from programmes.models import Financement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
+from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile
 
 template_sent = "conventions/sent.html"
@@ -517,20 +521,55 @@ def load_xlsx_model(request, file_type):
 @require_GET
 @login_required
 @currentrole_campaign_permission_required_view_function("convention.view_convention")
-def preview(request, convention_uuid):
+def preview(request, convention_uuid, doc_type=0):
     convention = Convention.objects.get(uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
     return render(
         request,
         "conventions/preview.html",
-        {"convention": convention},
+        {
+            "convention": convention,
+            "doc_type": doc_type,
+        },
     )
 
 
-# FIXME : to be tested
-class ConventionSentView(BaseConventionView):
+class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.get()
+        return render(
+            request,
+            "conventions/post.html",
+            {
+                **result,
+            },
+        )
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.save(as_type=FileType.PUBLICATION)
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:preview_upload_publication", args=[convention_uuid]
+                )
+            )
+
+        return render(
+            request,
+            "conventions/post.html",
+            {
+                **result,
+            },
+        )
+
+
+class ConventionSentView(BaseConventionView):
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid, type_doc=0):
         service = ConventionSentService(convention=self.convention, request=request)
         result = service.get()
         return render(
@@ -542,13 +581,21 @@ class ConventionSentView(BaseConventionView):
         )
 
     @currentrole_campaign_permission_required("convention.change_convention")
-    def post(self, request, convention_uuid):
+    def post(self, request, convention_uuid, type_doc=0):
         service = ConventionSentService(convention=self.convention, request=request)
-        result = service.save()
+        as_type = FileType.CONVENTION if type_doc == 0 else FileType.PUBLICATION
+        result = service.save(as_type=as_type)
         if result["success"] == ReturnStatus.SUCCESS:
-            return HttpResponseRedirect(
-                reverse("conventions:preview_upload_signed", args=[convention_uuid])
-            )
+            if as_type == FileType.CONVENTION:
+                return HttpResponseRedirect(
+                    reverse("conventions:preview_upload_signed", args=[convention_uuid])
+                )
+            else:
+                return HttpResponseRedirect(
+                    reverse(
+                        "conventions:preview_upload_publication", args=[convention_uuid]
+                    )
+                )
 
         return render(
             request,
@@ -575,6 +622,106 @@ class ConventionBaseUploadSignedView(BaseConventionView):
             {
                 **result,
             },
+        )
+
+
+class ConventionBaseUploadPublicationView(BaseConventionView):
+    step_number: int
+    template_path: str
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request, convention_uuid):
+        service = ConventionUploadPublicationService(
+            convention=self.convention, request=request, step_number=self.step_number
+        )
+        result = service.get()
+        return render(
+            request,
+            self.template_path,
+            {
+                **result,
+            },
+        )
+
+
+class ConventionPreviewUploadPublicationView(ConventionBaseUploadPublicationView):
+    step_number: int = 1
+    template_path: str = "conventions/publication/preview_document.html"
+
+
+class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
+    step_number: int = 2
+    template_path: str = "conventions/publication/publication_date.html"
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        service = ConventionUploadPublicationService(
+            convention=self.convention, request=request, step_number=self.step_number
+        )
+        result = service.save()
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.error(f"ConventionDateUploadPublicationView result: {result}")
+        if result["success"] == ReturnStatus.SUCCESS:
+            messages.add_message(
+                request,
+                messages.SUCCESS,
+                service.get_success_message(),
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
+        return render(
+            request,
+            self.template_path,
+            {
+                **result,
+                "convention": self.convention,
+            },
+        )
+
+
+class ConventionCancelUploadPublicationView(BaseConventionView):
+
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def post(self, request, convention_uuid):
+        path_fichier_publication_spf = (
+            f"spf/{self.convention.uuid}/publication/"
+            f"{self.convention.nom_fichier_publication_spf}"
+        )
+        if default_storage.exists(path_fichier_publication_spf):
+            with default_storage.open(
+                path_fichier_publication_spf
+            ) as fichier_publication_spf:
+                timestamp = time.strftime("%Y%m%d-%H%M%S")
+                old_name = os.path.splitext(self.convention.nom_fichier_publication_spf)
+                new_path = f"""spf/{self.convention.uuid}/publication/"
+                            {old_name[0]}_cancelled_on_{timestamp}{old_name[1]}"""
+                default_storage.save(new_path, fichier_publication_spf)
+            default_storage.delete(path_fichier_publication_spf)
+        self.convention.nom_fichier_publication_spf = None
+        self.convention.save()
+        return HttpResponseRedirect(
+            reverse("conventions:publication", args=[convention_uuid])
+        )
+
+
+class ConventionSendForPublicationView(BaseConventionView):
+
+    @currentrole_campaign_permission_required("convention.change_convention")
+    def post(self, request, convention_uuid):
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+        self.convention.save()
+        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+
+            siap_credentials = get_siap_credentials_from_request(self.request)
+            service = AlerteService(self.convention, siap_credentials)
+            service.delete_action_alertes()
+            service.create_alertes_publication_en_cours()
+        return HttpResponseRedirect(
+            reverse("conventions:publication", args=[convention_uuid])
         )
 
 
@@ -727,6 +874,48 @@ def display_pdf(request, convention_uuid):
         in [
             ConventionStatut.A_SIGNER.label,
             ConventionStatut.SIGNEE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
+        ]
+        and convention.nom_fichier_signe
+        and default_storage.exists(f"{convention_path}/{convention.nom_fichier_signe}")
+    ):
+        filename = convention.nom_fichier_signe
+    elif default_storage.exists(f"{convention_path}/{convention.uuid}.pdf"):
+        filename = f"{convention.uuid}.pdf"
+    elif default_storage.exists(f"{convention_path}/{convention.uuid}.docx"):
+        filename = f"{convention.uuid}.docx"
+
+    if filename:
+        return FileResponse(
+            default_storage.open(
+                name=f"{convention_path}/{filename}",
+                mode="rb",
+            ),
+            filename=filename,
+        )
+
+    return render(
+        request,
+        "conventions/no_convention_document.html",
+    )
+
+
+@login_required
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
+def display_convention_publie(request, convention_uuid):
+    # récupérer le doc PDF
+    convention = Convention.objects.get(uuid=convention_uuid)
+    convention_path = f"spf/{convention.uuid}/publication"
+
+    filename = None
+    if (
+        convention.statut
+        in [
+            ConventionStatut.PUBLIE.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,
