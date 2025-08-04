@@ -278,6 +278,8 @@ def display_is_validated(convention):
     return convention.statut in [
         ConventionStatut.A_SIGNER.label,
         ConventionStatut.SIGNEE.label,
+        ConventionStatut.PUBLICATION_EN_COURS.label,
+        ConventionStatut.PUBLIE.label,
         ConventionStatut.RESILIEE.label,
         ConventionStatut.DENONCEE.label,
     ]
@@ -360,6 +362,8 @@ def display_redirect_project(convention):
 def display_redirect_post_action(convention):
     return convention.statut in [
         ConventionStatut.SIGNEE.label,
+        ConventionStatut.PUBLICATION_EN_COURS,
+        ConventionStatut.PUBLIE.label,
         ConventionStatut.DENONCEE.label,
         ConventionStatut.RESILIEE.label,
     ]
@@ -545,8 +549,8 @@ def length_is(value, arg):
 @register.filter
 def can_use_expert_mode(request, convention):
     is_readonly = "readonly" in request.session and request.session["readonly"]
-    is_signee = convention.statut == ConventionStatut.SIGNEE.label
-    return is_signee and is_instructeur(request) and not is_readonly
+    is_completed = convention.statut in ConventionStatut.completed_statuts()
+    return is_completed and is_instructeur(request) and not is_readonly
 
 
 @register.filter

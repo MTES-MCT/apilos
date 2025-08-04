@@ -215,6 +215,14 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     def icone(self):
         return self.value.icone
 
+    @classmethod
+    def completed_statuts(cls):
+        return [
+            cls.SIGNEE,
+            cls.PUBLICATION_EN_COURS,
+            cls.PUBLIE,
+        ]
+
 
 class ConventionType1and2(TextChoices):
     TYPE1 = "Type1", "Type I"
