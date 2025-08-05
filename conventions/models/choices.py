@@ -218,9 +218,9 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     @classmethod
     def completed_statuts(cls):
         return [
-            cls.SIGNEE,
-            cls.PUBLICATION_EN_COURS,
-            cls.PUBLIE,
+            cls.SIGNEE.label,
+            cls.PUBLICATION_EN_COURS.label,
+            cls.PUBLIE.label,
         ]
 
 
