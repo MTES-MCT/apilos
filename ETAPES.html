@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" /><link rel="prev" title="APiLos - documentation technique" href="README.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="Changements de statuts" href="STATUTS.html" /><link rel="prev" title="Génération de docx et pdf" href="DOC_GENERATION.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>Services tiers utilisés par APiLos - Documentation APiLos</title>
+        <title>Gestion des étapes des formulaires - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -198,7 +198,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Services tiers utilisés par APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="THIRDPARTYSERVICES.html">Services tiers utilisés par APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
@@ -211,7 +211,7 @@
 <li class="toctree-l1"><a class="reference internal" href="ADMIN.html">Administration et back office</a></li>
 <li class="toctree-l1"><a class="reference internal" href="FEATURE_FLAGS.html">Utilisation des feature flags par APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DOC_GENERATION.html">Génération de docx et pdf</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ETAPES.html">Gestion des étapes des formulaires</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Gestion des étapes des formulaires</a></li>
 <li class="toctree-l1"><a class="reference internal" href="STATUTS.html">Changements de statuts</a></li>
 </ul>
 
@@ -233,7 +233,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/THIRDPARTYSERVICES.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/ETAPES.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -253,27 +253,25 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="services-tiers-utilises-par-apilos">
-<h1>Services tiers utilisés par APiLos<a class="headerlink" href="#services-tiers-utilises-par-apilos" title="Lien vers cette rubrique">¶</a></h1>
-<p>APiLos utilise un certain nombre de servce tiers pour fonctionner.L’équipe technique d’APiLos doit avoir un compte pour chacun de ces services.</p>
-<ul class="simple">
-<li><p>Scalingo (hébergement) : PaaS souverain. Voir le responsable technique du service responsable du marché pour créer les accès aux développeurs. Les projets actifs sur Scalingo sont :</p>
-<ul>
-<li><p>apilos-ecolo (image de la base de données Ecoloweb, peu/pas utilisé)</p></li>
-<li><p>apilos-metabase-prod (metabase)</p></li>
-<li><p>clamav-service (Antovirus as a service)</p></li>
-<li><p>apilos-siap-integration (Plateforme d’intégration)</p></li>
-<li><p>apilos-siap-recette (Plateforme de recette - utilisée par l’équipe SIAP)</p></li>
-<li><p>apilos-siap-ecole (plateforme école - utilisée par l’équipe SIAP)</p></li>
-<li><p>apilos-siap-production (Plateforme de production)</p></li>
-</ul>
-</li>
-<li><p>GitHub (https://github.com/MtES-MCT/apilos/) - gestion par FabNum/DNUM : Gestion des versions du code d’APiLos. Publié en open-source.</p></li>
-<li><p>S3 sur Scaleway - Géré par Nicolas O. : Stockage des documents de convention et des documents attachés aux convention. Le stockage S3 sera prochainement migrée sur une solution s3 maîtrisé par la FabNum/DNUM</p></li>
-<li><p>Sentry (fournit par beta.gouv.fr) - géré par beta.gouv.fr et FabNum/DNUM : Monitoring logiciel d’APiLos</p></li>
-<li><p>Dashlord/UpDown.io géré FabNum/DNUM : Monitoring système et qualité de APiLos</p></li>
-<li><p>Alwaysdata (gestion des DNS - compte Nicolas Oudard) : tous les environnements sauf la production sont sous le domaine apilos.beta.gouv.fr. Les URLs de ces environnements seront prochainement modifiées pour ne plus dépendre du sous domaine beta.gouv.fr</p></li>
-</ul>
+          <div class="toctree-wrapper compound">
+</div>
+<section id="gestion-des-etapes-des-formulaires">
+<h1>Gestion des étapes des formulaires<a class="headerlink" href="#gestion-des-etapes-des-formulaires" title="Lien vers cette rubrique">¶</a></h1>
+<section id="principe">
+<h2>Principe<a class="headerlink" href="#principe" title="Lien vers cette rubrique">¶</a></h2>
+<p>Nous découpons les formulaires en étapes pour simplifier leur remplissage par les utilisateurs.</p>
+<p>Nous appelons « stepper » le bloc situé en haut des formulaires qui permet d’en suivre les étapes.</p>
+</section>
+<section id="petits-formulaires">
+<h2>Petits formulaires<a class="headerlink" href="#petits-formulaires" title="Lien vers cette rubrique">¶</a></h2>
+<p>Pour les formulaires de finalisation, publication et création de convention depuis une opération, nous utilisons la classe <code class="docutils literal notranslate"><span class="pre">Stepper</span></code>.</p>
+<p>Chaque étape de ces formulaires ont une url dédiée, qui pointe sur une vue propre à chaque étape. Chaque vue définie une step_number qui caréctérise sa position parmis les autres étapes, et hérite d’une vue commune à tout le formulaire qui contient la logique du stepper.</p>
+<p>La vue de base (par exemple <code class="docutils literal notranslate"><span class="pre">FinalisationBase</span></code>) intialise un <code class="docutils literal notranslate"><span class="pre">Stepper</span></code> à partir du nom des différentes étapes.</p>
+</section>
+<section id="formulaire-de-convention">
+<h2>Formulaire de convention<a class="headerlink" href="#formulaire-de-convention" title="Lien vers cette rubrique">¶</a></h2>
+<p>Le formulaire principal du site utilise la classe <code class="docutils literal notranslate"><span class="pre">ConventionFormStep</span></code> plutôt que le <code class="docutils literal notranslate"><span class="pre">Stepper</span></code>, parce qu’il contient de la logique additionnelle.</p>
+</section>
 </section>
 
         </article>
@@ -281,23 +279,23 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="DEVELOPPEUR.html">
+          <a class="next-page" href="STATUTS.html">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">DEVELOPPEMENT</div>
+                <div class="title">Changements de statuts</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-          <a class="prev-page" href="README.html">
+          <a class="prev-page" href="DOC_GENERATION.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Génération de docx et pdf</div>
                 
               </div>
             </a>

@@ -3,10 +3,10 @@
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="next" title="DEVELOPPEMENT" href="DEVELOPPEUR.html" /><link rel="prev" title="APiLos - documentation technique" href="README.html" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Recherche" href="search.html" /><link rel="prev" title="Gestion des étapes des formulaires" href="ETAPES.html" />
 
     <!-- Generated with Sphinx 8.2.3 and Furo 2025.07.19 -->
-        <title>Services tiers utilisés par APiLos - Documentation APiLos</title>
+        <title>Changements de statuts - Documentation APiLos</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=25af2a20" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -198,7 +198,7 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <ul class="current">
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Services tiers utilisés par APiLos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="THIRDPARTYSERVICES.html">Services tiers utilisés par APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEVELOPPEUR.html">DEVELOPPEMENT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DEPLOIEMENT.html">DEPLOIEMENT DE LA PLATEFORME APILOS</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ECOLOWEB.html">Migration des données depuis Ecoloweb</a></li>
@@ -212,7 +212,7 @@
 <li class="toctree-l1"><a class="reference internal" href="FEATURE_FLAGS.html">Utilisation des feature flags par APiLos</a></li>
 <li class="toctree-l1"><a class="reference internal" href="DOC_GENERATION.html">Génération de docx et pdf</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ETAPES.html">Gestion des étapes des formulaires</a></li>
-<li class="toctree-l1"><a class="reference internal" href="STATUTS.html">Changements de statuts</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Changements de statuts</a></li>
 </ul>
 
 </div>
@@ -233,7 +233,7 @@
         </a>
         <div class="content-icon-container">
           <div class="view-this-page">
-  <a class="muted-link" href="_sources/THIRDPARTYSERVICES.md.txt" title="View this page">
+  <a class="muted-link" href="_sources/STATUTS.md.txt" title="View this page">
     <svg><use href="#svg-eye"></use></svg>
     <span class="visually-hidden">View this page</span>
   </a>
@@ -253,27 +253,133 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section id="services-tiers-utilises-par-apilos">
-<h1>Services tiers utilisés par APiLos<a class="headerlink" href="#services-tiers-utilises-par-apilos" title="Lien vers cette rubrique">¶</a></h1>
-<p>APiLos utilise un certain nombre de servce tiers pour fonctionner.L’équipe technique d’APiLos doit avoir un compte pour chacun de ces services.</p>
-<ul class="simple">
-<li><p>Scalingo (hébergement) : PaaS souverain. Voir le responsable technique du service responsable du marché pour créer les accès aux développeurs. Les projets actifs sur Scalingo sont :</p>
-<ul>
-<li><p>apilos-ecolo (image de la base de données Ecoloweb, peu/pas utilisé)</p></li>
-<li><p>apilos-metabase-prod (metabase)</p></li>
-<li><p>clamav-service (Antovirus as a service)</p></li>
-<li><p>apilos-siap-integration (Plateforme d’intégration)</p></li>
-<li><p>apilos-siap-recette (Plateforme de recette - utilisée par l’équipe SIAP)</p></li>
-<li><p>apilos-siap-ecole (plateforme école - utilisée par l’équipe SIAP)</p></li>
-<li><p>apilos-siap-production (Plateforme de production)</p></li>
-</ul>
-</li>
-<li><p>GitHub (https://github.com/MtES-MCT/apilos/) - gestion par FabNum/DNUM : Gestion des versions du code d’APiLos. Publié en open-source.</p></li>
-<li><p>S3 sur Scaleway - Géré par Nicolas O. : Stockage des documents de convention et des documents attachés aux convention. Le stockage S3 sera prochainement migrée sur une solution s3 maîtrisé par la FabNum/DNUM</p></li>
-<li><p>Sentry (fournit par beta.gouv.fr) - géré par beta.gouv.fr et FabNum/DNUM : Monitoring logiciel d’APiLos</p></li>
-<li><p>Dashlord/UpDown.io géré FabNum/DNUM : Monitoring système et qualité de APiLos</p></li>
-<li><p>Alwaysdata (gestion des DNS - compte Nicolas Oudard) : tous les environnements sauf la production sont sous le domaine apilos.beta.gouv.fr. Les URLs de ces environnements seront prochainement modifiées pour ne plus dépendre du sous domaine beta.gouv.fr</p></li>
-</ul>
+          <div class="toctree-wrapper compound">
+</div>
+<section id="changements-de-statuts">
+<h1>Changements de statuts<a class="headerlink" href="#changements-de-statuts" title="Lien vers cette rubrique">¶</a></h1>
+<p>Les changements de statuts ont lieu à des moments clés du cycle de vie d’une convention, voici une liste des changements de statuts possibles dans APiLos, avec le nom de la méthode qui effectue le changement dans le code et si possible le cas métier correspondant.</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Statut initial</p></th>
+<th class="head"><p>Nouveau statut</p></th>
+<th class="head"><p>Rôle</p></th>
+<th class="head"><p>Méthode appelée</p></th>
+<th class="head"><p>Cas métier</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>En projet</p></td>
+<td><p>En instruction</p></td>
+<td><p>Bailleur</p></td>
+<td><p>convention_submit</p></td>
+<td><p>Le bailleur a complété le formulaire et soumet la convention à l’instructeur</p></td>
+</tr>
+<tr class="row-odd"><td><p>En projet</p></td>
+<td><p>Annulée</p></td>
+<td><p>Instructeur ou Bailleur</p></td>
+<td><p>cancel_convention</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>En instruction</p></td>
+<td><p>En correction</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_feedback</p></td>
+<td><p>L’instructeur demandes des corrections au bailleur sur le formulaire de la convention</p></td>
+</tr>
+<tr class="row-odd"><td><p>En instruction</p></td>
+<td><p>Annulée</p></td>
+<td><p>Instructeur ou Bailleur</p></td>
+<td><p>cancel_convention</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>En instruction</p></td>
+<td><p>A signer</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_validate</p></td>
+<td><p>L’instructeur valide le formulaire de la convention</p></td>
+</tr>
+<tr class="row-odd"><td><p>En correction</p></td>
+<td><p>En instruction</p></td>
+<td><p>Bailleur</p></td>
+<td><p>convention_feedback</p></td>
+<td><p>Le bailleur a effectué les corrections demandées par l’instructeur et renvoie la convention en instruction</p></td>
+</tr>
+<tr class="row-even"><td><p>En correction</p></td>
+<td><p>Annulée</p></td>
+<td><p>Instructeur ou Bailleur</p></td>
+<td><p>cancel_convention</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>A signer</p></td>
+<td><p>En instruction</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_submit</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>A signer</p></td>
+<td><p>Validée</p></td>
+<td><p>Instructeur ou Bailleur</p></td>
+<td><p>ConventionUploadSignedService.save</p></td>
+<td><p>Le fichier signé par les deux parties est uploadé sur APiLos</p></td>
+</tr>
+<tr class="row-odd"><td><p>Validée</p></td>
+<td><p>En instruction</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_submit</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Validée</p></td>
+<td><p>En publication</p></td>
+<td><p>Instructeur</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>Validée</p></td>
+<td><p>Dénoncée</p></td>
+<td><p>Instructeur  ou Bailleur</p></td>
+<td><p>convention_update</p></td>
+<td><p>La convention est dénoncée</p></td>
+</tr>
+<tr class="row-even"><td><p>Validée</p></td>
+<td><p>Résiliée</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_update</p></td>
+<td><p>La convention est résiliée</p></td>
+</tr>
+<tr class="row-odd"><td><p>En publication</p></td>
+<td><p>Validée</p></td>
+<td><p>Instructeur</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>En publication</p></td>
+<td><p>Publiée</p></td>
+<td><p>Instructeur</p></td>
+<td><p></p></td>
+<td><p>La convention a été publiée par le SPF, l’instructeur upload le document publié</p></td>
+</tr>
+<tr class="row-odd"><td><p>Publiée</p></td>
+<td><p>En publication</p></td>
+<td><p>Instructeur</p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p>Publiée</p></td>
+<td><p>Dénoncée</p></td>
+<td><p>Instructeur  ou Bailleur</p></td>
+<td><p>convention_update</p></td>
+<td><p>La convention est dénoncée</p></td>
+</tr>
+<tr class="row-odd"><td><p>Publiée</p></td>
+<td><p>Résiliée</p></td>
+<td><p>Instructeur</p></td>
+<td><p>convention_update</p></td>
+<td><p>La convention est résiliée</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </section>
 
         </article>
@@ -281,23 +387,15 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="DEVELOPPEUR.html">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">DEVELOPPEMENT</div>
-              </div>
-              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
-            </a>
-          <a class="prev-page" href="README.html">
+          
+          <a class="prev-page" href="ETAPES.html">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Home</div>
+                <div class="title">Gestion des étapes des formulaires</div>
                 
               </div>
             </a>
