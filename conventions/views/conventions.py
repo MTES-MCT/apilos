@@ -915,15 +915,18 @@ def display_convention_publie(request, convention_uuid):
     if (
         convention.statut
         in [
+            ConventionStatut.PUBLICATION_EN_COURS.label,
             ConventionStatut.PUBLIE.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,
         ]
-        and convention.nom_fichier_signe
-        and default_storage.exists(f"{convention_path}/{convention.nom_fichier_signe}")
+        and convention.nom_fichier_publication_spf
+        and default_storage.exists(
+            f"{convention_path}/{convention.nom_fichier_publication_spf}"
+        )
     ):
-        filename = convention.nom_fichier_signe
+        filename = convention.nom_fichier_publication_spf
     elif default_storage.exists(f"{convention_path}/{convention.uuid}.pdf"):
         filename = f"{convention.uuid}.pdf"
     elif default_storage.exists(f"{convention_path}/{convention.uuid}.docx"):

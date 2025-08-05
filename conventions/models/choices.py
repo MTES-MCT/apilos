@@ -140,7 +140,7 @@ class ConventionStatut(ReverseEnumMixin, Enum):
         "5. Publication en cours",
         StatutByRole("Publication en cours"),
         StatutByRole("Publication en cours"),
-        "Publication en cours",
+        "En Publication",
         "time",
     )
     PUBLIE = Definition(

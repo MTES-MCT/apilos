@@ -14,7 +14,7 @@
             <h4>Assurez-vous d'avoir téléversé le bon document</h4>
 
             <div class="fr-mb-7w h-80vh">
-                <iframe title="Prévisualiser le document téléversé" src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
+                <iframe title="Prévisualiser le document téléversé" src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% url 'conventions:display_convention_publie' convention_uuid=convention.uuid %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
             </div>
             {% if convention.attached|get_files_from_textfiles %}
                 <div class="fr-container fr-my-6w">

@@ -9,7 +9,12 @@
                         {% if convention|display_redirect_post_action %}
                             <a class="fr-nav__link" href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "action" %}aria-current="page"{% endif %}>Vue d'ensemble</a>
                         {% else %}
-                            <a class="fr-nav__link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>Vue d'ensemble</a>
+                            {% if convention|display_redirect_convention_en_publication and not convention.is_avenant %}
+                                <a class="fr-nav__link" href="{% url 'conventions:publication' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>Vue d'ensemble</a>
+
+                            {% else %}
+                                <a class="fr-nav__link" href="{% url 'conventions:sent' convention_uuid=convention.uuid %}" target="_self" {% if nav_bar_step == "sent" %}aria-current="page"{% endif %}>Vue d'ensemble</a>
+                            {% endif %}
                         {% endif %}
                     </li>
                     <li class="fr-nav__item">
