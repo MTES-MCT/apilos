@@ -573,7 +573,7 @@ class User(AbstractUser):
             )
         return convs
 
-    def conventions(self, active: bool | None = None):
+    def conventions(self):
         """
         Return the conventions the user has right to view.
         For an `instructeur`, it returns the conventions of its administrations
@@ -585,15 +585,6 @@ class User(AbstractUser):
         If omitted or None, no filter is applied
         """
         convs = Convention.objects
-
-        if active is not None:
-            convs = convs.filter(
-                statut__in=(
-                    ConventionStatut.active_statuts()
-                    if active
-                    else ConventionStatut.completed_statuts()
-                )
-            )
 
         if self.is_superuser:
             return convs.all()

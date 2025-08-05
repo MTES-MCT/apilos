@@ -195,51 +195,6 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     def choices(cls) -> list[tuple[str, str]]:
         return [(member.name, member.label) for member in cls]
 
-    @classmethod
-    def active_statuts(cls, flat: bool = True, as_instructeur: bool = True):
-        if flat:
-            return [
-                statut.label
-                for statut in [
-                    cls.PROJET,
-                    cls.INSTRUCTION,
-                    cls.CORRECTION,
-                    cls.A_SIGNER,
-                ]
-            ]
-
-        return [
-            (
-                statut.name,
-                (
-                    statut.value.instructeur.label
-                    if as_instructeur
-                    else statut.value.bailleur.label
-                ),
-            )
-            for statut in [cls.PROJET, cls.INSTRUCTION, cls.CORRECTION, cls.A_SIGNER]
-        ]
-
-    @classmethod
-    def completed_statuts(cls, flat: bool = True, as_instructeur: bool = True):
-        if flat:
-            return [
-                statut.label
-                for statut in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
-            ]
-
-        return [
-            (
-                statut.name,
-                (
-                    statut.value.instructeur.label
-                    if as_instructeur
-                    else statut.value.bailleur.label
-                ),
-            )
-            for statut in [cls.SIGNEE, cls.RESILIEE, cls.DENONCEE, cls.ANNULEE]
-        ]
-
     @property
     def label(self):
         return self.value.label
@@ -259,6 +214,14 @@ class ConventionStatut(ReverseEnumMixin, Enum):
     @property
     def icone(self):
         return self.value.icone
+
+    @classmethod
+    def completed_statuts(cls):
+        return [
+            cls.SIGNEE.label,
+            cls.PUBLICATION_EN_COURS.label,
+            cls.PUBLIE.label,
+        ]
 
 
 class ConventionType1and2(TextChoices):

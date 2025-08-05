@@ -127,7 +127,9 @@ class AddAvenantsView(FromOperationBaseView, TemplateResponseMixin, ContextMixin
 
     def _handle(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         convention = get_object_or_404(
-            request.user.conventions().filter(statut=ConventionStatut.SIGNEE.label),
+            request.user.conventions().filter(
+                statut__in=ConventionStatut.completed_statuts()
+            ),
             uuid=kwargs.get("convention_uuid"),
         )
 
