@@ -17,6 +17,11 @@ logger = logging.getLogger(__name__)
 CONVENTION_EXPORT_MAX_ROWS = 5000
 
 
+class FileType(Enum):
+    CONVENTION = "Convention"
+    PUBLICATION = "Publication"
+
+
 def format_date_for_form(date):
     return date.strftime("%Y-%m-%d") if date is not None else ""
 
@@ -166,11 +171,16 @@ def set_from_form_or_object(field, form, obj):
     )
 
 
-def convention_upload_filename(convention: Convention) -> str:
+def convention_upload_filename(
+    convention: Convention, as_type: FileType = FileType.CONVENTION
+) -> str:
 
     def _normalize(numero: str | None) -> str | None:
         if numero:
-            return numero.replace(" ", "_")
+            new_numero_syntax = numero.replace(" ", "_")
+            if as_type == FileType.PUBLICATION:
+                return new_numero_syntax.replace("/", "_")
+            return new_numero_syntax
 
     parts = []
 
@@ -189,11 +199,12 @@ def convention_upload_filename(convention: Convention) -> str:
 
     parts.append(datetime.now().strftime("%Y-%m-%d_%H-%M"))
 
-    return f"{'_'.join(parts)}.pdf"
+    base_filename = f"{'_'.join(parts)}.pdf"
 
+    if as_type == FileType.PUBLICATION:
+        return f"publication_{base_filename}"
 
-def document_publication_upload_filename(convention: Convention) -> str:
-    return f"publication_{convention_upload_filename(convention)}"
+    return base_filename
 
 
 def stringify_date(date_value, format="%d/%m/%Y"):

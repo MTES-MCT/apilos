@@ -38,7 +38,7 @@
                                 {% endif %}
                             {% endif %}
                             <div class="fr-mb-3w">
-                                <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type=1 %}"> Voir en PDF</a>
+                                <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type='publication' %}"> Voir en PDF</a>
                             </div>
                         </div>
                     </div>

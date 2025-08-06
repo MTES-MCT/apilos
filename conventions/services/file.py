@@ -1,6 +1,5 @@
 import datetime
 import logging
-from enum import Enum
 
 from django.conf import settings
 from django.core.files import File
@@ -9,14 +8,9 @@ from conventions.models import Convention, ConventionStatut, PieceJointe
 from core.storage import client
 from upload.services import UploadService
 
-from .utils import convention_upload_filename, document_publication_upload_filename
+from .utils import FileType, convention_upload_filename
 
 logger = logging.getLogger(__name__)
-
-
-class FileType(Enum):
-    CONVENTION = "Convention"
-    PUBLICATION = "Publication"
 
 
 class ConventionFileService:
@@ -43,7 +37,9 @@ class ConventionFileService:
     def upload_publication_file(
         cls, convention: Convention, file: File, update_statut: bool = True
     ):
-        upload_filename = document_publication_upload_filename(convention)
+        upload_filename = convention_upload_filename(
+            convention, as_type=FileType.PUBLICATION
+        )
 
         upload_service = UploadService(
             convention_dirpath=f"spf/{convention.uuid}/publication",
