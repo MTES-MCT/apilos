@@ -33,42 +33,23 @@ logger = logging.getLogger(__name__)
 ADDRESS_PC_CITY = "adresseLigne6"
 ADDRESS_LINE_RAW = "adresseLigne4"
 ADDRESS_CLEANED = "adresseLigne"
-MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT = {
-    # "PSLA": "PSLA",
-    # "DEMOLITION": "DEMOLITION",
+
+MAPPING_TYPOLOGIE_TO_NATURE_LOGEMENT = {
     "CADA": "HEB",
-    "CHRS": "HEB",
-    "CPH": "HEB",
-    "DEROG3": "LOO",
-    "DEROG3CCH": "LOO",
-    "DEROG3DEROG5": "LOO",
-    "EHPAD": "ALF",
-    "FJT": "RES",
-    "FOYERAM": "ALF",
-    "FOYERHEBER": "ALF",
-    "FOYEROCC": "ALF",
-    "FOYERPAPH": "ALF",
-    "FOYERVIE": "ALF",
-    "LITAM": "HEB",
-    "LITHSS": "HEB",
-    "LLSFAMDEROG3": "LOO",
-    "LLSFAMMIXTE": "LOO",
-    "LLSFAMORDIN": "LOO",
-    "MARPA": "ALF",
-    "PDF": "PEF",
-    "PUV": "ALF",
-    "RAC": "REA",
-    "RAU": "ALF",
-    # WARNING : RENO_LF i the only case of a multi nature_logement possible
-    # here we can have a edge case if this kind of nature_operation is used with a
-    # sans_financment financement
-    "RENO_LF": "ALF",  # "PEF","REA","RES",
-    "RENO_LLS": "LOO",  # "REU",
-    "RESSOCJA": "RES",
-    "RHVSINTGEN": "RHVS",
-    "RHVSMOB": "RHVS",
-    "RSG": "RES",
     "RU": "REU",
+    "LLS": "LOO",
+    "CPH": "HEB",
+    "CHRS": "HEB",
+    "RHVS_M": "RHVS",
+    "RHVS_IG": "RHVS",
+    "LF": "ALF",
+    "LHSS": "HEB",
+    "LAM": "HEB",
+    "RELF": "ALF",
+    # TODO: To be completed for seconde vies: MOUS, ETUDES, and GDV
+    # FIXME: To be confirmed — added after an error occurred on an operation with the 'RELS' typology.
+    # Check if 'REU' is the appropriate nature_logement.
+    "RELS": "REU",
 }
 
 
@@ -534,21 +515,13 @@ def _get_nature_logement(donnees_operation: dict) -> NatureLogement:
     if "natureLogement" in donnees_operation and donnees_operation["natureLogement"]:
         nature_logement = donnees_operation["natureLogement"]
     elif (
-        "natureOperation" in donnees_operation
-        and donnees_operation["natureOperation"]
-        in MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT.keys()
+        "typologie" in donnees_operation
+        and donnees_operation["typologie"]
+        in MAPPING_TYPOLOGIE_TO_NATURE_LOGEMENT.keys()
     ):
-        nature_logement = MAPPING_NATURE_OPERATION_TO_NATURE_LOGEMENT[
-            donnees_operation["natureOperation"]
+        nature_logement = MAPPING_TYPOLOGIE_TO_NATURE_LOGEMENT[
+            donnees_operation["typologie"]
         ]
-        if donnees_operation["natureOperation"] == "RENO_LF":
-            # This will raise a Sentry error without anoy the user if the edge case
-            # occure
-            logger.error(
-                "RENO_LF is the only case of a multi nature_logement possible, "
-                " please check the operation if it fit the correct nature_logement",
-            )
-
     return _nature_logement(nature_logement)
 
 
