@@ -18,6 +18,7 @@ node_modules/
 
 #IDE
 .vscode/
+.cursor/
 
 #temporaire
 /.tgitconfig
