@@ -25,11 +25,12 @@ ERROR_FILL = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="so
 # Only those fields will be reported in output sheet
 MAPPING_HEADERS = {
     "numero": "N°convention",
-    "annee_convention": "Année convention",
+    "televersement_convention_signee_le": "Année convention",
     "adresse": "Adresse",
     "ville": "Communes",
-    "code_insee_commune": "INSEE",
+    "code_insee_commune": ["INSEE", "insee_new"],
     "bailleur": "Bailleurs",
+    "siret": ["SIRET", "OLD_SIRET"],
     "nom": "Nom de l’opération",
     "financement": "financement",
     "nb_logements": "Nb de logts",
@@ -38,11 +39,12 @@ MAPPING_HEADERS = {
 
 RESULT_HEADERS = {
     "numero": "Numero dans APiLos",
-    "annee_convention": "Année de la convention dans APiLos",
+    "televersement_convention_signee_le": "Année de la convention dans APiLos",
     "programme__adresse": "Adresse du programme dans APiLos",
     "programme__ville": "Ville du programme dans APiLos",
     "programme__code_insee_commune": "Code commune dans APiLos",
     "programme__bailleur": "Bailleur du programme dans APiLos",
+    "programme__bailleur__siret": "SIRET du bailleur dans APiLos",
     "programme__nom": "Nom du programme dans APiLos",
     "lot__financement": "Financement dans APiLos",
     "lot__nb_logements": "Nb de lgts dans APiLos",
@@ -51,6 +53,7 @@ RESULT_HEADERS = {
 
 RESULT_COMPUTED_HEADERS = {
     "avenant": "Avenant dans APiLos",
+    "nom_fichier_signe": "Fichier signé dans APiLos",
     "methode": "Méthode de recherche de la convention",
 }
 
@@ -165,10 +168,26 @@ def find_by_numero_without_sixth_number(
     return None
 
 
+def _get_code_insee_communes(convention: dict) -> list[str]:
+    code_insee_communes = []
+    for col in MAPPING_HEADERS["code_insee_commune"]:
+        if col:
+            code_insee_communes.append(convention[col])
+    return code_insee_communes
+
+
+def _get_sirets(convention: dict) -> list[str]:
+    sirets = []
+    for col in MAPPING_HEADERS["siret"]:
+        if col:
+            sirets.append(convention[col])
+    return sirets
+
+
 def find_by_numero_endwith_3_figures_code(
     cmd: BaseCommand, convention: dict, convention_qs: QuerySet
 ) -> Convention | None:
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     numero = convention[MAPPING_HEADERS["numero"]]
     # get the last number
     if not numero:
@@ -179,7 +198,7 @@ def find_by_numero_endwith_3_figures_code(
     if numero_endwith := _number_for_search(numero_endwith):
         convention_from_db = convention_qs.filter(
             numero_pour_recherche__endswith=numero_endwith,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
         if len(convention_from_db) == 1:
             return convention_from_db[0]
@@ -188,7 +207,7 @@ def find_by_numero_endwith_3_figures_code(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le numéro {numero}"
                     f", recherche sur la fin du numero {numero_endwith}"
-                    f" et code commune {code_insee_commune}"
+                    f" et code commune {code_insee_communes}"
                 )
             )
     return None
@@ -223,11 +242,40 @@ def find_by_numero_endwith_3_figures_commune(
     return None
 
 
+def find_by_siret_year_code(
+    cmd: BaseCommand, convention: dict, convention_qs: QuerySet
+):
+    code_insee_communes = _get_code_insee_communes(convention)
+    sirets = _get_sirets(convention)
+    year = convention[MAPPING_HEADERS["televersement_convention_signee_le"]]
+    if not year:
+        return None
+    year = int(year)
+    if not sirets:
+        return None
+
+    convention_from_db = convention_qs.filter(
+        programme__bailleur__siret__in=sirets,
+        televersement_convention_signee_le__year=year,
+        programme__code_insee_commune__in=code_insee_communes,
+    )
+    if len(convention_from_db) == 1:
+        return convention_from_db[0]
+    elif len(convention_from_db) > 1:
+        cmd.stdout.write(
+            cmd.style.WARNING(
+                f"Plusieurs conventions trouvées pour le siret {sirets}"
+                f", année {year} et code commune {code_insee_communes}"
+            )
+        )
+    return None
+
+
 # NUMERO_ENDWITH__CODE = "numero fini par et code commune"
 def find_by_numero_endwith_code(
     cmd: BaseCommand, convention: dict, convention_qs: QuerySet
 ) -> Convention | None:
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     numero = convention[MAPPING_HEADERS["numero"]]
     # get the last number
     if not numero:
@@ -238,7 +286,7 @@ def find_by_numero_endwith_code(
     if numero_endwith := _number_for_search(numero_endwith):
         convention_from_db = convention_qs.filter(
             numero_pour_recherche__endswith=numero_endwith,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
         if len(convention_from_db) == 1:
             return convention_from_db[0]
@@ -247,7 +295,7 @@ def find_by_numero_endwith_code(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le numéro {numero}"
                     f", recherche sur la fin du numero {numero_endwith}"
-                    f" et code commune {code_insee_commune}"
+                    f" et code commune {code_insee_communes}"
                 )
             )
     return None
@@ -261,13 +309,13 @@ def find_by_nom_exact_fin_code(
 ) -> Convention | None:
     nom = convention[MAPPING_HEADERS["nom"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
 
     if nom:
         convention_from_db = convention_qs.filter(
             programme__nom__iexact=nom,
             lots__financement=financement,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
 
         if len(convention_from_db) == 1:
@@ -276,7 +324,7 @@ def find_by_nom_exact_fin_code(
             cmd.stdout.write(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le nom {nom}, financement"
-                    f" {financement} et code commune {code_insee_commune}"
+                    f" {financement} et code commune {code_insee_communes}"
                 )
             )
     return None
@@ -292,7 +340,7 @@ def find_by_nom_trigram_fin_code(
 ) -> Convention | None:
     nom = convention[MAPPING_HEADERS["nom"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
 
     if nom:
         convention_from_db = (
@@ -302,7 +350,7 @@ def find_by_nom_trigram_fin_code(
             .filter(
                 similarity__gt=0.8,
                 lots__financement=financement,
-                programme__code_insee_commune=code_insee_commune,
+                programme__code_insee_commune__in=code_insee_communes,
             )
             .order_by("-similarity")
         )
@@ -314,7 +362,7 @@ def find_by_nom_trigram_fin_code(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le nom {nom}"
                     f" (trigram > 0.8), financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -328,13 +376,13 @@ def find_by_adresse_exact_fin_code(
 ) -> Convention | None:
     adresse = convention[MAPPING_HEADERS["adresse"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
 
     if adresse:
         convention_from_db = convention_qs.filter(
             programme__adresse__iexact=adresse,
             lots__financement=financement,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
 
         if len(convention_from_db) == 1:
@@ -344,7 +392,7 @@ def find_by_adresse_exact_fin_code(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le adresse {adresse},"
                     f" financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -358,7 +406,7 @@ def find_by_adresse_trigram_fin_code(
 ) -> Convention | None:
     adresse = convention[MAPPING_HEADERS["adresse"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     if adresse:
         convention_from_db = (
             convention_qs.annotate(
@@ -369,7 +417,7 @@ def find_by_adresse_trigram_fin_code(
             .filter(
                 similarity__gt=0.8,
                 lots__financement=financement,
-                programme__code_insee_commune=code_insee_commune,
+                programme__code_insee_commune__in=code_insee_communes,
             )
             .order_by("-similarity")
         )
@@ -382,7 +430,7 @@ def find_by_adresse_trigram_fin_code(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le adresse {adresse}"
                     f" (trigram > 0.8), financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -396,13 +444,13 @@ def find_by_adresse_with_nom_exact_code_fin_nb_lgts(
 ) -> Convention | None:
     adresse = convention[MAPPING_HEADERS["adresse"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
 
     if adresse:
         convention_from_db = convention_qs.filter(
             programme__nom__iexact=adresse,
             lots__financement=financement,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
 
         if len(convention_from_db) == 1:
@@ -412,7 +460,7 @@ def find_by_adresse_with_nom_exact_code_fin_nb_lgts(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le adresse {adresse},"
                     f" financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -427,7 +475,7 @@ def find_by_adresse_with_nom_trigram_code_fin_nb_lgts(
 ) -> Convention | None:
     adresse = convention[MAPPING_HEADERS["adresse"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     if adresse:
         convention_from_db = (
             convention_qs.annotate(
@@ -436,7 +484,7 @@ def find_by_adresse_with_nom_trigram_code_fin_nb_lgts(
             .filter(
                 similarity__gt=0.6,
                 lots__financement=financement,
-                programme__code_insee_commune=code_insee_commune,
+                programme__code_insee_commune__in=code_insee_communes,
             )
             .order_by("-similarity")
         )
@@ -449,7 +497,7 @@ def find_by_adresse_with_nom_trigram_code_fin_nb_lgts(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le adresse {adresse}"
                     f" (trigram > 0.6), financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -464,7 +512,7 @@ def find_by_adresse_with_nom_trigram_code_nb_lgts(
 ) -> Convention | None:
     adresse = convention[MAPPING_HEADERS["adresse"]]
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     if adresse:
         convention_from_db = (
             convention_qs.annotate(
@@ -472,7 +520,7 @@ def find_by_adresse_with_nom_trigram_code_nb_lgts(
             )
             .filter(
                 similarity__gt=0.6,
-                programme__code_insee_commune=code_insee_commune,
+                programme__code_insee_commune__in=code_insee_communes,
             )
             .order_by("-similarity")
         )
@@ -485,7 +533,7 @@ def find_by_adresse_with_nom_trigram_code_nb_lgts(
                 cmd.style.WARNING(
                     f"Plusieurs conventions trouvées pour le adresse {adresse}"
                     f" (trigram > 0.6), financement {financement} et"
-                    f" code commune {code_insee_commune}"
+                    f" code commune {code_insee_communes}"
                 )
             )
     return None
@@ -496,12 +544,12 @@ def find_by_financement_code_nb_lgts(
     cmd: BaseCommand, convention: dict, convention_qs: QuerySet
 ) -> Convention | None:
     financement = convention[MAPPING_HEADERS["financement"]]
-    code_insee_commune = convention[MAPPING_HEADERS["code_insee_commune"]]
+    code_insee_communes = _get_code_insee_communes(convention)
     nb_logements = convention[MAPPING_HEADERS["nb_logements"]]
     convention_from_db = (
         convention_qs.filter(
             lots__financement=financement,
-            programme__code_insee_commune=code_insee_commune,
+            programme__code_insee_commune__in=code_insee_communes,
         )
         .filter(lots__nb_logements=nb_logements)
         .distinct()
@@ -513,7 +561,7 @@ def find_by_financement_code_nb_lgts(
         cmd.stdout.write(
             cmd.style.WARNING(
                 f"Plusieurs conventions trouvées pour le financement {financement},"
-                f" code commune {code_insee_commune} et nb_logements {nb_logements}"
+                f" code commune {code_insee_communes} et nb_logements {nb_logements}"
             )
         )
     return None
@@ -532,11 +580,11 @@ class FindRuleBy(Enum):
     )
 
     # 0 -> FIXME : Useless ?
-    NUMERO_WITHOUT_SIXTH_NUMBER = FindRule(
-        "NUMERO_WITHOUT_SIXTH_NUMBER",
-        "Trouvé à partir du numero sans le 6ème chiffre",
-        find_by_numero_without_sixth_number,
-    )
+    # NUMERO_WITHOUT_SIXTH_NUMBER = FindRule(
+    #     "NUMERO_WITHOUT_SIXTH_NUMBER",
+    #     "Trouvé à partir du numero sans le 6ème chiffre",
+    #     find_by_numero_without_sixth_number,
+    # )
 
     # Nom de la commune (commune_new dans notre tableur) + les 3 derniers chiffres de la convention
     # Code INSEE (insee_new) + année + bailleur
@@ -550,11 +598,11 @@ class FindRuleBy(Enum):
     )
 
     # Nom de la commune (commune_new dans notre tableur) + les 3 derniers chiffres de la convention
-    NUMERO_ENDWITH_3_FIGURES_COMMUNE = FindRule(
-        "NUMERO_ENDWITH_3_FIGURES_CODE",
-        "Trouvé à partir du numero fini par 3 chiffres et nom de la commune",
-        find_by_numero_endwith_3_figures_commune,
-    )
+    # NUMERO_ENDWITH_3_FIGURES_COMMUNE = FindRule(
+    #     "NUMERO_ENDWITH_3_FIGURES_CODE",
+    #     "Trouvé à partir du numero fini par 3 chiffres et nom de la commune",
+    #     find_by_numero_endwith_3_figures_commune,
+    # )
 
     # 0 -> FIXME : Useless ?
     # NUMERO_ENDWITH__CODE = FindRule(
@@ -562,6 +610,12 @@ class FindRuleBy(Enum):
     #     "Trouvé à partir du numero fini par et code commune",
     #     find_by_numero_endwith_code,
     # )
+
+    BAILLEUR_YEAR_CODE = FindRule(
+        "BAILLEUR_YEAR_CODE",
+        "Trouvé à partir du bailleur, année et code commune",
+        find_by_siret_year_code,
+    )
 
     # 8 -> FIXME : Faux positif ?
     NOM_EXACT__FIN__CODE = FindRule(
@@ -571,11 +625,11 @@ class FindRuleBy(Enum):
     )
 
     # 0 -> FIXME : Useless ?
-    NOM_TRIGRAM_08__FIN__CODE = FindRule(
-        "NOM_TRIGRAM_08__FIN__CODE",
-        "Trouvé à partir du nom (similairité > 0.8), financement et code commune",
-        find_by_nom_trigram_fin_code,
-    )
+    # NOM_TRIGRAM_08__FIN__CODE = FindRule(
+    #     "NOM_TRIGRAM_08__FIN__CODE",
+    #     "Trouvé à partir du nom (similairité > 0.8), financement et code commune",
+    #     find_by_nom_trigram_fin_code,
+    # )
 
     # 8 -> FIXME : Faux positif ?
     ADRESSE_EXACT__FIN__CODE = FindRule(
@@ -592,12 +646,12 @@ class FindRuleBy(Enum):
     )
 
     # 0 -> FIXME : Useless ?
-    ADRESSE_WITH_NOM_EXACT__CODE__FIN__NB_LGTS = FindRule(
-        "ADRESSE_WITH_NOM_EXACT__CODE__FIN__NB_LGTS",
-        "Trouvé à partir de l'adresse (fichier) comparée avec le nom (APILOS),"
-        " financement, nb logements",
-        find_by_adresse_with_nom_exact_code_fin_nb_lgts,
-    )
+    # ADRESSE_WITH_NOM_EXACT__CODE__FIN__NB_LGTS = FindRule(
+    #     "ADRESSE_WITH_NOM_EXACT__CODE__FIN__NB_LGTS",
+    #     "Trouvé à partir de l'adresse (fichier) comparée avec le nom (APILOS),"
+    #     " financement, nb logements",
+    #     find_by_adresse_with_nom_exact_code_fin_nb_lgts,
+    # )
 
     # 8 -> FIXME : Faux positif ?
     ADRESSE_WITH_NOM_TRIGRAM_06__CODE__FIN__NB_LGTS = FindRule(
@@ -655,8 +709,11 @@ def _set_header(output_wb_sheet: Worksheet, apilos_wb_sheet: Worksheet) -> None:
 
     column_nb = 1
     for header in MAPPING_HEADERS.values():
-        output_wb_sheet.cell(row=1, column=column_nb, value=header)
-        column_nb += 1
+        if not isinstance(header, list):
+            header = [header]
+        for h in header:
+            output_wb_sheet.cell(row=1, column=column_nb, value=h)
+            column_nb += 1
 
     for header in RESULT_HEADERS.values():
         output_wb_sheet.cell(row=1, column=column_nb, value=header)
@@ -685,8 +742,11 @@ def row_to_dict(
         convention[column_from_index[cell.column]] = cell.value
 
     for field in MAPPING_HEADERS.values():
-        output_wb_sheet.cell(row=cell.row, column=column_nb, value=convention[field])
-        column_nb += 1
+        if not isinstance(field, list):
+            field = [field]
+        for f in field:
+            output_wb_sheet.cell(row=cell.row, column=column_nb, value=convention[f])
+            column_nb += 1
     return row_nb, column_nb, convention
 
 
@@ -790,19 +850,31 @@ def write_matching_conventions(
                     field = compose[1]
 
                 value = getattr(conv, field, "") if conv else ""
-                value = str(value) if field == "bailleur" else value
+                if field == "bailleur":
+                    value = str(value)
+                if (
+                    field == "televersement_convention_signee_le"
+                    and conv.televersement_convention_signee_le
+                ):
+                    value = conv.televersement_convention_signee_le.year
+
                 cell = output_wb_sheet.cell(
                     row=row_nb,
                     column=column_nb,
                     value=value,
                 )
-                column_nb += 1
-                if field in MAPPING_HEADERS and MAPPING_HEADERS[field] in convention:
+                if (
+                    field in MAPPING_HEADERS
+                    and not isinstance(MAPPING_HEADERS[field], list)
+                    and MAPPING_HEADERS[field] in convention
+                ):
                     if convention[MAPPING_HEADERS[field]] == value:
                         cell.fill = SUCCESS_FILL
                     else:
                         cell.fill = ERROR_FILL
+                column_nb += 1
 
+            # Avenant
             has_avenant = (
                 "Oui" if convention_from_db != last_convention_version else "Non"
             )
@@ -815,8 +887,21 @@ def write_matching_conventions(
                 cell.fill = ERROR_FILL
             else:
                 cell.fill = SUCCESS_FILL
-
             column_nb += 1
+
+            # Existing file
+            existing_file = convention_from_db.nom_fichier_signe
+            cell = output_wb_sheet.cell(
+                row=row_nb,
+                column=column_nb,
+                value=existing_file,
+            )
+            if existing_file:
+                cell.fill = SUCCESS_FILL
+            else:
+                cell.fill = ERROR_FILL
+            column_nb += 1
+
             output_wb_sheet.cell(
                 row=row_nb,
                 column=column_nb,
