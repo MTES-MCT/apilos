@@ -8,7 +8,8 @@ from conventions.services import utils
 from conventions.services.conventions import ConventionService
 from instructeurs.models import Administration
 from programmes.models import Programme
-
+import logging
+logger = logging.getLogger(__name__)
 
 class ConventionBailleurService(ConventionService):
     form: ConventionBailleurForm
@@ -58,6 +59,7 @@ class ConventionBailleurService(ConventionService):
         )
 
     def get(self):
+        logger.error(f"ConventionBailleurService --> for initial request for convention {self.convention.uuid}")
         bailleur = self.convention.programme.bailleur
         self._initial_change_bailleur_form(bailleur)
         self._initial_change_administration_form(self.convention.administration)

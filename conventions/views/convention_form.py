@@ -419,6 +419,9 @@ class ConventionView(ABC, BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, **kwargs):
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"ConventionView --> ConventionView GET request for convention {self.convention.uuid}")
         service = self.service_class(convention=self.convention, request=request)
         service.get()
         return render(

@@ -1,6 +1,8 @@
 from conventions.services.bailleurs import ConventionBailleurService
 from conventions.views.convention_form import ConventionView, avenant_bailleur_step
+import logging
 
+logger = logging.getLogger(__name__)
 
 class ConventionBailleurView(ConventionView):
     target_template: str = "conventions/bailleur.html"

@@ -104,7 +104,9 @@
                                                         >> Debug scoring >>>>>>>>>>>>>>
                                                     </th>
                                                 {% endif %}
-
+                                                <th title="convention mixte" scope="col">
+                                                    Grouper
+                                                </th>
                                                 <th title="Statut de la convention" scope="col">
                                                     Statut
                                                 </th>
@@ -175,12 +177,21 @@
                                                             </div>
                                                         </td>
                                                     {% endif %}
-
+                                                    <td style="text-align: center; vertical-align: middle;">
+                                                            <input type="checkbox"
+                                                            name="convention_{{ convention.uuid }}"
+                                                            value="{{ convention.uuid }}"
+                                                            class="fr-checkbox__input stop-row-click"
+                                                            id="convention_{{ convention.uuid }}">
+                                                    </td>
                                                     <td title="{{ convention.statut_for_template.statut_display }}">
                                                         {% include "conventions/home/statut_tag.html" %}
                                                         <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                                             document.addEventListener('DOMContentLoaded', function () {
-                                                                document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
+                                                                document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(e){
+                                                                    if (e.target.closest('.stop-row-click')) {
+                                                                        return;
+                                                                    }
                                                                     if (this.classList.contains("sent")) {
                                                                         location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
                                                                     }
@@ -261,6 +272,52 @@
                             </div>
                         </div>
                     </div>
+                    <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                        <button type="button" class="fr-btn fr-btn--icon-left fr-mb-1w" id="convention_mixt_button">
+                            créer une convention mixte
+                        </button>
+                    </div>
+                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                        document.addEventListener('DOMContentLoaded', function () {
+                            const button = document.getElementById('convention_mixt_button');
+                            button.addEventListener('click', function () {
+                                // Get all checked checkboxes
+                                const checkedBoxes = document.querySelectorAll('input.fr-checkbox__input:checked');
+                                const uuids = Array.from(checkedBoxes).map(cb => cb.value);
+
+                                if (uuids.length === 0) {
+                                    alert("Veuillez sélectionner au moins une convention.");
+                                    return;
+                                }
+
+                                // Example: POST to a Django view URL
+                                fetch("{% url 'conventions:create_mixed_convention' %}", {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': '{{ csrf_token }}', // if CSRF is needed
+                                    },
+                                    body: JSON.stringify({ uuids: uuids })
+                                })
+                                .then(response => {
+                                    if (response.ok) {
+                                        return response.json(); // or redirect, or other logic
+                                    } else {
+                                        throw new Error("Erreur lors de l'envoi.");
+                                    }
+                                })
+                                .then(data => {
+                                    console.log("Réponse du serveur :", data);
+                                    // e.g., redirect:
+                                    // window.location.href = data.redirect_url;
+                                })
+                                .catch(error => {
+                                    console.error(error);
+                                    alert("Une erreur s'est produite.");
+                                });
+                            });
+                        });
+                    </script>
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
                 {% else %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
