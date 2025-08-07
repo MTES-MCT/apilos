@@ -48,8 +48,8 @@ MAPPING_TYPOLOGIE_TO_NATURE_LOGEMENT = {
     "RELF": "ALF",
     # TODO: To be completed for seconde vies: MOUS, ETUDES, and GDV
     # FIXME: To be confirmed — added after an error occurred on an operation with the 'RELS' typology.
-    # Check if 'REU' is the appropriate nature_logement.
-    "RELS": "REU",
+    # Check if 'LOO' is the appropriate nature_logement.
+    "RELS": "LOO",
 }
 
 

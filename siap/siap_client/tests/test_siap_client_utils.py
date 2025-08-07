@@ -201,7 +201,7 @@ class GetOrCreateProgrammeTest(TestCase):
         data_from_siap = {**self.data_from_siap}
         data_from_siap["donneesOperation"]["sansTravaux"] = True
         data_from_siap["donneesOperation"]["natureLogement"] = None
-        data_from_siap["donneesOperation"]["natureOperation"] = "FOYEROCC"
+        data_from_siap["donneesOperation"]["typologie"] = "RELF"
         del data_from_siap["detailsOperation"]
         programme = utils.get_or_create_programme(
             data_from_siap,
