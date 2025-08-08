@@ -80,10 +80,12 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(), **self.siap_credentials
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(), **self.siap_credentials
+            )
+        except SIAPException as e:
+            logger.error(e)
 
         # Send an action notice to instructeurs
         alerte = Alerte.from_convention(
@@ -97,10 +99,12 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(), **self.siap_credentials
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(), **self.siap_credentials
+            )
+        except SIAPException as e:
+            logger.error(e)
 
     def create_alertes_correction(self, from_instructeur: bool):
         if self._is_ddt():
@@ -136,10 +140,13 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **self.siap_credentials,
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **self.siap_credentials,
+            )
+        except SIAPException as e:
+            logger.error(e)
 
         # Send action notice
         alerte = Alerte.from_convention(
@@ -151,9 +158,12 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(), **self.siap_credentials
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(), **self.siap_credentials
+            )
+        except SIAPException as e:
+            logger.error(e)
 
     def create_alertes_valide(self):
         if self._is_ddt():
@@ -174,10 +184,13 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **self.siap_credentials,
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **self.siap_credentials,
+            )
+        except SIAPException as e:
+            logger.error(e)
 
         # Action notice to instructeurs
         alerte = Alerte.from_convention(
@@ -192,10 +205,13 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **self.siap_credentials,
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **self.siap_credentials,
+            )
+        except SIAPException as e:
+            logger.error(e)
 
     def create_alertes_signed(self):
         if self._is_ddt():
@@ -215,9 +231,12 @@ class AlerteService:
             url_direction=redirect_url,
         )
 
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(), **self.siap_credentials
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(), **self.siap_credentials
+            )
+        except SIAPException as e:
+            logger.error(e)
 
     def create_alertes_publication_en_cours(self):
         redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
@@ -235,10 +254,13 @@ class AlerteService:
             url_direction=redirect_url,
         )
 
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **self.siap_credentials,
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **self.siap_credentials,
+            )
+        except SIAPException as e:
+            logger.error(e)
 
     def create_alertes_publie(self):
         redirect_url = reverse("conventions:recapitulatif", args=[self.convention.uuid])
@@ -255,7 +277,10 @@ class AlerteService:
             type_alerte=ALERTE_TYPE_CHANGEMENT_STATUT,
             url_direction=redirect_url,
         )
-        SIAPClient.get_instance().create_alerte(
-            payload=alerte.to_json(),
-            **self.siap_credentials,
-        )
+        try:
+            SIAPClient.get_instance().create_alerte(
+                payload=alerte.to_json(),
+                **self.siap_credentials,
+            )
+        except SIAPException as e:
+            logger.error(e)
