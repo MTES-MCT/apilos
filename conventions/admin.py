@@ -127,6 +127,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "fond_propre",
         "commentaires",
         "statut",
+        "type_convention",
         "cree_par",
         "cree_le",
         "soumis_le",
@@ -167,6 +168,7 @@ class ConventionAdmin(ApilosModelAdmin):
         IsAvenantFilter,
         ("statut", StatutFilter),
         "cree_le",
+        "type_convention",
     )
 
     form = ConventionModelForm

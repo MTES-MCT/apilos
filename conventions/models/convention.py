@@ -42,6 +42,11 @@ class ConventionManager(models.Manager):
 class Convention(models.Model):
     objects = ConventionManager.from_queryset(ConventionQuerySet)()
 
+    TYPE_CONVENTION_CHOICES = [
+        ("simple", "Simple"),
+        ("mixte", "Mixte"),
+    ]
+
     class Meta:
         indexes = [
             models.Index(fields=["numero"], name="convention_numero_idx"),
@@ -75,6 +80,10 @@ class Convention(models.Model):
         # ]
 
     id = models.AutoField(primary_key=True)
+    type_convention = models.CharField(
+        max_length=10, choices=TYPE_CONVENTION_CHOICES, default="simple"
+    )
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     parent = models.ForeignKey(
         "self",
