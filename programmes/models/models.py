@@ -69,7 +69,11 @@ class Programme(models.Model):
         null=False,
     )
     administration = models.ForeignKey(
-        "instructeurs.Administration", on_delete=models.SET_NULL, null=True, blank=True
+        "instructeurs.Administration",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="programmes",
     )
     adresse = models.TextField(blank=True)
     code_postal = models.CharField(max_length=5, blank=True)
