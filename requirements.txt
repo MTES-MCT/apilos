@@ -250,9 +250,9 @@ django-waffle==5.0.0 \
     --hash=sha256:3312851d9d926b76b9e90712355781700a383b82b5bf2b61e1f1be97532c0f3d \
     --hash=sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509
     # via -r requirements.in
-djangorestframework==3.16.0 \
-    --hash=sha256:bea7e9f6b96a8584c5224bfb2e4348dfb3f8b5e34edbecb98da258e892089361 \
-    --hash=sha256:f022ff46613584de994c0c6a4aebbace5fd700555fbe9d33b865ebf173eba6c9
+djangorestframework==3.16.1 \
+    --hash=sha256:166809528b1aced0a17dc66c24492af18049f2c9420dbd0be29422029cfc3ff7 \
+    --hash=sha256:33a59f47fb9c85ede792cbf88bde71893bcda0667bc573f784649521f1102cec
     # via
     #   -r requirements.in
     #   djangorestframework-simplejwt
