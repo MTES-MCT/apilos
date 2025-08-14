@@ -659,10 +659,6 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
             convention=self.convention, request=request, step_number=self.step_number
         )
         result = service.save()
-        import logging
-
-        logger = logging.getLogger(__name__)
-        logger.error(f"ConventionDateUploadPublicationView result: {result}")
         if result["success"] == ReturnStatus.SUCCESS:
             messages.add_message(
                 request,
