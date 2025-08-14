@@ -627,6 +627,12 @@ class Convention(models.Model):
                 "soumis_le",
                 "televersement_convention_signee_le",
                 "valide_le",
+                "date_publication_spf",
+                "reference_spf",
+                "date_envoi_spf",
+                "date_refus_spf",
+                "motif_refus_spf",
+                "nom_fichier_publication_spf",
             ],
         ) | {
             "programme": cloned_programme,
