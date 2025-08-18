@@ -122,7 +122,7 @@ class Alerte:
 
         # Truncate operation name to 98 chars and append "…"
         # (SIAP API rejects values longer than 100 characters)
-        if self.nom_operation and len(self.nom_operation) > 99:
+        if self.nom_operation and len(self.nom_operation) >= 99:
             self.nom_operation = self.nom_operation[:98] + "…"
 
     @classmethod
