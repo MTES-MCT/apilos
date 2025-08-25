@@ -42,64 +42,68 @@ class ConventionLogementsService(ConventionService):
         initial_sans_loyer = []
         initial_corrigee = []
         initial_corrigee_sans_loyer = []
-        logements = self.convention.lot.logements.order_by("import_order")
-        for logement in logements:
-            common_params = {
-                "uuid": logement.uuid,
-                "designation": logement.designation,
-                "typologie": logement.typologie,
-                "surface_habitable": logement.surface_habitable,
-                "import_order": logement.import_order,
-            }
-            surface_annexes_params = {
-                "surface_annexes": logement.surface_annexes,
-                "surface_annexes_retenue": logement.surface_annexes_retenue,
-            }
-            loyer_params = {
-                "loyer_par_metre_carre": logement.loyer_par_metre_carre,
-                "coeficient": logement.coeficient,
-                "loyer": logement.loyer,
-            }
-            surface_utile_params = {
-                "surface_utile": logement.surface_utile,
-            }
-            surface_corrigee_params = {
-                "surface_corrigee": logement.surface_corrigee,
-            }
-            if logement.loyer:
-                if logement.surface_corrigee:
-                    initial_corrigee.append(
-                        {
-                            **common_params,
-                            **surface_corrigee_params,
-                            **loyer_params,
-                        }
-                    )
+        lots = self.convention.lots.all()
+        for lot in lots:
+            logements = lot.logements.order_by("import_order")
+            for logement in logements:
+                common_params = {
+                    "uuid": logement.uuid,
+                    "designation": logement.designation,
+                    "typologie": logement.typologie,
+                    "financement": lot.financement,
+                    "surface_habitable": logement.surface_habitable,
+                    "import_order": logement.import_order,
+                }
+                surface_annexes_params = {
+                    "surface_annexes": logement.surface_annexes,
+                    "surface_annexes_retenue": logement.surface_annexes_retenue,
+                }
+                loyer_params = {
+                    "loyer_par_metre_carre": logement.loyer_par_metre_carre,
+                    "coeficient": logement.coeficient,
+                    "loyer": logement.loyer,
+                }
+                surface_utile_params = {
+                    "surface_utile": logement.surface_utile,
+                }
+                surface_corrigee_params = {
+                    "surface_corrigee": logement.surface_corrigee,
+                }
+                if logement.loyer:
+                    if logement.surface_corrigee:
+                        initial_corrigee.append(
+                            {
+                                **common_params,
+                                **surface_corrigee_params,
+                                **loyer_params,
+                            }
+                        )
+                    else:
+                        initial.append(
+                            {
+                                **common_params,
+                                **surface_annexes_params,
+                                **surface_utile_params,
+                                **loyer_params,
+                            }
+                        )
                 else:
-                    initial.append(
-                        {
-                            **common_params,
-                            **surface_annexes_params,
-                            **surface_utile_params,
-                            **loyer_params,
-                        }
-                    )
-            else:
-                if logement.surface_corrigee:
-                    initial_corrigee_sans_loyer.append(
-                        {
-                            **common_params,
-                            **surface_corrigee_params,
-                        }
-                    )
-                else:
-                    initial_sans_loyer.append(
-                        {
-                            **common_params,
-                            **surface_annexes_params,
-                            **surface_utile_params,
-                        }
-                    )
+                    if logement.surface_corrigee:
+                        initial_corrigee_sans_loyer.append(
+                            {
+                                **common_params,
+                                **surface_corrigee_params,
+                            }
+                        )
+                    else:
+                        initial_sans_loyer.append(
+                            {
+                                **common_params,
+                                **surface_annexes_params,
+                                **surface_utile_params,
+                            }
+                        )
+
         self.formset = LogementFormSet(initial=initial, prefix="avec_loyer")
         self.formset_sans_loyer = LogementSansLoyerFormSet(
             initial=initial_sans_loyer, prefix="sans_loyer"
@@ -113,18 +117,18 @@ class ConventionLogementsService(ConventionService):
 
     def get(self):
         self.initialize_formsets()
-        self.form = LotLgtsOptionForm(
+        self.form = [ LotLgtsOptionForm(
             initial={
-                "uuid": self.convention.lot.uuid,
-                "lgts_mixite_sociale_negocies": self.convention.lot.lgts_mixite_sociale_negocies,
-                "loyer_derogatoire": self.convention.lot.loyer_derogatoire,
+                "uuid": lot.uuid,
+                "lgts_mixite_sociale_negocies": lot.lgts_mixite_sociale_negocies,
+                "loyer_derogatoire": lot.loyer_derogatoire,
                 "surface_locaux_collectifs_residentiels": (
-                    self.convention.lot.surface_locaux_collectifs_residentiels
+                    lot.surface_locaux_collectifs_residentiels
                 ),
-                "loyer_associations_foncieres": self.convention.lot.loyer_associations_foncieres,
-                "nb_logements": self.convention.lot.nb_logements,
+                "loyer_associations_foncieres": lot.loyer_associations_foncieres,
+                "nb_logements": lot.nb_logements,
             }
-        )
+        ) for lot in self.convention.lots.all()]
 
     def save(self):
         self.editable_after_upload = self.request.POST.get(
@@ -299,12 +303,12 @@ class ConventionLogementsService(ConventionService):
         return nb_logements
 
     def _logements_atomic_update(self):
-        self.form = LotLgtsOptionForm(
+        self.form = [LotLgtsOptionForm(
             {
-                "uuid": self.convention.lot.uuid,
+                "uuid": lot.uuid,
                 **utils.build_partial_form(
                     self.request,
-                    self.convention.lot,
+                    lot,
                     [
                         "lgts_mixite_sociale_negocies",
                         "loyer_derogatoire",
@@ -321,7 +325,10 @@ class ConventionLogementsService(ConventionService):
                 ),
             }
         )
-        form_is_valid = self.form.is_valid()
+        
+        for lot in self.convention.lots.all()]
+        
+        form_is_valid = all([form.is_valid() for form in self.form])
 
         nb_logements = self._logements_update(
             prefix="avec_loyer",

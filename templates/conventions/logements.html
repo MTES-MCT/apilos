@@ -15,7 +15,9 @@
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
-                {% include "conventions/common/form_logements.html" %}
+                {% for form_item in form %}
+                    {% include "conventions/common/form_logements.html" with form=form_item %}
+                {% endfor %}
                 {% include "conventions/common/form_footer_button.html" %}
                 {% include "conventions/common/form_optional_errors_modal.html" %}
             </form>

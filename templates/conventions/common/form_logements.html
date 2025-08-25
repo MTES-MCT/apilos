@@ -71,6 +71,12 @@
                                                 {% include "common/form/required_field_star.html" %}
                                             {% endif %}
                                         </th>
+                                        <th scope="col" class="col__width--150">
+                                            Financement
+                                            {% if formset.total_form_count %}
+                                                {% include "common/form/required_field_star.html" %}
+                                            {% endif %}
+                                        </th>
                                         <th scope="col" class="col__width--120">
                                             Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                         <th scope="col" class="col__width--120">
@@ -119,6 +125,9 @@
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_select.html" with form_input=form.fianancement parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td id="lgt_sh">
                                                     {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_after_upload %}
