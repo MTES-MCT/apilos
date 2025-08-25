@@ -11,6 +11,7 @@ from django.forms import BaseFormSet, formset_factory
 
 from conventions.models import Preteur
 from programmes.models import TypeOperation
+from programmes.models.choices import Financement
 
 
 class ConventionFinancementForm(forms.Form):
@@ -225,6 +226,9 @@ class PretForm(forms.Form):
             "max_length": "Le numero ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
     preteur = forms.TypedChoiceField(required=False, label="", choices=Preteur.choices)
     autre = forms.CharField(
         required=False,
@@ -258,6 +262,7 @@ class PretForm(forms.Form):
           - si le prêteur est CDCF ou CDCL, numéro,date d'octroi et durée sont obligatoires
           - si le prêteur est autre, le champ autre est obligatoire
         """
+        # FIXME we have an issue with the validation clean method in super class BasePretFormSet
         cleaned_data = super().clean()
         preteur = cleaned_data.get("preteur")
 
@@ -322,6 +327,7 @@ class BasePretFormSet(BaseFormSet):
             for form in self.forms:
                 if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
                     return
+            # I got an error when i post data financement
             error = ValidationError(
                 "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
                 + "(CDC foncière, CDC locative)"

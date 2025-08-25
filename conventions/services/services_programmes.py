@@ -16,7 +16,6 @@ class ConventionProgrammeService(ConventionService):
 
     def get(self):
         programme = self.convention.programme
-        lot = self.convention.lot
         self.form = ProgrammeForm(
             initial={
                 "uuid": programme.uuid,
@@ -24,7 +23,7 @@ class ConventionProgrammeService(ConventionService):
                 "adresse": self.convention.adresse or programme.adresse,
                 "code_postal": programme.code_postal,
                 "ville": programme.ville,
-                "type_habitat": lot.type_habitat,
+                "type_habitat": self.convention.lots.first().type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
                 "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
@@ -52,7 +51,8 @@ class ConventionProgrammeService(ConventionService):
             {
                 "uuid": self.convention.programme.uuid,
                 "type_habitat": self.request.POST.get(
-                    "type_habitat", self.convention.lot.type_habitat
+                    "type_habitat",
+                    self.convention.lots.first().type_habitat,
                 ),
                 **utils.build_partial_form(
                     self.request,
@@ -74,12 +74,12 @@ class ConventionProgrammeService(ConventionService):
         if self.form.is_valid():
             _save_convention_adresse(self.convention, self.form)
             _save_programme_and_lot(
-                self.convention.programme, self.convention.lot, self.form
+                self.convention.programme, self.convention.lots.all(), self.form
             )
             self.return_status = utils.ReturnStatus.SUCCESS
 
 
-def _save_programme_and_lot(programme: Programme, lot: Lot, form: ProgrammeForm):
+def _save_programme_and_lot(programme: Programme, lots: list[Lot], form: ProgrammeForm):
     programme.nom = form.cleaned_data["nom"]
     programme.code_postal = form.cleaned_data["code_postal"]
     programme.ville = form.cleaned_data["ville"]
@@ -92,8 +92,11 @@ def _save_programme_and_lot(programme: Programme, lot: Lot, form: ProgrammeForm)
     programme.nb_locaux_commerciaux = form.cleaned_data["nb_locaux_commerciaux"]
     programme.nb_bureaux = form.cleaned_data["nb_bureaux"]
     programme.save()
-    lot.type_habitat = form.cleaned_data["type_habitat"]
-    lot.save()
+
+    # Set the same type_habitat for all lots (case convention mixte)
+    for lot in lots:
+        lot.type_habitat = form.cleaned_data["type_habitat"]
+        lot.save()
 
 
 def _save_convention_adresse(convention: Convention, form: ProgrammeForm):
