@@ -224,19 +224,44 @@ def without_missing_files(files):
     if not files:
         return ""
 
-    files_as_json = json.loads(files)
-    for convention_id, file in files_as_json.items():
-        try:
-            UploadedFile.objects.get(uuid=convention_id, filename=file["filename"])
-        except UploadedFile.DoesNotExist:
-            del files_as_json[convention_id]
+    try:
+        files_as_json = json.loads(files) if isinstance(files, str) else files
+    except json.JSONDecodeError:
+        raise Exception(f"invalid JSON syntax {files}")
+
+    # Handle dict
+    if isinstance(files_as_json, dict):
+        for convention_id in list(files_as_json.keys()):
+            file = files_as_json[convention_id]
+            try:
+                UploadedFile.objects.get(uuid=convention_id, filename=file["filename"])
+            except (UploadedFile.DoesNotExist, KeyError, TypeError):
+                del files_as_json[convention_id]
+
+    # Handle list
+    elif isinstance(files_as_json, list):
+        new_files = []
+        for item in files_as_json:
+            # item could be string or dict
+            if isinstance(item, dict):
+                uuid = item.get("uuid")
+                filename = item.get("filename")
+                if uuid and filename and UploadedFile.objects.filter(uuid=uuid, filename=filename).exists():
+                    new_files.append(item)
+            elif isinstance(item, str):
+                # if your list is just filenames, check if any file with that name exists
+                if UploadedFile.objects.filter(filename=item).exists():
+                    new_files.append(item)
+        files_as_json = new_files
 
     return json.dumps(files_as_json)
 
 
 @register.filter
 def with_financement(convention):
-    return convention.lot.financement != Financement.SANS_FINANCEMENT
+    return Financement.SANS_FINANCEMENT not in [
+        lot.financement for lot in convention.lots.all()
+    ]
 
 
 @register.filter
