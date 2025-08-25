@@ -11,6 +11,7 @@ from django.forms import BaseFormSet, formset_factory
 
 from conventions.models import Preteur
 from programmes.models import TypeOperation
+from programmes.models.choices import Financement
 
 
 class ConventionFinancementForm(forms.Form):
@@ -224,6 +225,9 @@ class PretForm(forms.Form):
         error_messages={
             "max_length": "Le numero ne doit pas excéder 255 caractères",
         },
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     preteur = forms.TypedChoiceField(required=False, label="", choices=Preteur.choices)
     autre = forms.CharField(
