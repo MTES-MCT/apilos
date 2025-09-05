@@ -1,9 +1,6 @@
 {% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
-    </div>
     <div class="fr-col-12">
         <h4>Logements associés à la convention</h4>
 
@@ -27,7 +24,7 @@
                     </p>
                 {% endif %}
                 <input type="hidden" id="{{ form.formset_disabled.id_for_label }}" name="{{ form.formset_disabled.html_name }}"
-                       value="">
+                    value="">
             </div>
         {% endif %}
         <div class="table-utile">
@@ -70,6 +67,9 @@
                                             {% if formset.total_form_count %}
                                                 {% include "common/form/required_field_star.html" %}
                                             {% endif %}
+                                        </th>
+                                        <th scope="col" class="col__width--150">
+                                            Financement
                                         </th>
                                         <th scope="col" class="col__width--120">
                                             Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -114,11 +114,14 @@
                                                 {% endif %}
                                                 <td>
                                                     <input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
-                                                           value="{{ form.uuid.value|default_if_none:'' }}">
+                                                        value="{{ form.uuid.value|default_if_none:'' }}">
                                                     {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_select.html" with form_input=form.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td id="lgt_sh">
                                                     {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_after_upload %}
@@ -157,6 +160,8 @@
                                             class="fr-text--lg">
                                             Total
                                         </td>
+                                        <td>
+                                        </td>
                                         <td id="total_sh" class="fr-text--lg text--center">
                                         </td>
                                         <td id="total_sa" class="fr-text--lg text--center">
@@ -191,36 +196,79 @@
         {% endif %}
     </div>
 </div>
-
-<input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
-       value="{{ form.uuid.value|default_if_none:'' }}">
-
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:form.uuid.value %}
-    </div>
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:form.uuid.value %}
-    </div>
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:form.uuid.value %}
-    </div>
+<div class="title-section">
+    <strong>Données financières</strong>
 </div>
+<br>
+formset_convention_mixte --> <{{ formset_convention_mixte }}>
+forms --> <{{ forms }}>
+{% for form in formset_convention_mixte %}
 
-{% if convention.mixity_option %}
-    <h4>Option de l'article sur la clause de mixité sociale</h4>
+    <input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}" value="{{ form.uuid.value|default_if_none:'' }}">
 
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-mb-2w">
-            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
-            <div class="insert-info">
-                <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS" target="_blank" rel="noreferrer" class="fr-text--xs fr-link">Informations complémentaires</a>
+    <!-- Accordion wrapper -->
+    <section class="fr-accordion fr-bg-white fr-mb-2w" data-fr-js-accordion="true">
+
+        <h3 class="fr-accordion__title">
+            <button type="button"
+                    aria-expanded="false"
+                    class="fr-accordion__btn"
+                    aria-controls="plan-financement-{{ form.uuid.value }}"
+                    data-fr-js-collapse-button="true">
+                <strong>{{ form.financement.value }}</strong>
+            </button>
+        </h3>
+
+        <div class="fr-collapse" id="plan-financement-{{ form.uuid.value }}" data-fr-js-collapse="true">
+            <div>
+
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+                        <div class="fr-col-12 fr-mb-2w">
+                            {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements %}
+                        </div>
+
+                        <div class="fr-col-12">
+                            {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire %}
+                        </div>
+
+                        <div class="fr-col-12">
+                            {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels %}
+                        </div>
+
+                        <div class="fr-col-12">
+                            {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres %}
+                        </div>
+                </div>
+
+                <!-- Option mixité sociale -->
+                {% if convention.mixity_option %}
+                    <hr>
+                    <h4>Option de l'article sur la clause de mixité sociale</h4>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-mb-2w">
+                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
+                            <div class="insert-info">
+                                <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS"
+                                   target="_blank" rel="noreferrer"
+                                   class="fr-text--xs fr-link">
+                                    Informations complémentaires
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
-    </div>
-{% endif %}
+
+    </section>
+
+{% endfor %}
+
 
 {% include "common/required_fields_info.html" %}
+
+{% with form=forms.0 %}
 {% if convention.is_avenant %}
     <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         function toggleTable(name) {
@@ -266,4 +314,5 @@
         toggleTable("corrigee-sans-loyer");
     </script>
 {% endif %}
+{% endwith %}
 <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
