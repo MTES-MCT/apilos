@@ -1,3 +1,5 @@
+import logging
+
 from conventions.forms import (
     FoyerResidenceLogementFormSet,
     LogementCorrigeeFormSet,
@@ -6,12 +8,15 @@ from conventions.forms import (
     LogementSansLoyerFormSet,
     LotFoyerResidenceLgtsDetailsForm,
     LotLgtsOptionForm,
+    LotLgtsOptionFormSet,
     UploadForm,
 )
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
 from programmes.models import Logement, LogementCorrigee, LogementCorrigeeSansLoyer
 from programmes.models.models import LogementSansLoyer
+
+logger = logging.getLogger(__name__)
 
 
 class ConventionLogementsService(ConventionService):
@@ -20,6 +25,7 @@ class ConventionLogementsService(ConventionService):
     formset_sans_loyer: LogementSansLoyerFormSet
     formset_corrigee: LogementCorrigeeFormSet
     formset_corrigee_sans_loyer: LogementCorrigeeSansLoyerFormSet
+    formset_convention_mixte: LotLgtsOptionFormSet
     upform: UploadForm = UploadForm()
 
     def initialize_formsets(self):
@@ -35,6 +41,9 @@ class ConventionLogementsService(ConventionService):
             self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
                 self.request.POST, prefix="corrigee_sans_loyer"
             )
+            self.formset_convention_mixte = LotLgtsOptionFormSet(
+                self.request.POST, prefix="lots"
+            )
             return
 
         # Dans le cas d'un GET, on initialise les tableaux à partir de la BDD
@@ -42,64 +51,83 @@ class ConventionLogementsService(ConventionService):
         initial_sans_loyer = []
         initial_corrigee = []
         initial_corrigee_sans_loyer = []
-        logements = self.convention.lot.logements.order_by("import_order")
-        for logement in logements:
-            common_params = {
-                "uuid": logement.uuid,
-                "designation": logement.designation,
-                "typologie": logement.typologie,
-                "surface_habitable": logement.surface_habitable,
-                "import_order": logement.import_order,
-            }
-            surface_annexes_params = {
-                "surface_annexes": logement.surface_annexes,
-                "surface_annexes_retenue": logement.surface_annexes_retenue,
-            }
-            loyer_params = {
-                "loyer_par_metre_carre": logement.loyer_par_metre_carre,
-                "coeficient": logement.coeficient,
-                "loyer": logement.loyer,
-            }
-            surface_utile_params = {
-                "surface_utile": logement.surface_utile,
-            }
-            surface_corrigee_params = {
-                "surface_corrigee": logement.surface_corrigee,
-            }
-            if logement.loyer:
-                if logement.surface_corrigee:
-                    initial_corrigee.append(
-                        {
-                            **common_params,
-                            **surface_corrigee_params,
-                            **loyer_params,
-                        }
-                    )
+        initial_convention_mixte = []
+        lots = self.convention.lots.all()
+        for lot in lots:
+            initial_convention_mixte.append(
+                {
+                    "uuid": lot.uuid,
+                    "financement": lot.financement,
+                    "lgts_mixite_sociale_negocies": lot.lgts_mixite_sociale_negocies,
+                    "loyer_derogatoire": lot.loyer_derogatoire,
+                    "surface_locaux_collectifs_residentiels": (
+                        lot.surface_locaux_collectifs_residentiels
+                    ),
+                    "loyer_associations_foncieres": lot.loyer_associations_foncieres,
+                    "nb_logements": lot.nb_logements,
+                }
+            )
+
+            logements = lot.logements.order_by("import_order")
+            for logement in logements:
+                common_params = {
+                    "uuid": logement.uuid,
+                    "designation": logement.designation,
+                    "typologie": logement.typologie,
+                    "financement": lot.financement,
+                    "surface_habitable": logement.surface_habitable,
+                    "import_order": logement.import_order,
+                }
+                surface_annexes_params = {
+                    "surface_annexes": logement.surface_annexes,
+                    "surface_annexes_retenue": logement.surface_annexes_retenue,
+                }
+                loyer_params = {
+                    "loyer_par_metre_carre": logement.loyer_par_metre_carre,
+                    "coeficient": logement.coeficient,
+                    "loyer": logement.loyer,
+                }
+                surface_utile_params = {
+                    "surface_utile": logement.surface_utile,
+                }
+                surface_corrigee_params = {
+                    "surface_corrigee": logement.surface_corrigee,
+                }
+                if logement.loyer:
+                    if logement.surface_corrigee:
+                        initial_corrigee.append(
+                            {
+                                **common_params,
+                                **surface_corrigee_params,
+                                **loyer_params,
+                            }
+                        )
+                    else:
+                        initial.append(
+                            {
+                                **common_params,
+                                **surface_annexes_params,
+                                **surface_utile_params,
+                                **loyer_params,
+                            }
+                        )
                 else:
-                    initial.append(
-                        {
-                            **common_params,
-                            **surface_annexes_params,
-                            **surface_utile_params,
-                            **loyer_params,
-                        }
-                    )
-            else:
-                if logement.surface_corrigee:
-                    initial_corrigee_sans_loyer.append(
-                        {
-                            **common_params,
-                            **surface_corrigee_params,
-                        }
-                    )
-                else:
-                    initial_sans_loyer.append(
-                        {
-                            **common_params,
-                            **surface_annexes_params,
-                            **surface_utile_params,
-                        }
-                    )
+                    if logement.surface_corrigee:
+                        initial_corrigee_sans_loyer.append(
+                            {
+                                **common_params,
+                                **surface_corrigee_params,
+                            }
+                        )
+                    else:
+                        initial_sans_loyer.append(
+                            {
+                                **common_params,
+                                **surface_annexes_params,
+                                **surface_utile_params,
+                            }
+                        )
+
         self.formset = LogementFormSet(initial=initial, prefix="avec_loyer")
         self.formset_sans_loyer = LogementSansLoyerFormSet(
             initial=initial_sans_loyer, prefix="sans_loyer"
@@ -110,28 +138,19 @@ class ConventionLogementsService(ConventionService):
         self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
             initial=initial_corrigee_sans_loyer, prefix="corrigee_sans_loyer"
         )
+        self.formset_convention_mixte = LotLgtsOptionFormSet(
+            initial=initial_convention_mixte, prefix="lots"
+        )
 
     def get(self):
         self.initialize_formsets()
-        self.form = LotLgtsOptionForm(
-            initial={
-                "uuid": self.convention.lot.uuid,
-                "lgts_mixite_sociale_negocies": self.convention.lot.lgts_mixite_sociale_negocies,
-                "loyer_derogatoire": self.convention.lot.loyer_derogatoire,
-                "surface_locaux_collectifs_residentiels": (
-                    self.convention.lot.surface_locaux_collectifs_residentiels
-                ),
-                "loyer_associations_foncieres": self.convention.lot.loyer_associations_foncieres,
-                "nb_logements": self.convention.lot.nb_logements,
-            }
-        )
 
     def save(self):
         self.editable_after_upload = self.request.POST.get(
             "editable_after_upload", False
         )
         if self.request.POST.get("Upload", False):
-            self.form = LotLgtsOptionForm(self.request.POST)
+            self.initialize_formsets()
             if self.request.POST["Upload"] == "file_sans_loyer":
                 self._upload_logements(
                     prefix="sans_loyer",
@@ -173,6 +192,7 @@ class ConventionLogementsService(ConventionService):
     ):
         setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
         self.upform = UploadForm(self.request.POST, self.request.FILES)
+        logger.error(f"self.upform {self.upform}")
         if self.upform.is_valid():
             result = upload_objects.handle_uploaded_xlsx(
                 self.upform,
@@ -182,9 +202,10 @@ class ConventionLogementsService(ConventionService):
                 xlsx_file_name,
                 import_order=True,
             )
+            logger.error(f"result {result}")
             if result["success"] != utils.ReturnStatus.ERROR:
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
+                for lgt in Logement.objects.filter(lot__in=self.convention.lots.all()):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (
@@ -219,6 +240,9 @@ class ConventionLogementsService(ConventionService):
             **initformset,
             f"{prefix}-{idx}-designation": self._get_form_value(
                 form_logement, "designation"
+            ),
+            f"{prefix}-{idx}-financement": self._get_form_value(
+                form_logement, "financement"
             ),
             f"{prefix}-{idx}-typologie": self._get_form_value(
                 form_logement, "typologie"
@@ -273,55 +297,77 @@ class ConventionLogementsService(ConventionService):
     def _logements_update(self, prefix, formset_name, formset_class, logement_class):
         setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
         initformset = {}
-        nb_logements = 0
+        nb_logements = {}
 
         for idx, form_logement in enumerate(getattr(self, formset_name)):
-            result = self._add_logement_to_initformset(
-                form_logement, idx, initformset, nb_logements, prefix=prefix
+            financement = self._get_form_value(
+                form_logement, "financement"
             )
-            initformset = result[0]
-            nb_logements = result[1]
+            if financement not in initformset:
+                initformset[financement] = {}
+                nb_logements[financement] = 0
+            result = self._add_logement_to_initformset(
+                form_logement, idx, initformset[financement], nb_logements[financement], prefix=prefix
+            )
+            initformset[financement] = result[0]
+            nb_logements[financement] = result[1]
 
-        initformset = {
-            **initformset,
-            f"{prefix}-TOTAL_FORMS": nb_logements,
-            f"{prefix}-INITIAL_FORMS": nb_logements,
-        }
-        setattr(self, formset_name, formset_class(initformset, prefix=prefix))
-        getattr(self, formset_name).programme_id = self.convention.programme_id
-        getattr(self, formset_name).lot_id = self.convention.lot.id
-        getattr(self, formset_name).nb_logements = int(
-            self.request.POST.get("nb_logements") or 0
-        )
-        getattr(self, formset_name).ignore_optional_errors = self.request.POST.get(
-            "ignore_optional_errors", False
-        )
+        for financement in initformset:
+            initformset[financement] = {
+                **initformset[financement],
+                f"{prefix}-TOTAL_FORMS": nb_logements[financement],
+                f"{prefix}-INITIAL_FORMS": nb_logements[financement],
+            }
+            setattr(self, formset_name, formset_class(initformset[financement], prefix=prefix))
+            getattr(self, formset_name).programme_id = self.convention.programme_id
+            logger.error(f"financement {financement}")
+            # FIXME : check the lot_id shoud not be None
+            lot_id = self.convention.lots.filter(financement=financement).first().id
+            assert lot_id is not None, f"Lot with financement {financement} not found"
+            
+            logger.error(f"_logements_update lot_id {lot_id}")
+            getattr(self, formset_name).lot_id = lot_id
+            getattr(self, formset_name).nb_logements = int(
+                nb_logements[financement] or 0
+            )
+            getattr(self, formset_name).ignore_optional_errors = self.request.POST.get(
+                "ignore_optional_errors", False
+            )
         return nb_logements
 
     def _logements_atomic_update(self):
-        self.form = LotLgtsOptionForm(
-            {
-                "uuid": self.convention.lot.uuid,
-                **utils.build_partial_form(
-                    self.request,
-                    self.convention.lot,
-                    [
-                        "lgts_mixite_sociale_negocies",
-                        "loyer_derogatoire",
-                        "surface_locaux_collectifs_residentiels",
-                        "loyer_associations_foncieres",
-                        "nb_logements",
-                    ],
-                    [
-                        "formset_sans_loyer_disabled",
-                        "formset_disabled",
-                        "formset_corrigee_disabled",
-                        "formset_corrigee_sans_loyer_disabled",
-                    ],
-                ),
-            }
-        )
-        form_is_valid = self.form.is_valid()
+        if self.request.POST:
+            self.formset_convention_mixte = LotLgtsOptionFormSet(
+                self.request.POST, prefix="lots"
+            )
+            
+        else:
+            
+            initial_data = [
+                {
+                    "uuid": lot.uuid,
+                    **utils.build_partial_form(
+                        self.request,
+                        lot,
+                        [
+                            "lgts_mixite_sociale_negocies",
+                            "loyer_derogatoire",
+                            "surface_locaux_collectifs_residentiels",
+                            "loyer_associations_foncieres",
+                            "nb_logements",
+                        ],
+                        [
+                            "formset_sans_loyer_disabled",
+                            "formset_disabled",
+                            "formset_corrigee_disabled",
+                            "formset_corrigee_sans_loyer_disabled",
+                        ],
+                    ),
+                }
+                for lot in self.convention.lots.all()
+            ]
+            logger.error(f"initial_data :  {initial_data}")
+            self.formset_convention_mixte = LotLgtsOptionFormSet(initial=initial_data)
 
         nb_logements = self._logements_update(
             prefix="avec_loyer",
@@ -347,69 +393,82 @@ class ConventionLogementsService(ConventionService):
             formset_class=LogementCorrigeeSansLoyerFormSet,
             logement_class=LogementCorrigeeSansLoyer,
         )
-        total_nb_logements = (
-            nb_logements
-            + nb_logements_sans_loyer
-            + nb_logements_corrigee
-            + nb_logements_corrigee_sans_loyer
-        )
+        
+        total_nb_logements = {}
+
+        for financement in nb_logements:
+            total_nb_logements[financement] = (
+                nb_logements[financement] if nb_logements else 0
+                + nb_logements_sans_loyer[financement] if nb_logements_sans_loyer else 0
+                + nb_logements_corrigee[financement] if nb_logements_corrigee else 0
+                + nb_logements_corrigee_sans_loyer[financement] if nb_logements_corrigee_sans_loyer else 0
+            )
+
         self.formset.total_nb_logements = total_nb_logements
         self.formset_sans_loyer.total_nb_logements = total_nb_logements
         self.formset_corrigee.total_nb_logements = total_nb_logements
         self.formset_corrigee_sans_loyer.total_nb_logements = total_nb_logements
 
+        
+        formset_convention_mixte_is_valid = self.formset_convention_mixte.is_valid()
         formset_is_valid = (
-            self.formset.is_valid() or self.form.cleaned_data["formset_disabled"]
+            self.formset.is_valid()
+            or all(form.cleaned_data.get("formset_disabled") for form in self.formset_convention_mixte if form.cleaned_data)
         )
-        formset_sans_loyer_is_valid = (
-            self.formset_sans_loyer.is_valid()
-            or self.form.cleaned_data["formset_sans_loyer_disabled"]
-        )
-        formset_corrigee_is_valid = (
-            self.formset_corrigee.is_valid()
-            or self.form.cleaned_data["formset_corrigee_disabled"]
-        )
-        formset_corrigee_sans_loyer_is_valid = (
-            self.formset_corrigee_sans_loyer.is_valid()
-            or self.form.cleaned_data["formset_corrigee_sans_loyer_disabled"]
-        )
+        
+        formset_sans_loyer_is_valid = self.formset_sans_loyer.is_valid()
+        formset_corrigee_is_valid = self.formset_corrigee.is_valid()
+        formset_corrigee_sans_loyer_is_valid = self.formset_corrigee_sans_loyer.is_valid()
+        for form_item in self.formset_convention_mixte:
+            formset_sans_loyer_is_valid = (
+                formset_sans_loyer_is_valid
+                or form_item.cleaned_data["formset_sans_loyer_disabled"]
+            )
+            formset_corrigee_is_valid = (
+                formset_corrigee_is_valid
+                or form_item.cleaned_data["formset_corrigee_disabled"]
+            )
+            formset_corrigee_sans_loyer_is_valid = (
+                formset_corrigee_sans_loyer_is_valid
+                or form_item.cleaned_data["formset_corrigee_sans_loyer_disabled"]
+            )
 
-        if (
-            form_is_valid
-            and formset_is_valid
-            and formset_sans_loyer_is_valid
-            and formset_corrigee_is_valid
-            and formset_corrigee_sans_loyer_is_valid
-        ):
-            self._save_logements()
-            self._save_logements_sans_loyer()
-            self._save_logements_corrigee()
-            self._save_logements_corrigee_sans_loyer()
-            self._save_lot_lgts_option()
-            self.return_status = utils.ReturnStatus.SUCCESS
+            if (
+                formset_convention_mixte_is_valid
+                and formset_is_valid
+                and formset_sans_loyer_is_valid
+                and formset_corrigee_is_valid
+                and formset_corrigee_sans_loyer_is_valid
+            ):
+                self._save_logements(form_item)
+                self._save_logements_sans_loyer(form_item)
+                self._save_logements_corrigee(form_item)
+                self._save_logements_corrigee_sans_loyer(form_item)
+                self._save_lot_lgts_option(form_item)
+                self.return_status = utils.ReturnStatus.SUCCESS
 
-    def _save_lot_lgts_option(self):
-        lot = self.convention.lot
-        lot.lgts_mixite_sociale_negocies = (
-            self.form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
-        )
-        lot.loyer_derogatoire = self.form.cleaned_data["loyer_derogatoire"]
-        lot.nb_logements = self.form.cleaned_data["nb_logements"]
-        lot.surface_locaux_collectifs_residentiels = (
-            self.form.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
-        )
-        lot.loyer_associations_foncieres = self.form.cleaned_data[
-            "loyer_associations_foncieres"
-        ]
-        lot.save()
+    def _save_lot_lgts_option(self, form_item):
+        for lot in self.convention.lots.all():
+            lot.lgts_mixite_sociale_negocies = (
+                form_item.cleaned_data["lgts_mixite_sociale_negocies"] or 0
+            )
+            lot.loyer_derogatoire = form_item.cleaned_data["loyer_derogatoire"]
+            lot.nb_logements = form_item.cleaned_data["nb_logements"]
+            lot.surface_locaux_collectifs_residentiels = (
+                form_item.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
+            )
+            lot.loyer_associations_foncieres = form_item.cleaned_data[
+                "loyer_associations_foncieres"
+            ]
+            lot.save()
 
-    def _save_logements_sans_loyer(self):
+    def _save_logements_sans_loyer(self, form_item):
         lgt_uuids1 = list(
             map(lambda x: x.cleaned_data["uuid"], self.formset_sans_loyer)
         )
         lgt_uuids = list(filter(None, lgt_uuids1))
 
-        if self.form.cleaned_data["formset_sans_loyer_disabled"]:
+        if form_item.cleaned_data["formset_sans_loyer_disabled"]:
             # Clear all logements sans loyer
             self.convention.lot.logements.filter(
                 surface_corrigee__isnull=True, loyer__isnull=True
@@ -435,7 +494,7 @@ class ConventionLogementsService(ConventionService):
                 logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.filter(financement=form_logement.cleaned_data["financement"]).first(),
                     designation=form_logement.cleaned_data["designation"],
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
@@ -448,11 +507,11 @@ class ConventionLogementsService(ConventionService):
                 )
             logement.save()
 
-    def _save_logements(self):
+    def _save_logements(self, form_item):
 
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         lgt_uuids = list(filter(None, lgt_uuids1))
-        if self.form.cleaned_data["formset_disabled"]:
+        if form_item.cleaned_data["formset_disabled"]:
             # Clear all logements avec loyer
             self.convention.lot.logements.filter(
                 surface_corrigee__isnull=True, loyer__isnull=False
@@ -483,7 +542,7 @@ class ConventionLogementsService(ConventionService):
                 logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.filter(financement=form_logement.cleaned_data["financement"]).first(),
                     designation=form_logement.cleaned_data["designation"],
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
@@ -501,11 +560,11 @@ class ConventionLogementsService(ConventionService):
                 )
             logement.save()
 
-    def _save_logements_corrigee(self):
+    def _save_logements_corrigee(self, form_item):
         lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee))
         lgt_uuids = list(filter(None, lgt_uuids1))
 
-        if self.form.cleaned_data["formset_corrigee_disabled"]:
+        if form_item.cleaned_data["formset_corrigee_disabled"]:
             # Clear all logements with surface corrigée and loyer
             self.convention.lot.logements.filter(
                 surface_corrigee__isnull=False, loyer__isnull=False
@@ -535,7 +594,7 @@ class ConventionLogementsService(ConventionService):
 
             else:
                 logement = Logement.objects.create(
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.filter(financement=form_logement.cleaned_data["financement"]).first(),
                     designation=form_logement.cleaned_data["designation"],
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
@@ -549,13 +608,13 @@ class ConventionLogementsService(ConventionService):
                 )
             logement.save()
 
-    def _save_logements_corrigee_sans_loyer(self):
+    def _save_logements_corrigee_sans_loyer(self, form_item):
         lgt_uuids1 = list(
             map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee_sans_loyer)
         )
         lgt_uuids = list(filter(None, lgt_uuids1))
 
-        if self.form.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
+        if form_item.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
             # Clear all logements with surface corrigée and loyer
             self.convention.lot.logements.filter(
                 surface_corrigee__isnull=False, loyer__isnull=True
@@ -579,7 +638,7 @@ class ConventionLogementsService(ConventionService):
                 logement.import_order = form_logement.cleaned_data["import_order"]
             else:
                 logement = Logement.objects.create(
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.filter(financement=form_logement.cleaned_data["financement"]).first(),
                     designation=form_logement.cleaned_data["designation"],
                     typologie=form_logement.cleaned_data["typologie"],
                     surface_habitable=form_logement.cleaned_data["surface_habitable"],
@@ -705,6 +764,7 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                 }
         self.formset = FoyerResidenceLogementFormSet(initformset)
         self.formset.lot_id = self.convention.lot.id
+        # TODO: Adapt for multiple lots
         self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         self.formset.ignore_optional_errors = self.request.POST.get(
             "ignore_optional_errors", False

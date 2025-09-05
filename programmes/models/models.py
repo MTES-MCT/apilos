@@ -729,6 +729,7 @@ class Logement(models.Model):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
+        "Financement" : "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
