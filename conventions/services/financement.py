@@ -190,7 +190,7 @@ class ConventionFinancementService(ConventionService):
         logger.error(f'obj_uuids : {obj_uuids}')
         Pret.objects.filter(lot__convention=self.convention).exclude(uuid__in=obj_uuids).delete()
         for form_pret in self.formset:
-            lot = self.convention.lots.filter(financement=form_pret.cleaned_data["financement"])
+            lot = self.convention.lots.get(financement=form_pret.cleaned_data["financement"])
             
             uuid = form_pret.cleaned_data.get("uuid")
             if uuid:
