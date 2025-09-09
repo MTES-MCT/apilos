@@ -24,6 +24,7 @@ class ConventionService(ABC):
     editable_after_upload: bool = False
     form: Form | None = None
     formset = None
+    formset_list: list | None = []
     formset_sans_loyer = None
     formset_corrigee = None
     formset_corrigee_sans_loyer = None

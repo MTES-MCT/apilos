@@ -70,4 +70,4 @@ class Command(BaseCommand):
                 self.style.SUCCESS(f"{nb_conventions} conventions canceled")
             )
         else:
-            self.sidout.write(self.style.NOTICE("Abording"))
+            self.stdout.write(self.style.NOTICE("Abording"))

@@ -602,6 +602,7 @@ class Convention(models.Model):
 
         return f"{dept_code}.{admin_code}.{year%100}.{max_number + 1:04d}"
 
+    # TODO : pourrait être une property
     def is_avenant(self):
         return self.parent_id is not None
 
@@ -705,7 +706,12 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return all([lot.financement in [Financement.PLUS, Financement.PLUS_CD] for lot in self.lots.all()])
+        return all(
+            [
+                lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+                for lot in self.lots.all()
+            ]
+        )
 
     def display_not_validated_status(self):
         """

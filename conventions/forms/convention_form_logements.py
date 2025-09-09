@@ -5,6 +5,8 @@ selon le type de convention :
     - Foyer Résidence
 """
 
+import logging
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
@@ -18,9 +20,8 @@ from programmes.models import (
 )
 from programmes.models.choices import Financement
 
-import logging
-
 logger = logging.getLogger(__name__)
+
 
 class LotLgtsOptionForm(forms.Form):
     """
@@ -377,6 +378,7 @@ class BaseLogementFormSet(BaseFormSet):
     total_nb_logements: dict[str, int] | None = None
     optional_errors: list = []
     ignore_optional_errors = False
+    financement: Financement = None
 
     def is_valid(self):
         return super().is_valid() and len(self.optional_errors) == 0
@@ -481,13 +483,13 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        for financement in self.total_nb_logements:
-            if self.nb_logements != self.total_nb_logements[financement]:
-                error = ValidationError(
-                    f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
-                )
-                self.optional_errors.append(error)
+        logger.warning(f"{self.total_nb_logements=}")
+        if self.nb_logements != self.total_nb_logements[self.financement]:
+            error = ValidationError(
+                f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[self.financement]})"
+            )
+            self.optional_errors.append(error)
 
     def manage_coefficient_propre(self):
         """
