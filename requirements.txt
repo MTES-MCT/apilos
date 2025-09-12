@@ -202,9 +202,9 @@ django==5.2.6 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-anymail[sendinblue]==13.0.1 \
-    --hash=sha256:f2c20c9f240d93789aa8da2ee54d701c6b0345d101133d65d67e9355a914af81 \
-    --hash=sha256:fd93b36c167eb968bd68a351218c29ae23a68682e67340ae8554478cf27f9d56
+django-anymail[sendinblue]==13.1 \
+    --hash=sha256:63e48402ec8258f17640eb73c8c64141f16d2f8ae7d448d0fb1c66e82b7cbcf6 \
+    --hash=sha256:b51783176f8a8382e958808151551558e4a46d1375fbc343742d1ebd06ce8e9e
     # via -r requirements.in
 django-appconf==1.0.6 \
     --hash=sha256:c3ae442fba1ff7ec830412c5184b17169a7a1e71cf0864a4c3f93cf4c98a1993 \
