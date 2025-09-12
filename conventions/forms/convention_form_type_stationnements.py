@@ -8,6 +8,7 @@ from django.forms import BaseFormSet, formset_factory
 from programmes.models import (
     TypologieStationnement,
 )
+from programmes.models.choices import Financement
 
 
 class TypeStationnementForm(forms.Form):
@@ -23,6 +24,9 @@ class TypeStationnementForm(forms.Form):
         error_messages={
             "required": "La typologie des stationnement est obligatoire",
         },
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     nb_stationnements = forms.IntegerField(
         label="",
