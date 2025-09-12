@@ -2,6 +2,8 @@
 Étape Annexes du formulaire par étape de la convention (type HLM, SEM, Type I & 2)
 """
 
+import logging
+
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
@@ -12,6 +14,9 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieLogementClassique,
 )
+from programmes.models.choices import Financement
+
+logger = logging.getLogger(__name__)
 
 
 class LotAnnexeForm(forms.Form):
@@ -20,6 +25,9 @@ class LotAnnexeForm(forms.Form):
     """
 
     uuid = forms.UUIDField(required=False)
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
     annexe_caves = forms.BooleanField(
         required=False,
         label="Caves",
@@ -91,6 +99,9 @@ class AnnexeForm(forms.Form):
             "min_length": "La designation du logement est obligatoire",
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     logement_typologie = forms.TypedChoiceField(
         required=True, label="", choices=TypologieLogementClassique.choices
@@ -165,8 +176,12 @@ class BaseAnnexeFormSet(BaseFormSet):
             - le logement doit exister dans le lot
         """
         if self.convention:
-            lgts = self.convention.lot.logements.all()
+            lgts = Logement.objects.filter(lot__convention=self.convention)
+            logger.error(f"manage_logement_exists_validation > lgts : {list(lgts)}")
             for form in self.forms:
+                logger.error(
+                    f'logement_designation {form.cleaned_data.get("logement_designation")}'
+                )
                 try:
                     lgts.get(designation=form.cleaned_data.get("logement_designation"))
                 except Logement.DoesNotExist:
@@ -176,3 +191,5 @@ class BaseAnnexeFormSet(BaseFormSet):
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
+
+LotAnnexeFormSet = formset_factory(LotAnnexeForm, extra=0)

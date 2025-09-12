@@ -1,22 +1,30 @@
-from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
+import logging
+
+from conventions.forms import AnnexeFormSet, LotAnnexeForm, LotAnnexeFormSet, UploadForm
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
 from programmes.models import Annexe, Logement
+
+logger = logging.getLogger(__name__)
 
 
 class ConventionAnnexesService(ConventionService):
     form: LotAnnexeForm
     formset: AnnexeFormSet
     upform: UploadForm = UploadForm()
+    formset_convention_mixte: LotAnnexeFormSet
 
     def get(self):
         initial = []
-        annexes = Annexe.objects.filter(logement__lot_id=self.convention.lot.id)
+        annexes = Annexe.objects.filter(
+            logement__lot_id__in=self.convention.lots.values_list("id", flat=True)
+        )
         for annexe in annexes:
             initial.append(
                 {
                     "uuid": annexe.uuid,
                     "typologie": annexe.typologie,
+                    "financement": annexe.logement.lot.financement,
                     "logement_designation": annexe.logement.designation,
                     "logement_typologie": annexe.logement.typologie,
                     "surface_hors_surface_retenue": annexe.surface_hors_surface_retenue,
@@ -25,22 +33,26 @@ class ConventionAnnexesService(ConventionService):
                 }
             )
         self.formset = AnnexeFormSet(initial=initial)
-        lot = self.convention.lot
-        self.form = LotAnnexeForm(
-            initial={
-                "uuid": lot.uuid,
-                "annexe_caves": lot.annexe_caves,
-                "annexe_soussols": lot.annexe_soussols,
-                "annexe_remises": lot.annexe_remises,
-                "annexe_ateliers": lot.annexe_ateliers,
-                "annexe_sechoirs": lot.annexe_sechoirs,
-                "annexe_celliers": lot.annexe_celliers,
-                "annexe_resserres": lot.annexe_resserres,
-                "annexe_combles": lot.annexe_combles,
-                "annexe_balcons": lot.annexe_balcons,
-                "annexe_loggias": lot.annexe_loggias,
-                "annexe_terrasses": lot.annexe_terrasses,
-            }
+        self.formset_convention_mixte = LotAnnexeFormSet(
+            initial=[
+                {
+                    "uuid": lot.uuid,
+                    "financement": lot.financement,
+                    "annexe_caves": lot.annexe_caves,
+                    "annexe_soussols": lot.annexe_soussols,
+                    "annexe_remises": lot.annexe_remises,
+                    "annexe_ateliers": lot.annexe_ateliers,
+                    "annexe_sechoirs": lot.annexe_sechoirs,
+                    "annexe_celliers": lot.annexe_celliers,
+                    "annexe_resserres": lot.annexe_resserres,
+                    "annexe_combles": lot.annexe_combles,
+                    "annexe_balcons": lot.annexe_balcons,
+                    "annexe_loggias": lot.annexe_loggias,
+                    "annexe_terrasses": lot.annexe_terrasses,
+                }
+                for lot in self.convention.lots.all()
+            ],
+            prefix="lots",
         )
 
     def save(self):
@@ -49,7 +61,9 @@ class ConventionAnnexesService(ConventionService):
         )
         if self.request.POST.get("Upload", False):
 
-            self.form = LotAnnexeForm(self.request.POST)
+            self.formset_convention_mixte = LotAnnexeFormSet(
+                self.request.POST, prefix="lots"
+            )
             self._upload_annexes()
         # When the user cliked on "Enregistrer et Suivant"
         else:
@@ -70,7 +84,9 @@ class ConventionAnnexesService(ConventionService):
 
                 annexes_by_designation = {}
                 for annexe in Annexe.objects.prefetch_related("logement").filter(
-                    logement__lot_id=self.convention.lot.id
+                    logement__lot_id__in=self.convention.lots.values_list(
+                        "id", flat=True
+                    )
                 ):
                     annexes_by_designation[
                         f"{annexe.logement.designation}_{annexe.typologie}"
@@ -92,44 +108,54 @@ class ConventionAnnexesService(ConventionService):
                 self.editable_after_upload = True
 
     def _save_lot_annexes(self):
-        lot = self.convention.lot
-        lot.annexe_caves = self.form.cleaned_data["annexe_caves"]
-        lot.annexe_soussols = self.form.cleaned_data["annexe_soussols"]
-        lot.annexe_remises = self.form.cleaned_data["annexe_remises"]
-        lot.annexe_ateliers = self.form.cleaned_data["annexe_ateliers"]
-        lot.annexe_sechoirs = self.form.cleaned_data["annexe_sechoirs"]
-        lot.annexe_celliers = self.form.cleaned_data["annexe_celliers"]
-        lot.annexe_resserres = self.form.cleaned_data["annexe_resserres"]
-        lot.annexe_combles = self.form.cleaned_data["annexe_combles"]
-        lot.annexe_balcons = self.form.cleaned_data["annexe_balcons"]
-        lot.annexe_loggias = self.form.cleaned_data["annexe_loggias"]
-        lot.annexe_terrasses = self.form.cleaned_data["annexe_terrasses"]
-        lot.save()
+        for form in self.formset_convention_mixte:
+            logger.error(
+                f'form.cleaned_data["financement"] {form.cleaned_data["financement"]}'
+            )
+            lot = self.convention.lots.get(financement=form.cleaned_data["financement"])
+            lot.annexe_caves = form.cleaned_data["annexe_caves"]
+            lot.annexe_soussols = form.cleaned_data["annexe_soussols"]
+            lot.annexe_remises = form.cleaned_data["annexe_remises"]
+            lot.annexe_ateliers = form.cleaned_data["annexe_ateliers"]
+            lot.annexe_sechoirs = form.cleaned_data["annexe_sechoirs"]
+            lot.annexe_celliers = form.cleaned_data["annexe_celliers"]
+            lot.annexe_resserres = form.cleaned_data["annexe_resserres"]
+            lot.annexe_combles = form.cleaned_data["annexe_combles"]
+            lot.annexe_balcons = form.cleaned_data["annexe_balcons"]
+            lot.annexe_loggias = form.cleaned_data["annexe_loggias"]
+            lot.annexe_terrasses = form.cleaned_data["annexe_terrasses"]
+            lot.save()
 
     def _annexes_atomic_update(self):
-        self.form = LotAnnexeForm(
-            {
-                "uuid": self.convention.lot.uuid,
-                **utils.build_partial_form(
-                    self.request,
-                    self.convention.lot,
-                    [
-                        "annexe_caves",
-                        "annexe_soussols",
-                        "annexe_remises",
-                        "annexe_ateliers",
-                        "annexe_sechoirs",
-                        "annexe_celliers",
-                        "annexe_resserres",
-                        "annexe_combles",
-                        "annexe_balcons",
-                        "annexe_loggias",
-                        "annexe_terrasses",
-                    ],
-                ),
-            }
+        self.formset_convention_mixte = LotAnnexeFormSet(
+            data=self.request.POST,
+            initial=[
+                {
+                    "uuid": lot.uuid,
+                    **utils.build_partial_form(
+                        self.request,
+                        lot,
+                        [
+                            "annexe_caves",
+                            "financement",
+                            "annexe_soussols",
+                            "annexe_remises",
+                            "annexe_ateliers",
+                            "annexe_sechoirs",
+                            "annexe_celliers",
+                            "annexe_resserres",
+                            "annexe_combles",
+                            "annexe_balcons",
+                            "annexe_loggias",
+                            "annexe_terrasses",
+                        ],
+                    ),
+                }
+                for lot in self.convention.lots.all()
+            ],
+            prefix="lots",
         )
-        form_is_valid = self.form.is_valid()
+        form_is_valid = self.formset_convention_mixte.is_valid()
 
         self.formset = AnnexeFormSet(self.request.POST)
         initformset = {
@@ -142,6 +168,7 @@ class ConventionAnnexesService(ConventionService):
         }
         for idx, form_annexe in enumerate(self.formset):
             if form_annexe["uuid"].value():
+                # logger.error(f'form_annexe > get_form_value > financement { utils.get_form_value(form_annexe, annexe, "financement")}')
                 annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
                 initformset = {
                     **initformset,
@@ -153,6 +180,9 @@ class ConventionAnnexesService(ConventionService):
                         form_annexe["logement_designation"].value()
                         if form_annexe["logement_designation"].value() is not None
                         else annexe.logement.designation
+                    ),
+                    f"form-{idx}-financement": utils.get_form_value(
+                        form_annexe, annexe, "financement"
                     ),
                     f"form-{idx}-logement_typologie": (
                         form_annexe["logement_typologie"].value()
@@ -170,12 +200,16 @@ class ConventionAnnexesService(ConventionService):
                     ),
                 }
             else:
+                logger.error(
+                    f'form_annexe > financement {form_annexe["financement"].value()}'
+                )
                 initformset = {
                     **initformset,
                     f"form-{idx}-typologie": form_annexe["typologie"].value(),
                     f"form-{idx}-logement_designation": form_annexe[
                         "logement_designation"
                     ].value(),
+                    f"form-{idx}-financement": form_annexe["financement"].value(),
                     f"form-{idx}-logement_typologie": form_annexe[
                         "logement_typologie"
                     ].value(),
@@ -187,6 +221,7 @@ class ConventionAnnexesService(ConventionService):
                     ].value(),
                     f"form-{idx}-loyer": form_annexe["loyer"].value(),
                 }
+        logger.error(f"_annexes_atomic_update > initformset : {initformset}")
         self.formset = AnnexeFormSet(initformset)
         self.formset.convention = self.convention
         formset_is_valid = self.formset.is_valid()
@@ -199,15 +234,18 @@ class ConventionAnnexesService(ConventionService):
     def _save_annexes(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        Annexe.objects.filter(logement__lot_id=self.convention.lot.id).exclude(
-            uuid__in=obj_uuids
-        ).delete()
+        Annexe.objects.filter(
+            logement__lot_id__in=self.convention.lots.values_list("id", flat=True)
+        ).exclude(uuid__in=obj_uuids).delete()
         for form_annexe in self.formset:
             if form_annexe.cleaned_data["uuid"]:
+                logger.error(f"form_annexe.cleaned_data : {form_annexe.cleaned_data}")
                 annexe = Annexe.objects.get(uuid=form_annexe.cleaned_data["uuid"])
                 logement = Logement.objects.get(
                     designation=form_annexe.cleaned_data["logement_designation"],
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.get(
+                        financement=form_annexe.cleaned_data["financement"]
+                    ),
                 )
                 annexe.logement = logement
                 annexe.typologie = form_annexe.cleaned_data["typologie"]
@@ -221,7 +259,9 @@ class ConventionAnnexesService(ConventionService):
             else:
                 logement = Logement.objects.get(
                     designation=form_annexe.cleaned_data["logement_designation"],
-                    lot=self.convention.lot,
+                    lot=self.convention.lots.get(
+                        financement=form_annexe.cleaned_data["financement"]
+                    ),
                 )
                 annexe = Annexe.objects.create(
                     logement=logement,
