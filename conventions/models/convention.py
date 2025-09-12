@@ -18,6 +18,7 @@ from conventions.models.convention_history import ConventionHistory
 from ecoloweb.models import EcoloReference
 from programmes.models import Financement, LocauxCollectifs, Lot, TypeStationnement
 from users.type_models import EmailPreferences, TypeRole
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -942,3 +943,14 @@ class Convention(models.Model):
 
     def get_lots(self) -> list[Lot]:
         return self.lots
+
+    def repartition_surfaces(self):
+        result = defaultdict(lambda: defaultdict(int))
+        data = [lot.repartition_surfaces() for lot in self.lots.all()]
+        for entry in data:
+            for type_name, subtypes in entry.items():  # INDIVIDUEL / COLLECTIF
+                for subtype, value in subtypes.items():  # T1, T2, ..
+                    result[type_name][subtype] += value
+
+        # Convert back to normal dicts
+        return {t: dict(sub) for t, sub in result.items()}
