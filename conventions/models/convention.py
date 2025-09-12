@@ -85,9 +85,6 @@ class ConventionManager(models.Manager):
         )
         convention.set_lots(others_conventions)
 
-        logger.info(
-            f"Mixte convention created {convention} with uuid {convention.uuid}"
-        )
         return convention.programme, convention.lots, convention
 
     def _degroup_convention(self, convention):

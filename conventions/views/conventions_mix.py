@@ -7,16 +7,10 @@ from django.views import View
 from conventions.forms.convention_mixed_form_initialisation import UUIDListForm
 from conventions.models.convention import Convention
 
-logger = logging.getLogger(__name__)
-
-
 class ConventionMix(View):
 
     def post(self, request):
-        logger.error("am in ConventionMix post function")
-        logger.debug("am in ConventionMix post function")
         form = UUIDListForm(request.POST)
-        logger.error(f"UUIDListForm : {form}")
         if form.is_valid():
             uuids = form.cleaned_data["uuids"]
             action = form.cleaned_data["action"]
