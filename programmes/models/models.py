@@ -729,7 +729,7 @@ class Logement(models.Model):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
-        "Financement" : "financement",
+        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
@@ -931,6 +931,7 @@ class Annexe(models.Model):
 
     import_mapping = {
         "Type d'annexe": "typologie",
+        "Financement": "financement",
         "Désignation des logements": "logement_designation",
         "Typologie des logements": "logement_typologie",
         "Surface de l'annexe": "surface_hors_surface_retenue",
