@@ -426,9 +426,18 @@ class ConventionView(ABC, BaseConventionView):
             self.target_template,
             {
                 **base_convention_response_error(request, service.convention),
-                **({"form": service.form} if service.form else {}),
+                **(
+                    {"form": service.form}
+                    if service.form and not service.formset_convention_mixte
+                    else {}
+                ),
                 **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
+                **(
+                    {"formset_convention_mixte": service.formset_convention_mixte}
+                    if service.formset_convention_mixte
+                    else {}
+                ),
                 **(
                     {"formset_sans_loyer": service.formset_sans_loyer}
                     if service.formset_sans_loyer
@@ -487,7 +496,16 @@ class ConventionView(ABC, BaseConventionView):
             self.target_template,
             {
                 **base_convention_response_error(request, self.service.convention),
-                **({"form": self.service.form} if self.service.form else {}),
+                **(
+                    {"form": self.service.form}
+                    if self.service.form and not self.service.formset_convention_mixte
+                    else {}
+                ),
+                **(
+                    {"formset_convention_mixte": self.service.formset_convention_mixte}
+                    if self.service.formset_convention_mixte
+                    else {}
+                ),
                 **({"upform": getattr(self.service, "upform", {})}),
                 **(
                     {"extra_forms": self.service.extra_forms}
