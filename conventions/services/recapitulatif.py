@@ -36,8 +36,6 @@ from siap.siap_client.client import SIAPClient, get_siap_credentials_from_reques
 from users.models import GroupProfile, User
 from users.type_models import EmailPreferences
 
-import logging
-logger = logging.getLogger(__name__)
 
 class ConventionRecapitulatifService(ConventionService):
     def get(self):
