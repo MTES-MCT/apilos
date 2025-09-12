@@ -1,11 +1,8 @@
-import logging
-
 from conventions.forms import AnnexeFormSet, LotAnnexeForm, LotAnnexeFormSet, UploadForm
 from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
 from programmes.models import Annexe, Logement
 
-logger = logging.getLogger(__name__)
 
 
 class ConventionAnnexesService(ConventionService):
@@ -109,9 +106,6 @@ class ConventionAnnexesService(ConventionService):
 
     def _save_lot_annexes(self):
         for form in self.formset_convention_mixte:
-            logger.error(
-                f'form.cleaned_data["financement"] {form.cleaned_data["financement"]}'
-            )
             lot = self.convention.lots.get(financement=form.cleaned_data["financement"])
             lot.annexe_caves = form.cleaned_data["annexe_caves"]
             lot.annexe_soussols = form.cleaned_data["annexe_soussols"]
@@ -168,7 +162,6 @@ class ConventionAnnexesService(ConventionService):
         }
         for idx, form_annexe in enumerate(self.formset):
             if form_annexe["uuid"].value():
-                # logger.error(f'form_annexe > get_form_value > financement { utils.get_form_value(form_annexe, annexe, "financement")}')
                 annexe = Annexe.objects.get(uuid=form_annexe["uuid"].value())
                 initformset = {
                     **initformset,
@@ -200,9 +193,6 @@ class ConventionAnnexesService(ConventionService):
                     ),
                 }
             else:
-                logger.error(
-                    f'form_annexe > financement {form_annexe["financement"].value()}'
-                )
                 initformset = {
                     **initformset,
                     f"form-{idx}-typologie": form_annexe["typologie"].value(),
@@ -221,7 +211,6 @@ class ConventionAnnexesService(ConventionService):
                     ].value(),
                     f"form-{idx}-loyer": form_annexe["loyer"].value(),
                 }
-        logger.error(f"_annexes_atomic_update > initformset : {initformset}")
         self.formset = AnnexeFormSet(initformset)
         self.formset.convention = self.convention
         formset_is_valid = self.formset.is_valid()
@@ -239,7 +228,6 @@ class ConventionAnnexesService(ConventionService):
         ).exclude(uuid__in=obj_uuids).delete()
         for form_annexe in self.formset:
             if form_annexe.cleaned_data["uuid"]:
-                logger.error(f"form_annexe.cleaned_data : {form_annexe.cleaned_data}")
                 annexe = Annexe.objects.get(uuid=form_annexe.cleaned_data["uuid"])
                 logement = Logement.objects.get(
                     designation=form_annexe.cleaned_data["logement_designation"],

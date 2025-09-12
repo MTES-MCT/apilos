@@ -2,8 +2,6 @@
 Étape Annexes du formulaire par étape de la convention (type HLM, SEM, Type I & 2)
 """
 
-import logging
-
 from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
@@ -16,7 +14,6 @@ from programmes.models import (
 )
 from programmes.models.choices import Financement
 
-logger = logging.getLogger(__name__)
 
 
 class LotAnnexeForm(forms.Form):
@@ -177,11 +174,7 @@ class BaseAnnexeFormSet(BaseFormSet):
         """
         if self.convention:
             lgts = Logement.objects.filter(lot__convention=self.convention)
-            logger.error(f"manage_logement_exists_validation > lgts : {list(lgts)}")
             for form in self.forms:
-                logger.error(
-                    f'logement_designation {form.cleaned_data.get("logement_designation")}'
-                )
                 try:
                     lgts.get(designation=form.cleaned_data.get("logement_designation"))
                 except Logement.DoesNotExist:
