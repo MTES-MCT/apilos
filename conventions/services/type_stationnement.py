@@ -11,10 +11,6 @@ from programmes.models import TypeStationnement
 
 from . import upload_objects, utils
 
-import logging 
-
-logger = logging.getLogger(__name__)
-
 
 class ConventionTypeStationnementService(ConventionService):
     convention: Convention
@@ -151,12 +147,10 @@ class ConventionTypeStationnementService(ConventionService):
             uuid__in=obj_uuids
         ).delete()
         for form_stationnement in self.formset:
-            logger.error(f'form_stationnement.cleaned_data {form_stationnement.cleaned_data}')
             if form_stationnement.cleaned_data["uuid"]:
                 stationnement = TypeStationnement.objects.get(
                     uuid=form_stationnement.cleaned_data["uuid"]
                 )
-                logger.error(f'form_stationnement.cleaned_data["financement"] {form_stationnement.cleaned_data["financement"]}')
                 stationnement.lot = self.convention.lots.get(financement=form_stationnement.cleaned_data["financement"])
                 stationnement.typologie = form_stationnement.cleaned_data["typologie"]
                 stationnement.nb_stationnements = form_stationnement.cleaned_data[
