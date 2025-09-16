@@ -39,26 +39,6 @@ def set_files_and_text_field(files_field, text_field=""):
     return json.dumps(field)
 
 
-def get_text_and_files_from_fields(name, fields):
-    """
-    Merge multiple fields (one per lot) into a single dictionary suitable for form initial.
-    Returns:
-        { name: list_of_texts, name + '_files': list_of_json_files }
-    """
-    texts = []
-    files = []
-
-    for field in fields:
-        result = get_text_and_files_from_field(name, field)
-        texts.append(result.get(name, ""))
-        files.append(result.get(f"{name}_files", "{}"))
-
-    return {
-        name: texts,
-        f"{name}_files": files,
-    }
-
-
 def get_text_and_files_from_field(name, field):
     object_field = {}
 
@@ -112,36 +92,6 @@ def init_text_and_files_from_field(request, object_instance, field_name):
     return get_text_and_files_from_field(
         field_name, getattr(object_instance, field_name)
     )
-
-def init_text_and_files_from_fields(request, object_instances, field_name):
-    """
-    Initialize a field for multiple object instances from POST data or object instance.
-
-    Args:
-        request: The Django request object.
-        object_instances: List of model instances to get fallback values from.
-        field_name: The field name to initialize.
-
-    Returns:
-        dict: Keys are "<field_name>_<index>" and "<field_name>_<index>_files" with their values.
-    """
-    result = {}
-
-    for i, obj in enumerate(object_instances):
-        text_value = request.POST.get(f"{field_name}_{i}")
-        files_value = request.POST.get(f"{field_name}_{i}_files")
-
-        if text_value is not None or files_value is not None:
-            result[f"{field_name}_{i}"] = text_value
-            result[f"{field_name}_{i}_files"] = files_value
-        else:
-            # fallback to object_instance value
-            field_data = get_text_and_files_from_field(field_name, getattr(obj, field_name))
-            # prefix keys with index to avoid collision
-            for key, value in field_data.items():
-                result[f"{key}_{i}"] = value
-
-    return result
 
 
 def get_form_value(form_instance, object_instance, field_name):

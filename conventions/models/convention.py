@@ -329,6 +329,10 @@ class Convention(models.Model):
     identification_bailleur_detail = models.TextField(null=True, blank=True)
 
     @property
+    def lot(self) -> Lot:
+        return self.lots.first()
+
+    @property
     def lots(self) -> Lot:
         return self.lots
 

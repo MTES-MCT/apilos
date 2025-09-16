@@ -32,17 +32,17 @@ class ConventionEDDService(ConventionService):
         self.form = ProgrammeEDDForm(
             initial={
                 "uuid": self.convention.programme.uuid,
-                "lot_uuid": [lot.uuid for lot in self.convention.lots.all()],
-                **utils.get_text_and_files_from_fields(
+                "lot_uuid": self.convention.lots.first().uuid,
+                **utils.get_text_and_files_from_field(
                     "edd_volumetrique",
-                    [lot.edd_volumetrique for lot in self.convention.lots.all()],
+                    self.convention.lots.first().edd_volumetrique,
                 ),
                 "mention_publication_edd_volumetrique": (
                     self.convention.programme.mention_publication_edd_volumetrique
                 ),
-                **utils.get_text_and_files_from_fields(
+                **utils.get_text_and_files_from_field(
                     "edd_classique",
-                    [lot.edd_classique for lot in self.convention.lots.all()],
+                    self.convention.lots.first().edd_classique,
                 ),
                 "mention_publication_edd_classique": (
                     self.convention.programme.mention_publication_edd_classique
@@ -98,8 +98,8 @@ class ConventionEDDService(ConventionService):
         self.form = ProgrammeEDDForm(
             {
                 "uuid": self.convention.programme.uuid,
-                **utils.init_text_and_files_from_fields(
-                    self.request, [lot for lot in self.convention.lots.all()], "edd_volumetrique"
+                **utils.init_text_and_files_from_field(
+                    self.request, self.convention.lots.first(), "edd_volumetrique"
                 ),
                 "mention_publication_edd_volumetrique": (
                     self.request.POST.get(
@@ -107,8 +107,8 @@ class ConventionEDDService(ConventionService):
                         self.convention.programme.mention_publication_edd_volumetrique,
                     )
                 ),
-                **utils.init_text_and_files_from_fields(
-                    self.request, [lot for lot in self.convention.lots.all()], "edd_classique"
+                **utils.init_text_and_files_from_field(
+                    self.request, self.convention.lots.first(), "edd_classique"
                 ),
                 "mention_publication_edd_classique": (
                     self.request.POST.get(
