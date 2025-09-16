@@ -16,6 +16,7 @@ from programmes.models import (
     TypologieLogementClassique,
     TypologieLogementFoyerResidence,
 )
+from programmes.models.choices import Financement
 
 
 class LotLgtsOptionForm(forms.Form):
@@ -26,6 +27,9 @@ class LotLgtsOptionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
         label="Logement du programme",
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     lgts_mixite_sociale_negocies = forms.IntegerField(
         required=False,
@@ -156,6 +160,10 @@ class BaseLogementForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
+
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
@@ -362,7 +370,7 @@ class BaseLogementFormSet(BaseFormSet):
     programme_id: int = None
     lot_id: int = None
     nb_logements: int = None
-    total_nb_logements: int = None
+    total_nb_logements: dict[str, int] | None = None
     optional_errors: list = []
     ignore_optional_errors = False
 
@@ -466,12 +474,13 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements != self.total_nb_logements:
-            error = ValidationError(
-                f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
-            )
-            self.optional_errors.append(error)
+        for financement in self.total_nb_logements:
+            if self.nb_logements != self.total_nb_logements[financement]:
+                error = ValidationError(
+                    f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                )
+                self.optional_errors.append(error)
 
     def manage_coefficient_propre(self):
         """
@@ -512,6 +521,7 @@ LogementCorrigeeFormSet = formset_factory(
 LogementCorrigeeSansLoyerFormSet = formset_factory(
     LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0
 )
+LotLgtsOptionFormSet = formset_factory(LotLgtsOptionForm, extra=0)
 
 
 class FoyerResidenceLogementForm(forms.Form):
