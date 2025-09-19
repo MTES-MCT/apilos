@@ -2,6 +2,7 @@
 .env
 .env.test.local
 .venv
+/venv/
 
 #Cache
 __pycache__
@@ -18,6 +19,7 @@ node_modules/
 
 #IDE
 .vscode/
+.idea/
 
 #temporaire
 /.tgitconfig
