@@ -106,9 +106,11 @@
                                                             >> Debug scoring >>>>>>>>>>>>>>
                                                         </th>
                                                     {% endif %}
+                                                    {% if switch_convention_mixte_on %}
                                                     <th title="convention mixte" scope="col">
                                                         Grouper
                                                     </th>
+                                                    {% endif %}
                                                     <th title="Statut de la convention" scope="col">
                                                         Statut
                                                     </th>
@@ -180,6 +182,7 @@
                                                                 </div>
                                                             </td>
                                                         {% endif %}
+                                                        {% if switch_convention_mixte_on %}
                                                         <td style="text-align: center; vertical-align: middle;">
                                                                 <input type="checkbox"
                                                                 name="uuids"
@@ -187,6 +190,7 @@
                                                                 class="fr-checkbox__input convention-checkbox stop-row-click"
                                                                 id="convention_{{ convention.uuid }}">
                                                         </td>
+                                                        {% endif %}
                                                         <td title="{{ convention.statut_for_template.statut_display }}">
                                                             {% include "conventions/home/statut_tag.html" %}
                                                             <script type="text/javascript" nonce="{{ request.csp_nonce }}">
@@ -274,59 +278,61 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="fr-col-12 fr-grid-row fr-grid-row--right">
-                            <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
-                                    id="dispatch_mixte_button" name="action" value="dispatch">
-                                Dégrouper la convention
-                            </button>
-                        </div>
-                        <div class="fr-col-12 fr-grid-row fr-grid-row--right">
-                            <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
-                                    id="create_mixte_button" name="action" value="create">
-                                Grouper les conventions
-                            </button>
-                        </div>
-                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                            document.addEventListener('DOMContentLoaded', function () {
-                                const checkboxes = document.querySelectorAll('.convention-checkbox');
-                                const dispatchButton = document.getElementById('dispatch_mixte_button');
-                                const createButton = document.getElementById('create_mixte_button');
+                        {% if switch_convention_mixte_on %}
+                            <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                                <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
+                                        id="dispatch_mixte_button" name="action" value="dispatch">
+                                    Dégrouper la convention
+                                </button>
+                            </div>
+                            <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                                <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
+                                        id="create_mixte_button" name="action" value="create">
+                                    Grouper les conventions
+                                </button>
+                            </div>
+                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const checkboxes = document.querySelectorAll('.convention-checkbox');
+                                    const dispatchButton = document.getElementById('dispatch_mixte_button');
+                                    const createButton = document.getElementById('create_mixte_button');
 
-                                function updateButtons() {
-                                    const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.closest('tr'));
+                                    function updateButtons() {
+                                        const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.closest('tr'));
 
-                                    if (!selected.length) {
-                                        dispatchButton.style.display = 'none';
-                                        createButton.style.display = 'none';
-                                        return;
+                                        if (!selected.length) {
+                                            dispatchButton.style.display = 'none';
+                                            createButton.style.display = 'none';
+                                            return;
+                                        }
+
+                                        const allMixte = selected.every(row => row.dataset.type === 'mixte');
+                                        const allSimple = selected.every(row => row.dataset.type === 'simple');
+
+                                        // Show degrouper only if exactly one mixte is selected
+                                        dispatchButton.style.display = (allMixte && selected.length === 1) ? 'inline-block' : 'none';
+                                        // Show grouper only if at least one simple is selected
+                                        createButton.style.display = (allSimple && selected.length >= 1) ? 'inline-block' : 'none';
                                     }
 
-                                    const allMixte = selected.every(row => row.dataset.type === 'mixte');
-                                    const allSimple = selected.every(row => row.dataset.type === 'simple');
-
-                                    // Show degrouper only if exactly one mixte is selected
-                                    dispatchButton.style.display = (allMixte && selected.length === 1) ? 'inline-block' : 'none';
-                                    // Show grouper only if at least one simple is selected
-                                    createButton.style.display = (allSimple && selected.length >= 1) ? 'inline-block' : 'none';
-                                }
-
-                                checkboxes.forEach(cb => {
-                                    cb.addEventListener('change', function () {
-                                        if (cb.closest('tr').dataset.type === 'mixte') {
-                                            // Uncheck all others if selecting a mixte (single selection)
-                                            checkboxes.forEach(other => {
-                                                if (other !== cb) other.checked = false;
-                                            });
-                                        }
-                                        updateButtons();
+                                    checkboxes.forEach(cb => {
+                                        cb.addEventListener('change', function () {
+                                            if (cb.closest('tr').dataset.type === 'mixte') {
+                                                // Uncheck all others if selecting a mixte (single selection)
+                                                checkboxes.forEach(other => {
+                                                    if (other !== cb) other.checked = false;
+                                                });
+                                            }
+                                            updateButtons();
+                                        });
                                     });
-                                });
 
-                                // initialize buttons as hidden
-                                dispatchButton.style.display = 'none';
-                                createButton.style.display = 'none';
-                            });
-                        </script>
+                                    // initialize buttons as hidden
+                                    dispatchButton.style.display = 'none';
+                                    createButton.style.display = 'none';
+                                });
+                            </script>
+                        {% endif %}
                     </form>
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
                 {% else %}
