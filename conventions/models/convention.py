@@ -1,15 +1,18 @@
 import datetime
 import logging
 import uuid
+from collections import defaultdict
 from datetime import date
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Prefetch, Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
+from waffle import switch_is_active
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
@@ -18,7 +21,6 @@ from conventions.models.convention_history import ConventionHistory
 from ecoloweb.models import EcoloReference
 from programmes.models import Financement, LocauxCollectifs, Lot, TypeStationnement
 from users.type_models import EmailPreferences, TypeRole
-from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
@@ -45,12 +47,18 @@ class ConventionManager(models.Manager):
 
     def _split_first_convention(self, conventions):
         """Returns the first convention and the rest of the conventions separately."""
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
         all_conventions = list(conventions.all())
         if not all_conventions:
             return None, []
         return all_conventions[0], all_conventions[1:]
 
     def group_conventions(self, uuids_conventions):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
         if not uuids_conventions:
             raise Exception(
                 "We can't create a mixte convention, a list of uuids conventions must be provided"
@@ -86,6 +94,8 @@ class ConventionManager(models.Manager):
         return convention.programme, convention.lots, convention
 
     def _degroup_convention(self, convention):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
         degrouped_conventions_ids = []
         if convention.is_mixte:
             for lot in convention.lots.all():
@@ -99,6 +109,9 @@ class ConventionManager(models.Manager):
         return self.model.objects.filter(id__in=degrouped_conventions_ids)
 
     def degroup_conventions(self, list_of_uuids_conventions):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
         if not list_of_uuids_conventions:
             raise Exception("We can't degroup convention, UUIDs list is required")
 
@@ -705,7 +718,12 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return all([lot.financement in [Financement.PLUS, Financement.PLUS_CD] for lot in self.lots.all()])
+        return all(
+            [
+                lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+                for lot in self.lots.all()
+            ]
+        )
 
     def display_not_validated_status(self):
         """
