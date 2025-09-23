@@ -198,3 +198,65 @@ La publication est executé à chaque mise à jour de la branch main via l'actio
 La configuration Github suivante est nécessaire :
 
 ![](./_static/configuration_github_pages_apilos.png)
+
+
+## Configuration d’une clé SSH pour Scalingo et GitHub
+
+Les clés SSH permettent d'établir une connexion sécurisée entre le runner du pipeline CI et l'environnement PaaS Scalingo.
+Elles sont indispensables pour :
+- authentifier les accès à Scalingo depuis GitHub.
+- permettre à la CI de pousser du code automatiquement sur Scalingo.
+- exécuter des commandes à distance sur l'environnement Scalingo.
+- déployer l'application sur le PaaS Scalingo de manière sécurisée.
+
+
+### 1. Générer une clé SSH avec l’algorithme **ed25519**
+
+```bash
+ssh-keygen -t ed25519
+```
+
+### 2. Lancer l’agent SSH
+
+```bash
+eval "$(ssh-agent -s)"
+```
+
+### 3. Ajouter la clé privée à l’agent SSH
+
+```bash
+ssh-add ~/.ssh/id_ed25519_scalingo
+```
+
+### 4. Vérifier que la clé est bien chargée
+
+```bash
+ssh-add -l
+```
+
+
+### 5. Ajouter la clé publique à Scalingo
+
+1. Aller dans **User settings > SSH keys > Add**.
+2. Copier le contenu de la clé publique générée (`~/.ssh/id_ed25519_example.pub`) et la coller dans le champ prévu.
+3. Donner un nom explicite, par exemple : `nom-pc-id_ed25519_scalingo`.
+4. Sauvegarder.
+
+### 6. Vérifier l’accès à Scalingo depuis votre PC
+
+```bash
+ssh -T git@ssh.osc-fr1.scalingo.com
+# ou
+ssh -T git@ssh.osc-secnum-fr1.scalingo.com
+```
+
+Si tout est correct, vous verrez le message :
+**“You’ve successfully authenticated on Scalingo, but there is no shell access.”**
+
+
+### 7. Ajouter la clé privée dans GitHub (projet Apilos)
+
+1. Dans GitHub, ouvrir **Settings > Secrets and variables > Actions**.
+2. Ajouter ou modifier le secret : `SCALINGO_SSH_PRIVATE_KEY`.
+3. Coller le contenu de la clé **privée** (`~/.ssh/id_ed25519_example`).
+4. Sauvegarder.
