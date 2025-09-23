@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.test import TestCase
 
-from conventions.forms import AnnexeFormSet, LotAnnexeForm, UploadForm
+from conventions.forms import AnnexeFormSet, LotAnnexeFormSet, UploadForm
 from conventions.models import Convention
 from conventions.services import utils
 from conventions.services.annexes import ConventionAnnexesService
@@ -16,6 +16,7 @@ post_fixture = {
     "form-INITIAL_FORMS": "2",
     "form-0-uuid": "",
     "form-0-typologie": "TERRASSE",
+    "form-0-financement": "PLUS",
     "form-0-logement_designation": "B1",
     "form-0-logement_typologie": "T1",
     "form-0-surface_hors_surface_retenue": "5.00",
@@ -23,22 +24,28 @@ post_fixture = {
     "form-0-loyer": "1.00",
     "form-1-uuid": "",
     "form-1-typologie": "TERRASSE",
+    "form-1-financement": "PLUS",
     "form-1-logement_designation": "B2",
     "form-1-logement_typologie": "T1",
     "form-1-surface_hors_surface_retenue": "5.00",
     "form-1-loyer_par_metre_carre": "0.2",
     "form-1-loyer": "1.00",
-    "annexe_caves": "FALSE",
-    "annexe_soussols": "FALSE",
-    "annexe_remises": "FALSE",
-    "annexe_ateliers": "FALSE",
-    "annexe_sechoirs": "FALSE",
-    "annexe_celliers": "FALSE",
-    "annexe_resserres": "on",
-    "annexe_combles": "on",
-    "annexe_balcons": "FALSE",
-    "annexe_loggias": "FALSE",
-    "annexe_terrasses": "FALSE",
+    # LotAnnexeFormSet block
+    "lots-TOTAL_FORMS": "1",
+    "lots-INITIAL_FORMS": "1",
+    "lots-0-uuid": "",
+    "lots-0-financement": "PLUS",
+    "lots-0-annexe_caves": "FALSE",
+    "lots-0-annexe_soussols": "FALSE",
+    "lots-0-annexe_remises": "FALSE",
+    "lots-0-annexe_ateliers": "FALSE",
+    "lots-0-annexe_sechoirs": "FALSE",
+    "lots-0-annexe_celliers": "FALSE",
+    "lots-0-annexe_resserres": "on",
+    "lots-0-annexe_combles": "on",
+    "lots-0-annexe_balcons": "FALSE",
+    "lots-0-annexe_loggias": "FALSE",
+    "lots-0-annexe_terrasses": "FALSE",
 }
 
 
@@ -76,39 +83,47 @@ class ConventionAnnexesServiceTests(TestCase):
     def test_get(self):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(self.service.form, LotAnnexeForm)
-        for lot_field in [
-            "uuid",
-            "annexe_caves",
-            "annexe_soussols",
-            "annexe_remises",
-            "annexe_ateliers",
-            "annexe_sechoirs",
-            "annexe_celliers",
-            "annexe_resserres",
-            "annexe_combles",
-            "annexe_balcons",
-            "annexe_loggias",
-            "annexe_terrasses",
-        ]:
-            self.assertEqual(
-                self.service.form.initial[lot_field],
-                getattr(self.service.convention.lot, lot_field),
-            )
+        self.assertIsInstance(self.service.formset_convention_mixte, LotAnnexeFormSet)
+        for form in self.service.formset_convention_mixte:
+            for lot_field in [
+                "uuid",
+                "annexe_caves",
+                "financement",
+                "annexe_soussols",
+                "annexe_remises",
+                "annexe_ateliers",
+                "annexe_sechoirs",
+                "annexe_celliers",
+                "annexe_resserres",
+                "annexe_combles",
+                "annexe_balcons",
+                "annexe_loggias",
+                "annexe_terrasses",
+            ]:
+                self.assertEqual(
+                    form.initial[lot_field],
+                    getattr(
+                        self.service.convention.lots.get(
+                            financement=form.initial["financement"]
+                        ),
+                        lot_field,
+                    ),
+                )
         self.assertIsInstance(self.service.formset, AnnexeFormSet)
         self.assertIsInstance(self.service.upform, UploadForm)
 
     def test_save(self):
         self.service.request.POST = {
-            "uuid": str(self.service.convention.lot.uuid),
             **post_fixture,
         }
 
         self.service.save()
+        self.service.convention.refresh_from_db()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
         annexes_b1 = Annexe.objects.filter(
-            logement__lot=self.service.convention.lot, logement__designation="B1"
+            logement__lot__in=self.service.convention.lots.all(),
+            logement__designation="B1",
         )
         self.assertEqual(annexes_b1.count(), 1)
 
@@ -140,9 +155,11 @@ class ConventionAnnexesServiceTests(TestCase):
             "annexe_loggias",
             "annexe_terrasses",
         ]:
-            self.assertFalse(getattr(self.service.convention.lot, annexe))
+            for lot in self.service.convention.lots.all():
+                self.assertFalse(getattr(lot, annexe))
         for annexe in ["annexe_resserres", "annexe_combles"]:
-            self.assertTrue(getattr(self.service.convention.lot, annexe))
+            for lot in self.service.convention.lots.all():
+                self.assertTrue(getattr(lot, annexe))
 
     def test_save_ok_on_loyer(self):
         self.service.request.POST = {
