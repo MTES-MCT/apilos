@@ -15,7 +15,6 @@ class Command(BaseCommand):
         bailleurs_anah = Bailleur.objects.filter(nom__startswith="ANAH")
         Programme.objects.filter(bailleur__in=bailleurs_anah).update(anah=True)
 
-
         self.stdout.write(
             self.style.SUCCESS(
                 "Successfully updated all programmes from ANAH bailleurs."
