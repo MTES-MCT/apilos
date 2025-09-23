@@ -584,6 +584,7 @@ DEBUG_SEARCH_SCORING = get_env_variable(
 # Waffle
 SWITCH_SIAP_ALERTS_ON = "siap_alerte_on"
 SWITCH_TRANSACTIONAL_EMAILS_OFF = "transactional_emails_off"
+SWITCH_CONVENTION_MIXTE_ON = "convention_mixte_on"
 
 WAFFLE_ENABLE_ADMIN_PAGES = False
 MIDDLEWARE += ["waffle.middleware.WaffleMiddleware"]

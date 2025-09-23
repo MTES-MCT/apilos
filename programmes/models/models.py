@@ -546,13 +546,6 @@ class Lot(models.Model):
                 fields=["convention", "financement"],
                 name="unique_convention_financement",
             ),
-            # TODO : quand on intégrera les convention mixte ou les conventions seconde
-            # vie il faudra supprimer cette contrainte et gérer plusieurs lots par
-            # convention
-            models.UniqueConstraint(
-                fields=["convention"],
-                name="unique_convention",
-            ),
         ]
 
     # Needed for admin
@@ -736,6 +729,7 @@ class Logement(models.Model):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
+        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
@@ -937,6 +931,7 @@ class Annexe(models.Model):
 
     import_mapping = {
         "Type d'annexe": "typologie",
+        "Financement": "financement",
         "Désignation des logements": "logement_designation",
         "Typologie des logements": "logement_typologie",
         "Surface de l'annexe": "surface_hors_surface_retenue",
