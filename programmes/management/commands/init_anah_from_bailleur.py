@@ -6,7 +6,7 @@ from programmes.models.models import Programme
 
 class Command(BaseCommand):
     help = (
-        'Met à jour le champ anah à True pour tous les programmes associés aux '
+        "Met à jour le champ anah à True pour tous les programmes associés aux "
         'bailleurs dont le nom commence par "ANAH"'
     )
 
