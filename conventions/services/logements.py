@@ -411,6 +411,7 @@ class ConventionLogementsService(ConventionService):
                     )
                 )
             )
+        self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
         self.formset.total_nb_logements = total_nb_logements
         self.formset_sans_loyer.total_nb_logements = total_nb_logements
         self.formset_corrigee.total_nb_logements = total_nb_logements
