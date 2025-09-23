@@ -190,7 +190,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
         if self.anru:
             queryset = queryset.filter(programme__anru=True)
-            
+
         if self.anah:
             queryset = queryset.filter(programme__anah=True)
 
