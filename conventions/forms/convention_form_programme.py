@@ -77,6 +77,10 @@ class ProgrammeForm(ProgrammeMinimalForm):
         required=False,
         label="L'opération bénéficie d'un financement&nbsp;<strong>ANRU</strong>",
     )
+    anah = forms.BooleanField(
+        required=False,
+        label="L'opération bénéficie d'un financement&nbsp;<strong>ANAH</strong>",
+    )
     nb_locaux_commerciaux = forms.IntegerField(
         required=False,
         label="Locaux commerciaux",

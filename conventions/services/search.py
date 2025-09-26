@@ -119,6 +119,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
     user: User
     anru: bool
+    anah: bool
     avenant_seulement: bool
 
     date_signature: str | None = None
@@ -135,11 +136,13 @@ class ConventionSearchService(ConventionSearchServiceBase):
     def __init__(self, user: User, search_filters: dict | None = None) -> None:
         self.user = user
         self.anru = False
+        self.anah = False
         self.avenant_seulement = False
         self.statuts = None
 
         if search_filters:
             self.anru = search_filters.get("anru") is not None
+            self.anah = search_filters.get("anah") is not None
             self.avenant_seulement = search_filters.get("avenant_seulement") is not None
             if search_filters.get("statuts"):
                 self.statuts = [
@@ -187,6 +190,9 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
         if self.anru:
             queryset = queryset.filter(programme__anru=True)
+
+        if self.anah:
+            queryset = queryset.filter(programme__anah=True)
 
         if self.avenant_seulement:
             queryset = queryset.filter(parent_id__isnull=False)

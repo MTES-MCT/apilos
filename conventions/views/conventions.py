@@ -169,6 +169,7 @@ class ConventionSearchMixin:
     def get_search_filters_mapping(self) -> list[tuple[str, str]]:
         return [
             ("anru", "anru"),
+            ("anah", "anah"),
             ("avenant_seulement", "avenant_seulement"),
             ("bailleur", "bailleur"),
             ("date_signature", "date_signature"),
