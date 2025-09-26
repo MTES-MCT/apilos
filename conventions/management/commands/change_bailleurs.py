@@ -20,28 +20,29 @@ class Command(BaseCommand):
             required=True,
             help="SIREN (9 digits) or SIRET (14 digits) of the new Bailleur",
         )
+        parser.add_argument(
+            "--run",
+            action="store_true",
+            help="Actually perform the transfer; without this flag, it will only perform a dry-run",
+        )
 
     def handle(self, *args, **options):
         old_id = options["old_bailleur"]
         new_id = options["new_bailleur"]
+        run = options["run"]
 
-        def get_bailleur(identifier: str):
+        def get_bailleur(identifier: str) -> Bailleur:
             if len(identifier) == 14:  # SIRET
-                return Bailleur.objects.filter(siret=identifier).first()
+                return Bailleur.objects.get(siret=identifier)
             elif len(identifier) == 9:  # SIREN
-                return Bailleur.objects.filter(siren=identifier).first()
+                return Bailleur.objects.get(siren=identifier)
             else:
                 raise CommandError(
                     f"Identifier {identifier} is not a valid SIREN (9) or SIRET (14)"
                 )
 
         old_bailleur = get_bailleur(old_id)
-        if not old_bailleur:
-            raise CommandError(f"No Bailleur found for identifier {old_id}")
-
         new_bailleur = get_bailleur(new_id)
-        if not new_bailleur:
-            raise CommandError(f"No Bailleur found for identifier {new_id}")
 
         programmes_to_update = Programme.objects.filter(bailleur=old_bailleur)
         count_old = programmes_to_update.count()
@@ -52,10 +53,19 @@ class Command(BaseCommand):
             )
             return
 
-        updated = programmes_to_update.update(bailleur=new_bailleur)
+        if run:
+            updated = programmes_to_update.update(bailleur=new_bailleur)
 
-        self.stdout.write(
-            self.style.SUCCESS(
-                f"Moved {updated} Programmes from {old_bailleur} to {new_bailleur}"
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Moved {updated} Programmes from {old_bailleur} to {new_bailleur}"
+                )
             )
-        )
+        else:
+            self.stdout.write(
+                self.style.NOTICE(
+                    f"[Dry Run] {count_old} Programmes would be moved from {old_bailleur} to {new_bailleur}"
+                )
+            )
+            for prog in programmes_to_update:
+                self.stdout.write(f"- {prog}")
