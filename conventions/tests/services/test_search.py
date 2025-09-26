@@ -118,6 +118,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             create_lot__financement=Financement.PALULOS,
         )
 
+        programme.anah = False
+
         ConventionFactory(
             uuid="4c337449-4fbc-42de-9f93-948a4dd65ee1",
             numero="QHKINZYDKDLSNJX",
