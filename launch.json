@@ -1,0 +1,9 @@
+{
+  "name": "Python Debugger: Django",
+  "type": "debugpy",
+  "request": "launch",
+  "program": "manage.py",
+  "args": ["runserver"],
+  "django": true,
+  "justMyCode": true
+}

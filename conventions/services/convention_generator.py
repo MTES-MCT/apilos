@@ -11,6 +11,8 @@ from django.conf import settings
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
 from django.template.defaultfilters import date as template_date
+from docx import Document
+from docx.oxml.ns import qn
 from docx.shared import Inches
 from docxtpl import DocxTemplate, InlineImage
 
@@ -202,6 +204,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     for local_path in list(set(local_pathes)):
         os.remove(local_path)
 
+
     if save_data:
         _save_convention_donnees_validees(
             convention,
@@ -211,7 +214,17 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
             logements_totale,
         )
 
+    # TODO variable à définir
+    if True:
+        remove_highlight(doc)
+
     return doc
+
+def remove_highlight(doc: Document):
+    for paragraph in doc.paragraphs:
+        for run in paragraph.runs:
+            if run.font.highlight_color is not None:
+                run.font.highlight_color = None
 
 
 def _get_bailleur_and_signataire(convention: Convention) -> dict:
