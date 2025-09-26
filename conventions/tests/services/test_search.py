@@ -45,6 +45,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             statut=ConventionStatut.PROJET.label,
             programme=ProgrammeFactory(
                 anru=False,
+                anah=True,
                 numero_operation="20230600400040",
                 nom="ANTIBES 31 avenue de Nice",
                 ville="Antibes",
@@ -92,6 +93,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
 
         programme = ProgrammeFactory(
             anru=False,
+            anah=True,
             numero_operation="2014E891109087",
             nom="blah blah blah",
             ville="Marseille",
@@ -160,6 +162,14 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                     "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
                 id="anru",
+            ),
+            param(
+                {"anah": "on"},
+                [
+                    "fbb9890f-171b-402d-a35e-71e1bd791b71",
+                    "53702e67-60c1-431e-baa9-449960cf8bcb",
+                ],
+                id="anah",
             ),
             param(
                 {"statuts": ConventionStatut.PROJET.label},
