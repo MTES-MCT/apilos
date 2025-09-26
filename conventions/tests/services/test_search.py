@@ -23,6 +23,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2024-01-01",
             programme=ProgrammeFactory(
                 anru=True,
+                anah=True,
                 numero_operation="2017DD01100057",
                 nom="Le Clos de l'Ille - Rue de l'Occitanie - Séniors",
                 ville="Bourg-en-Bresse",
@@ -93,7 +94,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
 
         programme = ProgrammeFactory(
             anru=False,
-            anah=True,
+            anah=False,
             numero_operation="2014E891109087",
             nom="blah blah blah",
             ville="Marseille",
@@ -169,7 +170,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 {"anah": "on"},
                 [
                     "fbb9890f-171b-402d-a35e-71e1bd791b71",
-                    "53702e67-60c1-431e-baa9-449960cf8bcb",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
                 id="anah",
             ),
