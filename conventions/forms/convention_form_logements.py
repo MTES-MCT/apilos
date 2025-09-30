@@ -441,33 +441,34 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: les logements déclarés dans l'EDD simplifié pour le financement de la
           convention doivent être déclarés dans la convention
         """
-        lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
-        lot = Lot.objects.get(id=self.lot_id)
+        if self.lot_id:
+            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
+            lot = Lot.objects.get(id=self.lot_id)
 
-        if lgts_edd.count() != 0:
-            for form in self.forms:
-                try:
-                    lgt_edd = lgts_edd.get(
-                        designation=form.cleaned_data.get("designation"),
-                        financement=lot.financement,
-                    )
-                    if lgt_edd.financement != lot.financement:
+            if lgts_edd.count() != 0:
+                for form in self.forms:
+                    try:
+                        lgt_edd = lgts_edd.get(
+                            designation=form.cleaned_data.get("designation"),
+                            financement=lot.financement,
+                        )
+                        if lgt_edd.financement != lot.financement:
+                            form.add_error(
+                                "designation",
+                                "Ce logement est déclaré comme "
+                                + f"{lgt_edd.financement} dans l'EDD simplifié "
+                                + "alors que vous déclarez un lot de type "
+                                + f"{lot.financement}",
+                            )
+                    except LogementEDD.DoesNotExist:
+                        form.add_error(
+                            "designation", "Ce logement n'est pas dans l'EDD simplifié"
+                        )
+                    except LogementEDD.MultipleObjectsReturned:
                         form.add_error(
                             "designation",
-                            "Ce logement est déclaré comme "
-                            + f"{lgt_edd.financement} dans l'EDD simplifié "
-                            + "alors que vous déclarez un lot de type "
-                            + f"{lot.financement}",
+                            "Ce logement est présent plusieurs fois dans l'EDD simplifié",
                         )
-                except LogementEDD.DoesNotExist:
-                    form.add_error(
-                        "designation", "Ce logement n'est pas dans l'EDD simplifié"
-                    )
-                except LogementEDD.MultipleObjectsReturned:
-                    form.add_error(
-                        "designation",
-                        "Ce logement est présent plusieurs fois dans l'EDD simplifié",
-                    )
 
     def manage_nb_logement_consistency(self):
         """
