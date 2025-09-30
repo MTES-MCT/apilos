@@ -6,8 +6,10 @@ selon le type de convention :
 """
 
 from django import forms
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.forms import BaseFormSet, formset_factory
+from waffle import switch_is_active
 
 from core.utils import round_half_up
 from programmes.models import (
@@ -475,11 +477,19 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        for financement in self.total_nb_logements:
-            if self.nb_logements != self.total_nb_logements[financement]:
+        if switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            for financement in self.total_nb_logements:
+                if self.nb_logements != self.total_nb_logements[financement]:
+                    error = ValidationError(
+                        f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                        + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    )
+                    self.optional_errors.append(error)
+        else:
+            if self.nb_logements != self.total_nb_logements:
                 error = ValidationError(
                     f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
                 )
                 self.optional_errors.append(error)
 
