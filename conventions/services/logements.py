@@ -856,3 +856,579 @@ class ConventionFoyerResidenceLogementsService(ConventionService):
                     import_order=form_logement.cleaned_data["import_order"],
                 )
             logement.save()
+
+
+class ConventionLogementsServiceAvenant(ConventionService):
+    # FIXME This class added just for
+    form: LotLgtsOptionForm
+    formset: LogementFormSet
+    formset_sans_loyer: LogementSansLoyerFormSet
+    formset_corrigee: LogementCorrigeeFormSet
+    formset_corrigee_sans_loyer: LogementCorrigeeSansLoyerFormSet
+    upform: UploadForm = UploadForm()
+
+    def initialize_formsets(self):
+        if self.request.POST:
+            # Dans le cas d'un POST (à l'upload d'un fichier), on initialise les tableaux avec les params du POST
+            self.formset = LogementFormSet(self.request.POST, prefix="avec_loyer")
+            self.formset_sans_loyer = LogementSansLoyerFormSet(
+                self.request.POST, prefix="sans_loyer"
+            )
+            self.formset_corrigee = LogementCorrigeeFormSet(
+                self.request.POST, prefix="corrigee_avec_loyer"
+            )
+            self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
+                self.request.POST, prefix="corrigee_sans_loyer"
+            )
+            return
+
+        # Dans le cas d'un GET, on initialise les tableaux à partir de la BDD
+        initial = []
+        initial_sans_loyer = []
+        initial_corrigee = []
+        initial_corrigee_sans_loyer = []
+        logements = self.convention.lot.logements.order_by("import_order")
+        for logement in logements:
+            common_params = {
+                "uuid": logement.uuid,
+                "designation": logement.designation,
+                "typologie": logement.typologie,
+                "surface_habitable": logement.surface_habitable,
+                "import_order": logement.import_order,
+            }
+            surface_annexes_params = {
+                "surface_annexes": logement.surface_annexes,
+                "surface_annexes_retenue": logement.surface_annexes_retenue,
+            }
+            loyer_params = {
+                "loyer_par_metre_carre": logement.loyer_par_metre_carre,
+                "coeficient": logement.coeficient,
+                "loyer": logement.loyer,
+            }
+            surface_utile_params = {
+                "surface_utile": logement.surface_utile,
+            }
+            surface_corrigee_params = {
+                "surface_corrigee": logement.surface_corrigee,
+            }
+            if logement.loyer:
+                if logement.surface_corrigee:
+                    initial_corrigee.append(
+                        {
+                            **common_params,
+                            **surface_corrigee_params,
+                            **loyer_params,
+                        }
+                    )
+                else:
+                    initial.append(
+                        {
+                            **common_params,
+                            **surface_annexes_params,
+                            **surface_utile_params,
+                            **loyer_params,
+                        }
+                    )
+            else:
+                if logement.surface_corrigee:
+                    initial_corrigee_sans_loyer.append(
+                        {
+                            **common_params,
+                            **surface_corrigee_params,
+                        }
+                    )
+                else:
+                    initial_sans_loyer.append(
+                        {
+                            **common_params,
+                            **surface_annexes_params,
+                            **surface_utile_params,
+                        }
+                    )
+        self.formset = LogementFormSet(initial=initial, prefix="avec_loyer")
+        self.formset_sans_loyer = LogementSansLoyerFormSet(
+            initial=initial_sans_loyer, prefix="sans_loyer"
+        )
+        self.formset_corrigee = LogementCorrigeeFormSet(
+            initial=initial_corrigee, prefix="corrigee_avec_loyer"
+        )
+        self.formset_corrigee_sans_loyer = LogementCorrigeeSansLoyerFormSet(
+            initial=initial_corrigee_sans_loyer, prefix="corrigee_sans_loyer"
+        )
+
+    def get(self):
+        self.initialize_formsets()
+        self.form = LotLgtsOptionForm(
+            initial={
+                "uuid": self.convention.lot.uuid,
+                "lgts_mixite_sociale_negocies": self.convention.lot.lgts_mixite_sociale_negocies,
+                "loyer_derogatoire": self.convention.lot.loyer_derogatoire,
+                "surface_locaux_collectifs_residentiels": (
+                    self.convention.lot.surface_locaux_collectifs_residentiels
+                ),
+                "loyer_associations_foncieres": self.convention.lot.loyer_associations_foncieres,
+                "nb_logements": self.convention.lot.nb_logements,
+            }
+        )
+
+    def save(self):
+        self.editable_after_upload = self.request.POST.get(
+            "editable_after_upload", False
+        )
+        if self.request.POST.get("Upload", False):
+            self.form = LotLgtsOptionForm(self.request.POST)
+            if self.request.POST["Upload"] == "file_sans_loyer":
+                self._upload_logements(
+                    prefix="sans_loyer",
+                    formset_name="formset_sans_loyer",
+                    formset_class=LogementSansLoyerFormSet,
+                    logement_class=LogementSansLoyer,
+                    xlsx_file_name="logements_sans_loyer.xlsx",
+                )
+            elif self.request.POST["Upload"] == "file_corrigee":
+                self._upload_logements(
+                    prefix="corrigee_avec_loyer",
+                    formset_name="formset_corrigee",
+                    formset_class=LogementCorrigeeFormSet,
+                    logement_class=LogementCorrigee,
+                    xlsx_file_name="logements_corrigee.xlsx",
+                )
+            elif self.request.POST["Upload"] == "file_corrigee_sans_loyer":
+                self._upload_logements(
+                    prefix="corrigee_sans_loyer",
+                    formset_name="formset_corrigee_sans_loyer",
+                    formset_class=LogementCorrigeeSansLoyerFormSet,
+                    logement_class=LogementCorrigeeSansLoyer,
+                    xlsx_file_name="logements_corrigee_sans_loyer.xlsx",
+                )
+            else:
+                self._upload_logements(
+                    prefix="avec_loyer",
+                    formset_name="formset",
+                    formset_class=LogementFormSet,
+                    logement_class=Logement,
+                    xlsx_file_name="logements.xlsx",
+                )
+        # When the user cliked on "Enregistrer et Suivant"
+        else:
+            self._logements_atomic_update()
+
+    def _upload_logements(
+        self, prefix, formset_name, formset_class, logement_class, xlsx_file_name
+    ):
+        setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
+        self.upform = UploadForm(self.request.POST, self.request.FILES)
+        if self.upform.is_valid():
+            result = upload_objects.handle_uploaded_xlsx(
+                self.upform,
+                self.request.FILES["file"],
+                logement_class,
+                self.convention,
+                xlsx_file_name,
+                import_order=True,
+            )
+            if result["success"] != utils.ReturnStatus.ERROR:
+                lgts_by_designation = {}
+                for lgt in Logement.objects.filter(lot_id=self.convention.lot.id):
+                    lgts_by_designation[lgt.designation] = lgt.uuid
+                for obj in result["objects"]:
+                    if (
+                        "designation" in obj
+                        and obj["designation"] in lgts_by_designation
+                    ):
+                        obj["uuid"] = lgts_by_designation[obj["designation"]]
+                self.initialize_formsets()
+                setattr(
+                    self,
+                    formset_name,
+                    formset_class(initial=result["objects"], prefix=prefix),
+                )
+                self.import_warnings = result["import_warnings"]
+                self.editable_after_upload = True
+
+    def _get_form_value(self, form_logement, field: str):
+        if form_logement["uuid"].value():
+            logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+            if field == "uuid":
+                return logement.uuid
+            return utils.get_form_value(form_logement, logement, field)
+        else:
+            if field == "uuid":
+                return None
+            return form_logement[field].value()
+
+    def _add_logement_to_initformset(
+        self, form_logement, idx, initformset, nb_logement, prefix
+    ):
+        initformset = {
+            **initformset,
+            f"{prefix}-{idx}-designation": self._get_form_value(
+                form_logement, "designation"
+            ),
+            f"{prefix}-{idx}-typologie": self._get_form_value(
+                form_logement, "typologie"
+            ),
+            f"{prefix}-{idx}-surface_habitable": self._get_form_value(
+                form_logement, "surface_habitable"
+            ),
+            f"{prefix}-{idx}-import_order": self._get_form_value(
+                form_logement, "import_order"
+            ),
+        }
+        if form_logement["uuid"].value():
+            logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+            initformset = {
+                **initformset,
+                f"{prefix}-{idx}-uuid": logement.uuid,
+            }
+        if "sans_loyer" not in prefix:
+            initformset = {
+                **initformset,
+                f"{prefix}-{idx}-loyer_par_metre_carre": self._get_form_value(
+                    form_logement, "loyer_par_metre_carre"
+                ),
+                f"{prefix}-{idx}-coeficient": self._get_form_value(
+                    form_logement, "coeficient"
+                ),
+                f"{prefix}-{idx}-loyer": self._get_form_value(form_logement, "loyer"),
+            }
+        if "corrigee" in prefix:
+            initformset = {
+                **initformset,
+                f"{prefix}-{idx}-surface_corrigee": self._get_form_value(
+                    form_logement, "surface_corrigee"
+                ),
+            }
+        else:
+            initformset = {
+                **initformset,
+                f"{prefix}-{idx}-surface_annexes": self._get_form_value(
+                    form_logement, "surface_annexes"
+                ),
+                f"{prefix}-{idx}-surface_annexes_retenue": self._get_form_value(
+                    form_logement, "surface_annexes_retenue"
+                ),
+                f"{prefix}-{idx}-surface_utile": self._get_form_value(
+                    form_logement, "surface_utile"
+                ),
+            }
+        nb_logement = nb_logement + 1
+        return initformset, nb_logement
+
+    def _logements_update(self, prefix, formset_name, formset_class, logement_class):
+        setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
+        initformset = {}
+        nb_logements = 0
+
+        for idx, form_logement in enumerate(getattr(self, formset_name)):
+            result = self._add_logement_to_initformset(
+                form_logement, idx, initformset, nb_logements, prefix=prefix
+            )
+            initformset = result[0]
+            nb_logements = result[1]
+
+        initformset = {
+            **initformset,
+            f"{prefix}-TOTAL_FORMS": nb_logements,
+            f"{prefix}-INITIAL_FORMS": nb_logements,
+        }
+        setattr(self, formset_name, formset_class(initformset, prefix=prefix))
+        getattr(self, formset_name).programme_id = self.convention.programme_id
+        getattr(self, formset_name).lot_id = self.convention.lot.id
+        getattr(self, formset_name).nb_logements = int(
+            self.request.POST.get("nb_logements") or 0
+        )
+        getattr(self, formset_name).ignore_optional_errors = self.request.POST.get(
+            "ignore_optional_errors", False
+        )
+        return nb_logements
+
+    def _logements_atomic_update(self):
+        self.form = LotLgtsOptionForm(
+            {
+                "uuid": self.convention.lot.uuid,
+                **utils.build_partial_form(
+                    self.request,
+                    self.convention.lot,
+                    [
+                        "lgts_mixite_sociale_negocies",
+                        "loyer_derogatoire",
+                        "surface_locaux_collectifs_residentiels",
+                        "loyer_associations_foncieres",
+                        "nb_logements",
+                    ],
+                    [
+                        "formset_sans_loyer_disabled",
+                        "formset_disabled",
+                        "formset_corrigee_disabled",
+                        "formset_corrigee_sans_loyer_disabled",
+                    ],
+                ),
+            }
+        )
+        form_is_valid = self.form.is_valid()
+
+        nb_logements = self._logements_update(
+            prefix="avec_loyer",
+            formset_name="formset",
+            formset_class=LogementFormSet,
+            logement_class=Logement,
+        )
+        nb_logements_sans_loyer = self._logements_update(
+            prefix="sans_loyer",
+            formset_name="formset_sans_loyer",
+            formset_class=LogementSansLoyerFormSet,
+            logement_class=LogementSansLoyer,
+        )
+        nb_logements_corrigee = self._logements_update(
+            prefix="corrigee_avec_loyer",
+            formset_name="formset_corrigee",
+            formset_class=LogementCorrigeeFormSet,
+            logement_class=LogementCorrigee,
+        )
+        nb_logements_corrigee_sans_loyer = self._logements_update(
+            prefix="corrigee_sans_loyer",
+            formset_name="formset_corrigee_sans_loyer",
+            formset_class=LogementCorrigeeSansLoyerFormSet,
+            logement_class=LogementCorrigeeSansLoyer,
+        )
+        total_nb_logements = (
+            nb_logements
+            + nb_logements_sans_loyer
+            + nb_logements_corrigee
+            + nb_logements_corrigee_sans_loyer
+        )
+        self.formset.total_nb_logements = total_nb_logements
+        self.formset_sans_loyer.total_nb_logements = total_nb_logements
+        self.formset_corrigee.total_nb_logements = total_nb_logements
+        self.formset_corrigee_sans_loyer.total_nb_logements = total_nb_logements
+
+        formset_is_valid = (
+            self.formset.is_valid() or self.form.cleaned_data["formset_disabled"]
+        )
+        formset_sans_loyer_is_valid = (
+            self.formset_sans_loyer.is_valid()
+            or self.form.cleaned_data["formset_sans_loyer_disabled"]
+        )
+        formset_corrigee_is_valid = (
+            self.formset_corrigee.is_valid()
+            or self.form.cleaned_data["formset_corrigee_disabled"]
+        )
+        formset_corrigee_sans_loyer_is_valid = (
+            self.formset_corrigee_sans_loyer.is_valid()
+            or self.form.cleaned_data["formset_corrigee_sans_loyer_disabled"]
+        )
+
+        if (
+            form_is_valid
+            and formset_is_valid
+            and formset_sans_loyer_is_valid
+            and formset_corrigee_is_valid
+            and formset_corrigee_sans_loyer_is_valid
+        ):
+            self._save_logements()
+            self._save_logements_sans_loyer()
+            self._save_logements_corrigee()
+            self._save_logements_corrigee_sans_loyer()
+            self._save_lot_lgts_option()
+            self.return_status = utils.ReturnStatus.SUCCESS
+
+    def _save_lot_lgts_option(self):
+        lot = self.convention.lot
+        lot.lgts_mixite_sociale_negocies = (
+            self.form.cleaned_data["lgts_mixite_sociale_negocies"] or 0
+        )
+        lot.loyer_derogatoire = self.form.cleaned_data["loyer_derogatoire"]
+        lot.nb_logements = self.form.cleaned_data["nb_logements"]
+        lot.surface_locaux_collectifs_residentiels = (
+            self.form.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
+        )
+        lot.loyer_associations_foncieres = self.form.cleaned_data[
+            "loyer_associations_foncieres"
+        ]
+        lot.save()
+
+    def _save_logements_sans_loyer(self):
+        lgt_uuids1 = list(
+            map(lambda x: x.cleaned_data["uuid"], self.formset_sans_loyer)
+        )
+        lgt_uuids = list(filter(None, lgt_uuids1))
+
+        if self.form.cleaned_data["formset_sans_loyer_disabled"]:
+            # Clear all logements sans loyer
+            self.convention.lot.logements.filter(
+                surface_corrigee__isnull=True, loyer__isnull=True
+            ).delete()
+            return
+        else:
+            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                surface_corrigee__isnull=True, loyer__isnull=True
+            ).delete()
+        for form_logement in self.formset_sans_loyer:
+            if form_logement.cleaned_data["uuid"]:
+                logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+                logement.designation = form_logement.cleaned_data["designation"]
+                logement.typologie = form_logement.cleaned_data["typologie"]
+                logement.surface_habitable = form_logement.cleaned_data[
+                    "surface_habitable"
+                ]
+                logement.surface_annexes = form_logement.cleaned_data["surface_annexes"]
+                logement.surface_annexes_retenue = form_logement.cleaned_data[
+                    "surface_annexes_retenue"
+                ]
+                logement.surface_utile = form_logement.cleaned_data["surface_utile"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
+            else:
+                logement = Logement.objects.create(
+                    lot=self.convention.lot,
+                    designation=form_logement.cleaned_data["designation"],
+                    typologie=form_logement.cleaned_data["typologie"],
+                    surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                    surface_annexes=form_logement.cleaned_data["surface_annexes"],
+                    surface_annexes_retenue=form_logement.cleaned_data[
+                        "surface_annexes_retenue"
+                    ],
+                    surface_utile=form_logement.cleaned_data["surface_utile"],
+                    import_order=form_logement.cleaned_data["import_order"],
+                )
+            logement.save()
+
+    def _save_logements(self):
+
+        lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
+        lgt_uuids = list(filter(None, lgt_uuids1))
+        if self.form.cleaned_data["formset_disabled"]:
+            # Clear all logements avec loyer
+            self.convention.lot.logements.filter(
+                surface_corrigee__isnull=True, loyer__isnull=False
+            ).delete()
+            return
+        else:
+            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                surface_corrigee__isnull=True, loyer__isnull=False
+            ).delete()
+        for form_logement in self.formset:
+            if form_logement.cleaned_data["uuid"]:
+                logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+                logement.designation = form_logement.cleaned_data["designation"]
+                logement.typologie = form_logement.cleaned_data["typologie"]
+                logement.surface_habitable = form_logement.cleaned_data[
+                    "surface_habitable"
+                ]
+                logement.surface_annexes = form_logement.cleaned_data["surface_annexes"]
+                logement.surface_annexes_retenue = form_logement.cleaned_data[
+                    "surface_annexes_retenue"
+                ]
+                logement.surface_utile = form_logement.cleaned_data["surface_utile"]
+                logement.loyer_par_metre_carre = form_logement.cleaned_data[
+                    "loyer_par_metre_carre"
+                ]
+                logement.coeficient = form_logement.cleaned_data["coeficient"]
+                logement.loyer = form_logement.cleaned_data["loyer"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
+            else:
+                logement = Logement.objects.create(
+                    lot=self.convention.lot,
+                    designation=form_logement.cleaned_data["designation"],
+                    typologie=form_logement.cleaned_data["typologie"],
+                    surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                    surface_annexes=form_logement.cleaned_data["surface_annexes"],
+                    surface_annexes_retenue=form_logement.cleaned_data[
+                        "surface_annexes_retenue"
+                    ],
+                    surface_utile=form_logement.cleaned_data["surface_utile"],
+                    loyer_par_metre_carre=form_logement.cleaned_data[
+                        "loyer_par_metre_carre"
+                    ],
+                    coeficient=form_logement.cleaned_data["coeficient"],
+                    loyer=form_logement.cleaned_data["loyer"],
+                    import_order=form_logement.cleaned_data["import_order"],
+                )
+            logement.save()
+
+    def _save_logements_corrigee(self):
+        lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee))
+        lgt_uuids = list(filter(None, lgt_uuids1))
+
+        if self.form.cleaned_data["formset_corrigee_disabled"]:
+            # Clear all logements with surface corrigée and loyer
+            self.convention.lot.logements.filter(
+                surface_corrigee__isnull=False, loyer__isnull=False
+            ).delete()
+            return
+        else:
+            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                surface_corrigee__isnull=False, loyer__isnull=False
+            ).delete()
+        for form_logement in self.formset_corrigee:
+            if form_logement.cleaned_data["uuid"]:
+                logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+                logement.designation = form_logement.cleaned_data["designation"]
+                logement.typologie = form_logement.cleaned_data["typologie"]
+                logement.surface_habitable = form_logement.cleaned_data[
+                    "surface_habitable"
+                ]
+                logement.surface_corrigee = form_logement.cleaned_data[
+                    "surface_corrigee"
+                ]
+                logement.loyer_par_metre_carre = form_logement.cleaned_data[
+                    "loyer_par_metre_carre"
+                ]
+                logement.coeficient = form_logement.cleaned_data["coeficient"]
+                logement.loyer = form_logement.cleaned_data["loyer"]
+                logement.import_order = form_logement.cleaned_data["import_order"]
+
+            else:
+                logement = Logement.objects.create(
+                    lot=self.convention.lot,
+                    designation=form_logement.cleaned_data["designation"],
+                    typologie=form_logement.cleaned_data["typologie"],
+                    surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                    surface_corrigee=form_logement.cleaned_data["surface_corrigee"],
+                    loyer_par_metre_carre=form_logement.cleaned_data[
+                        "loyer_par_metre_carre"
+                    ],
+                    coeficient=form_logement.cleaned_data["coeficient"],
+                    loyer=form_logement.cleaned_data["loyer"],
+                    import_order=form_logement.cleaned_data["import_order"],
+                )
+            logement.save()
+
+    def _save_logements_corrigee_sans_loyer(self):
+        lgt_uuids1 = list(
+            map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee_sans_loyer)
+        )
+        lgt_uuids = list(filter(None, lgt_uuids1))
+
+        if self.form.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
+            # Clear all logements with surface corrigée and loyer
+            self.convention.lot.logements.filter(
+                surface_corrigee__isnull=False, loyer__isnull=True
+            ).delete()
+            return
+        else:
+            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                surface_corrigee__isnull=False, loyer__isnull=True
+            ).delete()
+        for form_logement in self.formset_corrigee_sans_loyer:
+            if form_logement.cleaned_data["uuid"]:
+                logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
+                logement.designation = form_logement.cleaned_data["designation"]
+                logement.typologie = form_logement.cleaned_data["typologie"]
+                logement.surface_habitable = form_logement.cleaned_data[
+                    "surface_habitable"
+                ]
+                logement.surface_corrigee = form_logement.cleaned_data[
+                    "surface_corrigee"
+                ]
+                logement.import_order = form_logement.cleaned_data["import_order"]
+            else:
+                logement = Logement.objects.create(
+                    lot=self.convention.lot,
+                    designation=form_logement.cleaned_data["designation"],
+                    typologie=form_logement.cleaned_data["typologie"],
+                    surface_habitable=form_logement.cleaned_data["surface_habitable"],
+                    surface_corrigee=form_logement.cleaned_data["surface_corrigee"],
+                    import_order=form_logement.cleaned_data["import_order"],
+                )
+            logement.save()
