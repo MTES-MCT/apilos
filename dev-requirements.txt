@@ -533,9 +533,9 @@ typing-extensions==4.15.0 \
     #   beautifulsoup4
     #   django-stubs
     #   django-stubs-ext
-unittest-parametrize==1.6.0 \
-    --hash=sha256:d9d2209a265b61b310ce81c1890f0e3a2282025deae758773f04d5a692cf1a3f \
-    --hash=sha256:fcbc0023304b08624b38a4762d25b691468d66f61fd5f11672b372ed71eee0e2
+unittest-parametrize==1.8.0 \
+    --hash=sha256:10a580aa04d13cf4f1c8e5e07be5694392b7ecef3b4d585bfc2bddce65bc3275 \
+    --hash=sha256:90818ddeb28648e795eb53983f42d44e273b26ab03a1db49c27f6830ed419236
     # via -r dev-requirements.in
 urllib3==2.3.0 \
     --hash=sha256:1cee9ad369867bfdbbb48b7dd50374c0967a0bb7710050facf0dd6911440e3df \
