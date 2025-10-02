@@ -14,6 +14,7 @@
                 </div>
                 <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left" disabled>
                     Télécharger
+                    <span class="fr-sr-only">le projet {{ convention|display_kind_with_preposition }}</span>
                 </button>
             {% else %}
                 <div class="block--row-strech-1 fr-mr-6w">
@@ -26,6 +27,7 @@
                     {% csrf_token %}
                     <button class="fr-btn fr-btn--secondary fr-my-1w fr-icon-download-line fr-btn--icon-left">
                         Télécharger
+                        <span class="fr-sr-only">le projet {{ convention|display_kind_with_preposition }}</span>
                     </button>
                 </form>
             {% endif %}
