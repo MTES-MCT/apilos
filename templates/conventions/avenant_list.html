@@ -23,12 +23,14 @@
         {% else %}
             <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
                 <div>
-                    Avenant {{ convention.numero|default_if_none:'x' }}
-                    {% if convention.televersement_convention_signee_le %}
-                        du <span class="fr-ml-1v">
-                            <strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
-                        </span>
-                    {% endif %}
+                    <p class="fr-m-0">
+                        Avenant {{ convention.numero|default_if_none:'x' }}
+                        {% if convention.televersement_convention_signee_le %}
+                            du <span class="fr-ml-1v">
+                                <strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
+                            </span>
+                        {% endif %}
+                    </p>
                     <div>
                         <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
                     </div>
