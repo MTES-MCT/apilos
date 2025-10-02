@@ -65,6 +65,8 @@ class ConventionFinancementServiceTests(TestCase):
         self.assertIsInstance(self.service.upform, UploadForm)
 
     def test_save_success(self):
+        financement_form["form-0-financement"] = "PLUS"
+        financement_form["form-1-financement"] = "PLUS"
         self.service.request.POST = financement_form
 
         self.service.save()
