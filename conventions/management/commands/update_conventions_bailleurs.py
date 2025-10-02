@@ -2,22 +2,51 @@ import csv
 import json
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from bailleurs.models import Bailleur
 from conventions.models import Convention
+from programmes.models.models import Programme
 
 
 class Command(BaseCommand):
-    help = "Update bailleurs for conventions from a JSON file and log changes"
+    help = (
+        "Met à jour les bailleurs pour les Programmes. "
+        "Peut transférer tous les Programmes d'un Bailleur à un autre, "
+        "ou mettre à jour en se basant sur un fichier JSON de conventions."
+    )
 
     def add_arguments(self, parser):
         parser.add_argument(
+            "--old-bailleur",
+            type=str,
+            help="SIREN (9 chiffres) ou SIRET (14 chiffres) de l'ancien Bailleur",
+        )
+        parser.add_argument(
+            "--new-bailleur",
+            type=str,
+            help="SIREN (9 chiffres) ou SIRET (14 chiffres) du nouveau Bailleur",
+        )
+        parser.add_argument(
+            "--run",
+            action="store_true",
+            help="Effectuer réellement le transfert ; sans ce flag, le script ne fera qu'une simulation",
+        )
+        parser.add_argument(
             "--file",
             type=str,
-            help="Path to JSON file containing convention updates",
-            required=True,
+            help="Chemin vers le fichier JSON contenant les mises à jour de conventions",
         )
+
+    def get_bailleur(self, identifier: str) -> Bailleur:
+        if len(identifier) == 14:
+            return Bailleur.objects.get(siret=identifier)
+        elif len(identifier) == 9:
+            return Bailleur.objects.get(siren=identifier)
+        else:
+            raise CommandError(
+                f"L'identifiant {identifier} n'est pas un SIREN (9) ou SIRET (14) valide"
+            )
 
     def _read_json(self, json_file):
         try:
@@ -72,7 +101,7 @@ class Command(BaseCommand):
             )
         )
 
-    def _process_convention(self, convention, writer_updates, writer_name_diff):
+    def _process_convention(self, convention, writer_updates, writer_name_diff, run):
         numero = convention["id"]
         expected_name = convention["bailleur"]
         siren_siret = convention["siren_siret"].replace(" ", "")
@@ -90,56 +119,107 @@ class Command(BaseCommand):
         # log before update
         self.log_update(writer_updates, numero, old_bailleur, bailleur)
 
-        # update convention
-        conv.programme.bailleur = bailleur
-        conv.programme.save()
+        if run:
+            # update convention
+            conv.programme.bailleur = bailleur
+            conv.programme.save()
 
         # check mismatch
         if expected_name.strip().lower() not in bailleur.nom.strip().lower():
             self.log_name_diff(writer_name_diff, numero, expected_name, bailleur)
 
     def handle(self, *args, **options):
-        conventions = self._read_json(json_file=options["file"])
-        if not conventions:
-            # If the JSON is empty or invalid, exit early
-            self.stdout.write(self.style.ERROR("Aucune convention à traiter."))
-            return
+        run = options.get("run", False)
 
-        with open(
-            "updated_conventions.csv", "w", newline="", encoding="utf-8"
-        ) as log_updates, open(
-            "name_diff_conventions.csv", "w", newline="", encoding="utf-8"
-        ) as log_name_diff:
+        # Case 1: Transfer all programmes between two bailleurs
+        if options.get("old_bailleur") and options.get("new_bailleur"):
+            old_bailleur = self.get_bailleur(options["old_bailleur"])
+            new_bailleur = self.get_bailleur(options["new_bailleur"])
 
-            writer_updates = csv.writer(log_updates)
-            writer_name_diff = csv.writer(log_name_diff)
+            programmes_to_update = Programme.objects.filter(bailleur=old_bailleur)
+            count_old = programmes_to_update.count()
 
-            # headers
-            writer_updates.writerow(
-                [
-                    "numero_convention",
-                    "old_bailleur_name",
-                    "old_bailleur_siren",
-                    "new_bailleur_name",
-                    "new_bailleur_siren",
-                ]
+            if count_old == 0:
+                self.stdout.write(
+                    self.style.WARNING(f"Aucun Programme trouvé pour {old_bailleur}")
+                )
+                return
+
+            if run:
+                updated = programmes_to_update.update(bailleur=new_bailleur)
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"{updated} Programmes transférés de {old_bailleur} vers {new_bailleur}"
+                    )
+                )
+            else:
+                self.stdout.write(
+                    self.style.NOTICE(
+                        f"[Simulation] {count_old} Programmes seraient transférés de {old_bailleur} vers {new_bailleur}"
+                    )
+                )
+                for prog in programmes_to_update:
+                    self.stdout.write(f"- {prog}")
+
+        # Case 2: Update from a JSON file
+        elif options.get("file"):
+            conventions = self._read_json(json_file=options["file"])
+            if not conventions:
+                self.stdout.write(self.style.ERROR("Aucune convention à traiter."))
+                return
+
+            with open(
+                "updated_conventions.csv", "w", newline="", encoding="utf-8"
+            ) as log_updates, open(
+                "name_diff_conventions.csv", "w", newline="", encoding="utf-8"
+            ) as log_name_diff:
+
+                writer_updates = csv.writer(log_updates)
+                writer_name_diff = csv.writer(log_name_diff)
+
+                # headers
+                writer_updates.writerow(
+                    [
+                        "numero_convention",
+                        "old_bailleur_name",
+                        "old_bailleur_siren",
+                        "new_bailleur_name",
+                        "new_bailleur_siren",
+                    ]
+                )
+                writer_name_diff.writerow(
+                    [
+                        "numero_convention",
+                        "expected_bailleur_name",
+                        "db_bailleur_name",
+                        "siren",
+                    ]
+                )
+
+                # process all
+                for convention in conventions:
+                    self._process_convention(
+                        convention, writer_updates, writer_name_diff, run
+                    )
+
+            if run:
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        "Mise à jour JSON terminée. "
+                        "Fichiers générés : updated_conventions.csv et name_diff_conventions.csv"
+                    )
+                )
+            else:
+                self.stdout.write(
+                    self.style.NOTICE(
+                        "[Simulation] Traitement JSON terminé. Aucune mise à jour appliquée. "
+                        "Vérifiez updated_conventions.csv et name_diff_conventions.csv pour aperçu."
+                    )
+                )
+
+        else:
+            self.stdout.write(
+                self.style.ERROR(
+                    "Vous devez fournir soit --old-bailleur et --new-bailleur, soit --file"
+                )
             )
-            writer_name_diff.writerow(
-                [
-                    "numero_convention",
-                    "expected_bailleur_name",
-                    "db_bailleur_name",
-                    "siren",
-                ]
-            )
-
-            # process all
-            for convention in conventions:
-                self._process_convention(convention, writer_updates, writer_name_diff)
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                "Script terminé. Fichiers générés : updated_conventions.csv "
-                "et name_diff_conventions.csv"
-            )
-        )
