@@ -108,11 +108,11 @@ class Command(BaseCommand):
 
         conv = self._get_convention(numero)
         if not conv:
-            return
+            return False
 
         bailleur = self._get_bailleur(siren_siret, numero)
         if not bailleur:
-            return
+            return False
 
         old_bailleur = conv.programme.bailleur
 
@@ -127,6 +127,8 @@ class Command(BaseCommand):
         # check mismatch
         if expected_name.strip().lower() not in bailleur.nom.strip().lower():
             self.log_name_diff(writer_name_diff, numero, expected_name, bailleur)
+
+        return True
 
     def handle(self, *args, **options):
         run = options.get("run", False)
@@ -153,14 +155,14 @@ class Command(BaseCommand):
                     )
                 )
             else:
+                for prog in programmes_to_update:
+                    self.stdout.write(f"- {prog}")
+
                 self.stdout.write(
                     self.style.NOTICE(
                         f"[Simulation] {count_old} Programmes seraient transférés de {old_bailleur} vers {new_bailleur}"
                     )
                 )
-                for prog in programmes_to_update:
-                    self.stdout.write(f"- {prog}")
-
         # Case 2: Update from a JSON file
         elif options.get("file"):
             conventions = self._read_json(json_file=options["file"])
@@ -168,6 +170,7 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR("Aucune convention à traiter."))
                 return
 
+            updated_count = 0
             with open(
                 "updated_conventions.csv", "w", newline="", encoding="utf-8"
             ) as log_updates, open(
@@ -196,24 +199,32 @@ class Command(BaseCommand):
                     ]
                 )
 
-                # process all
+                # process all conventions
                 for convention in conventions:
-                    self._process_convention(
+                    if self._process_convention(
                         convention, writer_updates, writer_name_diff, run
-                    )
+                    ):
+                        updated_count += 1
 
             if run:
                 self.stdout.write(
                     self.style.SUCCESS(
-                        "Mise à jour JSON terminée. "
-                        "Fichiers générés : updated_conventions.csv et name_diff_conventions.csv"
+                        f"Mise à jour JSON terminée. "
+                        f"{updated_count} conventions mises à jour avec succès, "
+                        f"{len(conventions) - updated_count} non mises à jour. "
+                        "Consultez les fichiers générés pour aperçu : "
+                        "updated_conventions.csv et name_diff_conventions.csv"
                     )
                 )
             else:
                 self.stdout.write(
                     self.style.NOTICE(
-                        "[Simulation] Traitement JSON terminé. Aucune mise à jour appliquée. "
-                        "Vérifiez updated_conventions.csv et name_diff_conventions.csv pour aperçu."
+                        f"[Simulation] Mise à jour JSON terminé. "
+                        f"{updated_count} conventions mises à jour avec succès, "
+                        f"{len(conventions) - updated_count} non mises à jour. "
+                        "Aucune mise à jour appliquée. "
+                        "Consultez les fichiers générés pour aperçu : "
+                        "updated_conventions.csv et name_diff_conventions.csv"
                     )
                 )
 
