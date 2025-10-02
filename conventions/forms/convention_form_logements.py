@@ -475,11 +475,21 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        for financement in self.total_nb_logements:
-            if self.nb_logements != self.total_nb_logements[financement]:
+        # FIXME: After migrating avenants to multiple lots, this test should be removed,
+        # and we should only keep total_nb_logements as a dictionary.
+        if isinstance(self.total_nb_logements, dict):
+            for financement in self.total_nb_logements:
+                if self.nb_logements != self.total_nb_logements[financement]:
+                    error = ValidationError(
+                        f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                        + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    )
+                    self.optional_errors.append(error)
+        else:
+            if self.nb_logements != self.total_nb_logements:
                 error = ValidationError(
                     f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
                 )
                 self.optional_errors.append(error)
 
