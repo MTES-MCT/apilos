@@ -1,9 +1,6 @@
-import logging
 from uuid import UUID
 
 from django import forms
-
-logger = logging.getLogger(__name__)
 
 
 class UUIDListForm(forms.Form):
@@ -11,20 +8,25 @@ class UUIDListForm(forms.Form):
     action = forms.CharField(required=True)
 
     def clean_uuids(self):
-        data = self.data.getlist("uuids")
-        if not data:
+        raw_uuids = self.data.getlist("uuids")
+        if not raw_uuids:
             return []
 
         uuids = []
-        for u in data:
+        errors = []
+        for u in raw_uuids:
             try:
                 uuids.append(UUID(u))
             except ValueError:
-                logger.error(f"Invalid UUID : {u}")
+                errors.append(u)
+
+        if errors:
+            raise forms.ValidationError(f"Invalid UUIDs: {', '.join(errors)}")
+
         return uuids
 
     def clean_action(self):
         action = self.cleaned_data.get("action")
         if action not in ("create", "dispatch"):
-            logger.error(f"Invalid action: {action}")
+            raise forms.ValidationError(f"Invalid action: {action}")
         return action
