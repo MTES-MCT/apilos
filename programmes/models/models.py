@@ -111,6 +111,7 @@ class Programme(models.Model):
         default=NatureLogement.LOGEMENTSORDINAIRES,
     )
     anru = models.BooleanField(default=False)
+    anah = models.BooleanField(default=False)
     nb_locaux_commerciaux = models.IntegerField(null=True, blank=True)
     nb_bureaux = models.IntegerField(null=True, blank=True)
     autres_locaux_hors_convention = models.TextField(blank=True)
