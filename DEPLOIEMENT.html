@@ -439,6 +439,69 @@ Using default option: Users won&#39;t be truncated
 <p>La configuration Github suivante est nécessaire :</p>
 <p><img alt="" src="_images/configuration_github_pages_apilos.png" /></p>
 </section>
+<section id="configuration-dune-cle-ssh-pour-scalingo-et-github">
+<h2>Configuration d’une clé SSH pour Scalingo et GitHub<a class="headerlink" href="#configuration-dune-cle-ssh-pour-scalingo-et-github" title="Lien vers cette rubrique">¶</a></h2>
+<p>Les clés SSH permettent d’établir une connexion sécurisée entre le runner du pipeline CI et l’environnement PaaS Scalingo.
+Elles sont indispensables pour :</p>
+<ul class="simple">
+<li><p>authentifier les accès à Scalingo depuis GitHub.</p></li>
+<li><p>permettre à la CI de pousser du code automatiquement sur Scalingo.</p></li>
+<li><p>exécuter des commandes à distance sur l’environnement Scalingo.</p></li>
+<li><p>déployer l’application sur le PaaS Scalingo de manière sécurisée.</p></li>
+</ul>
+<section id="generer-une-cle-ssh-avec-lalgorithme-ed25519">
+<h3>1. Générer une clé SSH avec l’algorithme <strong>ed25519</strong><a class="headerlink" href="#generer-une-cle-ssh-avec-lalgorithme-ed25519" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519
+</pre></div>
+</div>
+</section>
+<section id="lancer-lagent-ssh">
+<h3>2. Lancer l’agent SSH<a class="headerlink" href="#lancer-lagent-ssh" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">eval</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>ssh-agent<span class="w"> </span>-s<span class="k">)</span><span class="s2">&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="ajouter-la-cle-privee-a-lagent-ssh">
+<h3>3. Ajouter la clé privée à l’agent SSH<a class="headerlink" href="#ajouter-la-cle-privee-a-lagent-ssh" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh-add<span class="w"> </span>~/.ssh/id_ed25519_scalingo
+</pre></div>
+</div>
+</section>
+<section id="verifier-que-la-cle-est-bien-chargee">
+<h3>4. Vérifier que la clé est bien chargée<a class="headerlink" href="#verifier-que-la-cle-est-bien-chargee" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh-add<span class="w"> </span>-l
+</pre></div>
+</div>
+</section>
+<section id="ajouter-la-cle-publique-a-scalingo">
+<h3>5. Ajouter la clé publique à Scalingo<a class="headerlink" href="#ajouter-la-cle-publique-a-scalingo" title="Lien vers cette rubrique">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Aller dans <strong>User settings &gt; SSH keys &gt; Add</strong>.</p></li>
+<li><p>Copier le contenu de la clé publique générée (<code class="docutils literal notranslate"><span class="pre">~/.ssh/id_ed25519_example.pub</span></code>) et la coller dans le champ prévu.</p></li>
+<li><p>Donner un nom explicite, par exemple : <code class="docutils literal notranslate"><span class="pre">nom-pc-id_ed25519_scalingo</span></code>.</p></li>
+<li><p>Sauvegarder.</p></li>
+</ol>
+</section>
+<section id="verifier-lacces-a-scalingo-depuis-votre-pc">
+<h3>6. Vérifier l’accès à Scalingo depuis votre PC<a class="headerlink" href="#verifier-lacces-a-scalingo-depuis-votre-pc" title="Lien vers cette rubrique">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ssh<span class="w"> </span>-T<span class="w"> </span>git@ssh.osc-fr1.scalingo.com
+<span class="c1"># ou</span>
+ssh<span class="w"> </span>-T<span class="w"> </span>git@ssh.osc-secnum-fr1.scalingo.com
+</pre></div>
+</div>
+<p>Si tout est correct, vous verrez le message :
+<strong>“You’ve successfully authenticated on Scalingo, but there is no shell access.”</strong></p>
+</section>
+<section id="ajouter-la-cle-privee-dans-github-projet-apilos">
+<h3>7. Ajouter la clé privée dans GitHub (projet Apilos)<a class="headerlink" href="#ajouter-la-cle-privee-dans-github-projet-apilos" title="Lien vers cette rubrique">¶</a></h3>
+<ol class="arabic simple">
+<li><p>Dans GitHub, ouvrir <strong>Settings &gt; Secrets and variables &gt; Actions</strong>.</p></li>
+<li><p>Ajouter ou modifier le secret : <code class="docutils literal notranslate"><span class="pre">SCALINGO_SSH_PRIVATE_KEY</span></code>.</p></li>
+<li><p>Coller le contenu de la clé <strong>privée</strong> (<code class="docutils literal notranslate"><span class="pre">~/.ssh/id_ed25519_example</span></code>).</p></li>
+<li><p>Sauvegarder.</p></li>
+</ol>
+</section>
+</section>
 </section>
 
         </article>
