@@ -12,11 +12,15 @@
             </div>
             <div class="fr-col-12 fr-col-lg-6">
                 {% if bailleur.adresse %}
-                    <div>{{ bailleur.adresse }}</div>
+                    <div>
+                        <address>{{ bailleur.adresse }}<address>
+                    </div>
                 {% endif %}
                 <div>
-                    {% if bailleur.code_postal %}{{ bailleur.code_postal }}{% endif %}&nbsp;
-                    {% if bailleur.ville %}{{ bailleur.ville }}{% endif %}
+                    <address>
+                        {% if bailleur.code_postal %}{{ bailleur.code_postal }}{% endif %}&nbsp;
+                        {% if bailleur.ville %}{{ bailleur.ville }}{% endif %}
+                    <address>
                 </div>
             </div>
             <div class="fr-col-12 fr-col-lg-6">
@@ -30,8 +34,12 @@
                 <div class="fr-col-12">
                     <div class="block--row-strech">
                         <div class="block--row-strech-1 fr-mr-2w">
-                            <div class="fr-text--lg fr-mb-0"><strong>Ce n'est pas le bon bailleur ? </strong></div>
-                            <div>Vous pouvez demander l'attribution de cette convention à un autre bailleur.</div>
+                            <p class="fr-text--lg fr-mb-0">
+                                <strong>Ce n'est pas le bon bailleur ?</strong>
+                            </p>
+                            <p>
+                                Vous pouvez demander l'attribution de cette convention à un autre bailleur.
+                            </p>
                         </div>
                         <details {% if form.errors %}open{% endif %} class="fr-mt-3w">
                             <summary>
