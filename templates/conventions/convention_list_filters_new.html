@@ -19,13 +19,13 @@
 
                     {# Champs nom de l'opération #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Nom de l'opération</div>
+                        <label class="select-label" for="search_operation_nom">Nom de l'opération</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_operation_nom" name="search_operation_nom" value="{{ request.GET.search_operation_nom }}" placeholder="Rechercher"/>
                     </div>
 
                     {# Champs numéro de l'opération ou de la convention #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Numéro de l'opération ou de la convention</div>
+                        <label class="select-label" for="search_numero">Numéro de l'opération ou de la convention</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_numero" name="search_numero" value="{{ request.GET.search_numero }}" placeholder="Rechercher"/>
                     </div>
 
@@ -36,7 +36,7 @@
                     {# Champs bailleur #}
                     {% if bailleur_query %}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select search-bailleur">
-                            <div class="select-label">Bailleur (nom ou SIREN)</div>
+                            <label class="select-label" for="search-field-bailleur">Bailleur (nom ou SIREN)</label>
                             <div class="fr-mt-1w">
                                 {% url 'users:search_bailleur' as search_bailleur_url %}
                                 <select class="fr-select" name="bailleur" id="search-field-bailleur">
@@ -71,7 +71,7 @@
 
                     {# Champs commune #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Commune, code postal</div>
+                        <label class="select-label" for="search_lieu">Commune, code postal</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_lieu" name="search_lieu" value="{{ request.GET.search_lieu }}" placeholder="Rechercher"/>
                     </div>
 
@@ -81,7 +81,7 @@
 
                     {# Champs statut #}
                     <div class="fr-col-12 fr-col-lg-3 search-select search-statut">
-                        <div class="select-label">Statut convention ou avenant</div>
+                        <label class="select-label" for="cstatut">Statut convention ou avenant</label>
                         <select
                             multiple
                             class="fr-select fr-mt-1w"
@@ -110,8 +110,8 @@
 
                     {# Champs financement #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
-                        <div class="select-label">Type de financement</div>
-                        <select class="fr-select fr-mt-1w" name="financement">
+                        <label class="select-label" for="financement">Type de financement</label>
+                        <select class="fr-select fr-mt-1w" name="financement" id="financement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in financement_choices %}
                                 <option value="{{ value }}"
@@ -125,8 +125,8 @@
                     {# Champs date de signature #}
                     {% if date_signature_choices %}
                         <div class="fr-col-12 fr-col-lg-3 search-select">
-                            <div class="select-label">Année de signature</div>
-                            <select class="fr-select fr-mt-1w" name="date_signature">
+                            <label class="select-label" for="date_signature">Année de signature</label>
+                            <select class="fr-select fr-mt-1w" name="date_signature" id="date_signature">
                                 <option value="">Sélectionner une période</option>
                                 {% for value, label in date_signature_choices %}
                                     <option value="{{ value }}"
@@ -140,8 +140,8 @@
 
                     {# Champs nature des logements #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
-                        <div class="select-label">Nature des logements</div>
-                        <select class="fr-select fr-mt-1w" name="nature_logement">
+                        <label class="select-label" for="nature_logement">Nature des logements</label>
+                        <select class="fr-select fr-mt-1w" name="nature_logement" id="nature_logement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in nature_logement_choices %}
                                 <option value="{{ value }}"

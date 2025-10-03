@@ -57,7 +57,9 @@
                         {% if filtered_conventions_count != all_conventions_count %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
                                 <div class="fr-grid-row fr-col-6">
-                                    <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
+                                    <h2 class="fr-mr-2w notes" style="font-size: inherit; font-weight: inherit; margin: 0;">
+                                        {{ filtered_conventions_count }} résultats
+                                    </h2>
                                     <a href="/" class="fr-link">
                                         <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                                         Réinitialiser la recherche
@@ -97,6 +99,7 @@
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
                                     <table aria-label="Conventions">
+                                        <caption class="fr-sr-only"> {{ filtered_conventions_count }} résultats </caption>
                                         <thead>
                                             <tr class="th_inline">
                                                 {% if debug_search_scoring %}
