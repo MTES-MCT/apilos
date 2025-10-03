@@ -16,6 +16,7 @@ from programmes.models import (
     TypologieLogementClassique,
     TypologieLogementFoyerResidence,
 )
+from programmes.models.choices import Financement
 
 
 class LotLgtsOptionForm(forms.Form):
@@ -26,6 +27,9 @@ class LotLgtsOptionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
         label="Logement du programme",
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     lgts_mixite_sociale_negocies = forms.IntegerField(
         required=False,
@@ -156,6 +160,10 @@ class BaseLogementForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
+
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
@@ -362,7 +370,7 @@ class BaseLogementFormSet(BaseFormSet):
     programme_id: int = None
     lot_id: int = None
     nb_logements: int = None
-    total_nb_logements: int = None
+    total_nb_logements: dict[str, int] | None = None
     optional_errors: list = []
     ignore_optional_errors = False
 
@@ -433,45 +441,57 @@ class BaseLogementFormSet(BaseFormSet):
         Validation: les logements déclarés dans l'EDD simplifié pour le financement de la
           convention doivent être déclarés dans la convention
         """
-        lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
-        lot = Lot.objects.get(id=self.lot_id)
+        if self.lot_id:
+            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
+            lot = Lot.objects.get(id=self.lot_id)
 
-        if lgts_edd.count() != 0:
-            for form in self.forms:
-                try:
-                    lgt_edd = lgts_edd.get(
-                        designation=form.cleaned_data.get("designation"),
-                        financement=lot.financement,
-                    )
-                    if lgt_edd.financement != lot.financement:
+            if lgts_edd.count() != 0:
+                for form in self.forms:
+                    try:
+                        lgt_edd = lgts_edd.get(
+                            designation=form.cleaned_data.get("designation"),
+                            financement=lot.financement,
+                        )
+                        if lgt_edd.financement != lot.financement:
+                            form.add_error(
+                                "designation",
+                                "Ce logement est déclaré comme "
+                                + f"{lgt_edd.financement} dans l'EDD simplifié "
+                                + "alors que vous déclarez un lot de type "
+                                + f"{lot.financement}",
+                            )
+                    except LogementEDD.DoesNotExist:
+                        form.add_error(
+                            "designation", "Ce logement n'est pas dans l'EDD simplifié"
+                        )
+                    except LogementEDD.MultipleObjectsReturned:
                         form.add_error(
                             "designation",
-                            "Ce logement est déclaré comme "
-                            + f"{lgt_edd.financement} dans l'EDD simplifié "
-                            + "alors que vous déclarez un lot de type "
-                            + f"{lot.financement}",
+                            "Ce logement est présent plusieurs fois dans l'EDD simplifié",
                         )
-                except LogementEDD.DoesNotExist:
-                    form.add_error(
-                        "designation", "Ce logement n'est pas dans l'EDD simplifié"
-                    )
-                except LogementEDD.MultipleObjectsReturned:
-                    form.add_error(
-                        "designation",
-                        "Ce logement est présent plusieurs fois dans l'EDD simplifié",
-                    )
 
     def manage_nb_logement_consistency(self):
         """
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements != self.total_nb_logements:
-            error = ValidationError(
-                f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
-            )
-            self.optional_errors.append(error)
+        # FIXME: After migrating avenants to multiple lots, this test should be removed,
+        # and we should only keep total_nb_logements as a dictionary.
+        if isinstance(self.total_nb_logements, dict):
+            for financement in self.total_nb_logements:
+                if self.nb_logements != self.total_nb_logements[financement]:
+                    error = ValidationError(
+                        f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                        + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    )
+                    self.optional_errors.append(error)
+        else:
+            if self.nb_logements != self.total_nb_logements:
+                error = ValidationError(
+                    f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                    + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
+                )
+                self.optional_errors.append(error)
 
     def manage_coefficient_propre(self):
         """
@@ -512,6 +532,7 @@ LogementCorrigeeFormSet = formset_factory(
 LogementCorrigeeSansLoyerFormSet = formset_factory(
     LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0
 )
+LotLgtsOptionFormSet = formset_factory(LotLgtsOptionForm, extra=0)
 
 
 class FoyerResidenceLogementForm(forms.Form):
