@@ -161,6 +161,7 @@
                         {% if not convention|display_is_validated %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
                                 {% include "conventions/actions/bailleur_notification.html" %}
+                                <span role="text" class="fr-sr-only" tabindex="0">ou</span>
                                 {% if not convention.is_resiliation %}
                                     <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
                                 {% endif %}
