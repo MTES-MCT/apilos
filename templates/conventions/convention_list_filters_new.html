@@ -35,6 +35,9 @@
 
                     {# Champs bailleur #}
                     {% if bailleur_query %}
+                        {# {% url 'users:search_bailleur' as search_bailleur_url %} #}
+                        {# {% include 'common/form/input_search_select_new.html' with field_name='bailleur' field_id='search-field-bailleur' label='Bailleur (nom ou SIREN)' placeholder='Rechercher un bailleur' options=bailleur_query search_url=search_bailleur_url current_value=request.GET.bailleur current_label=request.GET.bailleur|default:''|add:'' %} #}
+
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select search-bailleur">
                             <label class="select-label" for="search-field-bailleur">Bailleur (nom ou SIREN)</label>
                             <div class="fr-mt-1w">
@@ -68,6 +71,7 @@
                             </script>
                         </div>
                     {% endif %}
+
 
                     {# Champs commune #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
