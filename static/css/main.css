@@ -939,6 +939,14 @@ table .apilos-badge {
   color: #000091 !important;
 }
 
+.fr-btn--tertiary-no-outline:hover {
+  color: #000091 !important;
+}
+
+.fr-btn--close {
+  color: #000091 !important;
+}
+
 
 /*
  * End Adapt button color when it is a link 'a'
