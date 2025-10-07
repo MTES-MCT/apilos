@@ -263,8 +263,25 @@ class CommentFactory {
     }
 
     comment_header.classList.add("clickable");
-    comment_header.addEventListener("click", function () {
-      textarea_div.hidden = !textarea_div.hidden;
+    comment_header.setAttribute("role", "button");
+    comment_header.setAttribute("tabindex", "0");
+    comment_header.setAttribute("aria-expanded", "false");
+    comment_header.setAttribute("aria-controls", textarea_div.id);
+    comment_header.setAttribute("aria-label", "Bouton accordéon ouvrir espace d'écriture commentaire");
+
+    comment_header.addEventListener("click", function (e) {
+      const isHidden = textarea_div.hidden;
+      textarea_div.hidden = !isHidden;
+      comment_header.setAttribute("aria-expanded", isHidden ? "true" : "false");
+    });
+
+    comment_header.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        const isHidden = textarea_div.hidden;
+        textarea_div.hidden = !isHidden;
+        comment_header.setAttribute("aria-expanded", isHidden ? "true" : "false");
+      }
     });
   }
 
@@ -897,6 +914,12 @@ class CommentFactory {
       button_action.classList.add(additionalButtonClass);
     }
     button_action.innerText = label;
+
+    const child_sr_only_p = document.createElement("span");
+    child_sr_only_p.classList.add("fr-sr-only");
+    child_sr_only_p.innerText = " pour " + this.dialog_title;
+    button_action.appendChild(child_sr_only_p);
+    
     const li_action = document.createElement("li");
     li_action.setAttribute(
       "id",
