@@ -42,13 +42,30 @@ class CommentFactory {
   _add_comment_icon() {
     const icon_div = document.createElement("div");
     icon_div.setAttribute("id", this.comment_icon_id);
-    icon_div.setAttribute("title", "Cliquez pour ajouter un commentaire");
+    icon_div.setAttribute("title", "Cliquez pour ajouter un commentaire à propos de " + this.dialog_title);
     icon_div.setAttribute("data-fr-opened", "false");
     icon_div.setAttribute("aria-controls", this.comment_dialog_id + "-dialog");
+    icon_div.setAttribute("role", "button");
+    icon_div.setAttribute("tabindex", "0");
     icon_div.classList.add("content__icons");
     icon_div.classList.add("content__icons--add");
-    icon_div.hidden = true;
+    icon_div.style.opacity = "0";
     this.container.appendChild(icon_div);
+
+    icon_div.addEventListener("focus", () => {
+        icon_div.style.opacity = "1";
+    });
+    
+    icon_div.addEventListener("blur", () => {
+        if (icon_div.classList.contains("content__icons--add")) {
+            icon_div.style.opacity = "0";
+        }
+    });
+
+    const child_sr_only_p = document.createElement("p");
+    child_sr_only_p.classList.add("fr-sr-only")
+    child_sr_only_p.innerText = "Commentaire pour " + this.dialog_title
+    icon_div.appendChild(child_sr_only_p);
 
     if (document.getElementById(this.comment_dialog_id) === null) {
       //create dialog: Can be improved
@@ -133,6 +150,21 @@ class CommentFactory {
     this.container.onclick = (e) => {
       this.display_modal_comments();
     };
+
+    this.container.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            const modal = document.getElementById(this.comment_dialog_id + "-dialog");
+            if (modal) {
+                if (window.dsfr) {
+                    window.dsfr(modal).modal.disclose();
+                } else {
+                    this.container.click();
+                }
+            } 
+            this.display_modal_comments();
+        }
+    });
   }
 
   display_modal_comments() {
@@ -400,7 +432,7 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.hidden = false;
+      comment_icon.style.opacity = "1"
       if (this.empty_toggle_on) {
         this.empty_toggle_on.onclick = null;
         this.empty_toggle_on.onmouseover = null;
@@ -451,7 +483,7 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.hidden = false;
+      comment_icon.style.opacity = "1"
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.querySelectorAll('[id^="download_upload_block"]').length > 0
@@ -471,7 +503,7 @@ class CommentFactory {
       comment_icon.classList.add("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.hidden = false;
+      comment_icon.style.opacity = "1"
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.querySelectorAll('[id^="download_upload_block"]').length > 0
@@ -492,20 +524,19 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--resolved");
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.add("content__icons--add");
-      comment_icon.setAttribute("title", "Cliquez pour ajouter un commentaire");
       if (this.empty_toggle_on) {
-        comment_icon.hidden = true;
+        comment_icon.style.opacity = "0"
         this.empty_toggle_on.onmouseover = (e) => {
-          comment_icon.hidden = false;
+          comment_icon.style.opacity = "1"
         };
         this.empty_toggle_on.onclick = (e) => {
-          comment_icon.hidden = false;
+          comment_icon.style.opacity = "1"
         };
         this.empty_toggle_on.onmouseleave = (e) => {
-          comment_icon.hidden = true;
+          comment_icon.style.opacity = "0"
         };
       } else {
-        comment_icon.hidden = false;
+        comment_icon.style.opacity = "1"
       }
     }
   }
