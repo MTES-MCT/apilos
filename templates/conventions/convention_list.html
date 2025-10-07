@@ -98,7 +98,7 @@
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
-                                    <table aria-label="Conventions">
+                                    <table aria-label="Conventions et avenants">
                                         <caption class="fr-sr-only"> {{ filtered_conventions_count }} résultats </caption>
                                         <thead>
                                             <tr class="th_inline">
@@ -204,13 +204,45 @@
                                                                     }
                                                                 });
                                                             });
+
+                                                            document.addEventListener('DOMContentLoaded', function () {
+                                                                const statusElement = document.getElementById('convention_redirect_{{ convention.uuid }}');
+                                                                const linkElement = document.getElementById('convention_link_{{ convention.uuid }}');
+                                                                
+                                                                if (statusElement && linkElement) {
+                                                                    let targetUrl = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
+                                                                    
+                                                                    if (statusElement.classList.contains("sent")) {
+                                                                        targetUrl = "{% url 'conventions:sent' convention_uuid=convention.uuid %}";
+                                                                    }
+                                                                    else if (statusElement.classList.contains("signed")) {
+                                                                        targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
+                                                                    }
+                                                                    else if (statusElement.classList.contains("project")) {
+                                                                        targetUrl = "{% url 'conventions:bailleur' convention_uuid=convention.uuid %}";
+                                                                    }
+                                                                    else if (statusElement.classList.contains("publication_en_cours")){
+                                                                        targetUrl = "{% url 'conventions:publication' convention_uuid=convention.uuid %}";
+                                                                    }
+                                                                    else if (statusElement.classList.contains("publie")){
+                                                                        targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
+                                                                    }
+                                                                    
+                                                                    linkElement.href = targetUrl;
+                                                                }
+                                                            });
                                                         </script>
                                                     </td>
                                                     <td>
                                                         <div class="apilos--flex-row-left-center">
                                                             <div class="apilos--container_ellipsis">
                                                                 <strong class="apilos--overflow_ellipsis">
-                                                                    {{ convention.programme|highlight_if_match:search_operation_nom }}
+                                                                    <a href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" 
+                                                                    id="convention_link_{{ convention.uuid }}"
+                                                                    class="fr-link"
+                                                                    aria-label="Convention {{ convention.programme }}{% if convention.programme.numero_operation %}, opération {{ convention.programme.numero_operation }}{% endif %}{% if convention.numero %}, numéro {{ convention.numero }}{% elif convention.parent %}, numéro {{ convention.parent.numero }}{% endif %}{% if request|is_instructeur %}, bailleur {{ convention.programme.bailleur.nom }}{% endif %}{% if request|display_administration %}, administration {{ convention.programme.administration.nom }}{% endif %}, financement {{ convention.lot.get_financement_display }}, {{ convention.programme.ville }} {{ convention.programme.code_postal }}, {{ convention.lot.nb_logements }} logements{% if convention.programme.date_achevement_compile %}, achèvement {{ convention.programme.date_achevement_compile|date:'d F Y' }}{% endif %}{% if convention.televersement_convention_signee_le %}, signée le {{ convention.televersement_convention_signee_le|date:'d F Y' }}{% endif %}">
+                                                                        {{ convention.programme|highlight_if_match:search_operation_nom }}
+                                                                    </a>
                                                                 </strong>
                                                             </div>
                                                             {% if convention.is_avenant %}
