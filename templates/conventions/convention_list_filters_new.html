@@ -35,40 +35,12 @@
 
                     {# Champs bailleur #}
                     {% if bailleur_query %}
-                        {# {% url 'users:search_bailleur' as search_bailleur_url %} #}
-                        {# {% include 'common/form/input_search_select_new.html' with field_name='bailleur' field_id='search-field-bailleur' label='Bailleur (nom ou SIREN)' placeholder='Rechercher un bailleur' options=bailleur_query search_url=search_bailleur_url current_value=request.GET.bailleur current_label=request.GET.bailleur|default:''|add:'' %} #}
-
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select search-bailleur">
-                            <label class="select-label" for="search-field-bailleur">Bailleur (nom ou SIREN)</label>
-                            <div class="fr-mt-1w">
-                                {% url 'users:search_bailleur' as search_bailleur_url %}
-                                <select class="fr-select" name="bailleur" id="search-field-bailleur">
-                                    {% if request.GET.bailleur %}
-                                        <option selected value="{{ request.GET.bailleur }}">{% bailleur_from request.GET.bailleur %}</option>
-                                        {% endwith }
-                                    {% else %}
-                                        <option selected value></option>
-                                        {% for bailleur in bailleur_query %}
-                                            <option value="{{ bailleur.uuid }}">
-                                                {{ bailleur }}
-                                            </option>
-                                        {% endfor %}
-                                    {% endif %}
-                                </select>
-                            </div>
-                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                VirtualSelect.init({
-                                    ele: '#search-field-bailleur',
-                                    search: true,
-                                    placeholder: "Rechercher",
-                                    searchPlaceholderText: "Nom du bailleur ( SIREN )",
-                                    onServerSearch: function (search, select) {
-                                        fetch('{{ search_bailleur_url }}?q=' + search)
-                                            .then((response) => response.json())
-                                            .then(data => select.setServerOptions(data));
-                                    },
-                                });
-                            </script>
+                            {% url 'users:search_bailleur' as search_bailleur_url %}
+                            {% if request.GET.bailleur %}
+                                {% bailleur_from request.GET.bailleur as bailleur_initial %}
+                            {% endif %}
+                            {% include "common/form/input_search_select_native.html" with field_id="search-field-bailleur" field_name="bailleur" label="Bailleur (nom ou SIREN)" placeholder="Rechercher" search_url=search_bailleur_url initial_value=request.GET.bailleur initial_text=bailleur_initial initial_queryset=bailleur_query %}
                         </div>
                     {% endif %}
 
