@@ -1147,3 +1147,30 @@ table .apilos-badge {
 .apilos-recap-subtitle {
   font-size: 1.2rem;
 }
+
+button.fr-toggle-wrapper,
+a.fr-toggle-wrapper {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    display: block;
+    cursor: pointer;
+    width: 100%;
+    text-decoration: none;
+}
+
+button.fr-toggle-wrapper:hover,
+a.fr-toggle-wrapper:hover {
+    background: transparent;
+    color: inherit;
+    text-decoration: none;
+}
+
+button.fr-toggle-wrapper input[type="checkbox"],
+a.fr-toggle-wrapper input[type="checkbox"] {
+    pointer-events: none;
+}
