@@ -186,13 +186,13 @@ django-extensions==4.1 \
     --hash=sha256:0699a7af28f2523bf8db309a80278519362cd4b6e1fd0a8cd4bf063e1e023336 \
     --hash=sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb
     # via -r dev-requirements.in
-django-stubs==5.2.2 \
-    --hash=sha256:2a04b510c7a812f88223fd7e6d87fb4ea98717f19c8e5c8b59691d83ad40a8a6 \
-    --hash=sha256:79bd0fdbc78958a8f63e0b062bd9d03f1de539664476c0be62ade5f063c9e41e
+django-stubs==5.2.6 \
+    --hash=sha256:991dc36c10fefd6bf0cfd163db3dabd15787112f96cfedf6e8388ba1930040fb \
+    --hash=sha256:bb517a60355474a2c8403a48d16ff906c8bc46d604f419206de10ac018a5f4bc
     # via -r dev-requirements.in
-django-stubs-ext==5.2.2 \
-    --hash=sha256:8833bbe32405a2a0ce168d3f75a87168f61bd16939caf0e8bf173bccbd8a44c5 \
-    --hash=sha256:d9d151b919fe2438760f5bd938f03e1cb08c84d0651f9e5917f1313907e42683
+django-stubs-ext==5.2.6 \
+    --hash=sha256:1165a596138a54edac12616af126332db03b812c8272ada724b4e89188a3c41f \
+    --hash=sha256:c3736dcea49666140c92a1471dda83c31e8d5e71dc364ab3cedc7698dbf01cee
     # via django-stubs
 djhtml==3.0.9 \
     --hash=sha256:1bcde56d0d469546f391a269d84c71df4054c7df73ad5c51572b38a611156dc4 \
