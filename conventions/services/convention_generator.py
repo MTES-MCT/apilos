@@ -93,9 +93,9 @@ def _compute_total_logement(convention):
             logements_data[lot.financement]["logements_totale"]["su_totale"] += logement.surface_utile or 0
             logements_data[lot.financement]["logements_totale"]["sc_totale"] += logement.surface_corrigee or 0
             logements_data[lot.financement]["logements_totale"]["loyer_total"] += logement.loyer or 0
-        if logement.get_typologie_display() not in logements_data[lot.financement]["nb_logements_par_type"]:
-            logements_data[lot.financement]["nb_logements_par_type"][logement.get_typologie_display()] = 0
-        logements_data[lot.financement]["nb_logements_par_type"][logement.get_typologie_display()] += 1
+            if logement.get_typologie_display() not in logements_data[lot.financement]["nb_logements_par_type"]:
+                logements_data[lot.financement]["nb_logements_par_type"][logement.get_typologie_display()] = 0
+            logements_data[lot.financement]["nb_logements_par_type"][logement.get_typologie_display()] += 1
     return logements_data
 
 
