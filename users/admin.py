@@ -13,6 +13,7 @@ from .models import Role, User
 class CustomAdministrationAdmin(ApilosModelAdmin):
     list_select_related = ("administration", "bailleur", "user")
     readonly_fields = ("administration", "bailleur", "user")
+    list_filter = ("group",)
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":
