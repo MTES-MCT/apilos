@@ -16,7 +16,6 @@ from conventions.services import utils
 from conventions.services.logements import (
     ConventionFoyerResidenceLogementsService,
     ConventionLogementsService,
-    ConventionLogementsServiceAvenant,
 )
 from conventions.tests.fixtures import (
     foyer_residence_logements_success_payload,
@@ -50,7 +49,7 @@ class ConventionLogementsServiceTests(TestCase):
         )
 
         avenant = convention.clone(request.user, convention_origin=convention)
-        self.service_avenant = ConventionLogementsServiceAvenant(
+        self.service_avenant = ConventionLogementsService(
             convention=avenant, request=request
         )
 
