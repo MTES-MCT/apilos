@@ -369,7 +369,7 @@ class BaseLogementFormSet(BaseFormSet):
     # ils sont initialisés avant la validation
     programme_id: int = None
     lot_id: int = None
-    nb_logements: int = None
+    nb_logements: dict[str, int] | None = None
     total_nb_logements: dict[str, int] | None = None
     optional_errors: list = []
     ignore_optional_errors = False
@@ -481,7 +481,7 @@ class BaseLogementFormSet(BaseFormSet):
             for financement in self.total_nb_logements:
                 if self.nb_logements != self.total_nb_logements[financement]:
                     error = ValidationError(
-                        f"Le nombre de logement à conventionner ({self.nb_logements}) "
+                        f"Le nombre de logement à conventionner ({self.nb_logements[financement]}) "
                         + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
                     )
                     self.optional_errors.append(error)
@@ -509,17 +509,21 @@ class BaseLogementFormSet(BaseFormSet):
                 return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
-        if (
-            self.nb_logements is not None
-            and round_half_up(loyer_with_coef, 2)
-            > round_half_up(loyer_without_coef, 2) + self.nb_logements
-        ):
-            error = ValidationError(
-                "La somme des loyers après application des coefficients ne peut excéder "
-                + "la somme des loyers sans application des coefficients, c'est à dire "
-                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {self.nb_logements} €)"
+            self._non_form_errors.append(
+                "\nloyer_without_coef : " + str(loyer_without_coef)
             )
-            self._non_form_errors.append(error)
+        for financement in self.nb_logements:
+            if (
+                self.nb_logements[financement] is not None
+                and round_half_up(loyer_with_coef, 2)
+                > round_half_up(loyer_without_coef, 2) + self.nb_logements[financement]
+            ):
+                error = ValidationError(
+                    f"{financement} : La somme des loyers après application des coefficients ne peut excéder "
+                    + "la somme des loyers sans application des coefficients, c'est à dire "
+                    + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {self.nb_logements[financement]} €)"
+                )
+                self._non_form_errors.append(error)
 
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
