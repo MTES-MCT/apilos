@@ -1040,6 +1040,7 @@ class TypeStationnement(models.Model):
 
     import_mapping = {
         "Type de stationnement": "typologie",
+        "Financement": "lot.financement ",
         "Nombre de stationnements": "nb_stationnements",
         "Loyer maximum en €": "loyer",
     }

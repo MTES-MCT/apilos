@@ -119,6 +119,9 @@ class ConventionManager(models.Manager):
             uuid__in=list_of_uuids_conventions
         )
 
+        if not all([not conv.has_avenant for conv in related_conventions]):
+            raise ConventionGroupingError("Conventions must not have any avenant")
+
         statut_list = {conv.statut for conv in related_conventions}
         if statut_list != {ConventionStatut.PROJET.label}:
             raise ConventionGroupingError("Conventions must be in the same status")
@@ -504,6 +507,10 @@ class Convention(models.Model):
             )[1]
         return last_avenant_or_parent
 
+    @property
+    def has_avenant(self):
+        return self.avenants.exists()
+
     def get_email_bailleur_users(self):
         """
         return the email of the bailleurs to send them an email following their email
@@ -775,57 +782,60 @@ class Convention(models.Model):
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
 
-        lot_fields = model_to_dict(
-            self.lot,
-            exclude=[
-                "id",
-                "parent",
-                "convention",
-                "cree_le",
-                "mis_a_jour_le",
-            ],
-        ) | {
-            "parent_id": convention_origin.lot.id,
-            "convention": cloned_convention,
-        }
-        cloned_lot = Lot(**lot_fields)
-        cloned_lot.save()
-
-        for logement in self.lot.logements.all():
-            logement.clone(lot=cloned_lot)
-
-        for pret in convention_origin.lot.prets.all():
-            pret.clone(lot=cloned_lot)
-
-        for type_stationnement in self.lot.type_stationnements.all():
-            type_stationnement_fields = model_to_dict(
-                type_stationnement,
+        for lot in self.lots.all():
+            lot_fields = model_to_dict(
+                lot,
                 exclude=[
                     "id",
-                    "lot",
+                    "parent",
+                    "convention",
                     "cree_le",
                     "mis_a_jour_le",
                 ],
             ) | {
-                "lot": cloned_lot,
+                "parent_id": convention_origin.lot.id,
+                "convention": cloned_convention,
             }
-            cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
-            cloned_type_stationnement.save()
+            cloned_lot = Lot(**lot_fields)
+            cloned_lot.save()
 
-        for locaux_collectif in self.lot.locaux_collectifs.all():
-            locaux_collectif_fields = model_to_dict(
-                locaux_collectif,
-                exclude=[
-                    "id",
-                    "lot",
-                    "cree_le",
-                    "mis_a_jour_le",
-                ],
-            ) | {
-                "lot": cloned_lot,
-            }
-            cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
-            cloned_locaux_collectif.save()
+            for logement in lot.logements.all():
+                logement.clone(lot=cloned_lot)
+
+            for pret in convention_origin.lot.prets.all():
+                pret.clone(lot=cloned_lot)
+
+            for type_stationnement in lot.type_stationnements.all():
+                type_stationnement_fields = model_to_dict(
+                    type_stationnement,
+                    exclude=[
+                        "id",
+                        "lot",
+                        "cree_le",
+                        "mis_a_jour_le",
+                    ],
+                ) | {
+                    "lot": cloned_lot,
+                }
+                cloned_type_stationnement = TypeStationnement(
+                    **type_stationnement_fields
+                )
+                cloned_type_stationnement.save()
+
+            for locaux_collectif in lot.locaux_collectifs.all():
+                locaux_collectif_fields = model_to_dict(
+                    locaux_collectif,
+                    exclude=[
+                        "id",
+                        "lot",
+                        "cree_le",
+                        "mis_a_jour_le",
+                    ],
+                ) | {
+                    "lot": cloned_lot,
+                }
+                cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
+                cloned_locaux_collectif.save()
 
         return cloned_convention
 
