@@ -18,6 +18,7 @@ FEATURE_FLAGS.md
 DOC_GENERATION.md
 ETAPES.md
 STATUTS.md
+2SEVRES.md
 ```
 
 ## Solution technique
