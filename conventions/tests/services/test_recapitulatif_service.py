@@ -658,5 +658,5 @@ class TestConventionUploadPublicationService:
             assert result["success"] == utils.ReturnStatus.ERROR
             assert (
                 result["error_message"]
-                == "Ops ! Seuls les instructeurs peuvent effectuer cette action."
+                == "Oups ! Seuls les instructeurs peuvent effectuer cette action."
             )
