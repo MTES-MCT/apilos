@@ -230,7 +230,7 @@
                     </div>
                 </div>
             {% endif %}
-            {% if convention|display_publication_button:request and not request|is_readonly %}
+            {% if convention|display_publication_button and request|is_instructeur and not request|is_readonly %}
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech">

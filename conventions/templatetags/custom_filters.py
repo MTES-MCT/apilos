@@ -443,10 +443,8 @@ def display_back_to_instruction(convention, request):
 
 
 @register.filter
-def display_publication_button(convention, request):
-    return convention.statut == ConventionStatut.SIGNEE.label and is_instructeur(
-        request
-    )
+def display_publication_button(convention):
+    return convention.statut == ConventionStatut.SIGNEE.label
 
 
 @register.filter
