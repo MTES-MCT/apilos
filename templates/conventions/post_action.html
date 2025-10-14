@@ -114,7 +114,7 @@
                 </div>
                 <hr>
             {% endif %}
-            {% if convention|display_redirect_convention_publie %}
+            {% if convention|display_redirect_convention_publie and request|is_instructeur %}
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech">
                         {% include "conventions/actions/back_to_en_publication.html" %}
@@ -129,7 +129,7 @@
                         <p class="fr-alert__title">
                             {% if convention.is_denonciation %}
                                 Déposer l'acte de dénonciation
-                            {% elif convention|display_redirect_convention_publie %}
+                            {% elif convention|display_redirect_convention_publie and request|is_instructeur %}
                                     Déposer à nouveau la publication de {{ convention|display_kind_with_pronom }}
                             {% else %}
                                 Déposer à nouveau {{ convention|display_kind_with_pronom }}
@@ -138,7 +138,7 @@
                         <p class="fr-mb-0">
                             {% if convention.is_denonciation %}
                                 Vous pouvez déposer l'acte de dénonciation ici. Il sera accessible sur la page de visualisation de la dénonciation.
-                            {% elif convention|display_redirect_convention_publie %}
+                            {% elif convention|display_redirect_convention_publie and request|is_instructeur %}
                                 Si nécessaire, vous pouvez déposer une nouvelle version de {{ convention|display_kind_with_pronom }} publié{{ convention|display_gender_terminaison }} ici.
                             {% else %}
                                 Si nécessaire, vous pouvez déposer une nouvelle version de {{ convention|display_kind_with_pronom }} signé{{ convention|display_gender_terminaison }} ici.
@@ -146,7 +146,7 @@
 
                         </p>
                     </div>
-                    <form method="post" action="{% if convention|display_redirect_convention_publie %}{% url 'conventions:sent' convention_uuid=convention.uuid type_doc=1 %}{% else %}{% url 'conventions:sent' convention_uuid=convention.uuid %}{% endif %}" enctype="multipart/form-data" id="{{ upform.file.id_for_label }}_form">
+                    <form method="post" action="{% if convention|display_redirect_convention_publie and request|is_instructeur %}{% url 'conventions:sent' convention_uuid=convention.uuid type_doc=1 %}{% else %}{% url 'conventions:sent' convention_uuid=convention.uuid %}{% endif %}" enctype="multipart/form-data" id="{{ upform.file.id_for_label }}_form">
                         {% csrf_token %}
                         <input
                             class="fileinput--hidden"
@@ -159,7 +159,7 @@
                                 <button id="{{ upform.file.id_for_label }}_upload_button" class="fr-icon-upload-line fr-btn--icon-left fr-btn fr-btn--secondary fr-my-1w" type="button"{% if request|is_readonly %} disabled{% endif %}>
                                     {% if convention.is_denonciation %}
                                         Déposer la dénonciation
-                                    {% elif convention|display_redirect_convention_publie %}
+                                    {% elif convention|display_redirect_convention_publie and request|is_instructeur %}
                                         Déposer la publication de la convention
                                     {% else %}
                                         Déposer {{ convention|display_kind_with_pronom }} signé{{ convention|display_gender_terminaison }}
@@ -200,7 +200,7 @@
                     </div>
                 </div>
             {% endif %}
-            {% if convention|display_redirect_convention_publie %}
+            {% if convention|display_redirect_convention_publie and request|is_instructeur %}
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-5w fr-pt-2w">
@@ -230,7 +230,7 @@
                     </div>
                 </div>
             {% endif %}
-            {% if convention|display_publication_button and not request|is_readonly %}
+            {% if convention|display_publication_button:request and not request|is_readonly %}
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-2w fr-pt-2w block--row-strech">

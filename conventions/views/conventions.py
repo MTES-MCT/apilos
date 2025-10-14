@@ -682,8 +682,17 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
 
 class ConventionCancelUploadPublicationView(BaseConventionView):
 
-    @currentrole_campaign_permission_required("convention.view_convention")
+    @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
+        if not request.user.is_instructeur():
+            return render(
+                request,
+                "conventions/post_action.html",
+                {
+                    "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                    "convention": self.convention,
+                },
+            )
         path_fichier_publication_spf = (
             f"spf/{self.convention.uuid}/publication/"
             f"{self.convention.nom_fichier_publication_spf}"
@@ -709,6 +718,15 @@ class ConventionSendForPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
+        if not request.user.is_instructeur():
+            return render(
+                request,
+                "conventions/post_action.html",
+                {
+                    "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                    "convention": self.convention,
+                },
+            )
         self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
         self.convention.save()
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):

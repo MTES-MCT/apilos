@@ -3,12 +3,22 @@
 <div class="fr-col-12 fr-my-2w">
     <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-draft-line">
         <p class="fr-alert__title">
-            Déposer la convention publiée
+            {% if convention|display_redirect_convention_en_publication and request|is_instructeur and not request|is_readonly %}
+                Déposer la convention publiée.
+            {% else %}
+                {% if convention|display_redirect_convention_publie %}
+                    Votre convention a déjà été publiée.
+                {% else %}
+                    Votre convention est en cours de publication.
+                {% endif %}
+
+            {% endif %}
         </p>
 
         <div class="block--row-strech">
-            {% include "conventions/common/form_upload_publication_document.html" %}
-
+            {% if convention|display_redirect_convention_en_publication and request|is_instructeur and not request|is_readonly %}
+                {% include "conventions/common/form_upload_publication_document.html" %}
+            {% endif %}
             <a class="fr-my-1w fr-link fr-ml-2w" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                 Consulter le récapitulatif
             </a>
