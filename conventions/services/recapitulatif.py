@@ -708,7 +708,7 @@ class ConventionSentService(ConventionService):
             self.return_status = utils.ReturnStatus.ERROR
             return {
                 "success": self.return_status,
-                "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                "error_message": self.get_error_message(),
                 "convention": self.convention,
                 "upform": upform,
                 "extra_forms": {
@@ -732,6 +732,9 @@ class ConventionSentService(ConventionService):
                 "upform": upform,
             },
         }
+
+    def get_error_message(self):
+        return "Oups ! Seuls les instructeurs peuvent effectuer cette action."
 
 
 class ConventionUploadSignedService(ConventionService):
@@ -839,7 +842,7 @@ class ConventionUploadPublicationService(ConventionService):
             self.return_status = utils.ReturnStatus.ERROR
             return {
                 "success": self.return_status,
-                "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                "error_message": self.get_error_message(),
                 "form": form,
                 "publication_info_form": form,
                 "convention": self.convention,
@@ -872,3 +875,6 @@ class ConventionUploadPublicationService(ConventionService):
 
     def get_success_message(self):
         return "le document de publication à été ajouté sur Apilos"
+
+    def get_error_message(self):
+        return "Oups ! Seuls les instructeurs peuvent effectuer cette action."

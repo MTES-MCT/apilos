@@ -689,7 +689,7 @@ class ConventionCancelUploadPublicationView(BaseConventionView):
                 request,
                 "conventions/post_action.html",
                 {
-                    "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                    "error_message": "Oups ! Seuls les instructeurs peuvent effectuer cette action.",
                     "convention": self.convention,
                 },
             )
@@ -723,7 +723,7 @@ class ConventionSendForPublicationView(BaseConventionView):
                 request,
                 "conventions/post_action.html",
                 {
-                    "error_message": "Ops ! Seuls les instructeurs peuvent effectuer cette action.",
+                    "error_message": "Oups ! Seuls les instructeurs peuvent effectuer cette action.",
                     "convention": self.convention,
                 },
             )
