@@ -739,7 +739,7 @@ class Logement(models.Model):
         ),
         "Loyer maximum en € par m² de surface utile": "loyer_par_metre_carre",
         "Coefficient propre au logement": "coeficient",
-        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": "loyer",
+        "Loyer maximum du logement en €\n(col 5 * col 6 * col 7)": "loyer",
     }
 
     foyer_residence_import_mapping = {

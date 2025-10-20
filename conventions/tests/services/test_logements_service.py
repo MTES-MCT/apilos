@@ -147,8 +147,9 @@ class ConventionLogementsServiceTests(TestCase):
         self.service.request.POST = {
             "lots-0-uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
-            "nb_logements": "3",
         }
+
+        self.service.request.POST["lots-0-nb_logements"] = "3"
         self.service.save()
         assert self.service.formset.optional_errors == [
             ValidationError(
@@ -161,8 +162,8 @@ class ConventionLogementsServiceTests(TestCase):
         self.service_avenant.request.POST = {
             "uuid": str(self.service_avenant.convention.lot.uuid),
             **logement_success_payload,
-            "nb_logements": "3",
         }
+        self.service_avenant.request.POST["lots-0-nb_logements"] = "3"
         self.service_avenant.save()
         assert self.service_avenant.formset.optional_errors == [
             ValidationError(
