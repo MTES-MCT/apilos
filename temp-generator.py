@@ -183,17 +183,40 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "bailleur": convention.programme.bailleur,
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
-        "lot": convention.lot,
-        "lots": list(convention.lots.all()),
+        "financements": {
+            lot.financement: {
+                "lot": lot,
+                "logements": lot.logements_import_ordered,
+                "logements_sans_loyer": lot.logements_sans_loyer_import_ordered,
+                "logements_corrigee": lot.logements_corrigee_import_ordered,
+                "logements_corrigee_sans_loyer": lot.logements_corrigee_sans_loyer_import_ordered,
+                "locaux_collectifs": lot.locaux_collectifs.all(),
+                "stationnements": lot.type_stationnements.all(),
+                "prets_cdc": lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
+                "autres_prets": lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+                "loyer_m2": _get_loyer_par_metre_carre(lot),
+                "liste_des_annexes": _compute_liste_des_annexes(
+                    lot.type_stationnements.all(), get_annexes(lot)
+                ),
+                "annexes": get_annexes(lot),
+                **compute_mixte(convention, lot),
+            }
+            for lot in convention.lots.all()
+        },
+        "logements_totale": logements_totale,
+        "nb_logements_par_type": nb_logements_par_type,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "lot_num": lot_num,
+        "lc_sh_totale": _compute_total_locaux_collectifs(convention),
         "nombre_annees_conventionnement": (
             convention.date_fin_conventionnement.year - datetime.date.today().year
             if convention.date_fin_conventionnement
             else "---"
         ),
+        "res_sh_totale": _compute_total_locaux_collectifs(convention)
+        + logements_totale["sh_totale"],
     }
     context.update(object_images)
     context.update(adresse)
@@ -464,13 +487,13 @@ def _save_convention_donnees_validees(
         "convention": model_to_dict(convention),
         "bailleur": model_to_dict(convention.programme.bailleur),
         "programme": model_to_dict(convention.programme),
+        "lots": _get_data_per_financement(convention, nb_logements_par_type),
         "administration": model_to_dict(convention.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
         "references_cadastrales": _list_to_dict(
             convention.programme.referencecadastrales.all()
         ),
         "lot_num": lot_num,
-        "lots": _get_data_per_financement(convention, nb_logements_par_type),
     }
     context_to_save.update(compute_mixte(convention))
     context_to_save.update(logements_totale)
