@@ -68,66 +68,33 @@ def get_convention_template_path(convention):
     )
 
 
-def _compute_total_logement(convention, sc_totale=True):
-    base_totals = {
+def _compute_total_logement(convention):
+    logements_totale = {
         "sh_totale": 0,
         "sa_totale": 0,
         "sar_totale": 0,
         "su_totale": 0,
+        "sc_totale": 0,
         "loyer_total": 0,
     }
-    if sc_totale:
-        base_totals["sc_totale"] = 0
-
-    logements_data = {
-        lot.financement: {
-            "logements_totale": base_totals.copy(),
-            "nb_logements_par_type": {},
-        }
-        for lot in convention.lots.all()
-    }
-
-    for lot in convention.lots.all():
-        for logement in lot.logements.order_by("typologie").all():
-            logements_data[lot.financement]["logements_totale"]["sh_totale"] += (
-                logement.surface_habitable or 0
-            )
-            logements_data[lot.financement]["logements_totale"]["sa_totale"] += (
-                logement.surface_annexes or 0
-            )
-            logements_data[lot.financement]["logements_totale"]["sar_totale"] += (
-                logement.surface_annexes_retenue or 0
-            )
-            logements_data[lot.financement]["logements_totale"]["su_totale"] += (
-                logement.surface_utile or 0
-            )
-
-            if sc_totale:
-                logements_data[lot.financement]["logements_totale"]["sc_totale"] += (
-                    logement.surface_corrigee or 0
-                )
-
-            logements_data[lot.financement]["logements_totale"]["loyer_total"] += (
-                logement.loyer or 0
-            )
-            if (
-                logement.get_typologie_display()
-                not in logements_data[lot.financement]["nb_logements_par_type"]
-            ):
-                logements_data[lot.financement]["nb_logements_par_type"][
-                    logement.get_typologie_display()
-                ] = 0
-            logements_data[lot.financement]["nb_logements_par_type"][
-                logement.get_typologie_display()
-            ] += 1
-
-    return logements_data
+    nb_logements_par_type = {}
+    for logement in convention.lot.logements.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable or 0
+        logements_totale["sa_totale"] += logement.surface_annexes or 0
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
+        logements_totale["su_totale"] += logement.surface_utile or 0
+        logements_totale["sc_totale"] += logement.surface_corrigee or 0
+        logements_totale["loyer_total"] += logement.loyer or 0
+        if logement.get_typologie_display() not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
+    return (logements_totale, nb_logements_par_type)
 
 
-def _compute_total_locaux_collectifs(lot):
+def _compute_total_locaux_collectifs(convention):
     return sum(
         locaux_collectif.surface_habitable * locaux_collectif.nombre
-        for locaux_collectif in lot.locaux_collectifs.all()
+        for locaux_collectif in convention.lot.locaux_collectifs.all()
     )
 
 
@@ -152,13 +119,11 @@ def get_or_generate_convention_doc(
 
 
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
-
-    def get_annexes(lot):
-        return (
-            Annexe.objects.prefetch_related("logement")
-            .filter(logement__lot_id=lot.id)
-            .all()
-        )
+    annexes = (
+        Annexe.objects.prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id)
+        .all()
+    )
 
     # It is an avenant
     avenant_data = {}
@@ -187,14 +152,33 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "lots": list(convention.lots.all()),
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
+        "logements": convention.lot.logements_import_ordered,
+        "logements_sans_loyer": convention.lot.logements_sans_loyer_import_ordered,
+        "logements_corrigee": convention.lot.logements_corrigee_import_ordered,
+        "logements_corrigee_sans_loyer": convention.lot.logements_corrigee_sans_loyer_import_ordered,
+        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
+        "annexes": annexes,
+        "stationnements": convention.lot.type_stationnements.all(),
+        "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
+        "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrales.all(),
+        "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+        "liste_des_annexes": _compute_liste_des_annexes(
+            convention.lot.type_stationnements.all(), annexes
+        ),
+        "lc_sh_totale": _compute_total_locaux_collectifs(convention),
         "nombre_annees_conventionnement": (
             convention.date_fin_conventionnement.year - datetime.date.today().year
             if convention.date_fin_conventionnement
             else "---"
         ),
+        "res_sh_totale": _compute_total_locaux_collectifs(convention)
+        + logements_totale["sh_totale"],
     }
+    context.update(compute_mixte(convention))
+    context.update(logements_totale)
     context.update(object_images)
     context.update(adresse)
     # Dans le cas d'un avenant, c'est toujours le bailleur de la précédente convention
@@ -424,35 +408,6 @@ def _get_jinja_env():
     return jinja_env
 
 
-def _get_data_per_financement(convention, nb_logements_par_type):
-    tmp_data = {}
-
-    for financement in nb_logements_par_type:
-        lot = convention.lots.get(financement=financement)
-        annexes = (
-            Annexe.objects.prefetch_related("logement")
-            .filter(logement__lot_id=lot.id)
-            .all()
-        )
-        tmp_data[financement] = {
-            "lot": model_to_dict(lot),
-            "logements": _list_to_dict(lot.logements.all()),
-            "stationnements": _list_to_dict(lot.type_stationnements.all()),
-            "prets_cdc": _list_to_dict(lot.prets.filter(preteur__in=["CDCF", "CDCL"])),
-            "autres_prets": _list_to_dict(
-                lot.prets.exclude(preteur__in=["CDCF", "CDCL"])
-            ),
-            "nb_logements_par_type": nb_logements_par_type[financement],
-            "annexes": _list_to_dict(annexes),
-            "liste_des_annexes": _compute_liste_des_annexes(
-                lot.type_stationnements.all(), annexes
-            ),
-            "loyer_m2": _get_loyer_par_metre_carre(lot),
-        }
-
-    return tmp_data
-
-
 def _save_convention_donnees_validees(
     convention,
     logement_edds,
@@ -460,17 +415,37 @@ def _save_convention_donnees_validees(
     lot_num,
     logements_totale,
 ):
+    annexes = (
+        Annexe.objects.prefetch_related("logement")
+        .filter(logement__lot_id=convention.lot.id)
+        .all()
+    )
+
     context_to_save = {
         "convention": model_to_dict(convention),
         "bailleur": model_to_dict(convention.programme.bailleur),
         "programme": model_to_dict(convention.programme),
+        "lot": model_to_dict(convention.lot),
         "administration": model_to_dict(convention.programme.administration),
         "logement_edds": _list_to_dict(logement_edds),
+        "logements": _list_to_dict(convention.lot.logements.all()),
+        "annexes": _list_to_dict(annexes),
+        "stationnements": _list_to_dict(convention.lot.type_stationnements.all()),
+        "prets_cdc": _list_to_dict(
+            convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"])
+        ),
+        "autres_prets": _list_to_dict(
+            convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"])
+        ),
         "references_cadastrales": _list_to_dict(
             convention.programme.referencecadastrales.all()
         ),
+        "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
-        "lots": _get_data_per_financement(convention, nb_logements_par_type),
+        "loyer_m2": _get_loyer_par_metre_carre(convention),
+        "liste_des_annexes": _compute_liste_des_annexes(
+            convention.lot.type_stationnements.all(), annexes
+        ),
     }
     context_to_save.update(compute_mixte(convention))
     context_to_save.update(logements_totale)
@@ -487,10 +462,8 @@ def _save_convention_donnees_validees(
         convention.programme.reference_cadastrale_files()
     )
     object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
-    object_files["edd_volumetrique_files"] = (
-        convention.lots.first().edd_volumetrique_files()
-    )
-    object_files["edd_classique_files"] = convention.lots.first().edd_classique_files()
+    object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
+    object_files["edd_classique_files"] = convention.lot.edd_classique_files()
     convention.donnees_validees = json.dumps(
         {**context_to_save, **object_files}, default=str
     )
@@ -562,7 +535,13 @@ def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
 def _to_fr_float(value, d=2):
     if value is None:
         return ""
-    return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
+    try:
+        # Try to convert to float if it's not already a number
+        float_value = float(value)
+        return format(float_value, f",.{d}f").replace(",", " ").replace(".", ",")
+    except (ValueError, TypeError):
+        # Handle cases where value cannot be converted to float
+        return ""
 
 
 def pluralize(value):
@@ -665,12 +644,12 @@ def _get_object_images(doc, convention):
     object_images["effet_relatif_images"] = effet_relatif_images
     local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lots.first().edd_volumetrique_files()
+        doc, convention.uuid, convention.lot.edd_volumetrique_files()
     )
     object_images["edd_volumetrique_images"] = edd_volumetrique_images
     local_pathes += tmp_local_path
     edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lots.first().edd_classique_files()
+        doc, convention.uuid, convention.lot.edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
     local_pathes += tmp_local_path
@@ -683,10 +662,10 @@ def _get_object_images(doc, convention):
     return object_images, local_pathes
 
 
-def _get_loyer_par_metre_carre(lot):
-    logement = lot.logements.first()
+def _get_loyer_par_metre_carre(convention):
+    logement = convention.lot.logements.first()
     if logement:
-        return lot.logements.first().loyer_par_metre_carre
+        return convention.lot.logements.first().loyer_par_metre_carre
     return 0
 
 
@@ -716,7 +695,7 @@ def _compute_liste_des_annexes(typestationnements, annexes):
     return ", ".join(annexes_list)
 
 
-def compute_mixte(convention, lot):
+def compute_mixte(convention):
     mixite = {
         "mixPLUSsup10_30pc": 0,
         "mixPLUSinf10_30pc": 0,
@@ -724,7 +703,7 @@ def compute_mixte(convention, lot):
         "mixPLUS_30pc": 0,
         "mixPLUS_10pc": 0,
     }
-    nb_logements = lot.nb_logements or 0
+    nb_logements = convention.lot.nb_logements or 0
     if convention.mixity_option():
         # cf. convention : 30 % au moins des logements
         if nb_logements < 10:
@@ -755,10 +734,7 @@ def _prepare_logement_edds(convention):
         if financement != logement_edd.financement:
             financement = logement_edd.financement
             count = count + 1
-            if logement_edd.financement in [
-                lot.financement
-                for lot in convention.lots.select_related("financement").all()
-            ]:
+            if convention.lot.financement == logement_edd.financement:
                 lot_num = count
         logement_edd.lot_num = count
     return logement_edds, lot_num
@@ -801,22 +777,28 @@ def _get_foyer_attributions(convention: Convention) -> str:
     )
 
 
-def _get_fiche_caf_lots_data(convention):
-    fiche_caf_lots_data = {}
-    for lot in convention.lots.all():
-        fiche_caf_lots_data[lot.financement] = {
-            "lot": lot,
-            "logements": lot.logements.order_by("import_order"),
-        }
-
-    return fiche_caf_lots_data
-
-
 def fiche_caf_doc(convention):
     filepath = f"{settings.BASE_DIR}/documents/FicheCAF-template.docx"
 
     doc = DocxTemplate(filepath)
-    logements_data = _compute_total_logement(convention, sc_totale=False)
+
+    logements_totale = {
+        "sh_totale": 0,
+        "sa_totale": 0,
+        "sar_totale": 0,
+        "su_totale": 0,
+        "loyer_total": 0,
+    }
+    nb_logements_par_type = {}
+    for logement in convention.lot.logements.order_by("typologie").all():
+        logements_totale["sh_totale"] += logement.surface_habitable or 0
+        logements_totale["sa_totale"] += logement.surface_annexes or 0
+        logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
+        logements_totale["su_totale"] += logement.surface_utile or 0
+        logements_totale["loyer_total"] += logement.loyer or 0
+        if logement.get_typologie_display() not in nb_logements_par_type:
+            nb_logements_par_type[logement.get_typologie_display()] = 0
+        nb_logements_par_type[logement.get_typologie_display()] += 1
 
     lot_num = _prepare_logement_edds(convention)
     # tester si le logement existe avant de commencer
@@ -828,15 +810,17 @@ def fiche_caf_doc(convention):
         "convention": convention,
         "bailleur": convention.programme.bailleur,
         "programme": convention.programme,
-        "lots": _get_fiche_caf_lots_data(convention),
+        "lot": convention.lot,
         "administration": convention.programme.administration,
-        "logements_data": logements_data,
-        # TODO: use logements_data for access to nb_logements_par_type and logements_totale
+        "logements": convention.lot.logements.order_by("import_order"),
+        "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "residence_attributions": residence_attributions,
         "foyer_attributions": foyer_attributions,
     }
+    context.update(logements_totale)
+
     doc.render(context, _get_jinja_env())
     file_stream = io.BytesIO()
     doc.save(file_stream)
