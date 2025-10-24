@@ -149,7 +149,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
         "lot": convention.lot,
-        "lots": list(convention.lots.all()),
+        "lots": convention.lots.all(),
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
         "logements": convention.lot.logements_import_ordered,
@@ -644,12 +644,12 @@ def _get_object_images(doc, convention):
     object_images["effet_relatif_images"] = effet_relatif_images
     local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lot.edd_volumetrique_files()
+        doc, convention.uuid, convention.lots.first().edd_volumetrique_files()
     )
     object_images["edd_volumetrique_images"] = edd_volumetrique_images
     local_pathes += tmp_local_path
     edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lot.edd_classique_files()
+        doc, convention.uuid, convention.lots.first().edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
     local_pathes += tmp_local_path
