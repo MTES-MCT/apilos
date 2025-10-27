@@ -492,19 +492,19 @@ class ConventionLogementsService(ConventionService):
                     self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_lgts_option(self, form_item):
-        for lot in self.convention.lots.all():
-            lot.lgts_mixite_sociale_negocies = (
-                form_item.cleaned_data["lgts_mixite_sociale_negocies"] or 0
-            )
-            lot.loyer_derogatoire = form_item.cleaned_data["loyer_derogatoire"]
-            lot.nb_logements = form_item.cleaned_data["nb_logements"]
-            lot.surface_locaux_collectifs_residentiels = (
-                form_item.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
-            )
-            lot.loyer_associations_foncieres = form_item.cleaned_data[
-                "loyer_associations_foncieres"
-            ]
-            lot.save()
+        lot = self.convention.lots.get(uuid=form_item.cleaned_data["uuid"])
+        lot.lgts_mixite_sociale_negocies = (
+            form_item.cleaned_data["lgts_mixite_sociale_negocies"] or 0
+        )
+        lot.loyer_derogatoire = form_item.cleaned_data["loyer_derogatoire"]
+        lot.nb_logements = form_item.cleaned_data["nb_logements"]
+        lot.surface_locaux_collectifs_residentiels = (
+            form_item.cleaned_data["surface_locaux_collectifs_residentiels"] or 0
+        )
+        lot.loyer_associations_foncieres = form_item.cleaned_data[
+            "loyer_associations_foncieres"
+        ]
+        lot.save()
 
     def _save_logements_sans_loyer(self, form_item):
         lgt_uuids1 = list(

@@ -852,6 +852,7 @@ class LogementSansLoyer(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
+        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
@@ -875,6 +876,7 @@ class LogementCorrigee(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
+        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface corrigée": "surface_corrigee",
         "Loyer maximum en € par m² de surface corrigée": "loyer_par_metre_carre",
@@ -899,6 +901,7 @@ class LogementCorrigeeSansLoyer(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
+        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface corrigée": "surface_corrigee",
     }
@@ -1040,7 +1043,7 @@ class TypeStationnement(models.Model):
 
     import_mapping = {
         "Type de stationnement": "typologie",
-        "Financement": "lot.financement ",
+        "Financement": "financement",
         "Nombre de stationnements": "nb_stationnements",
         "Loyer maximum en €": "loyer",
     }
