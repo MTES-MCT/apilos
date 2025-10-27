@@ -24,6 +24,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: left;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 .apilos--container_ellipsis {
   position: relative;
@@ -963,17 +965,21 @@ table .apilos-badge {
   text-decoration: line-through;
 }
 .apilos-sticky {
-  position: -webkit-sticky; /* Safari */
+  position: -webkit-sticky;
   position: sticky;
   z-index: 100;
   background-color: var(--background-default-grey);
   top: 0;
 }
+
 .apilos-sticky-2 {
-  top: 141px;
+  /* Calculate top position based on the first sticky element's height */
+  top: calc(var(--header-height, 208px));
 }
+
 .fr-container-fluid:has(.apilos-notice--warning) .apilos-sticky-2 {
-  top: 213px;
+  /* Add 5px to whatever the header height is */
+  top: calc(var(--header-height, 208px) + 5px);
 }
 .recapitulatif .recapitulatif-link {
   display: none;
@@ -1293,4 +1299,47 @@ a.fr-toggle-wrapper input[type="checkbox"] {
 
 .combobox-no-results:hover {
   background-color: transparent;
+}
+
+.header-with-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.header-with-action__title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.convention_title {
+  white-space: normal !important;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
+.header-with-action__action {
+  margin-left: auto;
+}
+
+
+.info-row-with-action {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-row-with-action__link {
+  margin-left: auto;
+}
+
+.apilos-text-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }

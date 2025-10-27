@@ -7,6 +7,7 @@
     <script src="{% static "turbo/turbo.es2017-umd.js" %}" nonce="{{ request.csp_nonce }}"></script>
     <script type="text/javascript" src="{% static "js/type1and2.js" %}" nonce="{{ request.csp_nonce }}"></script>
     <script nonce="{{ request.csp_nonce }}">Turbo.session.drive = false</script>
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
 {% endblock javascript_extras %}
 
 {% block content %}

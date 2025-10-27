@@ -6,6 +6,7 @@
 
 {% block javascript_extras %}
     {% include "conventions/common/dropzone_js.html" %}
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
 {% endblock javascript_extras %}
 
 {% block css_extras %}
