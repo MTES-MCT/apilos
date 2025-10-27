@@ -608,19 +608,28 @@ class TestConventionUploadPublicationService:
         service = recapitulatif.ConventionUploadPublicationService(
             convention=convention, request=request
         )
+        request.user = User.objects.create(username="testuser")
+        with patch.object(User, "is_instructeur", return_value=True):
+            result = service.save()
+            assert result["success"] == utils.ReturnStatus.SUCCESS
+            assert convention.reference_spf == "REF-54321"
+            assert convention.date_publication_spf == date(2025, 7, 25)
+            assert len(result) == 4
+            assert "success" in result
+            assert "convention" in result
+            assert "form" in result
+            assert "publication_info_form" in result
 
-        result = service.save()
-        assert convention.reference_spf == "REF-54321"
-        assert convention.date_publication_spf == date(2025, 7, 25)
-        assert len(result) == 4
-        assert "success" in result
-        assert "convention" in result
-        assert "form" in result
-        assert "publication_info_form" in result
+            assert result["convention"] == convention
+            assert isinstance(result["form"], ConventionInfoPublicationForm)
+            assert result["success"] == ReturnStatus.SUCCESS
 
-        assert result["convention"] == convention
-        assert isinstance(result["form"], ConventionInfoPublicationForm)
-        assert result["success"] == ReturnStatus.SUCCESS
+        with patch.object(User, "is_instructeur", return_value=False):
+            service = recapitulatif.ConventionUploadPublicationService(
+                convention=convention, request=request
+            )
+            result = service.save()
+            assert result["success"] == utils.ReturnStatus.ERROR
 
     def test_get_success_message(self):
         convention = ConventionFactory()
@@ -629,11 +638,25 @@ class TestConventionUploadPublicationService:
             "/",
             data={"reference_spf": "REF-54321", "date_publication_spf": "25/07/2025"},
         )
-        service = recapitulatif.ConventionUploadPublicationService(
-            convention=convention, request=request
-        )
+        request.user = User.objects.create(username="testuser")
 
-        service.save()
-        message = service.get_success_message()
+        with patch.object(User, "is_instructeur", return_value=True):
+            service = recapitulatif.ConventionUploadPublicationService(
+                convention=convention, request=request
+            )
 
-        assert message == "le document de publication à été ajouté sur Apilos"
+            service.save()
+            message = service.get_success_message()
+
+            assert message == "le document de publication à été ajouté sur Apilos"
+
+        with patch.object(User, "is_instructeur", return_value=False):
+            service = recapitulatif.ConventionUploadPublicationService(
+                convention=convention, request=request
+            )
+            result = service.save()
+            assert result["success"] == utils.ReturnStatus.ERROR
+            assert (
+                result["error_message"]
+                == "Oups ! Seuls les instructeurs peuvent effectuer cette action."
+            )

@@ -1,6 +1,6 @@
 {% load custom_filters display_filters %}
 
-{% if convention|display_redirect_convention_en_publication and not request|is_readonly %}
+{% if convention|display_redirect_convention_en_publication and request|is_instructeur and not request|is_readonly %}
     <div class="fr-col-12">
         <div class="block--row-strech">
             <div class="block--row-strech-1 fr-mr-6w">
