@@ -20,7 +20,9 @@
             <div class="fr-container fr-mt-5w">
                 {% if convention.statut == CONVENTION_STATUT.SIGNEE %}
                     <div class="fr-px-2w">
-                        {{ convention|display_kind|capfirst }} n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</span>
+                        <p class="fr-m-0">
+                            {{ convention|display_kind|capfirst }} n°<strong>{{ convention.numero|default_if_none:'-' }}</strong> signé{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</span>
+                        </p>
                     </div>
                 {% endif %}
                 {% csrf_token %}
@@ -159,7 +161,7 @@
                     <turbo-frame id="convention_actions" data-turbo="true">
                         {% include "conventions/actions/submit_convention.html" %}
                         {% include "conventions/actions/instructeur_notification.html" %}
-                        {% if not convention|display_is_validated %}
+                        {% if not convention|display_is_validated and not convention|display_reactive_convention %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
                                 {% include "conventions/actions/bailleur_notification.html" %}
                                 <span role="text" class="fr-sr-only" tabindex="0">ou</span>

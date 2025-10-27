@@ -56,16 +56,18 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-mb-0 fr-text--sm">
-                <em>Vous pouvez{% if form.bailleur.field.choices %} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
-                    <a
-                        href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        votre espace d'administration
-                    </a>
-                </em>
+            <div class="fr-col-12 fr-mb-0">
+                <p class="fr-text--sm fr-mb-0">
+                    <em>Vous pouvez{% if form.bailleur.field.choices %} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
+                        <a
+                            href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            votre espace d'administration
+                        </a>
+                    </em>
+                </p>
             </div>
         {% endwith %}
     {% endwith %}

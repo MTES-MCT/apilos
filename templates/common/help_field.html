@@ -1,5 +1,7 @@
 {% if form_input.help_text %}
-    <span class="fr-hint-text" {% if form_input.id_for_label %} id="{{ form_input.id_for_label }}_help" {% endif %}>
-        {{ form_input.help_text|safe|linebreaksbr }}
-    </span>
+    <p class="fr-mb-0">
+        <span class="fr-hint-text" {% if form_input.id_for_label %} id="{{ form_input.id_for_label }}_help" {% endif %}>
+            {{ form_input.help_text|safe|linebreaksbr }}
+        </span>
+    </p>
 {% endif %}
