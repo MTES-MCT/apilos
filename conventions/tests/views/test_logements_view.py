@@ -39,6 +39,7 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
             "uuid": str(self.convention_75.lot.uuid),
             **logement_success_payload,
         }
+        self.success_payload["lots-0-uuid"] = str(self.convention_75.lot.uuid)
         self.msg_prefix = "[ConventionLogementsViewTests] "
 
     def _test_data_integrity(self):
