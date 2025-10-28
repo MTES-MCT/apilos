@@ -119,7 +119,7 @@ class ConventionManager(models.Manager):
             uuid__in=list_of_uuids_conventions
         )
 
-        if not all([not conv.has_avenant for conv in related_conventions]):
+        if any(conv.has_avenant for conv in related_conventions):
             raise ConventionGroupingError("Conventions must not have any avenant")
 
         statut_list = {conv.statut for conv in related_conventions}
@@ -726,10 +726,8 @@ class Convention(models.Model):
         Should be editable when it is a PLUS convention
         """
         return all(
-            [
-                lot.financement in [Financement.PLUS, Financement.PLUS_CD]
-                for lot in self.lots.all()
-            ]
+            lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+            for lot in self.lots.all()
         )
 
     def display_not_validated_status(self):
