@@ -202,7 +202,7 @@
 <br>
 {{ formset_convention_mixte.management_form }}
 {% for form in formset_convention_mixte %}
-    <input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}" value="{{ form.uuid.value|default_if_none:'' }}">
+    <input type="hidden" id="{{ form.uuid.id_for_label }}_{{ forloop.counter }}" name="{{ form.uuid.html_name }}" value="{{ form.uuid.value|default_if_none:'' }}">
     <div style="display:none;">{{ form.financement }}</div>
     <!-- Accordion wrapper -->
     <section class="fr-accordion fr-bg-white fr-mb-2w" data-fr-js-accordion="true">
