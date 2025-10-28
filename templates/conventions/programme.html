@@ -27,6 +27,8 @@
                         <h4>Adresse(s) de l'opération</h4>
                         {% if not convention.is_avenant %}{% include "common/editable_fields_info.html" %}{% endif %}
 
+                        {% include "common/required_fields_info.html" %}
+
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
 
                         {% if not convention.is_avenant %}
@@ -106,7 +108,6 @@
                         {% endif %}
                     </div>
                 </div>
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

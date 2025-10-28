@@ -17,6 +17,7 @@
                         </div>
                         <form class="fr-my-3w" method="get" action="{% url 'conventions:search_for_avenant' %}" id="search_for_avenant">
                             <div class="fr-mb-5w">
+                                {% include "common/required_fields_info.html" %}
                                 <div class="fr-col-9 fr-mb-3w">
                                     {% include "common/form/input_select.html" with form_input=search_form.departement editable=True without_empty_option=True with_empty_option=False %}
                                 </div>
@@ -27,7 +28,6 @@
                                     {% include "common/form/input_text.html" with form_input=search_form.numero editable=True placeholder="Ex: 1234" %}
                                 </div>
                             </div>
-                            {% include "common/required_fields_info.html" %}
                             <div class="fr-grid-row">
                                 <button class="fr-btn" title="Rechercher" id="search_btn">Etape suivante
                                     <span class="fr-icon-arrow-right-s-line fr-ml-1w" aria-hidden="true"></span>

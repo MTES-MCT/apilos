@@ -2,6 +2,7 @@
 
 <div class="fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+        {% include "common/required_fields_info.html" %}
         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
     </div>
     <div class="fr-col-12">
@@ -32,7 +33,7 @@
         {% endif %}
         <div class="table-utile">
             <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" %}
+                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" hidden_what='Surface utile avec loyers' %}
                 <hr class="fr-col-12 fr-my-3w">
             </div>
 
@@ -220,7 +221,6 @@
     </div>
 {% endif %}
 
-{% include "common/required_fields_info.html" %}
 {% if convention.is_avenant %}
     <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         function toggleTable(name) {

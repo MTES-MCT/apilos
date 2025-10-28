@@ -323,7 +323,7 @@ class BasePretFormSet(BaseFormSet):
                 if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
                     return
             error = ValidationError(
-                "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
+                "Au moins un prêt à la Caisse des dépôts et consignations doit-être déclaré "
                 + "(CDC foncière, CDC locative)"
             )
             self._non_form_errors.append(error)

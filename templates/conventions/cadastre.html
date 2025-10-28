@@ -23,6 +23,7 @@
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         {% include "conventions/common/form_header.html" %}
         {% include "common/step_progressbar.html" %}
+
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -33,7 +34,10 @@
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
+
                         <h4>Permis et dates</h4>
+
+                        {% include "common/required_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.permis_construire object_field="programme__permis_construire__"|add:form.uuid.value %}
 
@@ -246,7 +250,6 @@
                     </div>
                 </div>
 
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>
