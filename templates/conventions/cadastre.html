@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Etape 3 - Cadastre - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Cadastre - APiLos
+    {% else %}
+        Etape 3 - Cadastre - APiLos
+    {% endif %}
+{% endblock %}
 
 {% load custom_filters static %}
 

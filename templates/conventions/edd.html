@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Etape 4 - EDD - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - EDD - APiLos
+    {% else %}
+        Etape 4 - EDD - APiLos
+    {% endif %}
+{% endblock %}
 
 {% load custom_filters static %}
 

@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Etape 9 - Commentaires - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Commentaires - APiLos
+    {% else %}
+        Etape 9 - Commentaires - APiLos
+    {% endif %}
+{% endblock %}
 
 {% load static %}
 

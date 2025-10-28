@@ -1,6 +1,13 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Recapitulatif - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Convention - Avenant - APiLos
+    {% else %}
+        Convention - Récapitulatif - APiLos
+    {% endif %}
+{% endblock %}
+
 {% load custom_filters display_filters static %}
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

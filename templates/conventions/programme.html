@@ -2,7 +2,13 @@
 
 {% load static %}
 
-{% block page_title %}Etape 2 - Opération - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Opération - APiLos
+    {% else %}
+        Etape 2 - Opération - APiLos
+    {% endif %}
+{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
