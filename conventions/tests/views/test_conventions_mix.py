@@ -4,6 +4,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
+from conventions.models.convention import Convention
 from conventions.views.conventions_mix import ConventionMix
 from core.tests.factories import (
     AnnexeFactory,
@@ -34,7 +35,9 @@ class ConventionMixViewTests(TestCase):
         "users_for_tests.json",
     ]
 
-    def setUp(self):
+    @mock.patch("conventions.models.convention.switch_is_active")
+    def setUp(self, mock_switch_model):
+        mock_switch_model.return_value = True
 
         get_response = mock.MagicMock()
         self.request = RequestFactory().get("/")
@@ -99,6 +102,67 @@ class ConventionMixViewTests(TestCase):
             lot=lot_plus, designation="PLUS 1", typologie=TypologieLogement.T1
         )
 
+        self.convention_pls_programme_2 = ConventionFactory(
+            programme=self.programme_2, numero="0003"
+        )
+        self.convention_plai_programme_2 = ConventionFactory(
+            programme=self.programme_2, numero="0004"
+        )
+
+        lot_plai = LotFactory(
+            convention=self.convention_pls_programme_2,
+            financement=Financement.PLS,
+            type_habitat=TypeHabitat.MIXTE,
+            nb_logements=None,
+            make_upload_on_fields=["edd_volumetrique", "edd_classique"],
+        )
+        lot_plus = LotFactory(
+            convention=self.convention_plai_programme_2,
+            financement=Financement.PLAI,
+            type_habitat=TypeHabitat.MIXTE,
+            nb_logements=None,
+            make_upload_on_fields=["edd_volumetrique", "edd_classique"],
+        )
+        logement = LogementFactory(
+            lot=lot_plai, designation="PLAI-PROG-2-1", typologie=TypologieLogement.T1
+        )
+
+        AnnexeFactory(
+            logement=logement,
+            typologie=TypologieAnnexe.TERRASSE,
+            surface_hors_surface_retenue=5,
+            loyer_par_metre_carre=12,
+        )
+
+        AnnexeFactory(
+            logement=logement,
+            typologie=TypologieAnnexe.COUR,
+            surface_hors_surface_retenue=7,
+            loyer_par_metre_carre=10,
+        )
+
+        LogementFactory(
+            lot=lot_plai, designation="PLAI-PROG-2-2", typologie=TypologieLogement.T2
+        )
+
+        LogementFactory(
+            lot=lot_plai, designation="PLAI-PROG-2-3", typologie=TypologieLogement.T3
+        )
+
+        LogementFactory(
+            lot=lot_plus, designation="PLS-PROG-2-1", typologie=TypologieLogement.T1
+        )
+
+        self.mixed_convention_Programmp, _, self.mixed_convention = (
+            Convention.objects.group_conventions(
+                [
+                    str(self.convention_pls_programme_2.uuid),
+                    str(self.convention_plai_programme_2.uuid),
+                ]
+            )
+        )
+        self.mixed_convention.refresh_from_db()
+
     @mock.patch("conventions.views.conventions_mix.switch_is_active")
     def test_redirects_to_search_when_switch_off(self, mock_switch):
         mock_switch.return_value = False
@@ -109,10 +173,9 @@ class ConventionMixViewTests(TestCase):
         self.assertIn(reverse("conventions:search"), response["Location"])
 
     @mock.patch("conventions.views.conventions_mix.switch_is_active")
-    @mock.patch("conventions.models.convention.switch_is_active")  # ADD THIS LINE
-    @mock.patch("conventions.views.conventions_mix.UUIDListForm")
+    @mock.patch("conventions.models.convention.switch_is_active")
     def test_create_action_groups_and_redirects(
-        self, mock_form, mock_switch_model, mock_switch_view
+        self, mock_switch_model, mock_switch_view
     ):
         mock_switch_view.return_value = True
         mock_switch_model.return_value = True
@@ -123,10 +186,6 @@ class ConventionMixViewTests(TestCase):
             "uuids": [str(self.convention_plai.uuid), str(self.convention_plus.uuid)],
             "action": "create",
         }
-
-        mock_form_instance = mock_form.return_value
-        mock_form_instance.is_valid.return_value = True
-        mock_form_instance.cleaned_data = data
 
         self.request = RequestFactory().post(
             reverse("conventions:convention_mix_init"), data=data
@@ -150,4 +209,48 @@ class ConventionMixViewTests(TestCase):
 
         self.assertEqual(self.convention_plai.lots.count(), 2)
 
-        self.assertIsNotNone(self.programme_2)
+    @mock.patch("conventions.views.conventions_mix.switch_is_active")
+    @mock.patch("conventions.models.convention.switch_is_active")
+    def test_degroup_action_degroups_and_redirects(
+        self, mock_switch_view, mock_switch_model
+    ):
+        mock_switch_view.return_value = True
+        mock_switch_model.return_value = True
+        self.assertEqual(self.mixed_convention.lots.count(), 2)
+
+        data = {
+            "uuids": [str(self.mixed_convention.uuid)],
+            "action": "dispatch",
+        }
+
+        self.request = RequestFactory().post(
+            reverse("conventions:convention_mix_init"), data=data
+        )
+        self.request.user = User.objects.get(username="raph")
+        get_response = mock.MagicMock()
+        middleware = SessionMiddleware(get_response)
+        middleware.process_request(self.request)
+        self.request.session.save()
+        self.request.session["currently"] = GroupProfile.BAILLEUR
+        response = ConventionMix.as_view()(self.request)
+
+        self.assertEqual(response.status_code, 302)
+        expected_url = reverse(
+            "programmes:operation_conventions",
+            args=[self.convention_pls_programme_2.programme.numero_operation],
+        )
+        self.assertEqual(response.url, expected_url)
+        self.assertEqual(self.mixed_convention.lots.count(), 0)
+
+        degrouped_conventions = Convention.objects.filter(
+            programme=self.programme_2,
+        )
+        self.assertEqual(degrouped_conventions.count(), 2)
+
+        for convention in degrouped_conventions:
+            self.assertEqual(convention.lots.all().count(), 1)
+
+        self.assertEqual(
+            [convention.lot.financement for convention in degrouped_conventions],
+            [Financement.PLS.label, Financement.PLAI.label],
+        )
