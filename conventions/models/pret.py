@@ -33,8 +33,8 @@ class Pret(models.Model):
         "Date d'octroi\n(format dd/mm/yyyy)": "date_octroi",
         "Durée\n(en années)": "duree",
         "Montant\n(en €)": "montant",
-        "Prêteur\n(choisir dans la liste déroulante)": "preteur",
-        "Préciser l'identité du préteur si vous avez sélectionné 'Autre'": "autre",
+        "Organisme financeur\n(choisir dans la liste déroulante)": "preteur",
+        "Préciser l'identité de l'organisme financeur si vous avez sélectionné 'Autre'": "autre",
     }
     sheet_name = "Financements"
 
