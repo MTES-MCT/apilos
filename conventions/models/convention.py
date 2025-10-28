@@ -60,7 +60,7 @@ class ConventionManager(models.Manager):
             return
 
         if not uuids_conventions:
-            raise Exception(
+            raise ConventionGroupingError(
                 "We can't create a mixte convention, a list of uuids conventions must be provided"
             )
 
@@ -113,7 +113,9 @@ class ConventionManager(models.Manager):
             return
 
         if not list_of_uuids_conventions:
-            raise Exception("We can't degroup convention, UUIDs list is required")
+            raise ConventionGroupingError(
+                "We can't degroup convention, UUIDs list is required"
+            )
 
         related_conventions = self.model.objects.filter(
             uuid__in=list_of_uuids_conventions
