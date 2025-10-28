@@ -959,6 +959,7 @@ class Convention(models.Model):
                     if lot is not None:
                         lot.convention = self
                         lot.save()
+                        lot.save(update_fields=["convention"])
                         reassigned_lots.append(lot)
 
                 if with_remove_joined_convention:
