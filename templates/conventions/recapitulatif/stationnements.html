@@ -39,7 +39,7 @@
                                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
                                                                     </td>
                                                                 {% endif %}
-                                                                <td>
+                                                                <td scope="row">
                                                                     {{ stationnement.get_typologie_display }}
                                                                 </td>
                                                                 <td>

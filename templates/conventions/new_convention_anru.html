@@ -21,6 +21,7 @@
                     <form method="post" action="">
                         {% csrf_token %}
                         <div class="fr-col-12">
+                            {% include "common/required_fields_info.html" %}
                             <div class="fr-mb-3w">
                                 {% url 'users:search_bailleur' as search_bailleur_url %}
                                 {% include "common/form/input_search_select_form.html" with form_input=form.bailleur url=search_bailleur_url %}

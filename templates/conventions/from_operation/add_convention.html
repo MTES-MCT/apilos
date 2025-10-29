@@ -141,6 +141,8 @@
                 <form method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
 
+                    {% include "common/required_fields_info.html" %}
+
                     <div class="fr-grid-row fr-grid-row--gutters">
 
                         {% for error in form.non_field_errors %}
