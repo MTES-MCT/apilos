@@ -1,6 +1,6 @@
 {% load custom_filters %}
 {% for convention in conventions %}
-    <div class="fr-grid-row">
+    <li class="fr-grid-row">
         <div class="apilos-step-post-action fr-mr-2w">
             <div class="apilos-step-post-action--bubble apilos-step-post-action--bubble--red fr-mr-2w"></div>
         </div>
@@ -13,7 +13,7 @@
                 </div>
 
                 <div class="fr-mb-3w">
-                    <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"> Voir la dénonciation finalisée<embed src="" type=""></a>
+                    <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"> Voir la dénonciation finalisée</a>
                 </div>
 
             </div>
@@ -31,5 +31,5 @@
                 <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html" %}</strong></div>
             </div>
         {% endif %}
-    </div>
+    </li>
 {% endfor %}
