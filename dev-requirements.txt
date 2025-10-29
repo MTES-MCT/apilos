@@ -198,9 +198,9 @@ django-stubs-ext==5.2.7 \
     --hash=sha256:0466a7132587d49c5bbe12082ac9824d117a0dedcad5d0ada75a6e0d3aca6f60 \
     --hash=sha256:b690655bd4cb8a44ae57abb314e0995dc90414280db8f26fff0cb9fb367d1cac
     # via django-stubs
-djhtml==3.0.9 \
-    --hash=sha256:1bcde56d0d469546f391a269d84c71df4054c7df73ad5c51572b38a611156dc4 \
-    --hash=sha256:b21d7e6836b5aa8fb415233eb853ad14fdc26694f19ed17158ba71c97fa23f39
+djhtml==3.0.10 \
+    --hash=sha256:d6efbe6001008d730ede5c21944a427a76c901c6cd168c138e494d2a1091e0b9 \
+    --hash=sha256:dd4ebf778d3b7da7a6e6970f7e66740f08ed7485485491b9a80527f526c838d9
     # via -r dev-requirements.in
 execnet==2.1.1 \
     --hash=sha256:26dee51f1b80cebd6d0ca8e74dd8745419761d3bef34163928cbebbdc4749fdc \
