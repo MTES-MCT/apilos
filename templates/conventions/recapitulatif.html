@@ -170,27 +170,23 @@
                         {% include "conventions/actions/instructeur_notification.html" %}
                         {% if not convention|display_is_validated and not convention|display_reactive_convention %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-mt-3w">
-                                {% include "conventions/actions/bailleur_notification.html" %}
-                                <span role="text" class="fr-sr-only" tabindex="0">ou</span>
-                                {% if not convention.is_resiliation %}
-                                    <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
-                                {% endif %}
-                                {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
-                                    <div class="fr-col-6 fr-py-5w fr-px-3w apilos-or-border">
-                                {% endif %}
+                                <div class="fr-col-12 fr-col-md-6">
+                                    {% include "conventions/actions/bailleur_notification.html" %}
+                                </div>
+
+                                <span role="text" class="fr-sr-only">ou</span>
+
                                 {% if convention.is_denonciation %}
-                                    {% include "conventions/actions/validate_denonciation.html" %}
-                                {% elif convention.is_resiliation %}
-                                    {% if request.user.is_instructeur_departemental %}
-                                        {% include "conventions/actions/validate_resiliation.html" %}
-                                    {% endif %}
-                                {% else %}
-                                    {% include "conventions/actions/instructeur_validation.html" %}
-                                {% endif %}
-                                {% if not convention.is_resiliation %}
+                                    <div class="fr-col-12 fr-col-md-6 fr-py-5w fr-px-3w apilos-or-border">
+                                        {% include "conventions/actions/validate_denonciation.html" %}
                                     </div>
-                                {% endif %}
-                                {% if convention.is_resiliation and request.user.is_instructeur_departemental %}
+                                {% elif convention.is_resiliation and request.user.is_instructeur_departemental %}
+                                    <div class="fr-col-12 fr-col-md-6 fr-py-5w fr-px-3w apilos-or-border">
+                                        {% include "conventions/actions/validate_resiliation.html" %}
+                                    </div>
+                                {% elif not convention.is_resiliation %}
+                                    <div class="fr-col-12 fr-col-md-6 fr-py-5w fr-px-3w apilos-or-border">
+                                        {% include "conventions/actions/instructeur_validation.html" %}
                                     </div>
                                 {% endif %}
                             </div>

@@ -61,11 +61,20 @@
 .apilos--p-relative {
   position: relative;
 }
-.apilos--right-top {
-  position: absolute;
-  top: 10px;
-  right: 0;
-  z-index: 1;
+
+.apilos--right-top-responsive {
+  position: static;
+  display: block;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 768px) {
+  .apilos--right-top-responsive {
+    position: absolute;
+    top: 10px;
+    right: 0;
+    z-index: 1;
+  }
 }
 .insert-info {
   margin-top: -20px;
@@ -964,6 +973,7 @@ table .apilos-badge {
 .apilos-form-label--strike {
   text-decoration: line-through;
 }
+
 .apilos-sticky {
   position: -webkit-sticky;
   position: sticky;
@@ -972,13 +982,17 @@ table .apilos-badge {
   top: 0;
 }
 
+@media (max-height: 500px), (max-width: 991px) {
+  .apilos-sticky {
+    position: static;
+  }
+}
+
 .apilos-sticky-2 {
-  /* Calculate top position based on the first sticky element's height */
   top: calc(var(--header-height, 208px));
 }
 
 .fr-container-fluid:has(.apilos-notice--warning) .apilos-sticky-2 {
-  /* Add 5px to whatever the header height is */
   top: calc(var(--header-height, 208px) + 5px);
 }
 .recapitulatif .recapitulatif-link {
