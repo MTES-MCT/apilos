@@ -555,8 +555,6 @@ a[href].apilos-block-faqlink:after {
   color: #161616;
 }
 
-
-/* Styles communs à toutes les icônes */
 .content__icons--opened,
 .content__icons--resolved,
 .content__icons--closed,
@@ -565,7 +563,6 @@ a[href].apilos-block-faqlink:after {
   cursor: pointer;
 }
 
-/* Survol : fond gris clair */
 .content__icons--opened:hover,
 .content__icons--resolved:hover,
 .content__icons--closed:hover,
@@ -573,7 +570,6 @@ a[href].apilos-block-faqlink:after {
   background-color: #f2f2f2;
 }
 
-/* Clic (état actif) : fond gris un peu plus foncé */
 .content__icons--opened:active,
 .content__icons--resolved:active,
 .content__icons--closed:active,
@@ -581,22 +577,18 @@ a[href].apilos-block-faqlink:after {
   background-color: #cecece;
 }
 
-/* Add and orange #FF6F4C */
 .content__icons--opened {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="m13.771 9.123-1.399-1.398-3.869 3.864v1.398h1.398zM14.098 6l1.398 1.398-1.067 1.067-1.398-1.398z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
-/* Opened and green #00a34d*/
 .content__icons--resolved {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="m17.207 8.207-1.414-1.414L11 11.586 8.707 9.293l-1.414 1.414L11 14.414z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
-/* Closed and grey #9C9C9C */
 .content__icons--closed {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgb(156,156,156)"><path d="m17.207 8.207-1.414-1.414L11 11.586 8.707 9.293l-1.414 1.414L11 14.414z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
-/* Add and blue #0762C8 */
 .content__icons--add {
   background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="M11 14h2v-3h3V9h-3V6h-2v3H8v2h3z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
