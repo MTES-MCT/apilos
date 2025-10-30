@@ -530,7 +530,7 @@ a[href].apilos-block-faqlink:after {
 .content__icons {
   width: 32px;
   height: 32px;
-  border-radius: 4px;
+  /* border-radius: 4px; */
   margin: 0rem 0.2rem;
 }
 
@@ -555,24 +555,50 @@ a[href].apilos-block-faqlink:after {
   color: #161616;
 }
 
+
+/* Styles communs à toutes les icônes */
+.content__icons--opened,
+.content__icons--resolved,
+.content__icons--closed,
+.content__icons--add {
+  border: 2px solid #000091; 
+  cursor: pointer;
+}
+
+/* Survol : fond gris clair */
+.content__icons--opened:hover,
+.content__icons--resolved:hover,
+.content__icons--closed:hover,
+.content__icons--add:hover {
+  background-color: #f2f2f2;
+}
+
+/* Clic (état actif) : fond gris un peu plus foncé */
+.content__icons--opened:active,
+.content__icons--resolved:active,
+.content__icons--closed:active,
+.content__icons--add:active {
+  background-color: #cecece;
+}
+
 /* Add and orange #FF6F4C */
 .content__icons--opened {
-  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(255,111,76)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><circle cx="12" cy="11" r="1"></circle><circle cx="7" cy="11" r="1"></circle><circle cx="17" cy="11" r="1"></circle></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="m13.771 9.123-1.399-1.398-3.869 3.864v1.398h1.398zM14.098 6l1.398 1.398-1.067 1.067-1.398-1.398z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
 /* Opened and green #00a34d*/
 .content__icons--resolved {
-  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(0,163,77)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M8 11L10.5 14L16 9"></path></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="m17.207 8.207-1.414-1.414L11 11.586 8.707 9.293l-1.414 1.414L11 14.414z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
 /* Closed and grey #9C9C9C */
 .content__icons--closed {
-  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(156,156,156)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M8 11L10.5 14L16 9"></path></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgb(156,156,156)"><path d="m17.207 8.207-1.414-1.414L11 11.586 8.707 9.293l-1.414 1.414L11 14.414z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
 /* Add and blue #0762C8 */
 .content__icons--add {
-  background-image: url('data:image/svg+xml;utf8,<svg role="img" xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 24 24" width="32" height="32" stroke="rgb(7,98,200)" stroke-width="1.5" stroke-linecap="square" stroke-linejoin="miter" fill="none" aria-labelledby="chatIconTitle"><path d="M8.82388455,18.5880577 L4,21 L4.65322944,16.4273939 C3.00629211,15.0013 2,13.0946628 2,11 C2,6.581722 6.4771525,3 12,3 C17.5228475,3 22,6.581722 22,11 C22,15.418278 17.5228475,19 12,19 C10.8897425,19 9.82174472,18.8552518 8.82388455,18.5880577 Z"></path><path d="M16 11L8 11M12 7L12 15"></path></svg>');
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23000091"><path d="M11 14h2v-3h3V9h-3V6h-2v3H8v2h3z"/><path d="M20 2H4c-1.103 0-2 .897-2 2v18l5.333-4H20c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm0 14H6.667L4 18V4h16v12z"/></svg>');
 }
 
 .fr-btn--green {
@@ -934,6 +960,10 @@ table .apilos-badge {
 .fr-btn:hover {
   color: white;
   text-decoration: none;
+}
+
+.fr-btn--tertiary-outline{
+  border: solid 1px #000091 !important;
 }
 
 .fr-btn--secondary:hover {
@@ -1330,6 +1360,24 @@ a.fr-toggle-wrapper input[type="checkbox"] {
   min-width: 0;
 }
 
+.info-row-with-action {
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between; /* C'est la clé ! */
+}
+
+.info-row-with-action > *:not(.info-row-with-action__link) {
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.info-row-with-action__link {
+  flex-shrink: 0;
+  margin-left: auto !important;
+}
+
 .convention_title {
   white-space: normal !important;
   word-wrap: break-word;
@@ -1356,4 +1404,10 @@ a.fr-toggle-wrapper input[type="checkbox"] {
   word-wrap: break-word;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+.user-banner {
+  background-color: #F5F5FE;
+  color:#000091;
+  border: solid 1px #000091;
 }
