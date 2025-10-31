@@ -461,7 +461,9 @@ def _save_convention_donnees_validees(
         convention.programme.reference_cadastrale_files()
     )
     object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
-    object_files["edd_volumetrique_files"] = convention.programme.edd_volumetrique_files()
+    object_files["edd_volumetrique_files"] = (
+        convention.programme.edd_volumetrique_files()
+    )
     object_files["edd_classique_files"] = convention.programme.edd_classique_files()
     convention.donnees_validees = json.dumps(
         {**context_to_save, **object_files}, default=str
