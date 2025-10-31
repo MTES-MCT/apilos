@@ -79,20 +79,20 @@
 {% endblock content %}
 
 <script>
-const details = document.getElementById('change-company');
-const summary = document.getElementById('change-company-summary');
+    const companyDetails = document.getElementById('change-company');
+    const companySummary = document.getElementById('change-company-summary');
 
-summary.setAttribute('aria-expanded', details.open);
+    companySummary.setAttribute('aria-expanded', details.open);
 
-summary.addEventListener('click', () => {
-  summary.setAttribute('aria-expanded', details.open);
-});
+    companySummary.addEventListener('click', () => {
+    companySummary.setAttribute('aria-expanded', details.open);
+    });
 
-summary.addEventListener('keydown', (event) => {
-  if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    details.open = !details.open;
-    summary.setAttribute('aria-expanded', details.open);
-  }
-});
+    companySummary.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        details.open = !details.open;
+        companySummary.setAttribute('aria-expanded', details.open);
+    }
+    });
 </script>

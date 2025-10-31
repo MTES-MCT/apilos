@@ -183,33 +183,11 @@
                                                         {% include "conventions/home/statut_tag.html" %}
                                                         <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                                             document.addEventListener('DOMContentLoaded', function () {
-                                                                document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                                    if (this.classList.contains("sent")) {
-                                                                        location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("signed")) {
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("project")) {
-                                                                        location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publication_en_cours")){
-                                                                        location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publie")){
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else {
-                                                                        location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                });
-                                                            });
-
-                                                            document.addEventListener('DOMContentLoaded', function () {
                                                                 const statusElement = document.getElementById('convention_redirect_{{ convention.uuid }}');
                                                                 const linkElement = document.getElementById('convention_link_{{ convention.uuid }}');
 
                                                                 if (statusElement && linkElement) {
+                                                                    // Déterminer l'URL cible basée sur les classes
                                                                     let targetUrl = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
 
                                                                     if (statusElement.classList.contains("sent")) {
@@ -228,7 +206,11 @@
                                                                         targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
                                                                     }
 
+                                                                    // Appliquer l'URL au lien et au clic sur le statut
                                                                     linkElement.href = targetUrl;
+                                                                    statusElement.addEventListener('click', function() {
+                                                                        location.href = targetUrl;
+                                                                    });
                                                                 }
                                                             });
                                                         </script>

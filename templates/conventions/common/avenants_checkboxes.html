@@ -9,7 +9,8 @@
 
             <button type="submit"
                 class="fr-toggle-wrapper"
-                aria-labelledby="toggle-{{ id }}-title toggle-{{ id }}-action">
+                aria-labelledby="toggle-{{ id }}-title-button"
+                id="toggle-{{ id }}-button">
 
                 <span id="toggle-{{ id }}-action" class="fr-sr-only">Supprimer la section</span>
 
@@ -22,7 +23,7 @@
                     id="toggle-{{ id }}-button">
 
                 <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-button">
-                    <h4 class="fr-card__title" id="toggle-{{ id }}-title">
+                    <h4 class="fr-card__title" id="toggle-{{ id }}-title-button">
                         {{ title }}
                     </h4>
                 </label>
@@ -38,7 +39,7 @@
 
         <a href="#"
             class="fr-toggle-wrapper"
-            aria-labelledby="toggle-{{ id }}-title"
+            aria-labelledby="toggle-{{ id }}-title-link"
             id="toggle-{{ id }}-link">
 
                 {# Toggle purement visuel, non interactif #}
@@ -49,7 +50,7 @@
                     id="toggle-{{ id }}-label">
 
                 <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-label">
-                    <h4 class="fr-card__title" id="toggle-{{ id }}-title">
+                    <h4 class="fr-card__title" id="toggle-{{ id }}-title-link">
                         {{ title_unchecked }}
                     </h4>
                 </label>
