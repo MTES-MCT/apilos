@@ -8,9 +8,9 @@
             <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
 
             <button type="submit"
-                class="fr-toggle-wrapper"
-                aria-labelledby="toggle-{{ id }}-title-button"
-                id="toggle-{{ id }}-button">
+                    class="fr-toggle-wrapper"
+                    id="toggle-{{ id }}-button"
+                    aria-labelledby="toggle-{{ id }}-action toggle-{{ id }}-title-button">
 
                 <span id="toggle-{{ id }}-action" class="fr-sr-only">Supprimer la section</span>
 
@@ -20,9 +20,9 @@
                     checked="checked"
                     aria-hidden="true"
                     tabindex="-1"
-                    id="toggle-{{ id }}-button">
+                    id="toggle-{{ id }}-button-checkbox">
 
-                <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-button">
+                <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-button" aria-hidden="true">
                     <h4 class="fr-card__title" id="toggle-{{ id }}-title-button">
                         {{ title }}
                     </h4>
