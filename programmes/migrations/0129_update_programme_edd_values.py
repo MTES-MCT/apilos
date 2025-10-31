@@ -5,23 +5,28 @@ from django.db import connection, migrations
 
 def update_edd_classique(apps, schema_editor):
     with connection.cursor() as cursor:
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE programmes_programme pp
             SET edd_classique = pl.edd_classique
             FROM conventions_convention cc
             JOIN programmes_lot pl ON cc.id = pl.convention_id
             WHERE pp.id = cc.programme_id;
-        """)
+        """
+        )
+
 
 def update_edd_volumetrique(apps, schema_editor):
     with connection.cursor() as cursor:
-        cursor.execute("""
+        cursor.execute(
+            """
             UPDATE programmes_programme pp
             SET edd_volumetrique = pl.edd_volumetrique
             FROM conventions_convention cc
             JOIN programmes_lot pl ON cc.id = pl.convention_id
             WHERE pp.id = cc.programme_id;
-        """)
+        """
+        )
 
 
 class Migration(migrations.Migration):
