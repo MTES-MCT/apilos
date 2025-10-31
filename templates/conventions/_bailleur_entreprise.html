@@ -41,8 +41,9 @@
                                 Vous pouvez demander l'attribution de cette convention à un autre bailleur.
                             </p>
                         </div>
-                        <details {% if form.errors %}open{% endif %} class="fr-mt-3w">
-                            <summary>
+                        <details id="change-company" {% if form.errors %}open{% endif %} class="fr-mt-3w">
+                            <!-- NOSONAR -->
+                            <summary id="change-company-summary" role="button" aria-expanded="false">
                                 <div class="fr-btn fr-btn--secondary">Changer le bailleur de cette convention et de son opération</div>
                             </summary>
                             <div>
@@ -72,3 +73,22 @@
         {% endwith %}
     {% endwith %}
 {% endblock content %}
+
+<script>
+const details = document.getElementById('change-company');
+const summary = document.getElementById('change-company-summary');
+
+summary.setAttribute('aria-expanded', details.open);
+
+summary.addEventListener('click', () => {
+  summary.setAttribute('aria-expanded', details.open);
+});
+
+summary.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    details.open = !details.open;
+    summary.setAttribute('aria-expanded', details.open);
+  }
+});
+</script>

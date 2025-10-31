@@ -61,7 +61,7 @@
                 </button>
             </div>
 
-            {# NOSONAR: listbox role is required for ARIA combobox pattern with async server search #}
+            <!-- NOSONAR -->
             <div role="listbox"
                  id="{{ field_id }}_listbox"
                  class="combobox-listbox"
@@ -69,7 +69,7 @@
                  style="display: none;">
             </div>
 
-            {# NOSONAR: status role is correct for screen reader announcements, not calculation output #}
+            <!-- NOSONAR -->
             <div role="status" aria-live="polite" aria-atomic="true" class="fr-sr-only combobox-status"></div>
         </div>
     </div>

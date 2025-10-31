@@ -7,15 +7,14 @@
             <input type="hidden" value="{{ convention.uuid }}" name="uuid">
             <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
 
-            <button
-                type="submit"
+            <button type="submit"
                 class="fr-toggle-wrapper"
-                aria-label="Supprimer la section {{ title }}">
-                <span class="fr-sr-only">Supprimer la section {{ title }}</span>
+                aria-labelledby="toggle-{{ id }}-title toggle-{{ id }}-action">
+
+                <span id="toggle-{{ id }}-action" class="fr-sr-only">Supprimer la section</span>
 
                 {# Toggle purement visuel, non interactif #}
-                <input
-                    type="checkbox"
+                <input type="checkbox"
                     class="fr-toggle__input"
                     checked="checked"
                     aria-hidden="true"
@@ -23,7 +22,9 @@
                     id="toggle-{{ id }}-button">
 
                 <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-button">
-                    <h4 class="fr-card__title">{{ title }}</h4>
+                    <h4 class="fr-card__title" id="toggle-{{ id }}-title">
+                        {{ title }}
+                    </h4>
                 </label>
             </button>
         </form>
@@ -35,25 +36,24 @@
             <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
         </form>
 
-        <a
-            href="#"
+        <a href="#"
             class="fr-toggle-wrapper"
-            aria-label="{{ title_unchecked }}"
+            aria-labelledby="toggle-{{ id }}-title"
             id="toggle-{{ id }}-link">
-            <span class="fr-sr-only">{{ title_unchecked }}</span>
 
-            {# Toggle purement visuel, non interactif #}
-            <input
-                type="checkbox"
-                class="fr-toggle__input"
-                aria-hidden="true"
-                tabindex="-1"
-                id="toggle-{{ id }}-label">
+                {# Toggle purement visuel, non interactif #}
+                <input type="checkbox"
+                    class="fr-toggle__input"
+                    aria-hidden="true"
+                    tabindex="-1"
+                    id="toggle-{{ id }}-label">
 
-            <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-label">
-                <h4 class="fr-card__title">{{ title_unchecked }}</h4>
-            </label>
-        </a>
+                <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-label">
+                    <h4 class="fr-card__title" id="toggle-{{ id }}-title">
+                        {{ title_unchecked }}
+                    </h4>
+                </label>
+            </a>
 
         <p class="fr-hint-text fr-mt-1w" id="toggle-{{ id }}-text">{{ description }}</p>
     {% endif %}
