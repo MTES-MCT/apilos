@@ -57,9 +57,9 @@ AVENANT_TYPE_FIELDS_MAPPING = {
         "gestionnaire_signataire_date_deliberation",
     ],
     "edd": [
-        "lot.edd_volumetrique",
+        "programme.edd_volumetrique",
         "programme.mention_publication_edd_volumetrique",
-        "lot.edd_classique",
+        "programme.edd_classique",
         "programme.mention_publication_edd_classique",
         "programme.logementedds",
     ],
