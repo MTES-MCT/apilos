@@ -1,0 +1,11 @@
+{# Composant unifié pour search select - supporte à la fois form_input et paramètres natifs #}
+
+{% if form_input %}
+    {# Mode form : extraire les valeurs du form_input #}
+    {% with field_id=form_input.id_for_label field_name=form_input.html_name label=form_input.label %}
+        {% include "common/form/_input_search_select_core.html" %}
+    {% endwith %}
+{% else %}
+    {# Mode natif : utiliser les paramètres passés directement #}
+    {% include "common/form/_input_search_select_core.html" %}
+{% endif %}

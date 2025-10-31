@@ -25,7 +25,7 @@
                         </summary>
                         {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
                             {% url 'users:search_administration' as search_administration_url %}
-                            {% include "common/form/input_search_select_form.html" with form_input=form.administration url=search_administration_url %}
+                            {% include "common/form/input_search_select_unified.html" with form_input=form.administration url=search_administration_url %}
                         {% endwith %}
 
                         <button

@@ -40,7 +40,7 @@
                             {% if request.GET.bailleur %}
                                 {% bailleur_from request.GET.bailleur as bailleur_initial %}
                             {% endif %}
-                            {% include "common/form/input_search_select_native.html" with field_id="search-field-bailleur" field_name="bailleur" label="Bailleur (nom ou SIREN)" placeholder="Rechercher" search_url=search_bailleur_url initial_value=request.GET.bailleur initial_text=bailleur_initial initial_queryset=bailleur_query %}
+                            {% include "common/form/input_search_select_unified.html" with field_id="search-field-bailleur" field_name="bailleur" label="Bailleur (nom ou SIREN)" placeholder="Rechercher" search_url=search_bailleur_url initial_value=request.GET.bailleur initial_text=bailleur_initial initial_queryset=bailleur_query %}
                         </div>
                     {% endif %}
 

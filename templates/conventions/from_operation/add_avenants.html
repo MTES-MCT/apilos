@@ -97,7 +97,7 @@
                 </div>
                 <div class="fr-col-6">
                     {% url 'users:search_bailleur' as search_bailleur_url %}
-                    {% include "common/form/input_search_select_form.html" with form_input=form.bailleur url=search_bailleur_url editable=True %}
+                    {% include "common/form/input_search_select_unified.html" with form_input=form.bailleur url=search_bailleur_url editable=True %}
                 </div>
                 <div class="fr-col-6">
                     {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}

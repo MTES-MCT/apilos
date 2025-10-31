@@ -1,59 +1,91 @@
-<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
-    {% if form_input.label %}
-        <label class="fr-label select-label" for="{{ form_input.id_for_label }}" id="{{ form_input.id_for_label }}_label">
-            {{ form_input.label }}
+{# Template core - contient toute la logique commune #}
+
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ field_id }}_group">
+    {% if label %}
+        <label class="fr-label select-label" for="{{ field_id }}_combobox" id="{{ field_id }}_label">
+            {{ label }}
         </label>
     {% endif %}
 
-    <div class="fr-mt-1w accessible-combobox-wrapper" id="{{ form_input.id_for_label }}_wrapper">
-        {# Champ caché pour la soumission du formulaire - contient les options initiales #}
-        <select style="display: none;" id="{{ form_input.id_for_label }}" name="{{ form_input.html_name }}">
+    <div class="fr-mt-1w accessible-combobox-wrapper" id="{{ field_id }}_wrapper">
+        {# Champ caché pour la soumission du formulaire #}
+        <select style="display: none;" id="{{ field_id }}" name="{{ field_name }}">
             {% if initial_value %}
                 <option selected value="{{ initial_value }}">{{ initial_text }}</option>
-            {% else %}
+            {% elif form_input %}
+                {# Mode form : utiliser le queryset du form #}
                 <option selected value></option>
                 {% for element in form_input.field.queryset %}
                     <option value="{{ element|attribute:form_input.field.to_field_name }}">
                         {{ element }}
                     </option>
                 {% endfor %}
+            {% else %}
+                {# Mode natif : utiliser initial_queryset #}
+                <option selected value></option>
+                {% for item in initial_queryset %}
+                    <option value="{{ item.uuid }}">{{ item }}</option>
+                {% endfor %}
             {% endif %}
         </select>
 
         <div class="combobox-container">
             <div class="combobox-input-wrapper">
-                <input type="text" role="combobox" id="{{ form_input.id_for_label }}_combobox" class="fr-select combobox-input" aria-autocomplete="list" aria-expanded="false" aria-controls="{{ form_input.id_for_label }}_listbox" aria-labelledby="{{ form_input.id_for_label }}_label" autocomplete="off" placeholder="{{ placeholder|default:'Rechercher...' }}" data-url="{{ url }}" data-field-id="{{ form_input.id_for_label }}">
+                <input type="text" 
+                       role="combobox" 
+                       id="{{ field_id }}_combobox" 
+                       class="fr-select combobox-input" 
+                       aria-autocomplete="list" 
+                       aria-expanded="false" 
+                       aria-controls="{{ field_id }}_listbox" 
+                       aria-labelledby="{{ field_id }}_label" 
+                       autocomplete="off" 
+                       placeholder="{{ placeholder|default:'Rechercher...' }}" 
+                       data-url="{% if form_input %}{{ url }}{% else %}{{ search_url }}{% endif %}" 
+                       data-field-id="{{ field_id }}">
 
                 <button type="button" class="combobox-clear" style="display: none;">
-                    <span class="fr-sr-only">Effacer la séléction</span>
+                    <span class="fr-sr-only">Effacer la sélection</span>
                     <span aria-hidden="true">×</span>
                 </button>
 
-                <button type="button" class="combobox-toggle" aria-label="Afficher les options" aria-expanded="false" aria-controls="{{ form_input.id_for_label }}_listbox" tabindex="-1">
+                <button type="button" 
+                        class="combobox-toggle" 
+                        aria-label="Afficher les options" 
+                        aria-expanded="false" 
+                        aria-controls="{{ field_id }}_listbox" 
+                        tabindex="-1">
                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                         <path fill="currentColor" d="M4 6l4 4 4-4z"/>
                     </svg>
                 </button>
             </div>
 
-            <ul role="listbox" id="{{ form_input.id_for_label }}_listbox" class="combobox-listbox" aria-labelledby="{{ form_input.id_for_label }}_label" style="display: none;">
+            <ul role="listbox" 
+                id="{{ field_id }}_listbox" 
+                class="combobox-listbox" 
+                aria-labelledby="{{ field_id }}_label" 
+                style="display: none;">
             </ul>
 
             <div role="status" aria-live="polite" aria-atomic="true" class="fr-sr-only combobox-status"></div>
         </div>
     </div>
-    {% for error in form_input.errors %}
-        <p id="select-error-desc-error" class="fr-error-text">
-            {{ error }}
-        </p>
-    {% endfor %}
+    
+    {% if form_input.errors %}
+        {% for error in form_input.errors %}
+            <p id="select-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
 </div>
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
 (function() {
     'use strict';
 
-    const fieldId = '{{ form_input.id_for_label }}';
+    const fieldId = '{{ field_id }}';
     const combobox = document.getElementById(fieldId + '_combobox');
     const listbox = document.getElementById(fieldId + '_listbox');
     const hiddenSelect = document.getElementById(fieldId);
@@ -68,7 +100,6 @@
     let selectedText = '';
 
     function init() {
-        // Charger la valeur initiale depuis le select caché
         const selectedOption = hiddenSelect.querySelector('option[selected]');
         if (selectedOption && selectedOption.value) {
             selectedValue = selectedOption.value;
@@ -77,10 +108,8 @@
             updateClearButtonVisibility();
         }
 
-        // Charger les options initiales dans la listbox
         loadInitialOptions();
 
-        // Event listeners
         combobox.addEventListener('input', handleInput);
         combobox.addEventListener('keydown', handleKeyDown);
         combobox.addEventListener('blur', handleBlur);
@@ -133,14 +162,12 @@
     function handleInput(e) {
         const searchValue = e.target.value;
 
-        // Réinitialiser la sélection si l'utilisateur modifie le texte
         if (searchValue !== selectedText) {
             selectedValue = '';
             updateHiddenSelect('');
             clearSelectedOption();
         }
 
-        // Recherche serveur avec debounce
         clearTimeout(searchTimeout);
 
         if (searchValue.length >= 1) {
@@ -148,7 +175,6 @@
                 performServerSearch(searchValue);
             }, 300);
         } else if (searchValue.length === 0) {
-            // Si le champ est vide, recharger les options initiales
             loadInitialOptions();
             updateClearButtonVisibility();
             closeListbox();
@@ -207,12 +233,10 @@
     function updateHiddenSelect(value) {
         hiddenSelect.value = value;
 
-        // Mettre à jour le select caché pour la soumission
         const existingOption = hiddenSelect.querySelector(`option[value="${value}"]`);
         if (existingOption) {
             existingOption.selected = true;
         } else if (value) {
-            // Créer une nouvelle option si elle n'existe pas
             hiddenSelect.innerHTML = '';
             const newOption = document.createElement('option');
             newOption.value = value;
@@ -220,7 +244,6 @@
             newOption.selected = true;
             hiddenSelect.appendChild(newOption);
         } else {
-            // Valeur vide
             hiddenSelect.innerHTML = '<option selected value></option>';
         }
     }
@@ -283,7 +306,6 @@
     }
 
     function handleBlur(e) {
-        // Fermer la liste si le focus quitte complètement le composant
         setTimeout(() => {
             if (!combobox.parentElement.contains(document.activeElement)) {
                 closeListbox();
@@ -336,7 +358,6 @@
     }
 
     function handleListboxMouseDown(e) {
-        // Empêcher le blur du combobox
         e.preventDefault();
     }
 
@@ -382,20 +403,15 @@
     }
 
     function updateFocusedOption() {
-        // Retirer le focus des autres options
         options.forEach(opt => opt.classList.remove('focused'));
 
         if (focusedOptionIndex >= 0 && focusedOptionIndex < options.length) {
             const focusedOption = options[focusedOptionIndex];
             focusedOption.classList.add('focused');
 
-            // Mettre à jour aria-activedescendant
             combobox.setAttribute('aria-activedescendant', focusedOption.id);
-
-            // Scroll pour garder l'option visible
             focusedOption.scrollIntoView({ block: 'nearest' });
 
-            // Annoncer l'option aux lecteurs d'écran
             announceToScreenReader(focusedOption.textContent.trim());
         } else {
             combobox.removeAttribute('aria-activedescendant');
@@ -408,7 +424,6 @@
         updateHiddenSelect(selectedValue);
         combobox.value = selectedText;
 
-        // Mettre à jour aria-selected
         clearSelectedOption();
         option.setAttribute('aria-selected', 'true');
 
@@ -429,7 +444,6 @@
         toggleButton.setAttribute('aria-label', 'Masquer les options');
         listbox.style.display = 'block';
 
-        // Si pas d'option focalisée, mettre le focus sur l'option sélectionnée si elle existe
         if (focusedOptionIndex === -1) {
             const selectedOption = listbox.querySelector('[aria-selected="true"]');
             if (selectedOption) {
@@ -447,7 +461,6 @@
         combobox.removeAttribute('aria-activedescendant');
         focusedOptionIndex = -1;
 
-        // Retirer le focus visuel
         options.forEach(opt => opt.classList.remove('focused'));
     }
 
@@ -463,7 +476,6 @@
         statusEl.textContent = message;
     }
 
-    // Initialiser le composant
     init();
 })();
 </script>
