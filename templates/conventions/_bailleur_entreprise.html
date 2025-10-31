@@ -42,8 +42,12 @@
                             </p>
                         </div>
                         <details id="change-company" {% if form.errors %}open{% endif %} class="fr-mt-3w">
-                            <!-- NOSONAR -->
-                            <summary id="change-company-summary" role="button" aria-expanded="false">
+                            <!-- NOSONAR: Le rapport RGAA veux quelque chose que sonar n'accepte pas -->
+                            <summary
+                                id="change-company-summary"
+                                role="button"
+                                aria-expanded="false"
+                                onkeydown="return true;">
                                 <div class="fr-btn fr-btn--secondary">Changer le bailleur de cette convention et de son opération</div>
                             </summary>
                             <div>

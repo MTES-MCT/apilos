@@ -15,7 +15,11 @@
         name="{{ upform.file.html_name }}"
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <div class="block--row-strech">
-        <a role="button" class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left" href="{% url 'conventions:load_xlsx_model' file_type=file_type %}">
+        <a
+            role="button"
+            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+            href="{% url 'conventions:load_xlsx_model' file_type=file_type %}"
+            onkeydown="return true;">
             Télécharger le modèle des {{ what }}
             {% if hidden_what %}
                 <span class="fr-sr-only"> {{ hidden_what }} </span>
