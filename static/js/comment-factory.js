@@ -156,8 +156,8 @@ class CommentFactory {
             e.preventDefault();
             const modal = document.getElementById(this.comment_dialog_id + "-dialog");
             if (modal) {
-                if (window.dsfr) {
-                    window.dsfr(modal).modal.disclose();
+                if (globalThis.dsfr) {
+                    globalThis.dsfr(modal).modal.disclose();
                 } else {
                     this.container.click();
                 }

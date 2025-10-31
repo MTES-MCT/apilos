@@ -11,6 +11,7 @@
                 type="submit"
                 class="fr-toggle-wrapper"
                 aria-label="Supprimer la section {{ title }}">
+                <span class="fr-sr-only">Supprimer la section {{ title }}</span>
 
                 {# Toggle purement visuel, non interactif #}
                 <input
@@ -19,9 +20,9 @@
                     checked="checked"
                     aria-hidden="true"
                     tabindex="-1"
-                    id="toggle-{{ id }}">
+                    id="toggle-{{ id }}-button">
 
-                <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}">
+                <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-button">
                     <h4 class="fr-card__title">{{ title }}</h4>
                 </label>
             </button>
@@ -39,6 +40,7 @@
             class="fr-toggle-wrapper"
             aria-label="{{ title_unchecked }}"
             id="toggle-{{ id }}-link">
+            <span class="fr-sr-only">{{ title_unchecked }}</span>
 
             {# Toggle purement visuel, non interactif #}
             <input
@@ -46,9 +48,9 @@
                 class="fr-toggle__input"
                 aria-hidden="true"
                 tabindex="-1"
-                id="toggle-{{ id }}">
+                id="toggle-{{ id }}-label">
 
-            <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}">
+            <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}-label">
                 <h4 class="fr-card__title">{{ title_unchecked }}</h4>
             </label>
         </a>

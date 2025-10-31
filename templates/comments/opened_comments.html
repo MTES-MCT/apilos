@@ -50,8 +50,17 @@
 
         </div>
     {% else %}
-        <a class="fr-link fr-mb-1w" role="button" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden>
+        <a class="fr-link fr-mb-1w" role="button" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden onkeydown="handleKey(event)">
             <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
         </a>
     {% endif %}
 {% endif %}
+
+<script>
+function handleKey(event) {
+    if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        window.location.href = event.currentTarget.href;
+    }
+}
+</script>

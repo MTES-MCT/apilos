@@ -19,8 +19,8 @@
                             Cette opération est irréversible et vous fera perdre l'accès à cette convention.
                         </p>
                     </div>
-                    <details {% if form.errors %}open=""{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
-                        <summary  role="button" aria-expanded="[true/false]">
+                    <details id="change-admin" {% if form.errors %}open{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
+                        <summary id="change-admin-summary" role="button" aria-expanded="false">
                             <div class="fr-btn fr-btn--secondary fr-mt-auto fr-ml-auto fr-mb-1w">Changer l'administration</div>
                         </summary>
                         {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
@@ -43,3 +43,22 @@
         {% endif %}
     {% endwith %}
 {% endblock content %}
+
+<script>
+const details = document.getElementById('change-admin');
+const summary = document.getElementById('change-admin-summary');
+
+summary.setAttribute('aria-expanded', details.open);
+
+summary.addEventListener('click', () => {
+  summary.setAttribute('aria-expanded', details.open);
+});
+
+summary.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    details.open = !details.open;
+    summary.setAttribute('aria-expanded', details.open);
+  }
+});
+</script>
