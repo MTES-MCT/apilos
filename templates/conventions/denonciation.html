@@ -26,7 +26,7 @@
                 <div class="fr-col-12 fr-mb-4w">
                     <h4>Date de dénonciation</h4>
                     {% include "common/required_fields_info.html" %}
-                    
+
                     {% include "common/form/input_date.html" with form_input=form.date_denonciation object_field="convention__date_denonciation__"|add:form.uuid.value %}
                 </div>
                 <div class="fr-col-12 fr-mb-4w">

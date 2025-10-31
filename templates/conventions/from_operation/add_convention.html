@@ -74,8 +74,8 @@
                                                     <td>{{ convention.lot.nb_logements }}</td>
                                                     <td>
                                                         <div class="fr-grid-row fr-grid-row--center">
-                                                            <a  
-                                                                href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" 
+                                                            <a
+                                                                href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
                                                                 id="convention_link_{{ convention.uuid }}"
                                                                 class="fr-link"
                                                                 aria-label="Convention numéro {{ convention.numero|default_if_none:"-" }}, Financement {{ convention.lot.financement }}, {{ convention.lot.nb_logements }} Logements">
@@ -109,10 +109,10 @@
                                                     document.addEventListener('DOMContentLoaded', function () {
                                                     const statusElement = document.getElementById('convention_redirect_{{ convention.uuid }}');
                                                     const linkElement = document.getElementById('convention_link_{{ convention.uuid }}');
-                                                    
+
                                                     if (statusElement && linkElement) {
                                                         let targetUrl = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
-                                                        
+
                                                         if (statusElement.classList.contains("sent")) {
                                                             targetUrl = "{% url 'conventions:sent' convention_uuid=convention.uuid %}";
                                                         }
@@ -122,7 +122,7 @@
                                                         else if (statusElement.classList.contains("project")) {
                                                             targetUrl = "{% url 'conventions:bailleur' convention_uuid=convention.uuid %}";
                                                         }
-                                                        
+
                                                         linkElement.href = targetUrl;
                                                     }
                                                 });

@@ -6,21 +6,21 @@
             <input name="avenant_type" value="{{ avenant_type }}" hidden>
             <input type="hidden" value="{{ convention.uuid }}" name="uuid">
             <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
-            
-            <button 
-                type="submit" 
+
+            <button
+                type="submit"
                 class="fr-toggle-wrapper"
                 aria-label="Supprimer la section {{ title }}">
-                
+
                 {# Toggle purement visuel, non interactif #}
-                <input 
-                    type="checkbox" 
-                    class="fr-toggle__input" 
+                <input
+                    type="checkbox"
+                    class="fr-toggle__input"
                     checked="checked"
                     aria-hidden="true"
                     tabindex="-1"
                     id="toggle-{{ id }}">
-                
+
                 <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}">
                     <h4 class="fr-card__title">{{ title }}</h4>
                 </label>
@@ -33,21 +33,21 @@
             <input type="hidden" value="{{ convention.uuid }}" name="uuid">
             <input type="hidden" value="{{ title|lower }}" name="uncheck_avenant_type">
         </form>
-        
-        <a 
-            href="#" 
+
+        <a
+            href="#"
             class="fr-toggle-wrapper"
             aria-label="{{ title_unchecked }}"
             id="toggle-{{ id }}-link">
-            
+
             {# Toggle purement visuel, non interactif #}
-            <input 
-                type="checkbox" 
+            <input
+                type="checkbox"
                 class="fr-toggle__input"
                 aria-hidden="true"
                 tabindex="-1"
                 id="toggle-{{ id }}">
-            
+
             <label class="fr-toggle__label apilos-label-larger" for="toggle-{{ id }}">
                 <h4 class="fr-card__title">{{ title_unchecked }}</h4>
             </label>
@@ -55,7 +55,7 @@
 
         <p class="fr-hint-text fr-mt-1w" id="toggle-{{ id }}-text">{{ description }}</p>
     {% endif %}
-    
+
     <div class="fr-messages-group" id="toggle-{{ id }}-messages" aria-live="polite">
     </div>
 </div>

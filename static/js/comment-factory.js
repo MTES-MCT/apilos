@@ -55,7 +55,7 @@ class CommentFactory {
     icon_div.addEventListener("focus", () => {
         icon_div.style.opacity = "1";
     });
-    
+
     icon_div.addEventListener("blur", () => {
         if (icon_div.classList.contains("content__icons--add")) {
             icon_div.style.opacity = "0";
@@ -161,7 +161,7 @@ class CommentFactory {
                 } else {
                     this.container.click();
                 }
-            } 
+            }
             this.display_modal_comments();
         }
     });
@@ -919,7 +919,7 @@ class CommentFactory {
     child_sr_only_p.classList.add("fr-sr-only");
     child_sr_only_p.innerText = " pour " + this.dialog_title;
     button_action.appendChild(child_sr_only_p);
-    
+
     const li_action = document.createElement("li");
     li_action.setAttribute(
       "id",

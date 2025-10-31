@@ -559,7 +559,7 @@ a[href].apilos-block-faqlink:after {
 .content__icons--resolved,
 .content__icons--closed,
 .content__icons--add {
-  border: 2px solid #000091; 
+  border: 2px solid #000091;
   cursor: pointer;
 }
 

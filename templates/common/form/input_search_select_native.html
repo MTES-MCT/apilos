@@ -17,26 +17,26 @@
                 {% endfor %}
             {% endif %}
         </select>
-        
+
         <div class="combobox-container">
             <div class="combobox-input-wrapper">
                 <input type="text" role="combobox" id="{{ field_id }}_combobox" class="fr-select combobox-input" aria-autocomplete="list" aria-expanded="false" aria-controls="{{ field_id }}_listbox" aria-labelledby="{{ field_id }}_label" autocomplete="off" placeholder="{{ placeholder|default:'Rechercher...' }}" data-url="{{ search_url }}" data-field-id="{{ field_id }}">
-                
+
                 <button type="button" class="combobox-clear" style="display: none;">
                     <span class="fr-sr-only">Effacer la séléction</span>
                     <span aria-hidden="true">×</span>
                 </button>
-                
+
                 <button type="button" class="combobox-toggle" aria-label="Afficher les options" aria-expanded="false" aria-controls="{{ field_id }}_listbox" tabindex="-1">
                     <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                         <path fill="currentColor" d="M4 6l4 4 4-4z"/>
                     </svg>
                 </button>
             </div>
-            
+
             <ul role="listbox" id="{{ field_id }}_listbox" class="combobox-listbox" aria-labelledby="{{ field_id }}_label" style="display: none;">
             </ul>
-            
+
             <div role="status" aria-live="polite" aria-atomic="true" class="fr-sr-only combobox-status"></div>
         </div>
     </div>
@@ -45,7 +45,7 @@
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
 (function() {
     'use strict';
-    
+
     const fieldId = '{{ field_id }}';
     const combobox = document.getElementById(fieldId + '_combobox');
     const listbox = document.getElementById(fieldId + '_listbox');
@@ -53,13 +53,13 @@
     const clearButton = combobox.parentElement.querySelector('.combobox-clear');
     const toggleButton = combobox.parentElement.querySelector('.combobox-toggle');
     const statusEl = combobox.closest('.combobox-container').querySelector('.combobox-status');
-    
+
     let searchTimeout = null;
     let focusedOptionIndex = -1;
     let options = [];
     let selectedValue = '';
     let selectedText = '';
-    
+
     function init() {
         // Charger la valeur initiale depuis le select caché
         const selectedOption = hiddenSelect.querySelector('option[selected]');
@@ -69,27 +69,27 @@
             combobox.value = selectedText;
             updateClearButtonVisibility();
         }
-        
+
         // Charger les options initiales dans la listbox
         loadInitialOptions();
-        
+
         // Event listeners
         combobox.addEventListener('input', handleInput);
         combobox.addEventListener('keydown', handleKeyDown);
         combobox.addEventListener('blur', handleBlur);
         combobox.addEventListener('click', handleComboboxClick);
-        
+
         clearButton.addEventListener('click', handleClear);
         toggleButton.addEventListener('click', handleToggle);
-        
+
         listbox.addEventListener('mousedown', handleListboxMouseDown);
         listbox.addEventListener('click', handleListboxClick);
     }
-    
+
     function loadInitialOptions() {
         const selectOptions = hiddenSelect.querySelectorAll('option');
         listbox.innerHTML = '';
-        
+
         let hasOptions = false;
         selectOptions.forEach((opt, index) => {
             if (opt.value) {
@@ -106,7 +106,7 @@
                 listbox.appendChild(li);
             }
         });
-        
+
         if (!hasOptions) {
             const noResultLi = document.createElement('li');
             noResultLi.role = 'option';
@@ -114,27 +114,27 @@
             noResultLi.textContent = 'Commencez à taper pour rechercher';
             listbox.appendChild(noResultLi);
         }
-        
+
         updateOptions();
     }
-    
+
     function updateOptions() {
         options = Array.from(listbox.querySelectorAll('[role="option"]:not(.combobox-no-results)'));
     }
-    
+
     function handleInput(e) {
         const searchValue = e.target.value;
-        
+
         // Réinitialiser la sélection si l'utilisateur modifie le texte
         if (searchValue !== selectedText) {
             selectedValue = '';
             updateHiddenSelect('');
             clearSelectedOption();
         }
-        
+
         // Recherche serveur avec debounce
         clearTimeout(searchTimeout);
-        
+
         if (searchValue.length >= 1) {
             searchTimeout = setTimeout(() => {
                 performServerSearch(searchValue);
@@ -146,13 +146,13 @@
             closeListbox();
         }
     }
-    
+
     function performServerSearch(searchValue) {
         const url = combobox.dataset.url;
         if (!url) return;
-        
+
         announceToScreenReader('Recherche en cours...');
-        
+
         fetch(url + '?q=' + encodeURIComponent(searchValue))
             .then(response => response.json())
             .then(data => {
@@ -170,10 +170,10 @@
                 announceToScreenReader('Erreur lors de la recherche');
             });
     }
-    
+
     function updateListboxWithResults(data) {
         listbox.innerHTML = '';
-        
+
         if (data.length === 0) {
             const noResultLi = document.createElement('li');
             noResultLi.role = 'option';
@@ -191,14 +191,14 @@
                 listbox.appendChild(li);
             });
         }
-        
+
         updateOptions();
         focusedOptionIndex = -1;
     }
-    
+
     function updateHiddenSelect(value) {
         hiddenSelect.value = value;
-        
+
         // Mettre à jour le select caché pour la soumission
         const existingOption = hiddenSelect.querySelector(`option[value="${value}"]`);
         if (existingOption) {
@@ -216,10 +216,10 @@
             hiddenSelect.innerHTML = '<option selected value></option>';
         }
     }
-    
+
     function handleKeyDown(e) {
         const isOpen = combobox.getAttribute('aria-expanded') === 'true';
-        
+
         switch(e.key) {
             case 'ArrowDown':
                 e.preventDefault();
@@ -229,21 +229,21 @@
                     moveFocusDown();
                 }
                 break;
-                
+
             case 'ArrowUp':
                 e.preventDefault();
                 if (isOpen) {
                     moveFocusUp();
                 }
                 break;
-                
+
             case 'Enter':
                 e.preventDefault();
                 if (isOpen && focusedOptionIndex >= 0) {
                     selectOption(options[focusedOptionIndex]);
                 }
                 break;
-                
+
             case 'Escape':
                 e.preventDefault();
                 if (isOpen) {
@@ -251,20 +251,20 @@
                     combobox.focus();
                 }
                 break;
-                
+
             case 'Tab':
                 if (isOpen) {
                     closeListbox();
                 }
                 break;
-                
+
             case 'Home':
                 if (isOpen) {
                     e.preventDefault();
                     moveFocusToFirst();
                 }
                 break;
-                
+
             case 'End':
                 if (isOpen) {
                     e.preventDefault();
@@ -273,7 +273,7 @@
                 break;
         }
     }
-    
+
     function handleBlur(e) {
         // Fermer la liste si le focus quitte complètement le composant
         setTimeout(() => {
@@ -282,7 +282,7 @@
             }
         }, 100);
     }
-    
+
     function handleComboboxClick() {
         if (combobox.getAttribute('aria-expanded') === 'false') {
             if (combobox.value.length >= 2) {
@@ -292,11 +292,11 @@
             }
         }
     }
-    
+
     function handleClear(e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         selectedValue = '';
         selectedText = '';
         updateHiddenSelect('');
@@ -306,14 +306,14 @@
         updateClearButtonVisibility();
         closeListbox();
         combobox.focus();
-        
+
         announceToScreenReader('Sélection effacée');
     }
-    
+
     function handleToggle(e) {
         e.preventDefault();
         e.stopPropagation();
-        
+
         const isOpen = combobox.getAttribute('aria-expanded') === 'true';
         if (isOpen) {
             closeListbox();
@@ -326,22 +326,22 @@
         }
         combobox.focus();
     }
-    
+
     function handleListboxMouseDown(e) {
         // Empêcher le blur du combobox
         e.preventDefault();
     }
-    
+
     function handleListboxClick(e) {
         const option = e.target.closest('[role="option"]:not(.combobox-no-results)');
         if (option) {
             selectOption(option);
         }
     }
-    
+
     function moveFocusDown() {
         if (options.length === 0) return;
-        
+
         if (focusedOptionIndex < options.length - 1) {
             focusedOptionIndex++;
         } else {
@@ -349,10 +349,10 @@
         }
         updateFocusedOption();
     }
-    
+
     function moveFocusUp() {
         if (options.length === 0) return;
-        
+
         if (focusedOptionIndex > 0) {
             focusedOptionIndex--;
         } else {
@@ -360,67 +360,67 @@
         }
         updateFocusedOption();
     }
-    
+
     function moveFocusToFirst() {
         if (options.length === 0) return;
         focusedOptionIndex = 0;
         updateFocusedOption();
     }
-    
+
     function moveFocusToLast() {
         if (options.length === 0) return;
         focusedOptionIndex = options.length - 1;
         updateFocusedOption();
     }
-    
+
     function updateFocusedOption() {
         // Retirer le focus des autres options
         options.forEach(opt => opt.classList.remove('focused'));
-        
+
         if (focusedOptionIndex >= 0 && focusedOptionIndex < options.length) {
             const focusedOption = options[focusedOptionIndex];
             focusedOption.classList.add('focused');
-            
+
             // Mettre à jour aria-activedescendant
             combobox.setAttribute('aria-activedescendant', focusedOption.id);
-            
+
             // Scroll pour garder l'option visible
             focusedOption.scrollIntoView({ block: 'nearest' });
-            
+
             // Annoncer l'option aux lecteurs d'écran
             announceToScreenReader(focusedOption.textContent.trim());
         } else {
             combobox.removeAttribute('aria-activedescendant');
         }
     }
-    
+
     function selectOption(option) {
         selectedValue = option.dataset.value;
         selectedText = option.textContent.trim();
         updateHiddenSelect(selectedValue);
         combobox.value = selectedText;
-        
+
         // Mettre à jour aria-selected
         clearSelectedOption();
         option.setAttribute('aria-selected', 'true');
-        
+
         updateClearButtonVisibility();
         closeListbox();
         combobox.focus();
-        
+
         announceToScreenReader(selectedText + ' sélectionné');
     }
-    
+
     function clearSelectedOption() {
         options.forEach(opt => opt.removeAttribute('aria-selected'));
     }
-    
+
     function openListbox() {
         combobox.setAttribute('aria-expanded', 'true');
         toggleButton.setAttribute('aria-expanded', 'true');
         toggleButton.setAttribute('aria-label', 'Masquer les options');
         listbox.style.display = 'block';
-        
+
         // Si pas d'option focalisée, mettre le focus sur l'option sélectionnée si elle existe
         if (focusedOptionIndex === -1) {
             const selectedOption = listbox.querySelector('[aria-selected="true"]');
@@ -430,7 +430,7 @@
             }
         }
     }
-    
+
     function closeListbox() {
         combobox.setAttribute('aria-expanded', 'false');
         toggleButton.setAttribute('aria-expanded', 'false');
@@ -438,11 +438,11 @@
         listbox.style.display = 'none';
         combobox.removeAttribute('aria-activedescendant');
         focusedOptionIndex = -1;
-        
+
         // Retirer le focus visuel
         options.forEach(opt => opt.classList.remove('focused'));
     }
-    
+
     function updateClearButtonVisibility() {
         if (combobox.value) {
             clearButton.style.display = 'flex';
@@ -450,11 +450,11 @@
             clearButton.style.display = 'none';
         }
     }
-    
+
     function announceToScreenReader(message) {
         statusEl.textContent = message;
     }
-    
+
     // Initialiser le composant
     init();
 })();

@@ -46,7 +46,7 @@
                 {% else %}
                     <form method="post" action="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}">
                         {% csrf_token %}
-                        
+
                         {% include "common/required_fields_info.html" %}
 
                         <div class="fr-col-6">
