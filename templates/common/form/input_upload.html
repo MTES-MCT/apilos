@@ -49,11 +49,16 @@
                     <em class="fr-text--sm">et/ou </em>
                 {% endif %}
 
-                <button type="button" class="fr-btn {% if override_cerfa %}fr-btn--secondary{% endif %} fr-icon-upload-line fr-btn--icon-left fr-mb-1w" id="{{ form_input_files.id_for_label }}_dz_button">
+                <button
+                    type="button"
+                    class="fr-btn {% if override_cerfa %}fr-btn--secondary{% endif %} fr-icon-upload-line fr-btn--icon-left fr-mb-1w"
+                    id="{{ form_input_files.id_for_label }}_dz_button"
+                    aria-describedby="{{ form_input_files.id_for_label }}_help">
                     {% if override_cerfa %}
                         Déposer un nouveau CERFA et remplacer la version actuelle
                     {% else %}
                         Déposer une image{% if not image_only %} ou un document{% endif %}
+                        <span class="fr-sr-only"> lié à : {{ form_input.label }} </span>
                     {% endif %}
                 </button>
 
@@ -67,7 +72,8 @@
             </div>
             <div
                 class="fr-col-12 dropzone dz"
-                id="{{ form_input_files.id_for_label }}_dropzone">
+                id="{{ form_input_files.id_for_label }}_dropzone"
+                inert>
                 <div class="fallback">
                     Votre navigateur ne permet pas de déposer des documents.
                     Nous vous conseillons de modifier vos paramètres concernant

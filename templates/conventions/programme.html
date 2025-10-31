@@ -2,7 +2,13 @@
 
 {% load static %}
 
-{% block page_title %}Opération - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Opération - APiLos
+    {% else %}
+        Etape 2 - Opération - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -20,6 +26,8 @@
 
                         <h4>Adresse(s) de l'opération</h4>
                         {% if not convention.is_avenant %}{% include "common/editable_fields_info.html" %}{% endif %}
+
+                        {% include "common/required_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
 
@@ -39,7 +47,9 @@
                                 {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="convention__adresse__"|add:convention_uuid %}
                             {% endwith %}
                             {% if form.adresse.value is not None and not convention.adresse %}
-                                <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Vous pouvez le modifier avec les adresses associées à cette convention.</em>
+                                <p>
+                                    <em class=" fr-hint-text">Si ce champs est déjà pré-rempli, c'est que des adresses ont déjà été associées à cette opération. <br/>Vous pouvez le modifier avec les adresses associées à cette convention.</em>
+                                </p>
                             {% endif %}
                         </div>
 
@@ -98,7 +108,6 @@
                         {% endif %}
                     </div>
                 </div>
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

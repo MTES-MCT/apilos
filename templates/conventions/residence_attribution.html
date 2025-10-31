@@ -24,6 +24,8 @@
                     <div class="fr-col-12">
                         <h3>Conditions d'attribution et d'occupation permanente de la résidence</h3>
 
+                        {% include "common/required_fields_info.html" %}
+
                         {% include 'conventions/attribution/reservation_prefectoral.html' %}
 
                         {% include "common/form/input_checkbox.html" with form_input=form.attribution_residence_sociale_ordinaire object_field="convention__attribution_residence_sociale_ordinaire__"|add:form.uuid.value %}
@@ -35,7 +37,6 @@
                     </div>
                 </div>
 
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

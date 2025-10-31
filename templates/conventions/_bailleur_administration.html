@@ -13,19 +13,24 @@
             <div class="fr-col-12 fr-mt-1w">
                 <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
                     <div class="fr-col-12 fr-col-md-7">
-                        <strong>Ce n'est pas la bonne administration ?</strong>
+                        <p class="fr-m-0"><strong>Ce n'est pas la bonne administration ?</strong></p>
                         <p>
-                            Vous pouvez changer l'administration de cette convention. <br />
-                            cette opération est irréversible et vous fera perdre l'accès à cette convention.
+                            Vous pouvez changer l'administration de cette convention.<br />
+                            Cette opération est irréversible et vous fera perdre l'accès à cette convention.
                         </p>
                     </div>
-                    <details {% if form.errors %}open=""{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
-                        <summary>
+                    <details id="change-admin" {% if form.errors %}open{% endif %} class="fr-mt-3w fr-col-12 fr-col-md-5">
+                        <!-- NOSONAR: Le rapport RGAA veux quelque chose que sonar n'accepte pas -->
+                        <summary
+                            id="change-admin-summary"
+                            role="button"
+                            aria-expanded="false"
+                            onkeydown="return true;">
                             <div class="fr-btn fr-btn--secondary fr-mt-auto fr-ml-auto fr-mb-1w">Changer l'administration</div>
                         </summary>
                         {% with convention_uuid_str=convention.uuid|stringformat:"s" %}
                             {% url 'users:search_administration' as search_administration_url %}
-                            {% include "common/form/input_search_select.html" with form_input=form.administration url=search_administration_url %}
+                            {% include "common/form/input_search_select_unified.html" with form_input=form.administration url=search_administration_url %}
                         {% endwith %}
 
                         <button
@@ -43,3 +48,22 @@
         {% endif %}
     {% endwith %}
 {% endblock content %}
+
+<script>
+const details = document.getElementById('change-admin');
+const summary = document.getElementById('change-admin-summary');
+
+summary.setAttribute('aria-expanded', details.open);
+
+summary.addEventListener('click', () => {
+  summary.setAttribute('aria-expanded', details.open);
+});
+
+summary.addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    details.open = !details.open;
+    summary.setAttribute('aria-expanded', details.open);
+  }
+});
+</script>

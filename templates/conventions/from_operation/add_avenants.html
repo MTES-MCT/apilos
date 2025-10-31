@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Ajout de convention simplifié - APiLos{% endblock %}
+{% block page_title %}Etape 3 - Ajouter une convention - APiLos{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -72,6 +72,8 @@
         <form method="post" action="" enctype="multipart/form-data">
             {% csrf_token %}
 
+            {% include "common/required_fields_info.html" %}
+
             <div class="fr-grid-row fr-grid-row--gutters fr-mt-4w">
                 <div class="fr-col-8">
                     {% if avenants %}
@@ -95,7 +97,7 @@
                 </div>
                 <div class="fr-col-6">
                     {% url 'users:search_bailleur' as search_bailleur_url %}
-                    {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url editable=True %}
+                    {% include "common/form/input_search_select_unified.html" with form_input=form.bailleur url=search_bailleur_url editable=True %}
                 </div>
                 <div class="fr-col-6">
                     {% include "common/form/input_number.html" with form_input=form.nb_logements editable=True %}
@@ -135,7 +137,6 @@
                 <div class="form-button-footer">
                     <a href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}" class="fr-btn fr-btn--tertiary fr-icon-arrow-right-s-line fr-btn--icon-right">
                         Passer cette étape
-
                     </a>
                 </div>
             </div>
