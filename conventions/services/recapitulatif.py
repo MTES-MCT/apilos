@@ -703,7 +703,20 @@ class ConventionSentService(ConventionService):
 
     def save(self, as_type: FileType = FileType.CONVENTION):
         upform = UploadForm(self.request.POST, self.request.FILES)
-        if upform.is_valid():
+
+        if as_type == FileType.PUBLICATION and not self.request.user.is_instructeur():
+            self.return_status = utils.ReturnStatus.ERROR
+            return {
+                "success": self.return_status,
+                "error_message": self.get_error_message(),
+                "convention": self.convention,
+                "upform": upform,
+                "extra_forms": {
+                    "upform": upform,
+                },
+            }
+
+        elif upform.is_valid():
             ConventionFileService.upload_file(
                 convention=self.convention,
                 file=self.request.FILES["file"],
@@ -719,6 +732,9 @@ class ConventionSentService(ConventionService):
                 "upform": upform,
             },
         }
+
+    def get_error_message(self):
+        return "Oups ! Seuls les instructeurs peuvent effectuer cette action."
 
 
 class ConventionUploadSignedService(ConventionService):
@@ -821,6 +837,17 @@ class ConventionUploadPublicationService(ConventionService):
 
     def save(self):
         form = ConventionInfoPublicationForm(self.request.POST)
+
+        if not self.request.user.is_instructeur():
+            self.return_status = utils.ReturnStatus.ERROR
+            return {
+                "success": self.return_status,
+                "error_message": self.get_error_message(),
+                "form": form,
+                "publication_info_form": form,
+                "convention": self.convention,
+            }
+
         if form.is_valid() and self.convention.statut in [
             ConventionStatut.PUBLICATION_EN_COURS.label,
             ConventionStatut.PUBLIE.label,
@@ -848,3 +875,6 @@ class ConventionUploadPublicationService(ConventionService):
 
     def get_success_message(self):
         return "le document de publication à été ajouté sur Apilos"
+
+    def get_error_message(self):
+        return "Oups ! Seuls les instructeurs peuvent effectuer cette action."

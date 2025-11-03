@@ -15,9 +15,9 @@
                     </div>
                     {% if not convention.is_avenant or checked %}
                     <div class="table--limited-height">
-                        {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=lot.edd_volumetrique|get_text_from_textfiles file_list=lot.edd_volumetrique|get_files_from_textfiles object_field="lot__edd_volumetrique__"|add:lot_uuid %}
+                        {% include "common/display_text_and_files_if_exists.html" with label="EDD volumétrique" text=programme.edd_volumetrique|get_text_from_textfiles file_list=programme.edd_volumetrique|get_files_from_textfiles object_field="programme__edd_volumetrique__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD volumétrique" value=programme.mention_publication_edd_volumetrique object_field="programme__mention_publication_edd_volumetrique__"|add:programme_uuid %}
-                        {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=lot.edd_classique|get_text_from_textfiles file_list=lot.edd_classique|get_files_from_textfiles object_field="lot__edd_classique__"|add:lot_uuid %}
+                        {% include "common/display_text_and_files_if_exists.html" with label="EDD classique" text=programme.edd_classique|get_text_from_textfiles file_list=programme.edd_classique|get_files_from_textfiles object_field="programme__edd_classique__"|add:programme_uuid %}
                         {% include "common/display_field_if_exists.html" with label="Mention de publication de l'EDD classique" value=programme.mention_publication_edd_classique object_field="programme__mention_publication_edd_classique__"|add:programme_uuid %}
                     </div>
                     <p class="fr-my-1w">EDD Simplifé : </p>

@@ -23,6 +23,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             televersement_convention_signee_le="2024-01-01",
             programme=ProgrammeFactory(
                 anru=True,
+                anah=True,
                 numero_operation="2017DD01100057",
                 nom="Le Clos de l'Ille - Rue de l'Occitanie - Séniors",
                 ville="Bourg-en-Bresse",
@@ -45,6 +46,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             statut=ConventionStatut.PROJET.label,
             programme=ProgrammeFactory(
                 anru=False,
+                anah=True,
                 numero_operation="20230600400040",
                 nom="ANTIBES 31 avenue de Nice",
                 ville="Antibes",
@@ -92,6 +94,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
 
         programme = ProgrammeFactory(
             anru=False,
+            anah=False,
             numero_operation="2014E891109087",
             nom="blah blah blah",
             ville="Marseille",
@@ -115,6 +118,8 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             create_lot=True,
             create_lot__financement=Financement.PALULOS,
         )
+
+        programme.anah = False
 
         ConventionFactory(
             uuid="4c337449-4fbc-42de-9f93-948a4dd65ee1",
@@ -160,6 +165,14 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                     "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
                 id="anru",
+            ),
+            param(
+                {"anah": "on"},
+                [
+                    "fbb9890f-171b-402d-a35e-71e1bd791b71",
+                    "fbb9890f-171b-402d-a35e-71e1bd791b70",
+                ],
+                id="anah",
             ),
             param(
                 {"statuts": ConventionStatut.PROJET.label},

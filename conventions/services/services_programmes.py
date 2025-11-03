@@ -26,6 +26,7 @@ class ConventionProgrammeService(ConventionService):
                 "type_habitat": self.convention.lots.first().type_habitat,
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
+                "anah": programme.anah,
                 "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
                 "nb_locaux_commerciaux": programme.nb_locaux_commerciaux,
                 "nb_bureaux": programme.nb_bureaux,
@@ -64,6 +65,7 @@ class ConventionProgrammeService(ConventionService):
                         "ville",
                         "type_operation",
                         "anru",
+                        "anah",
                         "autres_locaux_hors_convention",
                         "nb_locaux_commerciaux",
                         "nb_bureaux",
@@ -86,6 +88,7 @@ def _save_programme_and_lot(programme: Programme, lots: list[Lot], form: Program
     if form.cleaned_data["type_operation"]:
         programme.type_operation = form.cleaned_data["type_operation"]
     programme.anru = form.cleaned_data["anru"]
+    programme.anah = form.cleaned_data["anah"]
     programme.autres_locaux_hors_convention = form.cleaned_data[
         "autres_locaux_hors_convention"
     ]

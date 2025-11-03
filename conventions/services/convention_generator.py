@@ -462,8 +462,10 @@ def _save_convention_donnees_validees(
         convention.programme.reference_cadastrale_files()
     )
     object_files["effet_relatif_files"] = convention.programme.effet_relatif_files()
-    object_files["edd_volumetrique_files"] = convention.lot.edd_volumetrique_files()
-    object_files["edd_classique_files"] = convention.lot.edd_classique_files()
+    object_files["edd_volumetrique_files"] = (
+        convention.programme.edd_volumetrique_files()
+    )
+    object_files["edd_classique_files"] = convention.programme.edd_classique_files()
     convention.donnees_validees = json.dumps(
         {**context_to_save, **object_files}, default=str
     )
@@ -644,12 +646,12 @@ def _get_object_images(doc, convention):
     object_images["effet_relatif_images"] = effet_relatif_images
     local_pathes += tmp_local_path
     edd_volumetrique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lots.first().edd_volumetrique_files()
+        doc, convention.uuid, convention.programme.edd_volumetrique_files()
     )
     object_images["edd_volumetrique_images"] = edd_volumetrique_images
     local_pathes += tmp_local_path
     edd_classique_images, tmp_local_path = _build_files_for_docx(
-        doc, convention.uuid, convention.lots.first().edd_classique_files()
+        doc, convention.uuid, convention.programme.edd_classique_files()
     )
     object_images["edd_classique_images"] = edd_classique_images
     local_pathes += tmp_local_path

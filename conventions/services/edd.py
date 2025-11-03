@@ -35,14 +35,14 @@ class ConventionEDDService(ConventionService):
                 "lot_uuid": self.convention.lots.first().uuid,
                 **utils.get_text_and_files_from_field(
                     "edd_volumetrique",
-                    self.convention.lots.first().edd_volumetrique,
+                    self.convention.programme.edd_volumetrique,
                 ),
                 "mention_publication_edd_volumetrique": (
                     self.convention.programme.mention_publication_edd_volumetrique
                 ),
                 **utils.get_text_and_files_from_field(
                     "edd_classique",
-                    self.convention.lots.first().edd_classique,
+                    self.convention.programme.edd_classique,
                 ),
                 "mention_publication_edd_classique": (
                     self.convention.programme.mention_publication_edd_classique
@@ -170,28 +170,24 @@ class ConventionEDDService(ConventionService):
             self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_programme_edd(self):
-        for lot_convention in self.convention.lots.all():
-            lot_convention.edd_volumetrique = utils.set_files_and_text_field(
-                self.form.cleaned_data["edd_volumetrique_files"],
-                self.form.cleaned_data["edd_volumetrique"],
-            )
-            self.convention.programme.mention_publication_edd_volumetrique = (
-                self.form.cleaned_data["mention_publication_edd_volumetrique"]
-            )
-            lot_convention.edd_classique = utils.set_files_and_text_field(
-                self.form.cleaned_data["edd_classique_files"],
-                self.form.cleaned_data["edd_classique"],
-            )
-            self.convention.programme.mention_publication_edd_classique = (
-                self.form.cleaned_data["mention_publication_edd_classique"]
-            )
-            self.convention.programme.edd_stationnements = (
-                utils.set_files_and_text_field(
-                    self.form.cleaned_data["edd_stationnements_files"],
-                    self.form.cleaned_data["edd_stationnements"],
-                )
-            )
-            lot_convention.save()
+        self.convention.programme.edd_volumetrique = utils.set_files_and_text_field(
+            self.form.cleaned_data["edd_volumetrique_files"],
+            self.form.cleaned_data["edd_volumetrique"],
+        )
+        self.convention.programme.mention_publication_edd_volumetrique = (
+            self.form.cleaned_data["mention_publication_edd_volumetrique"]
+        )
+        self.convention.programme.edd_classique = utils.set_files_and_text_field(
+            self.form.cleaned_data["edd_classique_files"],
+            self.form.cleaned_data["edd_classique"],
+        )
+        self.convention.programme.mention_publication_edd_classique = (
+            self.form.cleaned_data["mention_publication_edd_classique"]
+        )
+        self.convention.programme.edd_stationnements = utils.set_files_and_text_field(
+            self.form.cleaned_data["edd_stationnements_files"],
+            self.form.cleaned_data["edd_stationnements"],
+        )
         self.convention.programme.save()
 
     def _save_programme_logement_edd(self):
