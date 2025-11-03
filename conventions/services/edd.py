@@ -184,11 +184,9 @@ class ConventionEDDService(ConventionService):
         self.convention.programme.mention_publication_edd_classique = (
             self.form.cleaned_data["mention_publication_edd_classique"]
         )
-        self.convention.programme.edd_stationnements = (
-            utils.set_files_and_text_field(
-                self.form.cleaned_data["edd_stationnements_files"],
-                self.form.cleaned_data["edd_stationnements"],
-            )
+        self.convention.programme.edd_stationnements = utils.set_files_and_text_field(
+            self.form.cleaned_data["edd_stationnements_files"],
+            self.form.cleaned_data["edd_stationnements"],
         )
         self.convention.programme.save()
 
