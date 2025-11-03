@@ -84,30 +84,7 @@
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                                    const statusElement = document.getElementById('convention_redirect_{{ convention.uuid }}');
-                                                    const linkElement = document.getElementById('convention_link_{{ convention.uuid }}');
-
-                                                    if (statusElement && linkElement) {
-                                                        let targetUrl = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
-
-                                                        if (statusElement.classList.contains("sent")) {
-                                                            targetUrl = "{% url 'conventions:sent' convention_uuid=convention.uuid %}";
-                                                        }
-                                                        else if (statusElement.classList.contains("signed")) {
-                                                            targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
-                                                        }
-                                                        else if (statusElement.classList.contains("project")) {
-                                                            targetUrl = "{% url 'conventions:bailleur' convention_uuid=convention.uuid %}";
-                                                        }
-
-                                                        linkElement.href = targetUrl;
-
-                                                        document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                            window.open(targetUrl, "_blank");
-                                                        });
-                                                    }
-                                                </script>
+                                                {% include 'conventions/_convention_redirect_script.html' with use_dom_ready=True %}
                                             {% endfor %}
                                         </tbody>
                                     </table>

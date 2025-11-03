@@ -181,39 +181,7 @@
 
                                                     <td title="{{ convention.statut_for_template.statut_display }}">
                                                         {% include "conventions/home/statut_tag.html" %}
-                                                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                                            document.addEventListener('DOMContentLoaded', function () {
-                                                                const statusElement = document.getElementById('convention_redirect_{{ convention.uuid }}');
-                                                                const linkElement = document.getElementById('convention_link_{{ convention.uuid }}');
-
-                                                                if (statusElement && linkElement) {
-                                                                    // Déterminer l'URL cible basée sur les classes
-                                                                    let targetUrl = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
-
-                                                                    if (statusElement.classList.contains("sent")) {
-                                                                        targetUrl = "{% url 'conventions:sent' convention_uuid=convention.uuid %}";
-                                                                    }
-                                                                    else if (statusElement.classList.contains("signed")) {
-                                                                        targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
-                                                                    }
-                                                                    else if (statusElement.classList.contains("project")) {
-                                                                        targetUrl = "{% url 'conventions:bailleur' convention_uuid=convention.uuid %}";
-                                                                    }
-                                                                    else if (statusElement.classList.contains("publication_en_cours")){
-                                                                        targetUrl = "{% url 'conventions:publication' convention_uuid=convention.uuid %}";
-                                                                    }
-                                                                    else if (statusElement.classList.contains("publie")){
-                                                                        targetUrl = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
-                                                                    }
-
-                                                                    // Appliquer l'URL au lien et au clic sur le statut
-                                                                    linkElement.href = targetUrl;
-                                                                    statusElement.addEventListener('click', function() {
-                                                                        location.href = targetUrl;
-                                                                    });
-                                                                }
-                                                            });
-                                                        </script>
+                                                        {% include 'conventions/_convention_redirect_script.html' with use_dom_ready=True %}
                                                     </td>
                                                     <td>
                                                         <div class="apilos--flex-row-left-center">
