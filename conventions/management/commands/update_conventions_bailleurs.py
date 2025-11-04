@@ -61,11 +61,15 @@ class Command(BaseCommand):
         return []
 
     def _get_convention(self, numero):
-        try:
-            return Convention.objects.get(numero=numero)
-        except ObjectDoesNotExist:
-            self.stdout.write(self.style.WARNING(f"Convention introuvable: {numero}"))
-            return None
+        for check_numero in [numero, numero.replace(" ", "-")]:
+            try:
+                return Convention.objects.get(numero=check_numero)
+            except ObjectDoesNotExist:
+                self.stdout.write(
+                    self.style.WARNING(f"Convention introuvable: {numero}")
+                )
+
+        return None
 
     def _get_bailleur(self, siren_siret, numero):
         try:
