@@ -4,6 +4,7 @@ import json
 import math
 import os
 import subprocess
+from functools import reduce
 from pathlib import Path
 
 import jinja2
@@ -91,6 +92,12 @@ def _compute_total_logement(convention):
     return (logements_totale, nb_logements_par_type)
 
 
+def _compute_surface_locaux_collectifs_residentiels(convention):
+    return sum(
+        lot.surface_locaux_collectifs_residentiels for lot in convention.lots.all()
+    )
+
+
 def _compute_total_locaux_collectifs(convention):
     return sum(
         locaux_collectif.surface_habitable * locaux_collectif.nombre
@@ -116,6 +123,13 @@ def get_or_generate_convention_doc(
             return DocxTemplate(default_storage.open(filepath, "rb"))
 
     return generate_convention_doc(convention=convention, save_data=save_data)
+
+
+def _compute_type_stationnements(convention):
+    stationnements = [lot.type_stationnements.all() for lot in convention.lots.all()]
+    if not stationnements:
+        return convention.lots.none()
+    return reduce(lambda s1, s2: s1.union(s2), stationnements)
 
 
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
@@ -148,22 +162,25 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "bailleur": convention.programme.bailleur,
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
-        "lot": convention.lot,
         "lots": convention.lots.all(),
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
         "logements": convention.lot.logements_import_ordered,
-        "logements_sans_loyer": convention.lot.logements_sans_loyer_import_ordered,
-        "logements_corrigee": convention.lot.logements_corrigee_import_ordered,
-        "logements_corrigee_sans_loyer": convention.lot.logements_corrigee_sans_loyer_import_ordered,
-        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
+        # "logements_sans_loyer": convention.lot.logements_sans_loyer_import_ordered,
+        # "logements_corrigee": convention.lot.logements_corrigee_import_ordered,
+        # "logements_corrigee_sans_loyer": convention.lot.logements_corrigee_sans_loyer_import_ordered,
+        # "locaux_collectifs": convention.lot.locaux_collectifs.all(),
         "annexes": annexes,
-        "stationnements": convention.lot.type_stationnements.all(),
+        # "stationnements": convention.lot.type_stationnements.all(),
+        "stationnements": _compute_type_stationnements(convention),
         "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
+        "surface_locaux_collectifs_residentiels": _compute_surface_locaux_collectifs_residentiels(
+            convention
+        ),
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
             convention.lot.type_stationnements.all(), annexes
