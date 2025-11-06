@@ -222,7 +222,6 @@ class ConventionFinancementServiceTests(TestCase):
             lot = self.service_avenant.convention.lot
             lot.financement = financement
             lot.save()
-            # FIXME: adapter le test après l'ajout de l'avenant pour la convention mixte
             financement_form["form-0-financement"] = financement
             financement_form["form-1-financement"] = financement
             self.service_avenant.request.POST = {

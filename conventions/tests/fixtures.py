@@ -113,8 +113,6 @@ logement_success_payload = {
     "lots-MAX_NUM_FORMS": "1000",
     "lots-0-loyer_derogatoire": "10",
     "lots-0-financement": "PLUS",
-    # FIXME: loyer_associations_foncieres we should remove this field
-    # from the dict to keep the old logic and test should keep working
     "lots-0-loyer_associations_foncieres": "30",
     "lots-0-surface_locaux_collectifs_residentiels": "25",
     "lots-0-lgts_mixite_sociale_negocies": "2",

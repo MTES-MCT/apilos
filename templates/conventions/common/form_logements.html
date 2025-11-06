@@ -268,49 +268,49 @@
 
 {% include "common/required_fields_info.html" %}
 {% if convention.is_avenant %}
-{# FIXME: Adapt the logic for avenant #}
-    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-        function toggleTable(name) {
-            const table_div = document.getElementsByClassName(`table-${name}`)[0];
-            const input_checkbox = document.getElementById(`toggle-${name}`);
-            const error_div = document.getElementsByClassName(`toggle-${name}-error`)[0];
-            let input_hidden;
-            if (name === "utile") {
-                input_hidden = document.getElementById("{{ form.formset_disabled.id_for_label }}");
-            } else if (name === "utile-sans-loyer") {
-                input_hidden = document.getElementById("{{ form.formset_sans_loyer_disabled.id_for_label }}");
-            } else if (name === "corrigee") {
-                input_hidden = document.getElementById("{{ form.formset_corrigee_disabled.id_for_label }}");
-            } else if (name === "corrigee-sans-loyer") {
-                input_hidden = document.getElementById("{{ form.formset_corrigee_sans_loyer_disabled.id_for_label }}");
-            }
-            // Initialize
-            if (input_checkbox.checked) {
-                table_div.classList.remove("hidden");
-                error_div.classList.add("hidden");
-                input_hidden.value = "false";
-            } else {
-                table_div.classList.add("hidden");
-                error_div.classList.remove("hidden");
-                input_hidden.value = "true";
-            }
 
-            // Listen to change on checkbox
-            input_checkbox.onchange = (e) => {
-                table_div.classList.toggle("hidden");
-                error_div.classList.toggle("hidden")
-                if (input_checkbox.checked) {
-                    input_hidden.value = "false";
-                } else {
-                    input_hidden.value = "true";
-                }
-            }
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+    function toggleTable(name) {
+        const table_div = document.getElementsByClassName(`table-${name}`)[0];
+        const input_checkbox = document.getElementById(`toggle-${name}`);
+        const error_div = document.getElementsByClassName(`toggle-${name}-error`)[0];
+        let input_hidden;
+        if (name === "utile") {
+            input_hidden = document.getElementById("{{ form.formset_disabled.id_for_label }}");
+        } else if (name === "utile-sans-loyer") {
+            input_hidden = document.getElementById("{{ form.formset_sans_loyer_disabled.id_for_label }}");
+        } else if (name === "corrigee") {
+            input_hidden = document.getElementById("{{ form.formset_corrigee_disabled.id_for_label }}");
+        } else if (name === "corrigee-sans-loyer") {
+            input_hidden = document.getElementById("{{ form.formset_corrigee_sans_loyer_disabled.id_for_label }}");
+        }
+        // Initialize
+        if (input_checkbox.checked) {
+            table_div.classList.remove("hidden");
+            error_div.classList.add("hidden");
+            input_hidden.value = "false";
+        } else {
+            table_div.classList.add("hidden");
+            error_div.classList.remove("hidden");
+            input_hidden.value = "true";
         }
 
-        toggleTable("utile");
-        toggleTable("utile-sans-loyer");
-        toggleTable("corrigee");
-        toggleTable("corrigee-sans-loyer");
-    </script>
+        // Listen to change on checkbox
+        input_checkbox.onchange = (e) => {
+            table_div.classList.toggle("hidden");
+            error_div.classList.toggle("hidden")
+            if (input_checkbox.checked) {
+                input_hidden.value = "false";
+            } else {
+                input_hidden.value = "true";
+            }
+        }
+    }
+
+    toggleTable("utile");
+    toggleTable("utile-sans-loyer");
+    toggleTable("corrigee");
+    toggleTable("corrigee-sans-loyer");
+</script>
 {% endif %}
 <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
