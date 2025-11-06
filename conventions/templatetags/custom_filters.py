@@ -221,48 +221,17 @@ def get_files_from_textfiles(field):
 
 @register.filter
 def without_missing_files(files):
-    # FIXME: EDD case — sometimes we receive a list instead of a dict (one file per financement).
-    # This should be reviewed later.
-    # Maybe we should restore the previous version of this function.
     if not files:
         return ""
 
-    files_as_json = json.loads(files) if isinstance(files, str) else files
-
-    if isinstance(files_as_json, dict):
-        files_as_json = _filter_dict_files(files_as_json)
-    elif isinstance(files_as_json, list):
-        files_as_json = _filter_list_files(files_as_json)
-
-    return json.dumps(files_as_json)
-
-
-def _filter_dict_files(files_dict):
-    for convention_id in list(files_dict.keys()):
-        file = files_dict[convention_id]
+    files_as_json = json.loads(files)
+    for convention_id, file in files_as_json.items():
         try:
             UploadedFile.objects.get(uuid=convention_id, filename=file["filename"])
-        except (UploadedFile.DoesNotExist, KeyError, TypeError):
-            del files_dict[convention_id]
-    return files_dict
+        except UploadedFile.DoesNotExist:
+            del files_as_json[convention_id]
 
-
-def _filter_list_files(files_list):
-    new_files = []
-    for item in files_list:
-        if isinstance(item, dict):
-            uuid = item.get("uuid")
-            filename = item.get("filename")
-            if (
-                uuid
-                and filename
-                and UploadedFile.objects.filter(uuid=uuid, filename=filename).exists()
-            ):
-                new_files.append(item)
-        elif isinstance(item, str):
-            if UploadedFile.objects.filter(filename=item).exists():
-                new_files.append(item)
-    return new_files
+    return json.dumps(files_as_json)
 
 
 @register.filter
