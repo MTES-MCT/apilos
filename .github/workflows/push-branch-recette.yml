@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - recette
+  pull_request:
+    branches:
+      - recette
 
 env:
   DATABASE_URL: postgres://apilos:apilos@localhost:5432/apilos
