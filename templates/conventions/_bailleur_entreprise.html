@@ -12,11 +12,15 @@
             </div>
             <div class="fr-col-12 fr-col-lg-6">
                 {% if bailleur.adresse %}
-                    <div>{{ bailleur.adresse }}</div>
+                    <div>
+                        <address>{{ bailleur.adresse }}<address>
+                    </div>
                 {% endif %}
                 <div>
-                    {% if bailleur.code_postal %}{{ bailleur.code_postal }}{% endif %}&nbsp;
-                    {% if bailleur.ville %}{{ bailleur.ville }}{% endif %}
+                    <address>
+                        {% if bailleur.code_postal %}{{ bailleur.code_postal }}{% endif %}&nbsp;
+                        {% if bailleur.ville %}{{ bailleur.ville }}{% endif %}
+                    <address>
                 </div>
             </div>
             <div class="fr-col-12 fr-col-lg-6">
@@ -30,16 +34,25 @@
                 <div class="fr-col-12">
                     <div class="block--row-strech">
                         <div class="block--row-strech-1 fr-mr-2w">
-                            <div class="fr-text--lg fr-mb-0"><strong>Ce n'est pas le bon bailleur ? </strong></div>
-                            <div>Vous pouvez demander l'attribution de cette convention à un autre bailleur.</div>
+                            <p class="fr-text--lg fr-mb-0">
+                                <strong>Ce n'est pas le bon bailleur ?</strong>
+                            </p>
+                            <p>
+                                Vous pouvez demander l'attribution de cette convention à un autre bailleur.
+                            </p>
                         </div>
-                        <details {% if form.errors %}open{% endif %} class="fr-mt-3w">
-                            <summary>
+                        <details id="change-company" {% if form.errors %}open{% endif %} class="fr-mt-3w">
+                            <!-- NOSONAR: Le rapport RGAA veux quelque chose que sonar n'accepte pas -->
+                            <summary
+                                id="change-company-summary"
+                                role="button"
+                                aria-expanded="false"
+                                onkeydown="return true;">
                                 <div class="fr-btn fr-btn--secondary">Changer le bailleur de cette convention et de son opération</div>
                             </summary>
                             <div>
                                 {% url 'users:search_bailleur' as search_bailleur_url %}
-                                {% include "common/form/input_search_select.html" with form_input=form.bailleur url=search_bailleur_url %}
+                                {% include "common/form/input_search_select_unified.html" with form_input=form.bailleur url=search_bailleur_url %}
                                 <button class="fr-btn" name="change_bailleur" value="True" {% include "common/form/disable_form_input.html" %}>
                                     Changer le bailleur
                                 </button>
@@ -48,17 +61,38 @@
                     </div>
                 </div>
             {% endif %}
-            <div class="fr-col-12 fr-mb-0 fr-text--sm">
-                <em>Vous pouvez{% if form.bailleur.field.choices %} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
-                    <a
-                        href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
-                        target="_blank"
-                        rel="noreferrer"
-                    >
-                        votre espace d'administration
-                    </a>
-                </em>
+            <div class="fr-col-12 fr-mb-0">
+                <p class="fr-text--sm fr-mb-0">
+                    <em>Vous pouvez{% if form.bailleur.field.choices %} également{% endif %} mettre à jour les informations de votre bailleur, si celles-ci sont erronées, dans
+                        <a
+                            href="{% url 'settings:edit_bailleur' bailleur_uuid=convention.bailleur.uuid %}"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            votre espace d'administration
+                        </a>
+                    </em>
+                </p>
             </div>
         {% endwith %}
     {% endwith %}
 {% endblock content %}
+
+<script>
+    const companyDetails = document.getElementById('change-company');
+    const companySummary = document.getElementById('change-company-summary');
+
+    companySummary.setAttribute('aria-expanded', details.open);
+
+    companySummary.addEventListener('click', () => {
+    companySummary.setAttribute('aria-expanded', details.open);
+    });
+
+    companySummary.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        details.open = !details.open;
+        companySummary.setAttribute('aria-expanded', details.open);
+    }
+    });
+</script>

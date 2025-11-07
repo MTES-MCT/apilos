@@ -2,7 +2,13 @@
 
 {% load static %}
 
-{% block page_title %}Logements - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Etape 1 - Avenant - Logements - APiLos
+    {% else %}
+        Etape 6 - Logements - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

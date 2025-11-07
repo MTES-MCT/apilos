@@ -1,0 +1,508 @@
+{# Template core - contient toute la logique commune #}
+
+<div class="fr-select-group {% if form_input.errors %}fr-select-group--error{% endif %}" id="{{ field_id }}_group">
+    {% if label %}
+        <label class="fr-label select-label" for="{{ field_id }}_combobox" id="{{ field_id }}_label">
+            {{ label }}
+        </label>
+    {% endif %}
+
+    <div class="fr-mt-1w accessible-combobox-wrapper" id="{{ field_id }}_wrapper">
+        {# Champ caché pour la soumission du formulaire #}
+        <select style="display: none;" id="{{ field_id }}" name="{{ field_name }}">
+            {% if initial_value %}
+                <option selected value="{{ initial_value }}">{{ initial_text }}</option>
+            {% elif form_input %}
+                {# Mode form : utiliser le queryset du form #}
+                <option selected value></option>
+                {% for element in form_input.field.queryset %}
+                    <option value="{{ element|attribute:form_input.field.to_field_name }}">
+                        {{ element }}
+                    </option>
+                {% endfor %}
+            {% else %}
+                {# Mode natif : utiliser initial_queryset #}
+                <option selected value></option>
+                {% for item in initial_queryset %}
+                    <option value="{{ item.uuid }}">{{ item }}</option>
+                {% endfor %}
+            {% endif %}
+        </select>
+
+        <div class="combobox-container">
+            <div class="combobox-input-wrapper">
+                <input type="text"
+                       role="combobox"
+                       id="{{ field_id }}_combobox"
+                       class="fr-select combobox-input"
+                       aria-autocomplete="list"
+                       aria-expanded="false"
+                       aria-controls="{{ field_id }}_listbox"
+                       aria-labelledby="{{ field_id }}_label"
+                       autocomplete="off"
+                       placeholder="{{ placeholder|default:'Rechercher...' }}"
+                       data-url="{% if form_input %}{{ url }}{% else %}{{ search_url }}{% endif %}"
+                       data-field-id="{{ field_id }}">
+
+                <button type="button" class="combobox-clear" style="display: none;">
+                    <span class="fr-sr-only">Effacer la sélection</span>
+                    <span aria-hidden="true">×</span>
+                </button>
+
+                <button type="button"
+                        class="combobox-toggle"
+                        aria-label="Afficher les options"
+                        aria-expanded="false"
+                        aria-controls="{{ field_id }}_listbox"
+                        tabindex="-1">
+                    <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M4 6l4 4 4-4z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- NOSONAR: weird issue that I checked is ok according to RGAA -->
+            <div role="listbox"
+                id="{{ field_id }}_listbox"
+                class="combobox-listbox"
+                aria-labelledby="{{ field_id }}_label"
+                style="display: none;">
+            </div>
+
+            <!-- NOSONAR weird issue that I checked is ok according to RGAA -->
+            <div role="status" aria-live="polite" aria-atomic="true" class="fr-sr-only combobox-status"></div>
+        </div>
+    </div>
+
+    {% if form_input.errors %}
+        {% for error in form_input.errors %}
+            <p id="select-error-desc-error" class="fr-error-text">
+                {{ error }}
+            </p>
+        {% endfor %}
+    {% endif %}
+</div>
+
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+(function() {
+    'use strict';
+
+    const fieldId = '{{ field_id }}';
+    const combobox = document.getElementById(fieldId + '_combobox');
+    const listbox = document.getElementById(fieldId + '_listbox');
+    const hiddenSelect = document.getElementById(fieldId);
+    const clearButton = combobox.parentElement.querySelector('.combobox-clear');
+    const toggleButton = combobox.parentElement.querySelector('.combobox-toggle');
+    const statusEl = combobox.closest('.combobox-container').querySelector('.combobox-status');
+
+    let searchTimeout = null;
+    let focusedOptionIndex = -1;
+    let options = [];
+    let selectedValue = '';
+    let selectedText = '';
+
+    function init() {
+        const selectedOption = hiddenSelect.querySelector('option[selected]');
+        if (selectedOption && selectedOption.value) {
+            selectedValue = selectedOption.value;
+            selectedText = selectedOption.textContent.trim();
+            combobox.value = selectedText;
+            updateClearButtonVisibility();
+        }
+
+        loadInitialOptions();
+
+        combobox.addEventListener('input', handleInput);
+        combobox.addEventListener('keydown', handleKeyDown);
+        combobox.addEventListener('blur', handleBlur);
+        combobox.addEventListener('click', handleComboboxClick);
+
+        clearButton.addEventListener('click', handleClear);
+        toggleButton.addEventListener('click', handleToggle);
+
+        listbox.addEventListener('mousedown', handleListboxMouseDown);
+        listbox.addEventListener('click', handleListboxClick);
+    }
+
+    function loadInitialOptions() {
+        const selectOptions = hiddenSelect.querySelectorAll('option');
+        listbox.innerHTML = '';
+
+        let hasOptions = false;
+        let index = 0;
+        for (const opt of selectOptions) {
+            if (opt.value) {
+                hasOptions = true;
+                const li = document.createElement('li');
+                li.role = 'option';
+                li.id = fieldId + '_option_' + index;
+                li.className = 'combobox-option';
+                li.dataset.value = opt.value;
+                li.textContent = opt.textContent.trim();
+                if (opt.selected) {
+                    li.setAttribute('aria-selected', 'true');
+                }
+                listbox.appendChild(li);
+            }
+            index++;
+        }
+
+        if (!hasOptions) {
+            const noResultLi = document.createElement('li');
+            noResultLi.role = 'option';
+            noResultLi.className = 'combobox-option combobox-no-results';
+            noResultLi.textContent = 'Commencez à taper pour rechercher';
+            announceToScreenReader('Commencez à taper pour rechercher');
+            listbox.appendChild(noResultLi);
+        }
+
+        updateOptions();
+    }
+
+    function updateOptions() {
+        options = Array.from(listbox.querySelectorAll('[role="option"]:not(.combobox-no-results)'));
+    }
+
+    function handleInput(e) {
+        const searchValue = e.target.value;
+
+        if (searchValue !== selectedText) {
+            selectedValue = '';
+            updateHiddenSelect('');
+            clearSelectedOption();
+        }
+
+        clearTimeout(searchTimeout);
+
+        if (searchValue.length >= 1) {
+            searchTimeout = setTimeout(() => {
+                performServerSearch(searchValue);
+            }, 300);
+        } else if (searchValue.length === 0) {
+            loadInitialOptions();
+            updateClearButtonVisibility();
+            closeListbox();
+        }
+    }
+
+    function performServerSearch(searchValue) {
+        const url = combobox.dataset.url;
+        if (!url) return;
+
+        announceToScreenReader('Recherche en cours...');
+
+        fetch(url + '?q=' + encodeURIComponent(searchValue))
+            .then(response => response.json())
+            .then(data => {
+                updateListboxWithResults(data);
+                if (data.length > 0) {
+                    openListbox();
+                    announceToScreenReader(data.length + ' résultat' + (data.length > 1 ? 's' : '') + ' disponible' + (data.length > 1 ? 's' : ''));
+                } else {
+                    openListbox();
+                    announceToScreenReader('Aucun résultat trouvé');
+                }
+            })
+            .catch(error => {
+                console.error('Erreur de recherche:', error);
+                announceToScreenReader('Erreur lors de la recherche');
+            });
+    }
+
+    function updateListboxWithResults(data) {
+        listbox.innerHTML = '';
+
+        if (data.length === 0) {
+            const noResultLi = document.createElement('li');
+            noResultLi.role = 'option';
+            noResultLi.className = 'combobox-option combobox-no-results';
+            noResultLi.textContent = 'Aucun résultat';
+            listbox.appendChild(noResultLi);
+        } else {
+            let index = 0;
+            for (const item of data) {
+                const li = document.createElement('li');
+                li.role = 'option';
+                li.id = fieldId + '_option_' + index;
+                li.className = 'combobox-option';
+                li.dataset.value = item.value;
+                li.textContent = item.label;
+                listbox.appendChild(li);
+                index++;
+            }
+        }
+
+        updateOptions();
+        focusedOptionIndex = -1;
+    }
+
+    function updateHiddenSelect(value) {
+        hiddenSelect.value = value;
+
+        const existingOption = hiddenSelect.querySelector(`option[value="${value}"]`);
+        if (existingOption) {
+            existingOption.selected = true;
+        } else if (value) {
+            hiddenSelect.innerHTML = '';
+            const newOption = document.createElement('option');
+            newOption.value = value;
+            newOption.textContent = selectedText;
+            newOption.selected = true;
+            hiddenSelect.appendChild(newOption);
+        } else {
+            hiddenSelect.innerHTML = '<option selected value></option>';
+        }
+    }
+
+    function handleKeyDown(e) {
+        const isOpen = combobox.getAttribute('aria-expanded') === 'true';
+
+        if (e.key === 'ArrowDown') {
+            handleArrowDown(isOpen, e);
+        } else if (e.key === 'ArrowUp') {
+            handleArrowUp(isOpen, e);
+        } else if (e.key === 'Enter') {
+            handleEnter(isOpen, e);
+        } else if (e.key === 'Escape') {
+            handleEscape(isOpen, e);
+        } else if (e.key === 'Tab') {
+            handleTab(isOpen);
+        } else if (e.key === 'Home') {
+            handleHome(isOpen, e);
+        } else if (e.key === 'End') {
+            handleEnd(isOpen, e);
+        }
+    }
+
+    function handleArrowDown(isOpen, e) {
+        e.preventDefault();
+        if (isOpen) {
+            moveFocusDown();
+        } else {
+            openListbox();
+        }
+    }
+
+    function handleArrowUp(isOpen, e) {
+        e.preventDefault();
+        if (isOpen) {
+            moveFocusUp();
+        }
+    }
+
+    function handleEnter(isOpen, e) {
+        e.preventDefault();
+        if (isOpen && focusedOptionIndex >= 0) {
+            selectOption(options[focusedOptionIndex]);
+        }
+    }
+
+    function handleEscape(isOpen, e) {
+        e.preventDefault();
+        if (isOpen) {
+            closeListbox();
+            combobox.focus();
+        }
+    }
+
+    function handleTab(isOpen) {
+        if (isOpen) {
+            closeListbox();
+        }
+    }
+
+    function handleHome(isOpen, e) {
+        if (isOpen) {
+            e.preventDefault();
+            moveFocusToFirst();
+        }
+    }
+
+    function handleEnd(isOpen, e) {
+        if (isOpen) {
+            e.preventDefault();
+            moveFocusToLast();
+        }
+    }
+
+    function handleBlur(e) {
+        setTimeout(() => {
+            if (!combobox.parentElement.contains(document.activeElement)) {
+                closeListbox();
+            }
+        }, 100);
+    }
+
+    function handleComboboxClick() {
+        const isOpen = combobox.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+            return;
+        }
+
+        if (combobox.value.length >= 2) {
+            performServerSearch(combobox.value);
+        } else {
+            openListbox();
+        }
+    }
+
+    function handleClear(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        selectedValue = '';
+        selectedText = '';
+        updateHiddenSelect('');
+        combobox.value = '';
+        clearSelectedOption();
+        loadInitialOptions();
+        updateClearButtonVisibility();
+        closeListbox();
+        combobox.focus();
+
+        announceToScreenReader('Sélection effacée');
+    }
+
+    function handleToggle(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const isOpen = combobox.getAttribute('aria-expanded') === 'true';
+        if (isOpen) {
+            closeListbox();
+        } else if (combobox.value.length >= 2) {
+            performServerSearch(combobox.value);
+        } else {
+            openListbox();
+        }
+        combobox.focus();
+    }
+
+    function handleListboxMouseDown(e) {
+        e.preventDefault();
+    }
+
+    function handleListboxClick(e) {
+        const option = e.target.closest('[role="option"]:not(.combobox-no-results)');
+        if (option) {
+            selectOption(option);
+        }
+    }
+
+    function moveFocusDown() {
+        if (options.length === 0) return;
+
+        if (focusedOptionIndex < options.length - 1) {
+            focusedOptionIndex++;
+        } else {
+            focusedOptionIndex = 0;
+        }
+        updateFocusedOption();
+    }
+
+    function moveFocusUp() {
+        if (options.length === 0) return;
+
+        if (focusedOptionIndex > 0) {
+            focusedOptionIndex--;
+        } else {
+            focusedOptionIndex = options.length - 1;
+        }
+        updateFocusedOption();
+    }
+
+    function moveFocusToFirst() {
+        if (options.length === 0) return;
+        focusedOptionIndex = 0;
+        updateFocusedOption();
+    }
+
+    function moveFocusToLast() {
+        if (options.length === 0) return;
+        focusedOptionIndex = options.length - 1;
+        updateFocusedOption();
+    }
+
+    function updateFocusedOption() {
+        for (const opt of options) {
+            opt.classList.remove('focused');
+        }
+
+        if (focusedOptionIndex >= 0 && focusedOptionIndex < options.length) {
+            const focusedOption = options[focusedOptionIndex];
+            focusedOption.classList.add('focused');
+
+            combobox.setAttribute('aria-activedescendant', focusedOption.id);
+            focusedOption.scrollIntoView({ block: 'nearest' });
+
+            announceToScreenReader(focusedOption.textContent.trim());
+        } else {
+            combobox.removeAttribute('aria-activedescendant');
+        }
+    }
+
+    function selectOption(option) {
+        selectedValue = option.dataset.value;
+        selectedText = option.textContent.trim();
+        updateHiddenSelect(selectedValue);
+        combobox.value = selectedText;
+
+        clearSelectedOption();
+        option.setAttribute('aria-selected', 'true');
+
+        updateClearButtonVisibility();
+        closeListbox();
+        combobox.focus();
+
+        announceToScreenReader(selectedText + ' sélectionné');
+    }
+
+    function clearSelectedOption() {
+        for (const opt of options) {
+            opt.removeAttribute('aria-selected');
+        }
+    }
+
+    function openListbox() {
+        combobox.setAttribute('aria-expanded', 'true');
+        toggleButton.setAttribute('aria-expanded', 'true');
+        toggleButton.setAttribute('aria-label', 'Masquer les options');
+        listbox.style.display = 'block';
+
+        if (focusedOptionIndex === -1) {
+            const selectedOption = listbox.querySelector('[aria-selected="true"]');
+            if (selectedOption) {
+                focusedOptionIndex = options.indexOf(selectedOption);
+                updateFocusedOption();
+            }
+        }
+    }
+
+    function closeListbox() {
+        combobox.setAttribute('aria-expanded', 'false');
+        toggleButton.setAttribute('aria-expanded', 'false');
+        toggleButton.setAttribute('aria-label', 'Afficher les options');
+        listbox.style.display = 'none';
+        combobox.removeAttribute('aria-activedescendant');
+        focusedOptionIndex = -1;
+
+        for (const opt of options) {
+            opt.classList.remove('focused');
+        }
+    }
+
+    function updateClearButtonVisibility() {
+        if (combobox.value) {
+            clearButton.style.display = 'flex';
+        } else {
+            clearButton.style.display = 'none';
+        }
+    }
+
+    function announceToScreenReader(message) {
+        statusEl.textContent = message;
+    }
+
+    init();
+})();
+</script>

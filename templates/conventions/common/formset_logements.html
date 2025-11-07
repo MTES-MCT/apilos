@@ -17,7 +17,7 @@
 
 <div class="table-{{ js_name }}">
     <div id='download_upload_block_{{ js_name }}' {% if not editable %}hidden{% endif %}>
-        {% include "common/form/download_upload_form.html" with file_type=file_type upform=upform what='logements' file_field_label=file_field_label %}
+        {% include "common/form/download_upload_form.html" with file_type=file_type upform=upform what='logements' file_field_label=file_field_label hidden_what=formset_title %}
         <hr class="fr-col-12 fr-my-3w">
     </div>
 
@@ -38,7 +38,7 @@
         <div class="fr-table__wrapper">
             <div class="fr-table__container">
                 <div class="fr-table__content">
-                    <table id="lgts_table"  aria-label="Logements">
+                    <table id="lgts_table" aria-label="Table logements {{ formset_title }}">
                         <thead>
                             <tr>
                                 {% if convention|display_comments %}
