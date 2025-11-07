@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Cadastre - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Cadastre - APiLos
+    {% else %}
+        Etape 3 - Cadastre - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% load custom_filters static %}
 
@@ -17,6 +23,7 @@
     <div class="fr-container-fluid ds_banner fr-pb-1w">
         {% include "conventions/common/form_header.html" %}
         {% include "common/step_progressbar.html" %}
+
         <div class="fr-container">
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -27,7 +34,10 @@
                     value="{{ form.uuid.value|default_if_none:'' }}">
                 <div class="fr-grid-row fr-grid-row--gutters">
                     <div class="fr-col-md-12">
+
                         <h4>Permis et dates</h4>
+
+                        {% include "common/required_fields_info.html" %}
 
                         {% include "common/form/input_text.html" with form_input=form.permis_construire object_field="programme__permis_construire__"|add:form.uuid.value %}
 
@@ -143,7 +153,7 @@
                             {% include "common/form/input_upload.html" with single_file=False form_input=form.reference_publication_acte form_input_files=form.reference_publication_acte_files object_name='programme' object_uuid=convention.programme.uuid convention_uuid=convention.uuid textarea=True image_only=True file_list=convention.programme.reference_publication_acte|get_files_from_textfiles object_field="programme__reference_publication_acte__"|add:form.uuid.value %}
                         </div>
                         <div class="apilos--p-relative">
-                            <a href="https://www.cadastre.gouv.fr" target="_blank" class="fr-link apilos--right-top" rel="noreferrer">Vérifier mes informations sur cadastre.gouv.fr</a>
+                            <a href="https://www.cadastre.gouv.fr" target="_blank" class="fr-link apilos--right-top apilos--right-top-responsive" rel="noreferrer">Vérifier mes informations sur cadastre.gouv.fr</a>
                             {% include "common/form/input_upload.html" with single_file=False form_input=form.reference_cadastrale form_input_files=form.reference_cadastrale_files object_name='programme' object_uuid=convention.programme.uuid convention_uuid=convention.uuid image_only=True file_list=convention.programme.reference_cadastrale|get_files_from_textfiles object_field="programme__reference_cadastrale__"|add:form.uuid.value %}
                         </div>
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
@@ -240,7 +250,6 @@
                     </div>
                 </div>
 
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

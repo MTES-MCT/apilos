@@ -1,7 +1,8 @@
 {% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
+    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+        {% include "common/required_fields_info.html" %}
         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
     </div>
     <div class="fr-col-12">
@@ -32,7 +33,7 @@
         {% endif %}
         <div class="table-utile">
             <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" %}
+                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" hidden_what='Surface utile avec loyers' %}
                 <hr class="fr-col-12 fr-my-3w">
             </div>
 
@@ -53,7 +54,7 @@
                 <div class="fr-table__wrapper">
                     <div class="fr-table__container">
                         <div class="fr-table__content">
-                            <table id="lgts_table"  aria-label="Logements">
+                            <table id="lgts_table"  aria-label="Table logements Surface utile avec loyer">
                                 <thead>
                                     <tr>
                                         {% if convention|display_comments %}
@@ -196,13 +197,13 @@
        value="{{ form.uuid.value|default_if_none:'' }}">
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
+    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
         {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:form.uuid.value %}
     </div>
-    <div class="fr-col-12 fr-mb-2w">
+    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
         {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:form.uuid.value %}
     </div>
-    <div class="fr-col-12 fr-mb-2w">
+    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
         {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:form.uuid.value %}
     </div>
 </div>
@@ -211,7 +212,7 @@
     <h4>Option de l'article sur la clause de mixité sociale</h4>
 
     <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-mb-2w">
+        <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
             {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
             <div class="insert-info">
                 <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS" target="_blank" rel="noreferrer" class="fr-text--xs fr-link">Informations complémentaires</a>
@@ -220,7 +221,6 @@
     </div>
 {% endif %}
 
-{% include "common/required_fields_info.html" %}
 {% if convention.is_avenant %}
     <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         function toggleTable(name) {

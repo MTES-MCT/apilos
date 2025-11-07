@@ -2,7 +2,13 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Financements - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Financements - APiLos
+    {% else %}
+        Etape 5 - Financements - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -24,6 +30,8 @@
                     <div class="fr-col-md-12">
 
                         <h4>Financement : Prêts et Subventions</h4>
+
+                        {% include "common/required_fields_info.html" %}
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform what='prêts et subventions' file_field_label='financement' %}
@@ -163,7 +171,6 @@
                         </div>
                     </div>
 
-                    {% include "common/required_fields_info.html" %}
                     {% include "conventions/common/form_footer_button.html" %}
                 </form>
             </div>
