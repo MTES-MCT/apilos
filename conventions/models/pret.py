@@ -30,6 +30,7 @@ class Pret(models.Model):
     # Needed to import xlsx files
     import_mapping = {
         "Numéro\n(caractères alphanuméric)": "numero",
+        "Financement": "financement",
         "Date d'octroi\n(format dd/mm/yyyy)": "date_octroi",
         "Durée\n(en années)": "duree",
         "Montant\n(en €)": "montant",

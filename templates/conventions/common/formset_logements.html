@@ -52,9 +52,11 @@
                                 </th>
                                 <th scope="col" class="col__width--150">
                                     Type
-                                    {% if formset.total_form_count %}
-                                        {% include "common/form/required_field_star.html" %}
-                                    {% endif %}
+                                    {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}
+                                </th>
+                                <th scope="col" class="col__width--150">
+                                    Financement
+                                    {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}
                                 </th>
                                 <th scope="col" class="col__width--120">
                                     Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -116,6 +118,9 @@
                                         <td>
                                             {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                         </td>
+                                        <td>
+                                            {% include "common/form/input_select.html" with form_input=form.financement parent_object_field=main_object_field editable=editable_after_upload %}
+                                        </td>
                                         <td id="lgt_sh_{{ js_total_code }}">
                                             {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh_{{js_total_code}}')" parent_object_field=main_object_field editable=editable_after_upload %}
                                         </td>
@@ -157,20 +162,21 @@
                                 {% endwith %}
                             {% endfor %}
                             <tr>
-                                <td colspan="{% if convention|display_comments %}3{% else %}2{% endif %}"
-                                    class="fr-text--lg">
-                                    Total
-                                </td>
-                                <td id="total_sh_{{ js_total_code }}" class="fr-text--lg text--center">
-                                </td>
-                                {% if not use_surface_corrigee %}
-                                    <td id="total_sa_{{ js_total_code }}" class="fr-text--lg text--center">
+                                {% if use_surface_corrigee %}
+                                    <td colspan="{% if convention|display_comments %}4{% else %}3{% endif %}" class="fr-text--lg">
+                                        Total
                                     </td>
-                                    <td id="total_sar_{{ js_total_code }}" class="fr-text--lg text--center">
+                                {% else %}
+                                    <td colspan="{% if convention|display_comments %}5{% else %}3{% endif %}" class="fr-text--lg">
+                                        Total
                                     </td>
                                 {% endif %}
-                                <td id="total_su_{{ js_total_code }}" class="fr-text--lg text--center">
-                                </td>
+                                <td id="total_sh_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                {% if not use_surface_corrigee %}
+                                    <td id="total_sa_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                    <td id="total_sar_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                {% endif %}
+                                <td id="total_su_{{ js_total_code }}" class="fr-text--lg text--center"></td>
                                 {% if use_loyer %}
                                     <td>
                                     </td>

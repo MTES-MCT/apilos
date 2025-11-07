@@ -1,15 +1,18 @@
 import datetime
 import logging
 import uuid
+from collections import defaultdict
 from datetime import date
 
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Prefetch, Q
 from django.forms import model_to_dict
 from django.http import HttpRequest
 from django.utils.functional import cached_property
+from waffle import switch_is_active
 
 from conventions.models import TypeEvenement
 from conventions.models.avenant_type import AvenantType
@@ -20,6 +23,10 @@ from programmes.models import Financement, LocauxCollectifs, Lot, TypeStationnem
 from users.type_models import EmailPreferences, TypeRole
 
 logger = logging.getLogger(__name__)
+
+
+class ConventionGroupingError(Exception):
+    pass
 
 
 class ConventionQuerySet(models.QuerySet):
@@ -37,6 +44,95 @@ class ConventionManager(models.Manager):
             .get_queryset()
             .prefetch_related(Prefetch("lots", queryset=Lot.objects.order_by("pk")))
         )
+
+    def _split_first_convention(self, conventions):
+        """Returns the first convention and the rest of the conventions separately."""
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
+        all_conventions = list(conventions.all())
+        if not all_conventions:
+            return None, []
+        return all_conventions[0], all_conventions[1:]
+
+    def group_conventions(self, uuids_conventions):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
+        if not uuids_conventions:
+            raise ConventionGroupingError(
+                "We can't create a mixte convention, a list of uuids conventions must be provided"
+            )
+
+        related_conventions = self.model.objects.filter(uuid__in=uuids_conventions)
+
+        programme_ids = {conv.programme_id for conv in related_conventions}
+        if len(programme_ids) > 1:
+            raise ConventionGroupingError("Conventions must be from the same programme")
+
+        statut_list = {conv.statut for conv in related_conventions}
+        if statut_list != {ConventionStatut.PROJET.label}:
+            raise ConventionGroupingError("Conventions must be in the same status")
+
+        type_habitat_list = {
+            conv.lots.first().type_habitat for conv in related_conventions
+        }
+        if len(type_habitat_list) > 1:
+            raise ConventionGroupingError(
+                "All lots in the conventions must have the same type of habitat"
+            )
+
+        for conv in related_conventions:
+            if conv.is_avenant():
+                raise ConventionGroupingError("Avenants cannot be grouped")
+
+        convention, others_conventions = self._split_first_convention(
+            related_conventions
+        )
+        convention.set_lots(others_conventions)
+
+        return convention.programme, convention.lots, convention
+
+    def _degroup_convention(self, convention):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+        degrouped_conventions_ids = []
+        if convention.is_mixte:
+            for lot in convention.lots.all():
+                degrouped_convention = convention.clone_convention()
+                lot.convention = degrouped_convention
+                lot.save()
+                degrouped_conventions_ids.append(degrouped_convention.id)
+            if degrouped_conventions_ids:
+                convention.delete()
+
+        return self.model.objects.filter(id__in=degrouped_conventions_ids)
+
+    def degroup_conventions(self, list_of_uuids_conventions):
+        if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
+            return
+
+        if not list_of_uuids_conventions:
+            raise ConventionGroupingError(
+                "We can't degroup convention, UUIDs list is required"
+            )
+
+        related_conventions = self.model.objects.filter(
+            uuid__in=list_of_uuids_conventions
+        )
+
+        if any(conv.has_avenant for conv in related_conventions):
+            raise ConventionGroupingError("Conventions must not have any avenant")
+
+        statut_list = {conv.statut for conv in related_conventions}
+        if statut_list != {ConventionStatut.PROJET.label}:
+            raise ConventionGroupingError("Conventions must be in the same status")
+
+        for conv in related_conventions:
+            if conv.is_avenant():
+                raise ConventionGroupingError("Avenants cannot be degrouped")
+
+        return self._degroup_convention(related_conventions.first())
 
 
 class Convention(models.Model):
@@ -253,9 +349,22 @@ class Convention(models.Model):
         return self.lots.first()
 
     @property
+    def lots(self) -> Lot:
+        return self.lots
+
+    @property
+    def is_mixte(self) -> bool:
+        """
+        Returns True if the convention has multiple lots (mixte),
+        False if it has only one lot (Simple).
+        """
+        return self.lots.count() > 1
+
+    @property
     def is_pls_financement_type(self) -> bool:
-        if lot := self.lot:
-            return lot.financement in [
+        return all(
+            lot.financement
+            in [
                 Financement.PLS,
                 Financement.PLS_DOM,
                 Financement.PALULOS,
@@ -264,7 +373,8 @@ class Convention(models.Model):
                 Financement.PALU_COM,
                 Financement.PALU_RE,
             ]
-        return False
+            for lot in self.lots.all()
+        )
 
     @property
     def attribution_type(self) -> str | None:
@@ -299,6 +409,27 @@ class Convention(models.Model):
     def bailleur(self):
         return self.programme.bailleur
 
+    @property
+    def lots_list(self):
+        from django.utils.html import format_html_join
+
+        lots = self.lots.all()  # use related_name if set in Lot model
+        return format_html_join(
+            ", ",
+            '<a href="/admin/programmes/lot/{}/change/">{}</a>',
+            ((lot.pk, str(lot)) for lot in lots),
+        )
+
+    @property
+    def get_financement_display(self):
+        return ", ".join(
+            [str(lot.get_financement_display()) for lot in self.lots.all()]
+        )
+
+    @property
+    def nb_logements(self):
+        return sum([lot.nb_logements for lot in self.lots.all() if lot.nb_logements])
+
     @cached_property
     def ecolo_reference(self) -> EcoloReference | None:
         if self.id is not None:
@@ -313,10 +444,11 @@ class Convention(models.Model):
         if programme := self.programme:
             str_compose.append(programme.ville)
             str_compose.append(programme.nom)
-        if lot := self.lot:
-            str_compose.append(f"{lot.nb_logements} lgts")
-            str_compose.append(lot.get_type_habitat_display())
-            str_compose.append(lot.financement)
+        if lots := self.lots.all():
+            for lot in lots:
+                str_compose.append(f"{lot.nb_logements} lgts")
+                str_compose.append(lot.get_type_habitat_display())
+                str_compose.append(lot.financement)
         if not str_compose:
             str_compose.append(self.uuid)
         return " - ".join(str_compose)
@@ -376,6 +508,10 @@ class Convention(models.Model):
                 "-cree_le"
             )[1]
         return last_avenant_or_parent
+
+    @property
+    def has_avenant(self):
+        return self.avenants.exists()
 
     def get_email_bailleur_users(self):
         """
@@ -591,7 +727,10 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return self.lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+        return all(
+            lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+            for lot in self.lots.all()
+        )
 
     def display_not_validated_status(self):
         """
@@ -643,57 +782,60 @@ class Convention(models.Model):
         cloned_convention = Convention(**convention_fields)
         cloned_convention.save()
 
-        lot_fields = model_to_dict(
-            self.lot,
-            exclude=[
-                "id",
-                "parent",
-                "convention",
-                "cree_le",
-                "mis_a_jour_le",
-            ],
-        ) | {
-            "parent_id": convention_origin.lot.id,
-            "convention": cloned_convention,
-        }
-        cloned_lot = Lot(**lot_fields)
-        cloned_lot.save()
-
-        for logement in self.lot.logements.all():
-            logement.clone(lot=cloned_lot)
-
-        for pret in convention_origin.lot.prets.all():
-            pret.clone(lot=cloned_lot)
-
-        for type_stationnement in self.lot.type_stationnements.all():
-            type_stationnement_fields = model_to_dict(
-                type_stationnement,
+        for lot in self.lots.all():
+            lot_fields = model_to_dict(
+                lot,
                 exclude=[
                     "id",
-                    "lot",
+                    "parent",
+                    "convention",
                     "cree_le",
                     "mis_a_jour_le",
                 ],
             ) | {
-                "lot": cloned_lot,
+                "parent_id": convention_origin.lot.id,
+                "convention": cloned_convention,
             }
-            cloned_type_stationnement = TypeStationnement(**type_stationnement_fields)
-            cloned_type_stationnement.save()
+            cloned_lot = Lot(**lot_fields)
+            cloned_lot.save()
 
-        for locaux_collectif in self.lot.locaux_collectifs.all():
-            locaux_collectif_fields = model_to_dict(
-                locaux_collectif,
-                exclude=[
-                    "id",
-                    "lot",
-                    "cree_le",
-                    "mis_a_jour_le",
-                ],
-            ) | {
-                "lot": cloned_lot,
-            }
-            cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
-            cloned_locaux_collectif.save()
+            for logement in lot.logements.all():
+                logement.clone(lot=cloned_lot)
+
+            for pret in convention_origin.lot.prets.all():
+                pret.clone(lot=cloned_lot)
+
+            for type_stationnement in lot.type_stationnements.all():
+                type_stationnement_fields = model_to_dict(
+                    type_stationnement,
+                    exclude=[
+                        "id",
+                        "lot",
+                        "cree_le",
+                        "mis_a_jour_le",
+                    ],
+                ) | {
+                    "lot": cloned_lot,
+                }
+                cloned_type_stationnement = TypeStationnement(
+                    **type_stationnement_fields
+                )
+                cloned_type_stationnement.save()
+
+            for locaux_collectif in lot.locaux_collectifs.all():
+                locaux_collectif_fields = model_to_dict(
+                    locaux_collectif,
+                    exclude=[
+                        "id",
+                        "lot",
+                        "cree_le",
+                        "mis_a_jour_le",
+                    ],
+                ) | {
+                    "lot": cloned_lot,
+                }
+                cloned_locaux_collectif = LocauxCollectifs(**locaux_collectif_fields)
+                cloned_locaux_collectif.save()
 
         return cloned_convention
 
@@ -790,3 +932,54 @@ class Convention(models.Model):
                 result["instructeurs"].append((user.first_name, user.last_name))
         result["number"] = len(result["instructeurs"]) + len(result["bailleurs"])
         return result
+
+    def clone_convention(self) -> "Convention":
+        """
+        Create a shallow clone of this Convention (excluding id and uuid).
+        Keeps the same name.
+        """
+        fields = {
+            f.name: getattr(self, f.name)
+            for f in self._meta.fields
+            if f.name not in ["id", "uuid"]
+        }
+        return Convention.objects.create(**fields)
+
+    def set_lots(
+        self, joined_conventions: list["Convention"], with_remove_joined_convention=True
+    ) -> list[Lot] | bool:
+        """
+        Reassign lots from other conventions to this convention.
+        Returns the list of reassigned lots on success, or empty list on failure.
+        """
+        reassigned_lots = []
+        try:
+            for convention in joined_conventions:
+                for lot in convention.lots.all():
+                    if lot is not None:
+                        lot.convention = self
+                        lot.save()
+                        lot.save(update_fields=["convention"])
+                        reassigned_lots.append(lot)
+
+                if with_remove_joined_convention:
+                    convention.delete()
+
+            return reassigned_lots
+        except (ValueError, TypeError) as e:
+            logger.error(e)
+            return []
+
+    def get_lots(self) -> list[Lot]:
+        return self.lots
+
+    def repartition_surfaces(self):
+        result = defaultdict(lambda: defaultdict(int))
+        data = [lot.repartition_surfaces() for lot in self.lots.all()]
+        for entry in data:
+            for type_name, subtypes in entry.items():  # INDIVIDUEL / COLLECTIF
+                for subtype, value in subtypes.items():  # T1, T2, ..
+                    result[type_name][subtype] += value
+
+        # Convert back to normal dicts
+        return {t: dict(sub) for t, sub in result.items()}

@@ -32,7 +32,7 @@ class ConventionEDDService(ConventionService):
         self.form = ProgrammeEDDForm(
             initial={
                 "uuid": self.convention.programme.uuid,
-                "lot_uuid": self.convention.lot.uuid,
+                "lot_uuid": self.convention.lots.first().uuid,
                 **utils.get_text_and_files_from_field(
                     "edd_volumetrique",
                     self.convention.programme.edd_volumetrique,
@@ -99,7 +99,7 @@ class ConventionEDDService(ConventionService):
             {
                 "uuid": self.convention.programme.uuid,
                 **utils.init_text_and_files_from_field(
-                    self.request, self.convention.lot, "edd_volumetrique"
+                    self.request, self.convention.lots.first(), "edd_volumetrique"
                 ),
                 "mention_publication_edd_volumetrique": (
                     self.request.POST.get(
@@ -108,7 +108,7 @@ class ConventionEDDService(ConventionService):
                     )
                 ),
                 **utils.init_text_and_files_from_field(
-                    self.request, self.convention.lot, "edd_classique"
+                    self.request, self.convention.lots.first(), "edd_classique"
                 ),
                 "mention_publication_edd_classique": (
                     self.request.POST.get(

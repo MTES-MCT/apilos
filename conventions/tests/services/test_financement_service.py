@@ -16,6 +16,7 @@ financement_form = {
     "form-INITIAL_FORMS": 2,
     "form-0-uuid": "",
     "form-0-numero": "A",
+    "form-0-financement": "PLUS",
     "form-0-date_octroi": "2020-01-01",
     "form-0-duree": "50",
     "form-0-montant": "1000000.00",
@@ -23,6 +24,7 @@ financement_form = {
     "form-0-autre": "",
     "form-1-uuid": "",
     "form-1-numero": "A",
+    "form-1-financement": "PLUS",
     "form-1-date_octroi": "2020-01-01",
     "form-1-duree": "20",
     "form-1-montant": "200000.00",
@@ -63,6 +65,8 @@ class ConventionFinancementServiceTests(TestCase):
         self.assertIsInstance(self.service.upform, UploadForm)
 
     def test_save_success(self):
+        financement_form["form-0-financement"] = "PLUS"
+        financement_form["form-1-financement"] = "PLUS"
         self.service.request.POST = financement_form
 
         self.service.save()
@@ -218,7 +222,8 @@ class ConventionFinancementServiceTests(TestCase):
             lot = self.service_avenant.convention.lot
             lot.financement = financement
             lot.save()
-
+            financement_form["form-0-financement"] = financement
+            financement_form["form-1-financement"] = financement
             self.service_avenant.request.POST = {
                 **financement_form,
                 "annee_fin_conventionnement": 2065,

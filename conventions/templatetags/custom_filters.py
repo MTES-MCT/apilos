@@ -236,7 +236,9 @@ def without_missing_files(files):
 
 @register.filter
 def with_financement(convention):
-    return convention.lot.financement != Financement.SANS_FINANCEMENT
+    return Financement.SANS_FINANCEMENT not in [
+        lot.financement for lot in convention.lots.all()
+    ]
 
 
 @register.filter
