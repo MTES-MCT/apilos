@@ -6,7 +6,7 @@
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button aria-controls="modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                            <button aria-controls="modal" title="Fermer" type="button" class="fr-btn fr-btn--close">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h2 id="modal-title" class="fr-modal__title">
@@ -32,7 +32,7 @@
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button aria-controls="export-launched-modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                            <button aria-controls="export-launched-modal" title="Fermer" type="button" class="fr-btn fr-btn--close">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h2 id="export-modal-title" class="fr-modal__title">
@@ -57,7 +57,9 @@
                         {% if filtered_conventions_count != all_conventions_count %}
                             <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
                                 <div class="fr-grid-row fr-col-6">
-                                    <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
+                                    <h2 class="fr-mr-2w notes" style="font-size: inherit; font-weight: inherit; margin: 0;">
+                                        {{ filtered_conventions_count }} résultats
+                                    </h2>
                                     <a href="/" class="fr-link">
                                         <span class="fr-icon-close-circle-line fr-mr-1w"></span>
                                         Réinitialiser la recherche
@@ -96,7 +98,8 @@
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
-                                    <table aria-label="Conventions">
+                                    <table aria-label="Conventions et avenants">
+                                        <caption class="fr-sr-only"> {{ filtered_conventions_count }} résultats </caption>
                                         <thead>
                                             <tr class="th_inline">
                                                 {% if debug_search_scoring %}
@@ -178,36 +181,18 @@
 
                                                     <td title="{{ convention.statut_for_template.statut_display }}">
                                                         {% include "conventions/home/statut_tag.html" %}
-                                                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                                            document.addEventListener('DOMContentLoaded', function () {
-                                                                document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                                    if (this.classList.contains("sent")) {
-                                                                        location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("signed")) {
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("project")) {
-                                                                        location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publication_en_cours")){
-                                                                        location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publie")){
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else {
-                                                                        location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                });
-                                                            });
-                                                        </script>
+                                                        {% include 'conventions/_convention_redirect_script.html' with use_dom_ready=True %}
                                                     </td>
                                                     <td>
                                                         <div class="apilos--flex-row-left-center">
                                                             <div class="apilos--container_ellipsis">
                                                                 <strong class="apilos--overflow_ellipsis">
-                                                                    {{ convention.programme|highlight_if_match:search_operation_nom }}
+                                                                    <a href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                                    id="convention_link_{{ convention.uuid }}"
+                                                                    class="fr-link">
+                                                                        <span class="fr-sr-only" id"{{ convention.uuid }}-line-label">aria-label="Convention {{ convention.programme }}{% if convention.programme.numero_operation %}, opération {{ convention.programme.numero_operation }}{% endif %}{% if convention.numero %}, numéro {{ convention.numero }}{% elif convention.parent %}, numéro {{ convention.parent.numero }}{% endif %}{% if request|is_instructeur %}, bailleur {{ convention.programme.bailleur.nom }}{% endif %}{% if request|display_administration %}, administration {{ convention.programme.administration.nom }}{% endif %}, financement {{ convention.lot.get_financement_display }}, {{ convention.programme.ville }} {{ convention.programme.code_postal }}, {{ convention.lot.nb_logements }} logements{% if convention.programme.date_achevement_compile %}, achèvement {{ convention.programme.date_achevement_compile|date:'d F Y' }}{% endif %}{% if convention.televersement_convention_signee_le %}, signée le {{ convention.televersement_convention_signee_le|date:'d F Y' }}{% endif %}"</span>
+                                                                        {{ convention.programme|highlight_if_match:search_operation_nom }}
+                                                                    </a>
                                                                 </strong>
                                                             </div>
                                                             {% if convention.is_avenant %}
@@ -272,10 +257,17 @@
                     </div>
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">
                         <div class="fr-col-9">
-                            <div class="fr-text--lg">Aucune convention ou avenant ne correspond à votre recherche</div>
-                            <div>Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
-                                Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
-                                Dans ce cas, nous vous invitons à l'ajouter.
+                            <div>
+                                <p class="fr-text--lg">
+                                    Aucune convention ou avenant ne correspond à votre recherche
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
+                                    Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
+                                    Dans ce cas, nous vous invitons à l'ajouter.
+                                </p>
                             </div>
                             <div class="fr-mt-5w fr-ml-1w">
                                 <div class="fr-grid-row fr-grid-row--gutters" >

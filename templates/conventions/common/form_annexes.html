@@ -13,6 +13,9 @@
         <div role="alert" class="fr-alert fr-alert--info fr-mb-3w">
             <p class="fr-mb-1w">Attention, les annexes concernées sont ici les jardins, les cours et les surfaces de terrasse au-delà de 9 m² (ex : Pour une terrasse d’une surface totale de 10 m², renseignez ici uniquement 1 m², les 9m² sont intégrés dans le calcul de la surface utile)</p>
         </div>
+
+        {% include "common/required_fields_info.html" %}
+
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
             {% include "common/form/download_upload_form.html" with file_type='annexes' upform=upform what='annexes' file_field_label='annexe' %}
             <hr class="fr-col-12 fr-my-3w">
@@ -93,7 +96,11 @@
 
 
         <h4 class="fr-mb-1w">Type d'annexes incluses dans le calcul de la surface utile</h4>
-        <div class="fr-hint-text fr-mb-2w">Cochez les annexes que vous souhaitez voir apparaitre dans la convention</div>
+        <div>
+            <p class="fr-hint-text fr-mb-2w">
+                Cochez les annexes que vous souhaitez voir apparaitre dans la convention
+            </p>
+        </div>
 
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
@@ -115,5 +122,3 @@
 
     </div>
 </div>
-
-{% include "common/required_fields_info.html" %}
