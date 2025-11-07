@@ -1,4 +1,5 @@
 name: "Test and deploy to Recette environment"
+
 on:
   push:
     branches:
@@ -20,7 +21,7 @@ jobs:
   test:
     uses: ./.github/workflows/run_tests.yml
 
-    deploy_to_siap_recette:
+  deploy_to_siap_recette:
     name: "Deploy to Siap Recette"
     runs-on: ubuntu-latest
     needs: test
