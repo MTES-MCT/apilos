@@ -417,24 +417,33 @@ class BaseLogementFormSet(BaseFormSet):
         """
         Validation: le loyer par mètre carré doit être le même pour tous les logements du lot
         """
-        lpmc = None
-        error = None
-        for form in self.forms:
-            if lpmc is None:
-                lpmc = form.cleaned_data.get("loyer_par_metre_carre")
-            elif (
-                lpmc != form.cleaned_data.get("loyer_par_metre_carre") and error is None
-            ):
-                error = ValidationError(
-                    "Le loyer par mètre carré doit être le même pour tous les logements du lot"
-                )
-                self._non_form_errors.append(error)
-        if error is not None:
-            for form in self.forms:
-                form.add_error(
-                    "loyer_par_metre_carre",
-                    "Le loyer par mètre carré doit être le même pour tous les logements du lot",
-                )
+        financements = {form.cleaned_data.get("financement") for form in self.forms}
+
+        for financement in financements:
+            forms_financement = [
+                form
+                for form in self.forms
+                if form.cleaned_data.get("financement") == financement
+            ]
+            lpmc = None
+            error = None
+            for form in forms_financement:
+                if lpmc is None:
+                    lpmc = form.cleaned_data.get("loyer_par_metre_carre")
+                elif (
+                    lpmc != form.cleaned_data.get("loyer_par_metre_carre")
+                    and error is None
+                ):
+                    error = ValidationError(
+                        f"Le loyer par mètre carré doit être le même pour tous les logements du lot {financement}"
+                    )
+                    self._non_form_errors.append(error)
+            if error is not None:
+                for form in forms_financement:
+                    form.add_error(
+                        "loyer_par_metre_carre",
+                        f"Le loyer par mètre carré doit être le même pour tous les logements du lot {financement}",
+                    )
 
     def manage_edd_consistency(self):
         """
