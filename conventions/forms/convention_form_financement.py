@@ -62,14 +62,20 @@ class ConventionFinancementForm(forms.Form):
             and self.convention is not None
             and annee_fin_conventionnement is not None
         ):
-            if self.convention.programme.is_outre_mer:
-                self._outre_mer_end_date_validation(annee_fin_conventionnement)
-            elif self.convention.is_pls_financement_type:
-                self._pls_end_date_validation(annee_fin_conventionnement)
-            elif self.convention.programme.type_operation == TypeOperation.SANSTRAVAUX:
-                self._sans_travaux_end_date_validation(annee_fin_conventionnement)
-            else:
+            if self.convention.is_mixte:
                 self._other_end_date_validation(annee_fin_conventionnement)
+            else:
+                if self.convention.programme.is_outre_mer:
+                    self._outre_mer_end_date_validation(annee_fin_conventionnement)
+                elif self.convention.is_pls_financement_type:
+                    self._pls_end_date_validation(annee_fin_conventionnement)
+                elif (
+                    self.convention.programme.type_operation
+                    == TypeOperation.SANSTRAVAUX
+                ):
+                    self._sans_travaux_end_date_validation(annee_fin_conventionnement)
+                else:
+                    self._other_end_date_validation(annee_fin_conventionnement)
 
     def _outre_mer_end_date_validation(self, annee_fin_conventionnement):
         today = datetime.date.today()
@@ -263,6 +269,11 @@ class PretForm(forms.Form):
           - si le prêteur est autre, le champ autre est obligatoire
         """
         cleaned_data = super().clean()
+        if not cleaned_data.get("financement"):
+            self.add_error(
+                "financement",
+                "Le financement doit obligatoirement être fourni",
+            )
         preteur = cleaned_data.get("preteur")
 
         if preteur in ["CDCF", "CDCL"]:
@@ -302,15 +313,17 @@ class BasePretFormSet(BaseFormSet):
         self.manage_cdc_validation()
 
     def validate_initial_numero_unicity(self) -> bool:
-        is_valid = True
-        numeros = [form.initial.get("numero") for form in self.forms]
-        for form in self.forms:
-            num = form.initial.get("numero")
-            if numeros.count(num) > 1:
-                form.errors["numero"] = [
-                    f"Le numéro de financement {num} n'est pas unique."
-                ]
-                is_valid = False
+        financements = {form.initial.get("financement") for form in self.forms}
+        for financement in financements:
+            is_valid = True
+            numeros = [form.initial.get("numero") for form in self.forms]
+            for form in self.forms:
+                num = form.initial.get("numero")
+                if numeros.count(num) > 1:
+                    form.errors["numero"] = [
+                        f"Le numéro de financement {num} n'est pas unique pour le financement {financement}."
+                    ]
+                    is_valid = False
         return is_valid
 
     def manage_cdc_validation(self):
@@ -320,17 +333,21 @@ class BasePretFormSet(BaseFormSet):
         """
         if (
             self.convention is not None
-            and not self.convention.is_pls_financement_type
             and self.convention.programme.type_operation != TypeOperation.SANSTRAVAUX
         ):
-            for form in self.forms:
-                if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
-                    return
-            error = ValidationError(
-                "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
-                + "(CDC foncière, CDC locative)"
-            )
-            self._non_form_errors.append(error)
+            for lot in self.convention.lots.all():
+                if not lot.is_pls_financement_type:
+
+                    for form in self.forms:
+                        if form.cleaned_data.get("financement") == lot.financement:
+                            if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
+                                return
+
+                    error = ValidationError(
+                        "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
+                        + f"(CDC foncière, CDC locative) pour le financement {lot.financement}"
+                    )
+                    self._non_form_errors.append(error)
 
 
 PretFormSet = formset_factory(PretForm, formset=BasePretFormSet, extra=0)
