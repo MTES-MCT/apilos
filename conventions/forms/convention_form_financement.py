@@ -316,8 +316,13 @@ class BasePretFormSet(BaseFormSet):
         financements = {form.initial.get("financement") for form in self.forms}
         for financement in financements:
             is_valid = True
-            numeros = [form.initial.get("numero") for form in self.forms]
-            for form in self.forms:
+            forms_financement = [
+                form
+                for form in self.forms
+                if form.initial.get("financement") == financement
+            ]
+            numeros = [form.initial.get("numero") for form in forms_financement]
+            for form in forms_financement:
                 num = form.initial.get("numero")
                 if numeros.count(num) > 1:
                     form.errors["numero"] = [
@@ -337,11 +342,15 @@ class BasePretFormSet(BaseFormSet):
         ):
             for lot in self.convention.lots.all():
                 if not lot.is_pls_financement_type:
-
+                    exist_cdcf_cdcl = False
+                    lot_exist = False
                     for form in self.forms:
                         if form.cleaned_data.get("financement") == lot.financement:
+                            lot_exist = True
                             if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
-                                return
+                                exist_cdcf_cdcl = True
+                    if exist_cdcf_cdcl or not lot_exist:
+                        continue
 
                     error = ValidationError(
                         "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
