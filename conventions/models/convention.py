@@ -362,19 +362,7 @@ class Convention(models.Model):
 
     @property
     def is_pls_financement_type(self) -> bool:
-        return all(
-            lot.financement
-            in [
-                Financement.PLS,
-                Financement.PLS_DOM,
-                Financement.PALULOS,
-                Financement.PALU_AV_21,
-                Financement.PALUCOM,
-                Financement.PALU_COM,
-                Financement.PALU_RE,
-            ]
-            for lot in self.lots.all()
-        )
+        return self.lot.is_pls_financement_type
 
     @property
     def attribution_type(self) -> str | None:
