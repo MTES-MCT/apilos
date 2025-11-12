@@ -237,11 +237,14 @@ class ConventionFinancementServiceTests(TestCase):
 def test_formset_validate_numero_unicity_fail():
     upload_result = {
         "objects": [
-            {"numero": "1"},
-            {"numero": "2"},
-            {"numero": "1"},
-            {"numero": "3"},
-            {"numero": "3"},
+            {"numero": "1", "financement": "PLAI"},
+            {"numero": "2", "financement": "PLAI"},
+            {"numero": "1", "financement": "PLAI"},
+            {"numero": "3", "financement": "PLAI"},
+            {"numero": "3", "financement": "PLAI"},
+            {"numero": "1", "financement": "PLUS"},
+            {"numero": "2", "financement": "PLUS"},
+            {"numero": "1", "financement": "PLUS"},
         ]
     }
 
@@ -250,16 +253,34 @@ def test_formset_validate_numero_unicity_fail():
 
     assert not is_valid
     assert formset.forms[0].errors == {
-        "numero": ["Le numéro de financement 1 n'est pas unique."]
+        "numero": [
+            "Le numéro de financement 1 n'est pas unique pour le financement PLAI."
+        ]
     }
     assert formset.forms[1].errors == {}
     assert formset.forms[3].errors == {
-        "numero": ["Le numéro de financement 3 n'est pas unique."]
+        "numero": [
+            "Le numéro de financement 3 n'est pas unique pour le financement PLAI."
+        ]
+    }
+    assert formset.forms[5].errors == {
+        "numero": [
+            "Le numéro de financement 1 n'est pas unique pour le financement PLUS."
+        ]
     }
 
 
 def test_formset_validate_numero_unicity_success():
-    upload_result = {"objects": [{"numero": "1"}, {"numero": "2"}, {"numero": "3"}]}
+    upload_result = {
+        "objects": [
+            {"numero": "1", "financement": "PLAI"},
+            {"numero": "2", "financement": "PLAI"},
+            {"numero": "3", "financement": "PLAI"},
+            {"numero": "1", "financement": "PLUS"},
+            {"numero": "2", "financement": "PLUS"},
+            {"numero": "3", "financement": "PLUS"},
+        ]
+    }
 
     formset = PretFormSet(initial=upload_result["objects"])
     is_valid = formset.validate_initial_numero_unicity()
