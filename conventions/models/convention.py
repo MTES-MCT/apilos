@@ -983,3 +983,13 @@ class Convention(models.Model):
 
         # Convert back to normal dicts
         return {t: dict(sub) for t, sub in result.items()}
+
+    def lgts_mixite_sociale_negocies_display(self) -> str:
+        return sum(
+            [lot.lgts_mixite_sociale_negocies_display() for lot in self.lots.all()]
+        )
+
+    def get_lot_with_financement(self, financement):
+        return self.lots.filter(
+            financement=financement,
+        ).first()

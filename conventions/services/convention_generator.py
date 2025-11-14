@@ -4,6 +4,7 @@ import json
 import math
 import os
 import subprocess
+from functools import reduce
 from pathlib import Path
 
 import jinja2
@@ -78,17 +79,24 @@ def _compute_total_logement(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logements.order_by("typologie").all():
-        logements_totale["sh_totale"] += logement.surface_habitable or 0
-        logements_totale["sa_totale"] += logement.surface_annexes or 0
-        logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
-        logements_totale["su_totale"] += logement.surface_utile or 0
-        logements_totale["sc_totale"] += logement.surface_corrigee or 0
-        logements_totale["loyer_total"] += logement.loyer or 0
-        if logement.get_typologie_display() not in nb_logements_par_type:
-            nb_logements_par_type[logement.get_typologie_display()] = 0
-        nb_logements_par_type[logement.get_typologie_display()] += 1
+    for lot in convention.lots.all():
+        for logement in lot.logements.order_by("typologie").all():
+            logements_totale["sh_totale"] += logement.surface_habitable or 0
+            logements_totale["sa_totale"] += logement.surface_annexes or 0
+            logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
+            logements_totale["su_totale"] += logement.surface_utile or 0
+            logements_totale["sc_totale"] += logement.surface_corrigee or 0
+            logements_totale["loyer_total"] += logement.loyer or 0
+            if logement.get_typologie_display() not in nb_logements_par_type:
+                nb_logements_par_type[logement.get_typologie_display()] = 0
+            nb_logements_par_type[logement.get_typologie_display()] += 1
     return (logements_totale, nb_logements_par_type)
+
+
+def _compute_surface_locaux_collectifs_residentiels(convention):
+    return sum(
+        lot.surface_locaux_collectifs_residentiels for lot in convention.lots.all()
+    )
 
 
 def _compute_total_locaux_collectifs(convention):
@@ -118,6 +126,17 @@ def get_or_generate_convention_doc(
     return generate_convention_doc(convention=convention, save_data=save_data)
 
 
+def _compute_type_stationnements(convention):
+    stationnements = [lot.type_stationnements.all() for lot in convention.lots.all()]
+    if not stationnements:
+        return convention.lots.none()
+    return reduce(lambda s1, s2: s1.union(s2), stationnements)
+
+
+def _compute_object_list_from_each_lot(object_list):
+    return reduce(lambda s1, s2: s1.union(s2), object_list)
+
+
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
     annexes = (
         Annexe.objects.prefetch_related("logement")
@@ -142,27 +161,44 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
 
     adresse = _get_adresse(convention)
 
+    lots = convention.lots.prefetch_related(
+        "locaux_collectifs", "type_stationnements"
+    ).all()
+
     context = {
         **avenant_data,
         "convention": convention,
         "bailleur": convention.programme.bailleur,
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
-        "lot": convention.lot,
+        "lots": lots,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
         "logements": convention.lot.logements_import_ordered,
-        "logements_sans_loyer": convention.lot.logements_sans_loyer_import_ordered,
-        "logements_corrigee": convention.lot.logements_corrigee_import_ordered,
-        "logements_corrigee_sans_loyer": convention.lot.logements_corrigee_sans_loyer_import_ordered,
-        "locaux_collectifs": convention.lot.locaux_collectifs.all(),
+        "logements_sans_loyer": _compute_object_list_from_each_lot(
+            [lot.logements_sans_loyer_import_ordered for lot in lots]
+        ),
+        "logements_corrigee": _compute_object_list_from_each_lot(
+            [lot.logements_corrigee_import_ordered for lot in lots]
+        ),
+        "logements_corrigee_sans_loyer": _compute_object_list_from_each_lot(
+            [lot.logements_corrigee_sans_loyer_import_ordered for lot in lots]
+        ),
+        "locaux_collectifs": _compute_object_list_from_each_lot(
+            [lot.locaux_collectifs.all() for lot in lots]
+        ),
         "annexes": annexes,
-        "stationnements": convention.lot.type_stationnements.all(),
+        "stationnements": _compute_object_list_from_each_lot(
+            [lot.type_stationnements.all() for lot in lots]
+        ),
         "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
         "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
+        "surface_locaux_collectifs_residentiels": _compute_surface_locaux_collectifs_residentiels(
+            convention
+        ),
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
             convention.lot.type_stationnements.all(), annexes
@@ -175,6 +211,19 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         ),
         "res_sh_totale": _compute_total_locaux_collectifs(convention)
         + logements_totale["sh_totale"],
+        "surface_habitable_totale": sum(
+            lot.surface_habitable_totale
+            for lot in lots
+            if lot.surface_habitable_totale is not None
+        ),
+        "nombre_garage": sum(
+            lot.foyer_residence_nb_garage_parking
+            for lot in lots
+            if lot.foyer_residence_nb_garage_parking is not None
+        ),
+        "loyer_max_associations_foncieres": max(
+            lot.loyer_associations_foncieres or 0 for lot in lots
+        ),
     }
     context.update(compute_mixte(convention))
     context.update(logements_totale)
@@ -536,7 +585,13 @@ def generate_pdf(doc: DocxTemplate, convention_uuid: str) -> None:
 def _to_fr_float(value, d=2):
     if value is None:
         return ""
-    return format(value, f",.{d}f").replace(",", " ").replace(".", ",")
+    try:
+        # Try to convert to float if it's not already a number
+        float_value = float(value)
+        return format(float_value, f",.{d}f").replace(",", " ").replace(".", ",")
+    except (ValueError, TypeError):
+        # Handle cases where value cannot be converted to float
+        return ""
 
 
 def pluralize(value):

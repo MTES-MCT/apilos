@@ -663,6 +663,12 @@ class Lot(models.Model):
     def __str__(self):
         return f"{self.convention.programme.nom} - {self.financement}"
 
+    def _get_loyer_par_metre_carre(self):
+        logement = self.logements.first()
+        if logement:
+            return self.logements.first().loyer_par_metre_carre
+        return 0
+
 
 class Logement(models.Model):
     id = models.AutoField(primary_key=True)
