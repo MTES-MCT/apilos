@@ -222,7 +222,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
             if lot.foyer_residence_nb_garage_parking is not None
         ),
         "loyer_max_associations_foncieres": max(
-            lot.loyer_associations_foncieres for lot in lots
+            lot.loyer_associations_foncieres or 0 for lot in lots
         ),
     }
     context.update(compute_mixte(convention))
