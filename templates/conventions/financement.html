@@ -62,6 +62,7 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
                                                     {% endif %}
                                                     <th scope="col">Numéro</th>
+                                                    <th scope="col">Financement</th>
                                                     <th scope="col">Date d'octroi</th>
                                                     <th scope="col">Durée (en années)</th>
                                                     <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -85,6 +86,9 @@
                                                                     name="{{ form_pret.uuid.html_name }}"
                                                                     value="{{ form_pret.uuid.value|default_if_none:'' }}">
                                                                 {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_text.html" with form_input=form_pret.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                                             </td>
                                                             <td>
                                                                 {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}

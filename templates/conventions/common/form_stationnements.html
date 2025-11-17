@@ -38,6 +38,7 @@
                                         {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label='Types de stationnement' %}
                                     {% endif %}
                                     <th scope="col" class="col__width--150">Type de stationnement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
+                                    <th scope="col" class="col__width--150">Financement {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                     <th scope="col" class="col__width--200">Nombre de stationnements {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                     <th scope="col" class="col__width--150">Loyer maximum en € {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
                                 </tr>
@@ -58,6 +59,9 @@
                                                     name="{{ form.uuid.html_name }}"
                                                     value="{{ form.uuid.value|default_if_none:'' }}">
                                                 {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                            </td>
+                                            <td>
+                                                {% include "common/form/input_select.html" with form_input=form.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                             </td>
                                             <td>
                                                 {% include "common/form/input_number.html" with form_input=form.nb_stationnements parent_object_field=main_object_field editable=editable_after_upload %}

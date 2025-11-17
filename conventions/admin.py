@@ -120,7 +120,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "administration",
         "bailleur",
         "programme",
-        "lot",
+        "lots_list",
         "numero",
         "numero_pour_recherche",
         "date_fin_conventionnement",
@@ -157,7 +157,7 @@ class ConventionAdmin(ApilosModelAdmin):
         "numero_pour_recherche",
         "cree_par",
         "cree_le",
-        "lot",
+        "lots_list",
     )
     autocomplete_fields = (
         "programme",
