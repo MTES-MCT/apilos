@@ -96,6 +96,11 @@ urlpatterns = [
         name="new_convention_anru",
     ),
     path(
+        "convention/mix/init",
+        views.ConventionMix.as_view(),
+        name="convention_mix_init",
+    ),
+    path(
         "bailleur/<convention_uuid>",
         views.ConventionBailleurView.as_view(),
         name="bailleur",

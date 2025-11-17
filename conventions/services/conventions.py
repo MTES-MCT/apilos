@@ -27,6 +27,7 @@ class ConventionService(ABC):
     formset_sans_loyer = None
     formset_corrigee = None
     formset_corrigee_sans_loyer = None
+    formset_convention_mixte = None
     upform: Form | None = None
     extra_forms: dict[str, Form | None] | None = None
 

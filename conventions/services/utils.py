@@ -1,5 +1,4 @@
 import json
-import logging
 from datetime import date, datetime
 from enum import Enum
 
@@ -11,8 +10,6 @@ from conventions.models import Convention, ConventionStatut
 from conventions.templatetags.custom_filters import is_bailleur, is_instructeur
 from core.utils import is_valid_uuid
 from upload.models import UploadedFile
-
-logger = logging.getLogger(__name__)
 
 CONVENTION_EXPORT_MAX_ROWS = 5000
 
