@@ -11,6 +11,7 @@ from django.forms import BaseFormSet, formset_factory
 
 from conventions.models import Preteur
 from programmes.models import TypeOperation
+from programmes.models.choices import Financement
 
 
 class ConventionFinancementForm(forms.Form):
@@ -225,6 +226,9 @@ class PretForm(forms.Form):
             "max_length": "Le numero ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
     preteur = forms.TypedChoiceField(required=False, label="", choices=Preteur.choices)
     autre = forms.CharField(
         required=False,
@@ -323,7 +327,7 @@ class BasePretFormSet(BaseFormSet):
                 if form.cleaned_data.get("preteur") in ["CDCF", "CDCL"]:
                     return
             error = ValidationError(
-                "Au moins un prêt à la Caisee des dépôts et consignations doit-être déclaré "
+                "Au moins un prêt à la Caisse des dépôts et consignations doit-être déclaré "
                 + "(CDC foncière, CDC locative)"
             )
             self._non_form_errors.append(error)

@@ -1,11 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Prévisualisation - APiLos{% endblock %}
+{% block page_title %}Convention - Journal de bord - APiLos{% endblock %}
 
 {% load static %}
 
 {% block javascript_extras %}
     {% include "conventions/common/dropzone_js.html" %}
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
 {% endblock javascript_extras %}
 
 {% block css_extras %}
@@ -110,10 +111,15 @@
                                             <span class="fr-icon-edit-line fr-mr-1w" aria-hidden="true"></span>
                                         </button>
                                     </form>
-                                    <div class="fr-mr-6w"><strong>Le {{ evenement.survenu_le|date:"d/m/Y" }} - {{ evenement.type_evenement }} : </strong>
+                                    <div class="fr-mr-6w">
+                                        <p class="fr-m-0"><strong>Le {{ evenement.survenu_le|date:"d/m/Y" }} - {{ evenement.type_evenement }} : </strong></p>
                                     </div>
                                 </div>
-                                <div class="fr-col-12 fr-ml-4w">{{ evenement.description|linebreaksbr }}</div>
+                                <div class="fr-col-12 fr-ml-4w">
+                                    <p class="fr-m-0">
+                                        {{ evenement.description|linebreaksbr }}
+                                    </p>
+                                </div>
                                 <div class="fr-col-12 fr-ml-4w">
                                     {% include "common/display_text_and_files_if_exists.html" with label="Fichiers joints" text=evenement.pieces_jointes|get_text_from_textfiles file_list=evenement.pieces_jointes|get_files_from_textfiles object_field="evenement__pieces_jointes__"|add:evenement.uuid %}
                                 </div>

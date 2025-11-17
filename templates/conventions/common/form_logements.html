@@ -1,9 +1,6 @@
 {% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
-    </div>
     <div class="fr-col-12">
         <h4>Logements associés à la convention</h4>
 
@@ -27,12 +24,12 @@
                     </p>
                 {% endif %}
                 <input type="hidden" id="{{ form.formset_disabled.id_for_label }}" name="{{ form.formset_disabled.html_name }}"
-                       value="">
+                    value="">
             </div>
         {% endif %}
         <div class="table-utile">
             <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
-                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" %}
+                {% include "common/form/download_upload_form.html" with file_type='logements' upform=upform what='logements' file_field_label="file_avec_loyer" hidden_what='Surface utile avec loyers' %}
                 <hr class="fr-col-12 fr-my-3w">
             </div>
 
@@ -53,7 +50,7 @@
                 <div class="fr-table__wrapper">
                     <div class="fr-table__container">
                         <div class="fr-table__content">
-                            <table id="lgts_table"  aria-label="Logements">
+                            <table id="lgts_table"  aria-label="Table logements Surface utile avec loyer">
                                 <thead>
                                     <tr>
                                         {% if convention|display_comments %}
@@ -70,6 +67,9 @@
                                             {% if formset.total_form_count %}
                                                 {% include "common/form/required_field_star.html" %}
                                             {% endif %}
+                                        </th>
+                                        <th scope="col" class="col__width--150">
+                                            Financement
                                         </th>
                                         <th scope="col" class="col__width--120">
                                             Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -114,11 +114,14 @@
                                                 {% endif %}
                                                 <td>
                                                     <input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
-                                                           value="{{ form.uuid.value|default_if_none:'' }}">
+                                                        value="{{ form.uuid.value|default_if_none:'' }}">
                                                     {% include "common/form/input_text.html" with form_input=form.designation parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td>
                                                     {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
+                                                </td>
+                                                <td>
+                                                    {% include "common/form/input_select.html" with form_input=form.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                                 </td>
                                                 <td id="lgt_sh">
                                                     {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh')" parent_object_field=main_object_field editable=editable_after_upload %}
@@ -157,6 +160,8 @@
                                             class="fr-text--lg">
                                             Total
                                         </td>
+                                        <td>
+                                        </td>
                                         <td id="total_sh" class="fr-text--lg text--center">
                                         </td>
                                         <td id="total_sa" class="fr-text--lg text--center">
@@ -191,79 +196,120 @@
         {% endif %}
     </div>
 </div>
-
-<input type="hidden" id="{{ form.uuid.id_for_label }}" name="{{ form.uuid.html_name }}"
-       value="{{ form.uuid.value|default_if_none:'' }}">
-
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire object_field="lot__loyer_derogatoire__"|add:form.uuid.value %}
-    </div>
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels object_field="lot__surface_locaux_collectifs_residentiels__"|add:form.uuid.value %}
-    </div>
-    <div class="fr-col-12 fr-mb-2w">
-        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres object_field="lot__loyer_associations_foncieres__"|add:form.uuid.value %}
-    </div>
+<div class="title-section">
+    <strong>Données financières</strong>
 </div>
+<br>
+{{ formset_convention_mixte.management_form }}
+{% for form in formset_convention_mixte %}
+    <input type="hidden" id="{{ form.uuid.id_for_label }}_{{ forloop.counter }}" name="{{ form.uuid.html_name }}" value="{{ form.uuid.value|default_if_none:'' }}">
+    <div style="display:none;">{{ form.financement }}</div>
+    <!-- Accordion wrapper -->
+    <section class="fr-accordion fr-bg-white fr-mb-2w" data-fr-js-accordion="true">
 
-{% if convention.mixity_option %}
-    <h4>Option de l'article sur la clause de mixité sociale</h4>
+        <h3 class="fr-accordion__title">
+            <button type="button"
+                    aria-expanded="false"
+                    class="fr-accordion__btn"
+                    aria-controls="plan-financement-{{ form.uuid.value }}"
+                    data-fr-js-collapse-button="true">
+                <strong>{{ form.financement.value }}</strong>
+            </button>
+        </h3>
 
-    <div class="fr-grid-row fr-grid-row--gutters">
-        <div class="fr-col-12 fr-mb-2w">
-            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
-            <div class="insert-info">
-                <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS" target="_blank" rel="noreferrer" class="fr-text--xs fr-link">Informations complémentaires</a>
+        <div class="fr-collapse" id="plan-financement-{{ form.uuid.value }}" data-fr-js-collapse="true">
+            <div>
+                <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements %}
+                        {{ form.nb_logements.errors }}
+                    </div>
+
+                    <div class="fr-col-12">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire %}
+                        {{ form.loyer_derogatoire.errors }}
+                    </div>
+
+                    <div class="fr-col-12">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels %}
+                        {{ form.surface_locaux_collectifs_residentiels.errors }}
+                    </div>
+
+                    <div class="fr-col-12">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres %}
+                        {{ form.loyer_associations_foncieres.errors }}
+                    </div>
+                </div>
+                <!-- Option mixité sociale -->
+                {% if convention.mixity_option %}
+                    <hr>
+                    <h4>Option de l'article sur la clause de mixité sociale</h4>
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-mb-2w">
+                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
+                            <div class="insert-info">
+                                <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS"
+                                   target="_blank" rel="noreferrer"
+                                   class="fr-text--xs fr-link">
+                                    Informations complémentaires
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+
             </div>
         </div>
-    </div>
-{% endif %}
 
-{% include "common/required_fields_info.html" %}
+    </section>
+
+{% endfor %}
+
+
 {% if convention.is_avenant %}
-    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-        function toggleTable(name) {
-            const table_div = document.getElementsByClassName(`table-${name}`)[0];
-            const input_checkbox = document.getElementById(`toggle-${name}`);
-            const error_div = document.getElementsByClassName(`toggle-${name}-error`)[0];
-            let input_hidden;
-            if (name === "utile") {
-                input_hidden = document.getElementById("{{ form.formset_disabled.id_for_label }}");
-            } else if (name === "utile-sans-loyer") {
-                input_hidden = document.getElementById("{{ form.formset_sans_loyer_disabled.id_for_label }}");
-            } else if (name === "corrigee") {
-                input_hidden = document.getElementById("{{ form.formset_corrigee_disabled.id_for_label }}");
-            } else if (name === "corrigee-sans-loyer") {
-                input_hidden = document.getElementById("{{ form.formset_corrigee_sans_loyer_disabled.id_for_label }}");
-            }
-            // Initialize
-            if (input_checkbox.checked) {
-                table_div.classList.remove("hidden");
-                error_div.classList.add("hidden");
-                input_hidden.value = "false";
-            } else {
-                table_div.classList.add("hidden");
-                error_div.classList.remove("hidden");
-                input_hidden.value = "true";
-            }
 
-            // Listen to change on checkbox
-            input_checkbox.onchange = (e) => {
-                table_div.classList.toggle("hidden");
-                error_div.classList.toggle("hidden")
-                if (input_checkbox.checked) {
-                    input_hidden.value = "false";
-                } else {
-                    input_hidden.value = "true";
-                }
-            }
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+    function toggleTable(name) {
+        const table_div = document.getElementsByClassName(`table-${name}`)[0];
+        const input_checkbox = document.getElementById(`toggle-${name}`);
+        const error_div = document.getElementsByClassName(`toggle-${name}-error`)[0];
+        let input_hidden;
+        if (name === "utile") {
+            input_hidden = document.getElementById("{{ form.formset_disabled.id_for_label }}");
+        } else if (name === "utile-sans-loyer") {
+            input_hidden = document.getElementById("{{ form.formset_sans_loyer_disabled.id_for_label }}");
+        } else if (name === "corrigee") {
+            input_hidden = document.getElementById("{{ form.formset_corrigee_disabled.id_for_label }}");
+        } else if (name === "corrigee-sans-loyer") {
+            input_hidden = document.getElementById("{{ form.formset_corrigee_sans_loyer_disabled.id_for_label }}");
+        }
+        // Initialize
+        if (input_checkbox.checked) {
+            table_div.classList.remove("hidden");
+            error_div.classList.add("hidden");
+            input_hidden.value = "false";
+        } else {
+            table_div.classList.add("hidden");
+            error_div.classList.remove("hidden");
+            input_hidden.value = "true";
         }
 
-        toggleTable("utile");
-        toggleTable("utile-sans-loyer");
-        toggleTable("corrigee");
-        toggleTable("corrigee-sans-loyer");
-    </script>
+        // Listen to change on checkbox
+        input_checkbox.onchange = (e) => {
+            table_div.classList.toggle("hidden");
+            error_div.classList.toggle("hidden")
+            if (input_checkbox.checked) {
+                input_hidden.value = "false";
+            } else {
+                input_hidden.value = "true";
+            }
+        }
+    }
+
+    toggleTable("utile");
+    toggleTable("utile-sans-loyer");
+    toggleTable("corrigee");
+    toggleTable("corrigee-sans-loyer");
+</script>
 {% endif %}
 <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>

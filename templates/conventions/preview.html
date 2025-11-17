@@ -1,8 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}Prévisualisation - APiLos{% endblock %}
+{% block page_title %}Convention - Prévisualisation - APiLos{% endblock %}
 
 {% load static %}
+
+{% block javascript_extras %}
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
