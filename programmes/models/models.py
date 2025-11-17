@@ -547,6 +547,13 @@ class Lot(models.Model):
                 fields=["convention", "financement"],
                 name="unique_convention_financement",
             ),
+            # TODO : quand on intégrera les convention mixte ou les conventions seconde
+            # vie il faudra supprimer cette contrainte et gérer plusieurs lots par
+            # convention
+            models.UniqueConstraint(
+                fields=["convention"],
+                name="unique_convention",
+            ),
         ]
 
     # Needed for admin
@@ -663,12 +670,6 @@ class Lot(models.Model):
     def __str__(self):
         return f"{self.convention.programme.nom} - {self.financement}"
 
-    def _get_loyer_par_metre_carre(self):
-        logement = self.logements.first()
-        if logement:
-            return self.logements.first().loyer_par_metre_carre
-        return 0
-
 
 class Logement(models.Model):
     id = models.AutoField(primary_key=True)
@@ -736,7 +737,6 @@ class Logement(models.Model):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
-        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
@@ -745,7 +745,7 @@ class Logement(models.Model):
         ),
         "Loyer maximum en € par m² de surface utile": "loyer_par_metre_carre",
         "Coefficient propre au logement": "coeficient",
-        "Loyer maximum du logement en €\n(col 5 * col 6 * col 7)": "loyer",
+        "Loyer maximum du logement en €\n(col 4 * col 5 * col 6)": "loyer",
     }
 
     foyer_residence_import_mapping = {
@@ -858,7 +858,6 @@ class LogementSansLoyer(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
-        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface des annexes\nRéelle": "surface_annexes",
         "Surface des annexes\nRetenue dans la SU": "surface_annexes_retenue",
@@ -882,7 +881,6 @@ class LogementCorrigee(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
-        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface corrigée": "surface_corrigee",
         "Loyer maximum en € par m² de surface corrigée": "loyer_par_metre_carre",
@@ -907,7 +905,6 @@ class LogementCorrigeeSansLoyer(Logement):
     import_mapping = {
         "Désignation des logements": "designation",
         "Type": "typologie",
-        "Financement": "financement",
         "Surface habitable\n(article": "surface_habitable",
         "Surface corrigée": "surface_corrigee",
     }
@@ -941,7 +938,6 @@ class Annexe(models.Model):
 
     import_mapping = {
         "Type d'annexe": "typologie",
-        "Financement": "financement",
         "Désignation des logements": "logement_designation",
         "Typologie des logements": "logement_typologie",
         "Surface de l'annexe": "surface_hors_surface_retenue",
@@ -1049,7 +1045,6 @@ class TypeStationnement(models.Model):
 
     import_mapping = {
         "Type de stationnement": "typologie",
-        "Financement": "financement",
         "Nombre de stationnements": "nb_stationnements",
         "Loyer maximum en €": "loyer",
     }

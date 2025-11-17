@@ -30,7 +30,6 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Subventions' callback_click="refresh_opened_comments" %}
                                                     {% endif %}
                                                     <th scope="col">Numéro</th>
-                                                    <th scope="col">Financement</th>
                                                     <th scope="col">Date d'octroi</th>
                                                     <th scope="col">Durée (en années)</th>
                                                     <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
@@ -50,9 +49,6 @@
                                                                 {% endif %}
                                                                 <td>
                                                                     {{ pret.numero|default_if_none:'-' }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.lot.financement }}
                                                                 </td>
                                                                 <td>
                                                                     {{ pret.date_octroi|default_if_none:'-' }}

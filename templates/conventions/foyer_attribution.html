@@ -24,8 +24,6 @@
                     <div class="fr-col-12">
                         <h3>Conditions d'attribution et d'occupation permanente du logement-foyer</h3>
 
-                        {% include "common/required_fields_info.html" %}
-
                         {% include 'conventions/attribution/reservation_prefectoral.html' %}
 
                         <div class="fr-form-group">
@@ -127,6 +125,7 @@
                     </div>
                 </div>
 
+                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

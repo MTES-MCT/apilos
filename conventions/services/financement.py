@@ -13,20 +13,18 @@ class ConventionFinancementService(ConventionService):
 
     def get(self):
         initial = []
-        for lot in self.convention.lots.all():
-            for pret in lot.prets.all():
-                initial.append(
-                    {
-                        "uuid": pret.uuid,
-                        "numero": pret.numero,
-                        "financement": lot.financement,
-                        "date_octroi": utils.format_date_for_form(pret.date_octroi),
-                        "duree": pret.duree,
-                        "montant": pret.montant,
-                        "preteur": pret.preteur,
-                        "autre": pret.autre,
-                    }
-                )
+        for pret in self.convention.lot.prets.all():
+            initial.append(
+                {
+                    "uuid": pret.uuid,
+                    "numero": pret.numero,
+                    "date_octroi": utils.format_date_for_form(pret.date_octroi),
+                    "duree": pret.duree,
+                    "montant": pret.montant,
+                    "preteur": pret.preteur,
+                    "autre": pret.autre,
+                }
+            )
         self.formset = PretFormSet(initial=initial)
         self.form = ConventionFinancementForm(
             initial={
@@ -55,9 +53,8 @@ class ConventionFinancementService(ConventionService):
 
     def _add_uuid_to_prets(self, result):
         prets_by_numero = {}
-        for lot in self.convention.lots.all():
-            for pret in lot.prets.all():
-                prets_by_numero[pret.numero] = pret.uuid
+        for pret in self.convention.lot.prets.all():
+            prets_by_numero[pret.numero] = pret.uuid
         for obj in result["objects"]:
             if "numero" in obj and obj["numero"] in prets_by_numero:
                 obj["uuid"] = prets_by_numero[obj["numero"]]
@@ -126,9 +123,6 @@ class ConventionFinancementService(ConventionService):
                     f"form-{idx}-numero": utils.get_form_value(
                         form_pret, pret, "numero"
                     ),
-                    f"form-{idx}-financement": utils.get_form_value(
-                        form_pret, pret, "financement"
-                    ),
                     f"form-{idx}-date_octroi": utils.get_form_date_value(
                         form_pret, pret, "date_octroi"
                     ),
@@ -145,7 +139,6 @@ class ConventionFinancementService(ConventionService):
                 initformset = {
                     **initformset,
                     f"form-{idx}-numero": form_pret["numero"].value(),
-                    f"form-{idx}-financement": form_pret["financement"].value(),
                     f"form-{idx}-date_octroi": form_pret["date_octroi"].value(),
                     f"form-{idx}-duree": form_pret["duree"].value(),
                     f"form-{idx}-montant": form_pret["montant"].value(),
@@ -180,32 +173,22 @@ class ConventionFinancementService(ConventionService):
         self.convention.save()
 
     def _save_convention_financement_prets(self):
-        # Collect all uuids from the formset
-        obj_uuids = [
-            form.cleaned_data["uuid"]
-            for form in self.formset
-            if form.cleaned_data.get("uuid")
-        ]
-        Pret.objects.filter(lot__convention=self.convention).exclude(
-            uuid__in=obj_uuids
-        ).delete()
+        obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
+        obj_uuids = list(filter(None, obj_uuids1))
+        self.convention.lot.prets.exclude(uuid__in=obj_uuids).delete()
         for form_pret in self.formset:
-            lot = self.convention.lots.get(
-                financement=form_pret.cleaned_data["financement"]
-            )
-
-            uuid = form_pret.cleaned_data.get("uuid")
-            if uuid:
-                pret = Pret.objects.get(uuid=uuid)
+            if form_pret.cleaned_data["uuid"]:
+                pret = Pret.objects.get(uuid=form_pret.cleaned_data["uuid"])
                 pret.numero = form_pret.cleaned_data["numero"]
                 pret.date_octroi = form_pret.cleaned_data["date_octroi"]
                 pret.duree = form_pret.cleaned_data["duree"]
                 pret.montant = form_pret.cleaned_data["montant"]
                 pret.preteur = form_pret.cleaned_data["preteur"]
                 pret.autre = form_pret.cleaned_data["autre"]
+
             else:
                 pret = Pret.objects.create(
-                    lot=lot,
+                    lot=self.convention.lot,
                     numero=form_pret.cleaned_data["numero"],
                     date_octroi=form_pret.cleaned_data["date_octroi"],
                     duree=form_pret.cleaned_data["duree"],

@@ -8,7 +8,7 @@ from conventions.forms import (
     FoyerResidenceLogementFormSet,
     LogementFormSet,
     LotFoyerResidenceLgtsDetailsForm,
-    LotLgtsOptionFormSet,
+    LotLgtsOptionForm,
     UploadForm,
 )
 from conventions.models import Convention
@@ -40,9 +40,8 @@ class ConventionLogementsServiceTests(TestCase):
     def setUp(self):
         request = HttpRequest()
         convention = Convention.objects.get(numero="0001")
-        for lot in convention.lots.all():
-            lot.nb_logements = 2
-            lot.save()
+        convention.lot.nb_logements = 2
+
         request.user = User.objects.get(username="fix")
         self.service = ConventionLogementsService(
             convention=convention, request=request
@@ -56,34 +55,26 @@ class ConventionLogementsServiceTests(TestCase):
     def test_get(self):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertIsInstance(
-            self.service.formset_convention_mixte, LotLgtsOptionFormSet
-        )
-
-        for form in self.service.formset_convention_mixte:
-            lot = self.service.convention.lots.get(
-                financement=form.initial["financement"]
+        self.assertIsInstance(self.service.form, LotLgtsOptionForm)
+        for lot_field in [
+            "uuid",
+            "lgts_mixite_sociale_negocies",
+            "loyer_derogatoire",
+            "surface_locaux_collectifs_residentiels",
+            "loyer_associations_foncieres",
+            "nb_logements",
+        ]:
+            self.assertEqual(
+                self.service.form.initial[lot_field],
+                getattr(self.service.convention.lot, lot_field),
             )
-            for lot_field in [
-                "uuid",
-                "financement",
-                "lgts_mixite_sociale_negocies",
-                "loyer_derogatoire",
-                "surface_locaux_collectifs_residentiels",
-                "loyer_associations_foncieres",
-                "nb_logements",
-            ]:
-                self.assertEqual(
-                    form.initial[lot_field],
-                    getattr(lot, lot_field),
-                )
         self.assertIsInstance(self.service.formset, LogementFormSet)
         self.assertIsInstance(self.service.upform, UploadForm)
 
     def test_save(self):
         self.service.request.POST = {
             "nb_logements": "2",
-            "lots-0-uuid": str(self.service.convention.lot.uuid),
+            "uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
         }
 
@@ -91,10 +82,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
         logement_b1 = Logement.objects.prefetch_related("lot").get(
-            lot=self.service.convention.lots.get(
-                financement=logement_success_payload["lots-0-financement"]
-            ),
-            designation="B1",
+            lot=self.service.convention.lot, designation="B1"
         )
 
         self.assertEqual(
@@ -145,11 +133,10 @@ class ConventionLogementsServiceTests(TestCase):
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
-            "lots-0-uuid": str(self.service.convention.lot.uuid),
+            "uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
+            "nb_logements": "3",
         }
-
-        self.service.request.POST["lots-0-nb_logements"] = "3"
         self.service.save()
         assert self.service.formset.optional_errors == [
             ValidationError(
@@ -162,8 +149,8 @@ class ConventionLogementsServiceTests(TestCase):
         self.service_avenant.request.POST = {
             "uuid": str(self.service_avenant.convention.lot.uuid),
             **logement_success_payload,
+            "nb_logements": "3",
         }
-        self.service_avenant.request.POST["lots-0-nb_logements"] = "3"
         self.service_avenant.save()
         assert self.service_avenant.formset.optional_errors == [
             ValidationError(

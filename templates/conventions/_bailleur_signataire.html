@@ -22,8 +22,6 @@
             {% endwith %}
         {% endif %}
 
-        {% include "common/required_fields_info.html" %}
-
         <div class="signataire_infos">
             {% include "common/form/input_text.html" with mandatory_input=True form_input=form.signataire_nom object_field="bailleur__signataire_nom__"|add:form.uuid.value %}
 
@@ -97,4 +95,5 @@
             }
         </script>
     {% endif %}
+    {% include "common/required_fields_info.html" %}
 {% endblock content %}

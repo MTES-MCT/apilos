@@ -1,4 +1,4 @@
-<button class="fr-nav__btn user-banner" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
+<button class="fr-nav__btn orange-background" aria-expanded="false" aria-controls="list-habilitation" aria-current="true">
     {% for habilitation in request.session.habilitations %}
         {% if habilitation.id == request.session.habilitation_id %}
             {% if habilitation.entete %}{{ habilitation.entete }}{% else %}{{ habilitation.groupe.libelleRole }}{% endif %}<br>

@@ -15,15 +15,8 @@
         name="{{ upform.file.html_name }}"
         accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
     <div class="block--row-strech">
-        <a
-            role="button"
-            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
-            href="{% url 'conventions:load_xlsx_model' file_type=file_type %}"
-            onkeydown="return true;">
+        <a class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left" href="{% url 'conventions:load_xlsx_model' file_type=file_type %}">
             Télécharger le modèle des {{ what }}
-            {% if hidden_what %}
-                <span class="fr-sr-only"> {{ hidden_what }} </span>
-            {% endif %}
         </a>
 
         <div class="fr-mx-2w">Puis</div>
@@ -31,9 +24,6 @@
         <div>
             <button id="{{ file_field_label }}_upload_button" class="fr-btn fr-icon-upload-line fr-btn--icon-left" type="button">
                 Déposer le fichier de vos {{ what }}
-                {% if hidden_what %}
-                    <span class="fr-sr-only"> {{ hidden_what }} </span>
-                {% endif %}
             </button>
             {% for error in upform.file.errors %}
                 <p id="text-input-error-desc-error" class="fr-error-text">
@@ -55,14 +45,6 @@
             input.setAttribute('value', {% if file_field_label %}"{{ file_field_label }}"{% else %}'True'{% endif %});//set the value
             this.form.appendChild(input)
             this.form.submit()
-        };
-        document.querySelectorAll('a[role="button"]').forEach(function(btn) {
-            btn.addEventListener('keydown', function(event) {
-                if (event.key === ' ' || event.key === 'Spacebar') {
-                    event.preventDefault();
-                    this.click();
-                }
-            });
-        });
+        }
     </script>
 {% endif %}

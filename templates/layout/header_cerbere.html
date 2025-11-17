@@ -16,10 +16,7 @@
                     </div>
                 </div>
                 <div class="fr-header__service">
-                    <a href="/" title="Accueil Apilos - République Française liberté égalité fraternité">
-                        <span class="fr-sr-only">République française</span>
-                        <span class="fr-sr-only">Liberté égalité fraternité</span>
-                        <span class="fr-sr-only">Accueil Apilos</span>
+                    <a href="/" title="Accueil - APiLos">
                         <p class="fr-header__service-title">APiLos / SIAP  (Système d'Information des Aides à la Pierre)</p>
                     </a>
                 </div>
@@ -31,15 +28,13 @@
                             <span class="fr-text--sm fr-px-1w">{{ request.user }}</span>
                             <a class="fr-mt-1w width-100 no-target-blank" href="//docs.apilos.beta.gouv.fr" target="_blank" rel="noreferrer">
                                 <span class="fr-icon-question-line fr-mr-1w" aria-hidden="true"></span>
-                                <span class="fr-sr-only">Documentation APiLos</span>
                             </a>
                             <a href="{% url 'settings:profile' %}">
                                 <span class="fr-icon-settings-5-line fr-mr-1w" aria-hidden="true"></span>
-                                <span class="fr-sr-only">Paramètres de profil utilisateur</span>
                             </a>
                             <a href="{% url 'cas_ng_logout' %}?next=/">
-                                <span class="fr-icon-logout-box-r-line fr-mr-1w" aria-hidden="true"></span>
-                                <span class="fr-sr-only">Se déconnecter</span>
+                                <span class="fr-icon-logout-box-r-line fr-mr-1w" aria-hidden="true">
+                                </span>
                             </a>
                         </div>
                         {% include "layout/siap/habilitations.html" %}

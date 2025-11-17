@@ -17,7 +17,7 @@
 
 <div class="table-{{ js_name }}">
     <div id='download_upload_block_{{ js_name }}' {% if not editable %}hidden{% endif %}>
-        {% include "common/form/download_upload_form.html" with file_type=file_type upform=upform what='logements' file_field_label=file_field_label hidden_what=formset_title %}
+        {% include "common/form/download_upload_form.html" with file_type=file_type upform=upform what='logements' file_field_label=file_field_label %}
         <hr class="fr-col-12 fr-my-3w">
     </div>
 
@@ -38,7 +38,7 @@
         <div class="fr-table__wrapper">
             <div class="fr-table__container">
                 <div class="fr-table__content">
-                    <table id="lgts_table" aria-label="Table logements {{ formset_title }}">
+                    <table id="lgts_table"  aria-label="Logements">
                         <thead>
                             <tr>
                                 {% if convention|display_comments %}
@@ -52,11 +52,9 @@
                                 </th>
                                 <th scope="col" class="col__width--150">
                                     Type
-                                    {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}
-                                </th>
-                                <th scope="col" class="col__width--150">
-                                    Financement
-                                    {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}
+                                    {% if formset.total_form_count %}
+                                        {% include "common/form/required_field_star.html" %}
+                                    {% endif %}
                                 </th>
                                 <th scope="col" class="col__width--120">
                                     Surface habitable {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -118,9 +116,6 @@
                                         <td>
                                             {% include "common/form/input_select.html" with form_input=form.typologie parent_object_field=main_object_field editable=editable_after_upload %}
                                         </td>
-                                        <td>
-                                            {% include "common/form/input_select.html" with form_input=form.financement parent_object_field=main_object_field editable=editable_after_upload %}
-                                        </td>
                                         <td id="lgt_sh_{{ js_total_code }}">
                                             {% include "common/form/input_number.html" with form_input=form.surface_habitable step="0.01" onchange="compute_total_value('sh_{{js_total_code}}')" parent_object_field=main_object_field editable=editable_after_upload %}
                                         </td>
@@ -162,21 +157,20 @@
                                 {% endwith %}
                             {% endfor %}
                             <tr>
-                                {% if use_surface_corrigee %}
-                                    <td colspan="{% if convention|display_comments %}4{% else %}3{% endif %}" class="fr-text--lg">
-                                        Total
-                                    </td>
-                                {% else %}
-                                    <td colspan="{% if convention|display_comments %}5{% else %}3{% endif %}" class="fr-text--lg">
-                                        Total
-                                    </td>
-                                {% endif %}
-                                <td id="total_sh_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                <td colspan="{% if convention|display_comments %}3{% else %}2{% endif %}"
+                                    class="fr-text--lg">
+                                    Total
+                                </td>
+                                <td id="total_sh_{{ js_total_code }}" class="fr-text--lg text--center">
+                                </td>
                                 {% if not use_surface_corrigee %}
-                                    <td id="total_sa_{{ js_total_code }}" class="fr-text--lg text--center"></td>
-                                    <td id="total_sar_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                    <td id="total_sa_{{ js_total_code }}" class="fr-text--lg text--center">
+                                    </td>
+                                    <td id="total_sar_{{ js_total_code }}" class="fr-text--lg text--center">
+                                    </td>
                                 {% endif %}
-                                <td id="total_su_{{ js_total_code }}" class="fr-text--lg text--center"></td>
+                                <td id="total_su_{{ js_total_code }}" class="fr-text--lg text--center">
+                                </td>
                                 {% if use_loyer %}
                                     <td>
                                     </td>

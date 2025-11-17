@@ -1,9 +1,6 @@
 {% load custom_filters static %}
 
 <div class="fr-grid-row fr-grid-row--gutters">
-
-    {% include "common/required_fields_info.html" %}
-
     <div class="fr-col-12 fr-mb-2w">
         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value %}
     </div>
@@ -120,3 +117,5 @@
 </div>
 
 <script type="text/javascript" src="{% static "js/logements-table.js" %}" nonce="{{ request.csp_nonce }}"></script>
+
+{% include "common/required_fields_info.html" %}

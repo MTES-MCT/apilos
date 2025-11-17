@@ -39,7 +39,6 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
             "uuid": str(self.convention_75.lot.uuid),
             **logement_success_payload,
         }
-        self.success_payload["lots-0-uuid"] = str(self.convention_75.lot.uuid)
         self.msg_prefix = "[ConventionLogementsViewTests] "
 
     def _test_data_integrity(self):
@@ -63,7 +62,6 @@ class AvenantLogementsViewTests(ConventionLogementsViewTests):
         user = User.objects.get(username="fix")
         convention = Convention.objects.get(numero="0001")
         self.convention_75 = convention.clone(user, convention_origin=convention)
-        self.success_payload["lots-0-uuid"] = str(self.convention_75.lot.uuid)
         self.target_path = reverse(
             "conventions:avenant_logements", args=[self.convention_75.uuid]
         )

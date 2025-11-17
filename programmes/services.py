@@ -105,10 +105,10 @@ class OperationService:
             # group by financement
             conventions_by_financements = {}
             for convention in conventions:
-                for financement in convention.lots.all():
-                    if financement not in conventions_by_financements:
-                        conventions_by_financements[financement] = []
-                    conventions_by_financements[financement].append(convention)
+                financement = convention.lot.financement
+                if financement not in conventions_by_financements:
+                    conventions_by_financements[financement] = []
+                conventions_by_financements[financement].append(convention)
         else:
             filtered_op_aides = get_filtered_aides(self.operation)
             conventions_by_financements = {}

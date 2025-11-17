@@ -32,8 +32,6 @@
 
                                 <h4>Entreprise bailleur</h4>
 
-                                {% include "common/required_fields_info.html" %}
-
                                 {% include "common/form/input_text.html" with form_input=form.nom object_field="bailleur__nom__"|add:form.uuid.value %}
 
                                 {% if form.bailleur.value %}
@@ -91,6 +89,7 @@
 
                             </div>
                         </div>
+                        {% include "common/required_fields_info.html" %}
 
                         <button class="fr-btn fr-icon-save-line fr-btn--icon-left" type="submit">
                             Enregistrer

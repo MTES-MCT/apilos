@@ -5,9 +5,9 @@
         <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
             <div class="block--row-strech" id="{{ object_field }}_div">
                 <div class="block--row-strech-1">
-                    <h4 class="fr-alert__title">
+                    <p class="fr-alert__title">
                         {{ opened_comments.count }} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
-                    </h4>
+                    </p>
                 </div>
                 <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments">
                     <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
@@ -50,12 +50,8 @@
 
         </div>
     {% else %}
-        <button class="fr-link fr-mb-1w"
-        id="refresh_opened_comments"
-        hidden
-        onclick="window.location.href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}'">
-            <span class="fr-icon-refresh-line" aria-hidden="true"></span>
-            Rafraichir
-        </button>
+        <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden>
+            <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
+        </a>
     {% endif %}
 {% endif %}

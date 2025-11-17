@@ -27,18 +27,16 @@ class ConventionTypeStationnementService(ConventionService):
             self.request.POST.get("editable_after_upload", False)
         )
         initial = []
-        for lot in self.convention.lots.all():
-            stationnements = lot.type_stationnements.all()
-            for stationnement in stationnements:
-                initial.append(
-                    {
-                        "uuid": stationnement.uuid,
-                        "typologie": stationnement.typologie,
-                        "financement": lot.financement,
-                        "nb_stationnements": stationnement.nb_stationnements,
-                        "loyer": stationnement.loyer,
-                    }
-                )
+        stationnements = self.convention.lot.type_stationnements.all()
+        for stationnement in stationnements:
+            initial.append(
+                {
+                    "uuid": stationnement.uuid,
+                    "typologie": stationnement.typologie,
+                    "nb_stationnements": stationnement.nb_stationnements,
+                    "loyer": stationnement.loyer,
+                }
+            )
         self.formset = TypeStationnementFormSet(initial=initial)
 
     def save(self):
@@ -112,9 +110,6 @@ class ConventionTypeStationnementService(ConventionService):
                     f"form-{idx}-typologie": utils.get_form_value(
                         form_stationnement, stationnement, "typologie"
                     ),
-                    f"form-{idx}-financement": utils.get_form_value(
-                        form_stationnement, stationnement, "financement"
-                    ),
                     f"form-{idx}-nb_stationnements": utils.get_form_value(
                         form_stationnement, stationnement, "nb_stationnements"
                     ),
@@ -126,9 +121,6 @@ class ConventionTypeStationnementService(ConventionService):
                 initformset = {
                     **initformset,
                     f"form-{idx}-typologie": form_stationnement["typologie"].value(),
-                    f"form-{idx}-financement": form_stationnement[
-                        "financement"
-                    ].value(),
                     f"form-{idx}-nb_stationnements": form_stationnement[
                         "nb_stationnements"
                     ].value(),
@@ -145,16 +137,13 @@ class ConventionTypeStationnementService(ConventionService):
     def _save_stationnements(self):
         obj_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
         obj_uuids = list(filter(None, obj_uuids1))
-        TypeStationnement.objects.filter(
-            lot_id__in=self.convention.lots.values_list("id", flat=True)
-        ).exclude(uuid__in=obj_uuids).delete()
+        TypeStationnement.objects.filter(lot_id=self.convention.lot.id).exclude(
+            uuid__in=obj_uuids
+        ).delete()
         for form_stationnement in self.formset:
             if form_stationnement.cleaned_data["uuid"]:
                 stationnement = TypeStationnement.objects.get(
                     uuid=form_stationnement.cleaned_data["uuid"]
-                )
-                stationnement.lot = self.convention.lots.get(
-                    financement=form_stationnement.cleaned_data["financement"]
                 )
                 stationnement.typologie = form_stationnement.cleaned_data["typologie"]
                 stationnement.nb_stationnements = form_stationnement.cleaned_data[
@@ -163,9 +152,7 @@ class ConventionTypeStationnementService(ConventionService):
                 stationnement.loyer = form_stationnement.cleaned_data["loyer"]
             else:
                 stationnement = TypeStationnement.objects.create(
-                    lot=self.convention.lots.get(
-                        financement=form_stationnement.cleaned_data["financement"]
-                    ),
+                    lot=self.convention.lot,
                     typologie=form_stationnement.cleaned_data["typologie"],
                     nb_stationnements=form_stationnement.cleaned_data[
                         "nb_stationnements"

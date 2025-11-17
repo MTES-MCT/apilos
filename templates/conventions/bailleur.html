@@ -2,13 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}
-    {% if convention.is_avenant %}
-        Avenant - Bailleur - APiLos
-    {% else %}
-        Etape 1 - Bailleur - APiLos
-    {% endif %}
-{% endblock page_title %}
+{% block page_title %}Bailleur - APiLos{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

@@ -4,10 +4,6 @@
 
 {% load static %}
 
-{% block javascript_extras %}
-    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
-{% endblock javascript_extras %}
-
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" %}
