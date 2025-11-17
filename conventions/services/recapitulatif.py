@@ -145,14 +145,14 @@ class ConventionRecapitulatifService(ConventionService):
         return {
             "opened_comments": opened_comments,
             "annexes": Annexe.objects.filter(
-                logement__lot_id__in=self.convention.lots.values_list("id", flat=True)
+                logement__lot_id=self.convention.lot.id
             ).all(),
             "notificationForm": NotificationForm(),
             "conventionNumberForm": convention_number_form,
             "complete_for_avenant_form": complete_for_avenant_form,
             "ConventionType1and2Form": convention_type1_and_2_form,
             "programmeNumberForm": programme_number_form,
-            "repartition_surfaces": self.convention.repartition_surfaces(),
+            "repartition_surfaces": self.convention.lot.repartition_surfaces(),
         }
 
     def uncheck_avenant_type(self, avenant_type, avenant_type_title):

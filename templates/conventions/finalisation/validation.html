@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 {% load display_filters %}
-{% block page_title %}Etape 3 - Finalisation convention - APiLos{% endblock %}
+{% block page_title %}Finalisation - APiLos{% endblock %}
 
 {% block content %}
     {% include "conventions/common/form_header.html" %}
@@ -8,39 +8,28 @@
         <h1>Finaliser {{ convention|display_kind_with_pronom }}</h1>
 
         {% include "../common/stepper.html" %}
-        <div class="fr-grid-row fr-grid-row--gutters">
-            <div class="fr-col-12 fr-col-md-8 fr-pt-3w">
-                <p>
-                {{ convention|display_kind_with_pronom|capfirst }}
-                est prêt{{ convention|display_gender_terminaison }}
-                à être transmis{{ convention|display_gender_terminaison }} au bailleur pour signature !
-                </p>
-
+        <div class="fr-grid-row">
+            <div class="fr-col-8 fr-pt-3w">
+                <p>{{ convention|display_kind_with_pronom|capfirst }} est prêt{{ convention|display_gender_terminaison }} à être transmis{{ convention|display_gender_terminaison }} au bailleur pour signature !</p>
                 <form method="post" action="{% url 'conventions:validate' convention_uuid=convention.uuid %}" data-turbo="false">
-                {% csrf_token %}
-                <input id="finalisationform" type="hidden" name="finalisationform" value="true" />
-                <button class="fr-btn">
-                    Valider et envoyer {{ convention|display_kind_with_pronom }} pour signature
-                </button>
-                </form>
-            </div>
-
-            <div class="fr-col-12 fr-col-md-4 fr-notice fr-notice--info fr-py-4w fr-px-2w">
-                <div class="apilos-fit-content-centered">
-                <form method="post" action="{% url 'conventions:get_or_generate_cerfa' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
-                    <button class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left fr-mb-2w">
-                    <span class="fr-sr-only">Télécharger le </span>
-                    Document CERFA de {{ convention|display_kind_with_pronom }}
+                    <input id="finalisationform" type="hidden" name="finalisationform" value="true" />
+                    <button class="fr-btn">
+                        Valider et envoyer {{ convention|display_kind_with_pronom }} pour signature
                     </button>
                 </form>
-
-                <a class="fr-link apilos-no-dsfr-target" target="_blank" rel="noreferrer"
-                    href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
-                    Récapitulatif du formulaire
-                </a>
+            </div>
+            <div class="fr-col-4 fr-notice fr-notice--info fr-py-4w fr-px-2w">
+                <div class="apilos-fit-content-centered">
+                    <form method="post" action="{% url 'conventions:get_or_generate_cerfa' convention_uuid=convention.uuid %}" data-turbo="false">
+                        {% csrf_token %}
+                        <button class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left fr-mb-2w">
+                            Document CERFA de {{ convention|display_kind_with_pronom }}
+                        </button>
+                    </form>
+                    <a class="fr-link apilos-no-dsfr-target" target="_blank" rel="noreferrer" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">Récapitulatif du formulaire</a>
                 </div>
             </div>
-            </div>
+        </div>
     </div>
 {% endblock content %}

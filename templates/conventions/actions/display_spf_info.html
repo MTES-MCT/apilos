@@ -3,16 +3,16 @@
 {% if convention|display_spf_info %}
     <div class="fr-col-md-12 fr-mb-5w fr-mt-3w">
         <div role="alert" class="fr-alert fr-alert--warning">
-            <h4 class="fr-alert__title">{{ convention|display_kind_with_pronom|capfirst }} a été {% if convention.date_envoi_spf %}envoyé le {{ convention.date_envoi_spf|date:"j F Y" }}{% endif %}
+            <p class="fr-alert__title">{{ convention|display_kind_with_pronom|capfirst }} a été {% if convention.date_envoi_spf %}envoyé le {{ convention.date_envoi_spf|date:"j F Y" }}{% endif %}
                 {% if convention.date_publication_spf %}{% if convention.date_envoi_spf %} et{% endif %} publié le {{ convention.date_publication_spf|date:"j F Y" }}
                     au <abbr title="Service de Publication Foncière">SPF</abbr>{% if convention.reference_spf %}, sous la référence
                         &quot;{{ convention.reference_spf }}&quot;{% endif %}{% endif %}.
-            </h4>
+            </p>
 
             {% if date_refus_spf %}
-                <h4 class="fr-alert__title">Elle a cependant été refusée le {{ convention.date_refus_spf|date:"j F Y" }}{% if convention.motif_refus_spf %}
+                <p class="fr-alert__title">Elle a cependant été refusée le {{ convention.date_refus_spf|date:"j F Y" }}{% if convention.motif_refus_spf %}
                     pour le motif &quot;{{ convention.motif_refus_spf }}&quot;{% endif %}.
-                </h4>
+                </p>
             {% endif %}
         </div>
     </div>

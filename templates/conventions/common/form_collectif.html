@@ -10,9 +10,6 @@
 <div class="fr-grid-row fr-grid-row--gutters fr-mb-3w">
     <div class="fr-col-md-12">
         <h4>Surfaces à usage collectif</h4>
-
-        {% include "common/required_fields_info.html" %}
-
         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
             {% include "common/form/download_upload_form.html" with file_type='locaux_collectifs' upform=upform what='surfaces à usage collectif' file_field_label='locaux' %}
             <hr class="fr-col-12 fr-my-3w">
@@ -85,3 +82,4 @@
         {% include "common/form/input_textarea.html" with form_input=form.foyer_residence_locaux_hors_convention helptext_visible=True is_list=True object_field="lot__foyer_residence_locaux_hors_convention__"|add:form.uuid.value %}
     </div>
 </div>
+{% include "common/required_fields_info.html" %}

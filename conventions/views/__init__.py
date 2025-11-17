@@ -20,4 +20,3 @@ from conventions.views.convention_form_selection import *
 from conventions.views.convention_form_type_stationnement import *
 from conventions.views.convention_form_variante import *
 from conventions.views.conventions import *
-from conventions.views.conventions_mix import *

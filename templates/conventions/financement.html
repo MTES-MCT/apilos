@@ -2,13 +2,7 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}
-    {% if convention.is_avenant %}
-        Avenant - Financements - APiLos
-    {% else %}
-        Etape 5 - Financements - APiLos
-    {% endif %}
-{% endblock page_title %}
+{% block page_title %}Financements - APiLos{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -30,8 +24,6 @@
                     <div class="fr-col-md-12">
 
                         <h4>Financement : Prêts et Subventions</h4>
-
-                        {% include "common/required_fields_info.html" %}
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform what='prêts et subventions' file_field_label='financement' %}
@@ -62,7 +54,6 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
                                                     {% endif %}
                                                     <th scope="col">Numéro</th>
-                                                    <th scope="col">Financement</th>
                                                     <th scope="col">Date d'octroi</th>
                                                     <th scope="col">Durée (en années)</th>
                                                     <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -86,9 +77,6 @@
                                                                     name="{{ form_pret.uuid.html_name }}"
                                                                     value="{{ form_pret.uuid.value|default_if_none:'' }}">
                                                                 {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
-                                                            </td>
-                                                            <td>
-                                                                {% include "common/form/input_text.html" with form_input=form_pret.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                                             </td>
                                                             <td>
                                                                 {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}
@@ -175,6 +163,7 @@
                         </div>
                     </div>
 
+                    {% include "common/required_fields_info.html" %}
                     {% include "conventions/common/form_footer_button.html" %}
                 </form>
             </div>

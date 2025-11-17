@@ -1,6 +1,5 @@
 import logging
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -8,7 +7,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.views.decorators.http import require_safe
 from django.views.generic import TemplateView
-from waffle import switch_is_active
 
 from conventions.services.search import (
     OperationConventionSearchService,
@@ -94,9 +92,6 @@ def operation_conventions(request, numero_operation):
     service = OperationConventionSearchService(numero_operation)
     paginator = service.paginate()
     context = operation_service.get_context_list_conventions(paginator=paginator)
-    context["switch_convention_mixte_on"] = switch_is_active(
-        settings.SWITCH_CONVENTION_MIXTE_ON
-    )
     return render(
         request,
         "operations/conventions.html",

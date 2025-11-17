@@ -42,30 +42,13 @@ class CommentFactory {
   _add_comment_icon() {
     const icon_div = document.createElement("div");
     icon_div.setAttribute("id", this.comment_icon_id);
-    icon_div.setAttribute("title", "Cliquez pour ajouter un commentaire à propos de " + this.dialog_title);
+    icon_div.setAttribute("title", "Cliquez pour ajouter un commentaire");
     icon_div.setAttribute("data-fr-opened", "false");
     icon_div.setAttribute("aria-controls", this.comment_dialog_id + "-dialog");
-    icon_div.setAttribute("role", "button");
-    icon_div.setAttribute("tabindex", "0");
     icon_div.classList.add("content__icons");
     icon_div.classList.add("content__icons--add");
-    icon_div.style.opacity = "0";
+    icon_div.hidden = true;
     this.container.appendChild(icon_div);
-
-    icon_div.addEventListener("focus", () => {
-        icon_div.style.opacity = "1";
-    });
-
-    icon_div.addEventListener("blur", () => {
-        if (icon_div.classList.contains("content__icons--add")) {
-            icon_div.style.opacity = "0";
-        }
-    });
-
-    const child_sr_only_p = document.createElement("p");
-    child_sr_only_p.classList.add("fr-sr-only")
-    child_sr_only_p.innerText = "Commentaire pour " + this.dialog_title
-    icon_div.appendChild(child_sr_only_p);
 
     if (document.getElementById(this.comment_dialog_id) === null) {
       //create dialog: Can be improved
@@ -150,21 +133,6 @@ class CommentFactory {
     this.container.onclick = (e) => {
       this.display_modal_comments();
     };
-
-    this.container.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            const modal = document.getElementById(this.comment_dialog_id + "-dialog");
-            if (modal) {
-                if (globalThis.dsfr) {
-                    globalThis.dsfr(modal).modal.disclose();
-                } else {
-                    this.container.click();
-                }
-            }
-            this.display_modal_comments();
-        }
-    });
   }
 
   display_modal_comments() {
@@ -263,25 +231,8 @@ class CommentFactory {
     }
 
     comment_header.classList.add("clickable");
-    comment_header.setAttribute("role", "button");
-    comment_header.setAttribute("tabindex", "0");
-    comment_header.setAttribute("aria-expanded", "false");
-    comment_header.setAttribute("aria-controls", textarea_div.id);
-    comment_header.setAttribute("aria-label", "Bouton accordéon ouvrir espace d'écriture commentaire");
-
-    comment_header.addEventListener("click", function (e) {
-      const isHidden = textarea_div.hidden;
-      textarea_div.hidden = !isHidden;
-      comment_header.setAttribute("aria-expanded", isHidden ? "true" : "false");
-    });
-
-    comment_header.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        const isHidden = textarea_div.hidden;
-        textarea_div.hidden = !isHidden;
-        comment_header.setAttribute("aria-expanded", isHidden ? "true" : "false");
-      }
+    comment_header.addEventListener("click", function () {
+      textarea_div.hidden = !textarea_div.hidden;
     });
   }
 
@@ -449,7 +400,7 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.style.opacity = "1"
+      comment_icon.hidden = false;
       if (this.empty_toggle_on) {
         this.empty_toggle_on.onclick = null;
         this.empty_toggle_on.onmouseover = null;
@@ -500,7 +451,7 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.style.opacity = "1"
+      comment_icon.hidden = false;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.querySelectorAll('[id^="download_upload_block"]').length > 0
@@ -520,7 +471,7 @@ class CommentFactory {
       comment_icon.classList.add("content__icons--closed");
       comment_icon.classList.remove("content__icons--add");
       comment_icon.removeAttribute("title");
-      comment_icon.style.opacity = "1"
+      comment_icon.hidden = false;
       if (
         (parent_parent.tagName == "TR" || parent_parent.tagName == "TH") &&
         document.querySelectorAll('[id^="download_upload_block"]').length > 0
@@ -541,19 +492,20 @@ class CommentFactory {
       comment_icon.classList.remove("content__icons--resolved");
       comment_icon.classList.remove("content__icons--closed");
       comment_icon.classList.add("content__icons--add");
+      comment_icon.setAttribute("title", "Cliquez pour ajouter un commentaire");
       if (this.empty_toggle_on) {
-        comment_icon.style.opacity = "0"
+        comment_icon.hidden = true;
         this.empty_toggle_on.onmouseover = (e) => {
-          comment_icon.style.opacity = "1"
+          comment_icon.hidden = false;
         };
         this.empty_toggle_on.onclick = (e) => {
-          comment_icon.style.opacity = "1"
+          comment_icon.hidden = false;
         };
         this.empty_toggle_on.onmouseleave = (e) => {
-          comment_icon.style.opacity = "0"
+          comment_icon.hidden = true;
         };
       } else {
-        comment_icon.style.opacity = "1"
+        comment_icon.hidden = false;
       }
     }
   }
@@ -914,12 +866,6 @@ class CommentFactory {
       button_action.classList.add(additionalButtonClass);
     }
     button_action.innerText = label;
-
-    const child_sr_only_p = document.createElement("span");
-    child_sr_only_p.classList.add("fr-sr-only");
-    child_sr_only_p.innerText = " pour " + this.dialog_title;
-    button_action.appendChild(child_sr_only_p);
-
     const li_action = document.createElement("li");
     li_action.setAttribute(
       "id",

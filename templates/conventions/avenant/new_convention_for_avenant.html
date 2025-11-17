@@ -16,8 +16,6 @@
     {% csrf_token %}
     <div class="fr-col-12">
         <div class="fr-mb-3w">
-            {% include "common/required_fields_info.html" %}
-
             {% url 'users:search_bailleur' as search_bailleur_url %}
             {% include "common/form/input_select.html" with form_input=form.bailleur without_empty_option=form.bailleur.field.choices|length_is:1 mandatory_input=True %}
             <script type="text/javascript" nonce="{{ request.csp_nonce }}">

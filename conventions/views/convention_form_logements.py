@@ -1,9 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from conventions.models import Convention
-from conventions.services.logements import (
-    ConventionLogementsService,
-)
+from conventions.services.logements import ConventionLogementsService
 from conventions.views.convention_form import (
     ConventionView,
     avenant_annexes_step,

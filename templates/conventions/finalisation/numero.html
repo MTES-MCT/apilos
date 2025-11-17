@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 {% load display_filters %}
-{% block page_title %}Etape 1 - Finalisation convention - APiLos{% endblock %}
+{% block page_title %}Finalisation - APiLos{% endblock %}
 
 {% block content %}
     {% include "conventions/common/form_header.html" %}
@@ -46,9 +46,6 @@
                 {% else %}
                     <form method="post" action="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}">
                         {% csrf_token %}
-
-                        {% include "common/required_fields_info.html" %}
-
                         <div class="fr-col-6">
                             {% include "common/form/input_text.html" with form_input=form.numero editable=True object_field="convention_numero__"|add:form.uuid.value %}
                         </div>

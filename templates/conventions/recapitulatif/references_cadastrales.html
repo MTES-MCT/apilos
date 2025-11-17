@@ -12,7 +12,7 @@
                         {% if not convention.is_avenant or checked %}
                             {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
                                 <a class="fr-link fr-mb-1w" href="{% url target_url convention_uuid=convention.uuid %}{% if not convention.is_avenant %}#id_reference_cadastrale_div{% endif %}" >
-                                    <span class="fr-icon-edit-line">Aller à cette étape</span>
+                                    <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
                                 </a>
                             {% endif %}
                         {% endif %}
