@@ -1,5 +1,6 @@
 import csv
 import json
+import re
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
@@ -7,6 +8,19 @@ from django.core.management.base import BaseCommand, CommandError
 from bailleurs.models import Bailleur
 from conventions.models import Convention
 from programmes.models.models import Programme
+
+
+def digits_only(value):
+    """Garder uniquement les chiffres"""
+    if not value:
+        return ""
+    return re.sub(r"\D", "", value)
+
+
+def build_numero_dict():
+    """Crée un dictionnaire clean_numero -> numero original"""
+    numeros_base = Convention.objects.all().values_list("numero", flat=True)
+    return {digits_only(num): num for num in numeros_base if num}
 
 
 class Command(BaseCommand):
@@ -60,14 +74,21 @@ class Command(BaseCommand):
             self.stdout.write(self.style.ERROR(f"Erreur lecture JSON: {e}"))
         return []
 
-    def _get_convention(self, numero):
-        for check_numero in [numero, numero.replace(" ", "-")]:
+    def _get_convention(self, numero, numero_dict):
+        clean_num = digits_only(numero)
+
+        if clean_num in numero_dict:
+            numero_base = numero_dict[clean_num]
             try:
-                return Convention.objects.get(numero=check_numero)
+                return Convention.objects.get(numero=numero_base)
             except ObjectDoesNotExist:
                 self.stdout.write(
-                    self.style.WARNING(f"Convention introuvable: {numero}")
+                    self.style.WARNING(
+                        f"Convention trouvée dans le dict mais introuvable en DB: {numero_base}"
+                    )
                 )
+        else:
+            self.stdout.write(self.style.WARNING(f"Convention introuvable: {numero}"))
 
         return None
 
@@ -85,10 +106,13 @@ class Command(BaseCommand):
                 )
                 return None
 
-    def log_update(self, writer, numero, old_bailleur, new_bailleur):
+    def log_update(
+        self, writer, numero_metier, numero_apilos, old_bailleur, new_bailleur
+    ):
         writer.writerow(
             [
-                numero,
+                numero_metier,
+                numero_apilos,
                 old_bailleur.nom if old_bailleur else None,
                 old_bailleur.siren if old_bailleur else None,
                 new_bailleur.nom,
@@ -96,21 +120,27 @@ class Command(BaseCommand):
             ]
         )
 
-    def log_name_diff(self, writer, numero, expected_name, bailleur):
-        writer.writerow([numero, expected_name, bailleur.nom, bailleur.siren])
+    def log_name_diff(
+        self, writer, numero_metier, numero_apilos, expected_name, bailleur
+    ):
+        writer.writerow(
+            [numero_metier, numero_apilos, expected_name, bailleur.nom, bailleur.siren]
+        )
         self.stdout.write(
             self.style.WARNING(
-                f"[WARN] Nom différent pour {numero}: "
+                f"[WARN] Nom différent pour {numero_metier} (Apilos={numero_apilos}): "
                 f"attendu='{expected_name}' trouvé='{bailleur.nom}'"
             )
         )
 
-    def _process_convention(self, convention, writer_updates, writer_name_diff, run):
+    def _process_convention(
+        self, convention, writer_updates, writer_name_diff, run, numero_dict
+    ):
         numero = convention["id"]
         expected_name = convention["bailleur"]
         siren_siret = convention["siren_siret"].replace(" ", "")
 
-        conv = self._get_convention(numero)
+        conv = self._get_convention(numero, numero_dict)
         if not conv:
             return False
 
@@ -119,9 +149,9 @@ class Command(BaseCommand):
             return False
 
         old_bailleur = conv.programme.bailleur
-
+        numero_apilos = conv.numero
         # log before update
-        self.log_update(writer_updates, numero, old_bailleur, bailleur)
+        self.log_update(writer_updates, numero, numero_apilos, old_bailleur, bailleur)
 
         if run:
             # update convention
@@ -130,7 +160,9 @@ class Command(BaseCommand):
 
         # check mismatch
         if expected_name.strip().lower() not in bailleur.nom.strip().lower():
-            self.log_name_diff(writer_name_diff, numero, expected_name, bailleur)
+            self.log_name_diff(
+                writer_name_diff, numero, numero_apilos, expected_name, bailleur
+            )
 
         return True
 
@@ -174,6 +206,8 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.ERROR("Aucune convention à traiter."))
                 return
 
+            numero_dict = build_numero_dict()
+
             updated_count = 0
             with open(
                 "updated_conventions.csv", "w", newline="", encoding="utf-8"
@@ -188,6 +222,7 @@ class Command(BaseCommand):
                 writer_updates.writerow(
                     [
                         "numero_convention",
+                        "numero_convention_apilos",
                         "old_bailleur_name",
                         "old_bailleur_siren",
                         "new_bailleur_name",
@@ -197,6 +232,7 @@ class Command(BaseCommand):
                 writer_name_diff.writerow(
                     [
                         "numero_convention",
+                        "numero_convention_apilos",
                         "expected_bailleur_name",
                         "db_bailleur_name",
                         "siren",
@@ -206,7 +242,7 @@ class Command(BaseCommand):
                 # process all conventions
                 for convention in conventions:
                     if self._process_convention(
-                        convention, writer_updates, writer_name_diff, run
+                        convention, writer_updates, writer_name_diff, run, numero_dict
                     ):
                         updated_count += 1
 
