@@ -276,6 +276,9 @@ def test_formset_validate_numero_unicity_success():
             {"numero": "1", "financement": "PLAI"},
             {"numero": "2", "financement": "PLAI"},
             {"numero": "3", "financement": "PLAI"},
+            {"numero": "1", "financement": "PLUS"},
+            {"numero": "2", "financement": "PLUS"},
+            {"numero": "3", "financement": "PLUS"},
         ]
     }
 
