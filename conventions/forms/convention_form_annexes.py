@@ -130,6 +130,26 @@ class AnnexeForm(forms.Form):
         },
     )
 
+    def clean_financement(self):
+        """
+        Validation du financement
+        """
+        financement = self.cleaned_data.get("financement", None)
+        financement_exist = False
+
+        if financement:
+            for choices in list(Financement.choices):
+                if financement in choices:
+                    financement_exist = True
+                    break
+
+        if not financement_exist:
+            raise ValidationError(
+                "Vérifiez si le financement est pris en charge par Apilos ou s'il s'agit d'une erreur de saisie."
+            )
+
+        return financement
+
     def clean_loyer(self):
         """
         Validation du loyer :
