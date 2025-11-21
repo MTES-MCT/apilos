@@ -225,7 +225,7 @@ def get_convention_export_excel_header(request):
         "Commune",
         "Code postal",
         "Nom de l'opération",
-        "Instructeur" if request.user.is_instructeur else "Bailleur",
+        "Bailleur",
         "Type de financement",
         "Nombre de logements",
         "Nature de l'opération",
@@ -251,11 +251,7 @@ def get_convention_export_excel_row(request, convention):
         convention.programme.ville,  # 5. Commune
         convention.programme.code_postal,  # 6. Code postal
         convention.programme.nom,  # 7. Nom de l'opération
-        (
-            convention.programme.administration.nom
-            if request.user.is_instructeur
-            else convention.programme.bailleur.nom
-        ),  # 8. Instructeur or Bailleur
+        convention.programme.bailleur.nom,  # 8. Bailleur
         convention.lot.get_financement_display(),  # 9. Type de financement
         convention.lot.nb_logements,  # 10. Nombre de logements
         convention.programme.nature_logement,  # 11. Nature de l'opération dans programme
