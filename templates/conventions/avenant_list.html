@@ -1,6 +1,7 @@
 {% load custom_filters %}
 {% for convention in conventions %}
-    <div class="fr-grid-row">
+    {# squid:S1134 - The <ol> tag is in the parent template that includes this component #}
+    <li class="fr-grid-row">  <!-- NOSONAR -->
         <div class="apilos-step-post-action fr-mr-2w">
             <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
             {% if not forloop.last %}
@@ -23,12 +24,14 @@
         {% else %}
             <div class="fr-grid-row fr-grid-row--middle fr-mb-3w">
                 <div>
-                    Avenant {{ convention.numero|default_if_none:'x' }}
-                    {% if convention.televersement_convention_signee_le %}
-                        du <span class="fr-ml-1v">
-                            <strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
-                        </span>
-                    {% endif %}
+                    <p class="fr-m-0">
+                        Avenant {{ convention.numero|default_if_none:'x' }}
+                        {% if convention.televersement_convention_signee_le %}
+                            du <span class="fr-ml-1v">
+                                <strong>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }} </strong>
+                            </span>
+                        {% endif %}
+                    </p>
                     <div>
                         <a class="fr-link" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}" >Voir l'avenant</a>
                     </div>
@@ -37,5 +40,5 @@
                 <div class="fr-ml-4w"><strong>{% include "conventions/home/statut_tag.html" %}</strong></div>
             </div>
         {% endif %}
-    </div>
+    </li>
 {% endfor %}

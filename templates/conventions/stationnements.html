@@ -2,7 +2,13 @@
 
 {% load static %}
 
-{% block page_title %}Type de stationnements - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Type de stationnements - APiLos
+    {% else %}
+        Etape 8 - Type de stationnements - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

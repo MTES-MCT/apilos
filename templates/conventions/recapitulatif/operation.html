@@ -63,7 +63,7 @@
                             </div>
                             {% if convention|display_convention_form_progressbar or request.session.is_expert and convention.statut == CONVENTION_STATUT.SIGNEE %}
                                 <a class="fr-link fr-mb-1w" href="{% url 'conventions:cadastre' convention_uuid=convention.uuid %}" >
-                                    <span class="fr-icon-edit-line" aria-hidden="true">Aller à cette étape</span>
+                                    <span class="fr-icon-edit-line">Aller à cette étape</span>
                                 </a>
                             {% endif %}
                         </div>

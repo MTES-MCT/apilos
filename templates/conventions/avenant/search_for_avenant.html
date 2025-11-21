@@ -1,6 +1,6 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Recherche de convention - APiLos{% endblock %}
+{% block page_title %} Recherche de convention originale - APiLos{% endblock %}
 
 {% load static %}
 
@@ -16,6 +16,7 @@
                             <p>Pour quelle convention souhaitez-vous créer un avenant ?</p>
                         </div>
                         <form class="fr-my-3w" method="get" action="{% url 'conventions:search_for_avenant' %}" id="search_for_avenant">
+                            {% include "common/required_fields_info.html" %}
                             <div class="fr-mb-5w">
                                 <div class="fr-col-9 fr-mb-3w">
                                     {% include "common/form/input_select.html" with form_input=search_form.departement editable=True without_empty_option=True with_empty_option=False %}
