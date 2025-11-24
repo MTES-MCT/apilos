@@ -20,20 +20,24 @@
                                 {% endif %}
                                 {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.date_resiliation %}
                                     <div class="fr-pr-2w">
-                                        {% if convention.is_resiliation_due %}
-                                            Convention résiliée depuis le {{ convention.date_resiliation }}
-                                        {% else %}
-                                            Résiliation de la convention prévue le {{ convention.date_resiliation }}
-                                        {% endif %}
+                                        <p>
+                                            {% if convention.is_resiliation_due %}
+                                                Convention résiliée depuis le {{ convention.date_resiliation }}
+                                            {% else %}
+                                                Résiliation de la convention prévue le {{ convention.date_resiliation }}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                 {% endif %}
                                 {% if convention.statut == CONVENTION_STATUT.DENONCEE and convention.date_denonciation %}
                                     <div class="fr-pr-2w">
-                                        {% if convention.is_denonciation_due %}
-                                            Convention dénoncée depuis le {{ convention.date_denonciation }}
-                                        {% else %}
-                                            Dénonciation de la convention prévue le {{ convention.date_denonciation }}
-                                        {% endif %}
+                                        <p>
+                                            {% if convention.is_denonciation_due %}
+                                                Convention dénoncée depuis le {{ convention.date_denonciation }}
+                                            {% else %}
+                                                Dénonciation de la convention prévue le {{ convention.date_denonciation }}
+                                            {% endif %}
+                                        </p>
                                     </div>
                                 {% endif %}
                                 <a class='fr-link apilos-link fr-text--sm' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale n°{{ convention.parent.numero }} <span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span></a>
@@ -64,13 +68,25 @@
                                                 </a>
                                             </div>
                                         {% endif %}
-                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.ville|default_if_none:'-' }}</div>
-                                        {% comment %} TODO: reverse relation convention lot {% endcomment %}
-                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}</div>
-                                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ convention.programme.get_nature_logement_display }}</div>
-                                        <div class="fr-pl-2w fr-text--sm">{{ convention.get_financement_display|default_if_none:'' }}</div>
+                                            {% comment %} TODO: reverse relation convention lot {% endcomment %}
+                                            <p class="fr-px-2w fr-text--sm apilos-separator">
+                                                {{ convention.programme.ville|default_if_none:'-' }}
+                                            </p>
+
+                                            {% comment %} TODO: reverse relation convention lot {% endcomment %}
+                                            <p class="fr-px-2w fr-text--sm apilos-separator">
+                                                {{ convention.lot.nb_logements|default_if_none:'-' }} logement{{ convention.lot.nb_logements|pluralize }}
+                                            </p>
+
+                                            <p class="fr-px-2w fr-text--sm apilos-separator">
+                                                {{ convention.programme.get_nature_logement_display }}
+                                            </p>
+
+                                            <p class="fr-pl-2w fr-text--sm">
+                                                {{ convention.get_financement_display|default_if_none:'' }}
+                                            </p>
                                     </div>
-                                    <div class="recapitulatif-link fr-pl-3w">
+                                    <div class="info-row-with-action__link">
                                         <a class="fr-link apilos-link fr-text--sm" href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}">
                                             Voir le récapitulatif<span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span>
                                         </a>

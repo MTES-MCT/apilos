@@ -10,6 +10,8 @@
             </div>
         {% endif %}
 
+        {% include "common/required_fields_info.html" %}
+
         {% if convention.is_avenant %}
             <div class="fr-toggle fr-mb-2w">
                 <input type="checkbox" {% if formset.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-utile-messages" id="toggle-utile">
@@ -197,13 +199,15 @@
     </div>
 </div>
 <div class="title-section">
-    <strong>Données financières</strong>
+    <h2 class="fr-text--lg fr-mb-0">
+        Données financières
+    </h2>
 </div>
 <br>
 {{ formset_convention_mixte.management_form }}
 {% for form in formset_convention_mixte %}
     <input type="hidden" id="{{ form.uuid.id_for_label }}_{{ forloop.counter }}" name="{{ form.uuid.html_name }}" value="{{ form.uuid.value|default_if_none:'' }}">
-    <div style="display:none;">{{ form.financement }}</div>
+    <div style="display:none;" aria-hidden="true">{{ form.financement }}</div>
     <!-- Accordion wrapper -->
     <section class="fr-accordion fr-bg-white fr-mb-2w" data-fr-js-accordion="true">
 
@@ -220,23 +224,27 @@
         <div class="fr-collapse" id="plan-financement-{{ form.uuid.value }}" data-fr-js-collapse="true">
             <div>
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-                    <div class="fr-col-12 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements %}
+                    <div class="fr-col-md-0 fr-mb-0">
+                    {% include "common/required_fields_info.html" %}
+                    </div>
+
+                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements hidden_label=form.financement.value %}
                         {{ form.nb_logements.errors }}
                     </div>
 
-                    <div class="fr-col-12">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire %}
+                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire hidden_label=form.financement.value %}
                         {{ form.loyer_derogatoire.errors }}
                     </div>
 
-                    <div class="fr-col-12">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels %}
+                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels hidden_label=form.financement.value %}
                         {{ form.surface_locaux_collectifs_residentiels.errors }}
                     </div>
 
-                    <div class="fr-col-12">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres %}
+                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
+                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres hidden_label=form.financement.value %}
                         {{ form.loyer_associations_foncieres.errors }}
                     </div>
                 </div>
@@ -246,7 +254,7 @@
                     <h4>Option de l'article sur la clause de mixité sociale</h4>
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-mb-2w">
-                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value %}
+                            {% include "common/form/input_number.html" with display_inline=True form_input=form.lgts_mixite_sociale_negocies object_field="lot__lgts_mixite_sociale_negocies__"|add:form.uuid.value hidden_label=form.financement.value %}
                             <div class="insert-info">
                                 <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061069/Logements#%3Ainfo%3A-Options-facultatives-pour-les-Financements-PLUS"
                                    target="_blank" rel="noreferrer"
