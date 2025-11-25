@@ -140,17 +140,26 @@
                                                 </summary>
                                                 <div class="fr-text--xs">
                                                     <div>
-                                                        {% if convention.is_pls_financement_type %}
-                                                            La convention bénéficie d'un financement «{{ convention.lot.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
-                                                        {% elif convention.lot.financement == 'SANS_FINANCEMENT' %}
-                                                            La convention ne bénéficie pas de financement, la durée de conventionnement doit être supérieure à 9 ans.
-                                                        {% else %}
+                                                        {% if convention.is_mixte %}
                                                             Année de signature de la convention + au moins la durée du prêt le plus long. <br>
                                                             Elle ne peut être inférieure à 9 ans.
                                                             {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
                                                                 Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
                                                             {% endif %}
+                                                        {% else %}
+                                                            {% if convention.is_pls_financement_type %}
+                                                                La convention bénéficie d'un financement «{{ convention.lot.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
+                                                            {% elif convention.lot.financement == 'SANS_FINANCEMENT' %}
+                                                                La convention ne bénéficie pas de financement, la durée de conventionnement doit être supérieure à 9 ans.
+                                                            {% else %}
+                                                                Année de signature de la convention + au moins la durée du prêt le plus long. <br>
+                                                                Elle ne peut être inférieure à 9 ans.
+                                                                {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
+                                                                    Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
+                                                                {% endif %}
+                                                            {% endif %}
                                                         {% endif %}
+
                                                         <div><a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7209048/Pr+alable+r+glementaire+et+informatif+-+Conventionnement+APL#Dur%C3%A9e-des-conventions-APL" target="_blank" rel="noreferrer" class="fr-link fr-text--xs">Plus d’informations sur la date de fin de convention.</a></div>
                                                     </div>
                                                 </details>
