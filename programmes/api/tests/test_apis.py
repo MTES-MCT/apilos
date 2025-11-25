@@ -30,7 +30,7 @@ from users.tests.factories import GroupFactory, UserFactory
 operation_response = {
     **fixtures.programme2,
     "bailleur": {
-        "nom": "13 HABITAT",
+        "nom": "3F",
         "siren": "782855696",
         "siret": "782855696",
         "adresse": "80 RUE ALBE",
