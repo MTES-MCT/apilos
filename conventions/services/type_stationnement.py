@@ -113,7 +113,7 @@ class ConventionTypeStationnementService(ConventionService):
                         form_stationnement, stationnement, "typologie"
                     ),
                     f"form-{idx}-financement": utils.get_form_value(
-                        form_stationnement, stationnement, "financement"
+                        form_stationnement, stationnement.lot, "financement"
                     ),
                     f"form-{idx}-nb_stationnements": utils.get_form_value(
                         form_stationnement, stationnement, "nb_stationnements"

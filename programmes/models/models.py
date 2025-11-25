@@ -660,6 +660,18 @@ class Lot(models.Model):
         """
         return self.financement in [Financement.PLUS, Financement.PLUS_CD]
 
+    @property
+    def is_pls_financement_type(self) -> bool:
+        return self.financement in [
+            Financement.PLS,
+            Financement.PLS_DOM,
+            Financement.PALULOS,
+            Financement.PALU_AV_21,
+            Financement.PALUCOM,
+            Financement.PALU_COM,
+            Financement.PALU_RE,
+        ]
+
     def __str__(self):
         return f"{self.convention.programme.nom} - {self.financement}"
 

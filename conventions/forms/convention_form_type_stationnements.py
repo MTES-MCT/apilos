@@ -26,7 +26,12 @@ class TypeStationnementForm(forms.Form):
         },
     )
     financement = forms.TypedChoiceField(
-        required=False, label="", choices=Financement.choices
+        required=True,
+        label="",
+        choices=Financement.choices,
+        error_messages={
+            "required": "Le financement est obligatoire",
+        },
     )
     nb_stationnements = forms.IntegerField(
         label="",
