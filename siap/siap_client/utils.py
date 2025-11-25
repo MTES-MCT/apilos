@@ -165,12 +165,21 @@ def get_or_create_bailleur(bailleur_from_siap: dict):
     )
     # Workaround waiting fix on SIAP Side :
     # https://airtable.com/appqEzValO6eQoHbM/tblNIOUJttSKoH866/viwarZ7MJFl9MSfsi/recuXwXkRXzvssine?blocks=hide*
+
+    has_been_modified = False
     if (
         "codeFamilleMO" in bailleur_from_siap
         and not is_created
         and bailleur.nature_bailleur != _get_nature_bailleur(bailleur_from_siap)
     ):
         bailleur.nature_bailleur = _get_nature_bailleur(bailleur_from_siap)
+        has_been_modified = True
+
+    if nom != bailleur.nom:
+        bailleur.nom = nom
+        has_been_modified = True
+
+    if has_been_modified:
         bailleur.save()
 
     return bailleur
