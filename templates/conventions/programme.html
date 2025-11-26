@@ -23,16 +23,8 @@
 
                         {% include "common/form/input_text.html" with form_input=form.nom object_field="programme__nom__"|add:form.uuid.value %}
 
-                        {% if not convention.is_avenant %}
-                            {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
-                        {% else %}
-                            <div class="fr-mt-1w block--row-strech">
-                                <div class="fr-checkbox-group block--row-strech-1">
-                                    <input type="checkbox" disabled>
-                                    <label class="fr-label">L'opération bénéficie d'un financement <strong class="fr-ml-1w"> ANRU</strong></label>
-                                </div>
-                            </div>
-                        {% endif %}
+                        {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
+
                         {% include "common/form/input_checkbox.html" with form_input=form.anah object_field="programme__anah__"|add:form.uuid.value %}
                         <div class="fr-my-3w">
                             {% with convention_uuid=convention.uuid|stringformat:'s' %}
