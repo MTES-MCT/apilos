@@ -93,11 +93,11 @@
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:avenant_edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all checked=False %}
                     {% endif %}
                     {% if 'logements' in avenant_list %}
-                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.lot.logements_import_ordered checked=True %}
-                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.lot.logements_import_ordered logements_sans_loyer=convention.lot.logements_sans_loyer_import_ordered logements_corrigee=convention.lot.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.lot.logements_corrigee_sans_loyer_import_ordered checked=True %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered checked=True %}
+                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered checked=True %}
                     {% else %}
-                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.lot.logements_import_ordered checked=False %}
-                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.lot.logements_import_ordered logements_sans_loyer=convention.lot.logements_sans_loyer_import_ordered logements_corrigee=convention.lot.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.lot.logements_corrigee_sans_loyer_import_ordered checked=False %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered checked=False %}
+                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered checked=False %}
                     {% endif %}
 
                     {% if 'duree' in avenant_list %}
@@ -106,9 +106,9 @@
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=False %}
                     {% endif %}
                     {% if 'stationnement' in avenant_list %}
-                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.lot.type_stationnements.all checked=True %}
+                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.stationnements checked=True %}
                     {% else %}
-                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.lot.type_stationnements.all checked=False %}
+                        {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:avenant_stationnement' stationnements=convention.stationnements checked=False %}
                     {% endif %}
                     {% if 'foyer_attribution' in avenant_list %}
                         {% include "conventions/recapitulatif/foyer_attribution.html" with target_url='conventions:avenant_foyer_attribution' checked=True %}
@@ -150,15 +150,15 @@
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
-                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.lot.logements_import_ordered logements_sans_loyer=convention.lot.logements_sans_loyer_import_ordered logements_corrigee=convention.lot.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.lot.logements_corrigee_sans_loyer_import_ordered %}
-                    {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=convention.lot.logements_import_ordered %}
-                    {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' lot=convention.lot locaux_collectifs=convention.lot.locaux_collectifs.all %}
+                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered %}
+                    {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered %}
+                    {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' lot=convention.lot locaux_collectifs=convention.locaux_collectifs %}
                     {% if not ecolo_ref %}
-                        {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' annexes=convention.lot.annexes.all lot=convention.lot %}
+                        {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' annexes=convention.annexes lot=convention.lot %}
                     {% else %}
                         {% include "conventions/recapitulatif/pieces_jointes.html" %}
                     {% endif %}
-                    {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:stationnements' stationnements=convention.lot.type_stationnements.all %}
+                    {% include "conventions/recapitulatif/stationnements.html" with target_url='conventions:stationnements' stationnements=convention.stationnements %}
                     {% include "conventions/recapitulatif/foyer_attribution.html" with target_url='conventions:foyer_attribution' %}
                     {% include "conventions/recapitulatif/residence_attribution.html" with target_url='conventions:residence_attribution' %}
                     {% include "conventions/recapitulatif/variantes.html" with target_url='conventions:variantes' %}
