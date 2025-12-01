@@ -120,38 +120,91 @@
                                                         </th>
                                                     {% endif %}
                                                     {% if switch_convention_mixte_on %}
-                                                    <th title="convention mixte" scope="col">
+                                                    <th title="convention mixte" scope="col" class="th_not_sortable">
                                                         Grouper
                                                     </th>
                                                     {% endif %}
-                                                    <th title="Statut de la convention" scope="col">
+                                                    <th title="Statut de la convention" scope="col" class="th_not_sortable">
                                                         Statut
                                                     </th>
-                                                    <th title="Opération" scope="col" class="col__width--150">
+                                                    <th title="Opération" scope="col" class="th_not_sortable col__width--150">
                                                         Opération
                                                     </th>
                                                     {% if request|is_instructeur %}
-                                                        <th scope="col">Bailleur</th>
+                                                        <th scope="col" class="th-sortable" data-sort="bailleur_nom" role="button" tabindex="0">
+                                                            <span class="fr-sr-only">Trier par ordre alphabétique de</span>
+                                                            Bailleur
+                                                            <div class="sort--asc"></div>
+                                                        </th>
                                                     {% endif %}
                                                     {% if request|display_administration %}
-                                                        <th scope="col">Instructeur</th>
+                                                        <th scope="col" class="th_not_sortable">
+                                                            Instructeur
+                                                        </th>
                                                     {% endif %}
-                                                    <th title="Financement" scope="col">
+                                                    <th title="Financement" scope="col" class="th_not_sortable">
                                                         Financement
                                                     </th>
-                                                    <th title="Ville" scope="col">
+                                                    <th title="Ville" scope="col" class="th_not_sortable">
                                                         Ville
                                                     </th>
-                                                    <th title="Nombre de logements à conventionner" scope="col">
+                                                    <th title="Nombre de logements à conventionner" scope="col" class="th_not_sortable">
                                                         Logements
                                                     </th>
-                                                    <th title="Date de livraison et mise en service" scope="col">
+                                                    <th title="Date de livraison et mise en service" scope="col" class="th-sortable" data-sort="-date-achevement" role="button" tabindex="0">
+                                                        <span class="fr-sr-only">Trier par date de </span>
                                                         Livraison
+                                                        <span class="fr-sr-only"> proche</span>
+                                                        <div class="sort--asc"></div>
                                                     </th>
-                                                    <th title="Date de signature" scope="col">
+                                                    <th title="Date de signature" scope="col" class="th-sortable" data-sort="-date-signature" role="button" tabindex="0">
+                                                        <span class="fr-sr-only">Trier par date de </span>
                                                         Signature
+                                                        <span class="fr-sr-only"> récente</span>
+                                                        <div class="sort--asc"></div>
                                                     </th>
                                                 </tr>
+                                                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                                                    document.addEventListener('DOMContentLoaded', function () {
+                                                        const urlParams = new URLSearchParams(window.location.search);
+
+                                                        //récupérer le tri actif
+                                                        const currentOrderBy = urlParams.get('order_by');
+
+                                                        if (currentOrderBy) {
+                                                            const activeHeader = document.querySelector(`.th-sortable[data-sort="${currentOrderBy}"]`);
+                                                            if (activeHeader) {
+                                                                activeHeader.classList.add('active');
+                                                            }
+                                                        }
+
+                                                        //trier quand on clique
+                                                        document.querySelectorAll(".th-sortable").forEach(th => {
+                                                            th.addEventListener("click", () => {
+                                                                const sortField = th.getAttribute('data-sort');
+
+                                                                document.querySelectorAll(".th-sortable").forEach(el => {
+                                                                    el.classList.remove("active");
+                                                                });
+
+                                                                th.classList.add("active");
+
+                                                                //recréer la recherche avec le nouveau tri
+                                                                const urlParams = new URLSearchParams(window.location.search);
+
+                                                                if (currentOrderBy === sortField) {
+                                                                    urlParams.delete('order_by');
+                                                                }
+                                                                else {
+                                                                    urlParams.set('order_by', sortField);
+                                                                }
+                                                                urlParams.delete('page');
+
+                                                                window.location.search = urlParams.toString();
+                                                            });
+                                                        });
+                                                    });
+                                                </script>
                                             </thead>
                                             <tbody>
                                                 {% for convention in conventions %}

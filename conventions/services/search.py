@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Coalesce, Round
+from django.db.models.functions import Coalesce, Lower, Round
 
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Programme
@@ -127,6 +127,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     nature_logement: str | None = None
     statuts: list[ConventionStatut] | None = None
     bailleur: str | None = None
+    order_by: str | None = None
 
     search_operation_nom: str | None = None
     search_operation_nom_query: SearchQuery | None = None
@@ -154,6 +155,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
                 "date_signature",
                 "financement",
                 "nature_logement",
+                "order_by",
                 "search_lieu",
                 "search_numero",
                 "search_operation_nom",
@@ -210,6 +212,18 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
         if self.bailleur:
             queryset = queryset.filter(programme__bailleur__uuid=self.bailleur)
+
+        if self.order_by == "-date-signature":
+            queryset = queryset.filter(
+                Q(televersement_convention_signee_le__lte=date.today())
+                | Q(televersement_convention_signee_le__isnull=True)
+            )
+
+        if self.order_by == "-date-achevement":
+            queryset = queryset.filter(
+                Q(programme__date_achevement_compile__gte=date.today())
+                | Q(programme__date_achevement_compile__isnull=True)
+            )
 
         return queryset
 
@@ -460,4 +474,28 @@ class ConventionSearchService(ConventionSearchServiceBase):
         )
 
     def _get_order_by(self) -> list[str]:
-        return super()._get_order_by() + ["-score", "-cree_le"]
+
+        normalized_bailleur = Lower(Coalesce("programme__bailleur__nom", Value("")))
+
+        sort_mapping = {
+            "bailleur_nom": normalized_bailleur.asc(),
+            "-date-achevement": F("programme__date_achevement_compile").asc(
+                nulls_last=True
+            ),
+            "-date-signature": F("televersement_convention_signee_le").desc(
+                nulls_last=True
+            ),
+        }
+
+        # Au cas ou order_by est une liste (pour x raison)
+        order_by = self.order_by
+        if isinstance(order_by, list):
+            order_by = order_by[0] if order_by else None
+
+        # Si il y a un tri particulier
+        if order_by and order_by in sort_mapping:
+            return [sort_mapping[order_by]] + ["-score", "-cree_le"]
+
+        # Aucun tri particulier
+        base_order = super()._get_order_by()
+        return base_order + ["-score", "-cree_le"]
