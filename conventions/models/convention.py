@@ -3,6 +3,7 @@ import logging
 import uuid
 from collections import defaultdict
 from datetime import date
+from itertools import chain
 
 from django.apps import apps
 from django.conf import settings
@@ -981,3 +982,65 @@ class Convention(models.Model):
         return self.lots.filter(
             financement=financement,
         ).first()
+
+    @property
+    def logements_import_ordered(self):
+        return list(
+            chain.from_iterable(
+                lot.logements.filter(
+                    surface_corrigee__isnull=True, loyer__isnull=False
+                ).order_by("import_order")
+                for lot in self.lots.all()
+            )
+        )
+
+    @property
+    def logements_sans_loyer_import_ordered(self):
+        return list(
+            chain.from_iterable(
+                lot.logements.filter(
+                    surface_corrigee__isnull=True, loyer__isnull=True
+                ).order_by("import_order")
+                for lot in self.lots.all()
+            )
+        )
+
+    @property
+    def logements_corrigee_import_ordered(self):
+        return list(
+            chain.from_iterable(
+                lot.logements.filter(
+                    surface_corrigee__isnull=False, loyer__isnull=False
+                ).order_by("import_order")
+                for lot in self.lots.all()
+            )
+        )
+
+    @property
+    def logements_corrigee_sans_loyer_import_ordered(self):
+        return list(
+            chain.from_iterable(
+                lot.logements.filter(
+                    surface_corrigee__isnull=False, loyer__isnull=True
+                ).order_by("import_order")
+                for lot in self.lots.all()
+            )
+        )
+
+    @property
+    def annexes(self):
+        return chain.from_iterable(lot.annexes.all() for lot in self.lots.all())
+
+    @property
+    def stationnements(self):
+        return list(
+            chain.from_iterable(
+                lot.type_stationnements.all() for lot in self.lots.all()
+            )
+        )
+
+    @property
+    def locaux_collectifs(self):
+        return list(
+            chain.from_iterable(lot.locaux_collectifs.all() for lot in self.lots.all())
+        )

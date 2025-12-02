@@ -14,7 +14,7 @@
                         </div>
                             {% include "conventions/actions/goto.html" %}
                     </div>
-                    {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.lot.annexes.all lot=convention.lot checked=False %}
+                    {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.annexes lots=convention.lots.all checked=False %}
                 </div>
             </div>
         </div>

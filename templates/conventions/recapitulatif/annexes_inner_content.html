@@ -17,6 +17,7 @@
                                 {% endif %}
                                 <th scope="col" class="col__width--150">Type d'annexe {% include "common/form/required_field_star.html" %}</th>
                                 <th scope="col" class="col__width--200">Désignation des logements {% include "common/form/required_field_star.html" %}</th>
+                                <th scope="col" class="col__width--200">Financement {% include "common/form/required_field_star.html" %}</th>
                                 <th scope="col" class="col__width--150">Typologie des logements {% include "common/form/required_field_star.html" %}</th>
                                 <th scope="col" class="col__width--120">Surface de l'annexe {% include "common/form/required_field_star.html" %}</th>
                                 <th scope="col" class="col__width--120">Loyer unitaire en € {% include "common/form/required_field_star.html" %}</th>
@@ -38,6 +39,9 @@
                                             </td>
                                             <td>
                                                 {{ annexe.logement.designation }}
+                                            </td>
+                                            <td>
+                                                {{ annexe.logement.lot.financement }}
                                             </td>
                                             <td>
                                                 {{ annexe.logement.get_typologie_display }}
@@ -67,77 +71,42 @@
         <a class="fr-mb-1w fr-link" href="{% url target_url convention_uuid=convention.uuid %}">Ajouter une annexe</a>
     </div>
 {% endif %}
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-        {% if lot.annexe_caves %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Caves</p>
-        {% endif %}
-        {% if lot.annexe_soussols %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Sous-sols</p>
-        {% endif %}
-        {% if lot.annexe_remises %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Remises</p>
-        {% endif %}
-        {% if lot.annexe_ateliers %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Ateliers</p>
-        {% endif %}
-        {% if lot.annexe_sechoirs %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Séchoirs</p>
-        {% endif %}
-        {% if lot.annexe_celliers %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Celliers extérieurs au logement</p>
-        {% endif %}
-        {% if lot.annexe_resserres %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Resserres</p>
-        {% endif %}
-        {% if lot.annexe_combles %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Combles et greniers aménageables</p>
-        {% endif %}
-        {% if lot.annexe_balcons %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Balcons</p>
-        {% endif %}
-        {% if lot.annexe_loggias %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Loggias et vérandas</p>
-        {% endif %}
-        {% if lot.annexe_terrasses %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Terrasses</p>
-        {% endif %}
+{% for lot in lots %}
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
+            {% if lot.annexe_caves %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Caves:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_soussols %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Sous-sols:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_remises %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Remises:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_ateliers %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Ateliers:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_sechoirs %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Séchoirs:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_celliers %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Celliers extérieurs au logement:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_resserres %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Resserres:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_combles %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Combles et greniers aménageables:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_balcons %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Balcons:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_loggias %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Loggias et vérandas:{{ lot.financement }}</p>
+            {% endif %}
+            {% if lot.annexe_terrasses %}
+                <p class="fr-tag fr-mb-2w fr-mr-1w apilos-tag-ok">Terrasses:{{ lot.financement }}</p>
+            {% endif %}
+        </div>
     </div>
-</div>
-<div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
-        {% if lot.annexe_caves is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Caves</p>
-        {% endif %}
-        {% if lot.annexe_soussols is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Sous-sols</p>
-        {% endif %}
-        {% if lot.annexe_remises is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Remises</p>
-        {% endif %}
-        {% if lot.annexe_ateliers is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Ateliers</p>
-        {% endif %}
-        {% if lot.annexe_sechoirs is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Séchoirs</p>
-        {% endif %}
-        {% if lot.annexe_celliers is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Celliers extérieurs au logement</p>
-        {% endif %}
-        {% if lot.annexe_resserres is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Resserres</p>
-        {% endif %}
-        {% if lot.annexe_combles is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Combles et greniers aménageables</p>
-        {% endif %}
-        {% if lot.annexe_balcons is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Balcons</p>
-        {% endif %}
-        {% if lot.annexe_loggias is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Loggias et vérandas</p>
-        {% endif %}
-        {% if lot.annexe_terrasses is False %}
-            <p class="fr-tag fr-mb-2w fr-mr-1w">Terrasses</p>
-        {% endif %}
-    </div>
-</div>
+{% endfor %}
