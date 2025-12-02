@@ -3,7 +3,7 @@ name: Deploy Sphinx Documentation to GitHub Pages
 on:
   push:
     branches:
-      - main  # Adjust this to your default branch name, if necessary
+      - main
       - sphynx
 
 jobs:
@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
       - uses: actions/setup-python@v6
         with:
