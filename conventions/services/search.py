@@ -96,19 +96,62 @@ class ProgrammeConventionSearchService(ConventionSearchServiceBase):
 
 class OperationConventionSearchService(ConventionSearchServiceBase):
     prefetch = [
+        "programme__bailleur",
         "programme__administration",
     ]
 
-    def __init__(self, num_operation: str, order_by: str | None = None):
-        self.num_operation: str = num_operation
+    numero_operation: str
+    order_by: str | None = None
 
-        if order_by:
-            self.order_by = order_by
+    def __init__(
+        self, numero_operation: str, search_filters: dict | None = None
+    ) -> None:
+        self.numero_operation = numero_operation
+
+        if search_filters:
+            self.order_by = search_filters.get("order_by")
 
     def _get_base_queryset(self) -> QuerySet:
         return Convention.objects.filter(
-            programme__numero_operation_pour_recherche=self.num_operation
+            programme__numero_operation=self.numero_operation
         )
+
+    def _build_filters(self, queryset: QuerySet) -> QuerySet:
+        if self.order_by == "-date-signature":
+            queryset = queryset.filter(
+                Q(televersement_convention_signee_le__lte=date.today())
+                | Q(televersement_convention_signee_le__isnull=True)
+            )
+
+        if self.order_by == "-date-achevement":
+            queryset = queryset.filter(
+                Q(programme__date_achevement_compile__gte=date.today())
+                | Q(programme__date_achevement_compile__isnull=True)
+            )
+
+        return queryset
+
+    def _get_order_by(self) -> list[str]:
+        clean_bailleur = Lower(Coalesce("programme__bailleur__nom", Value("")))
+
+        sort_mapping = {
+            "bailleur_nom": clean_bailleur.asc(),
+            "-date-achevement": F("programme__date_achevement_compile").asc(
+                nulls_last=True
+            ),
+            "-date-signature": F("televersement_convention_signee_le").desc(
+                nulls_last=True
+            ),
+        }
+
+        order_by = self.order_by
+        if isinstance(order_by, list):
+            order_by = order_by[0] if order_by else None
+
+        if order_by and order_by in sort_mapping:
+            return [sort_mapping[order_by]]
+
+        return ["-cree_le"]
 
 
 class ConventionSearchService(ConventionSearchServiceBase):
@@ -175,8 +218,6 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _statut_filters = Q(statut__in=[s.label for s in self.statuts])
 
             if ConventionStatut.SIGNEE in self.statuts:
-                # Si on filtre sur les conventions signées,
-                # on inclut égaement les conventions en cours de resiliation ou de denonciation
                 if ConventionStatut.RESILIEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.RESILIEE.label,

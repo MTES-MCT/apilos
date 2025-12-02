@@ -36,7 +36,6 @@ def operation_conventions(request, numero_operation):
             f"L'opération {numero_operation} n'existe pas dans le SIAP",
         )
 
-        # TODO: get_operations_from_numero_operation function ?
         operation_service.programmes = list(
             Programme.objects.filter(numero_operation_pour_recherche=numero_operation)
         )
@@ -44,10 +43,7 @@ def operation_conventions(request, numero_operation):
         operation_service.get_or_create_operation()
         operation_service.check_sans_financement_consistancy()
 
-    # Choix du programme de référence, celui qui va être utilisé pour créer les
-    # conventions manquantes
     if len(operation_service.programmes) > 1:
-        # on selectionne le programme qui a le plus de convention
         programme = max(
             operation_service.programmes, key=lambda p: len(p.conventions.all())
         )
@@ -63,7 +59,6 @@ def operation_conventions(request, numero_operation):
             reverse("conventions:search") + f"?search_numero={numero_operation}"
         )
 
-    # Seconde vie : on ne crée pas les conventions automatiquement
     if operation_service.is_seconde_vie() and not operation_service.has_conventions():
         return render(
             request,
@@ -74,7 +69,6 @@ def operation_conventions(request, numero_operation):
             },
         )
 
-    # collect des conventions par financement
     conventions_by_financements = (
         operation_service.collect_conventions_by_financements()
     )
@@ -91,7 +85,10 @@ def operation_conventions(request, numero_operation):
                 " souhaitez pas conserver",
             )
 
-    service = OperationConventionSearchService(numero_operation)
+    search_filters = {"order_by": request.GET.get("order_by")}
+    service = OperationConventionSearchService(
+        numero_operation, search_filters=search_filters
+    )
     paginator = service.paginate()
     context = operation_service.get_context_list_conventions(paginator=paginator)
     context["switch_convention_mixte_on"] = switch_is_active(
