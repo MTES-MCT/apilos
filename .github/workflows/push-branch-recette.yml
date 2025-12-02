@@ -1,7 +1,9 @@
 name: "Test and deploy to Recette environment"
-
 on:
   push:
+    branches:
+      - recette
+  pull_request:
     branches:
       - recette
 
