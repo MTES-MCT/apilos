@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Coalesce, Lower, Round
+from django.db.models.functions import Coalesce, Lower, Round, Trim
 
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Programme
@@ -132,7 +132,7 @@ class OperationConventionSearchService(ConventionSearchServiceBase):
         return queryset
 
     def _get_order_by(self) -> list[str]:
-        clean_bailleur = Lower(Coalesce("programme__bailleur__nom", Value("")))
+        clean_bailleur = Lower(Trim(Coalesce("programme__bailleur__nom", Value(""))))
 
         sort_mapping = {
             "bailleur_nom": clean_bailleur.asc(),
@@ -516,7 +516,9 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
     def _get_order_by(self) -> list[str]:
 
-        normalized_bailleur = Lower(Coalesce("programme__bailleur__nom", Value("")))
+        normalized_bailleur = Lower(
+            Trim(Coalesce("programme__bailleur__nom", Value("")))
+        )
 
         sort_mapping = {
             "bailleur_nom": normalized_bailleur.asc(),
