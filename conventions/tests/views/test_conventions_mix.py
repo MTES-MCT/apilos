@@ -309,7 +309,9 @@ class ConventionMixViewTests(TestCase):
         with pytest.raises(ConventionGroupingError) as exc_info:
             ConventionMix.as_view()(self.request)
 
-        self.assertEqual(str(exc_info.value), "Conventions must be in the same status")
+        self.assertEqual(
+            str(exc_info.value), "Les conventions doivent avoir le même statut"
+        )
 
         self.convention_plai_habitat_mixte.statut = ConventionStatut.PROJET.label
         self.convention_plai_habitat_mixte.save(update_fields=["statut"])
@@ -321,7 +323,7 @@ class ConventionMixViewTests(TestCase):
 
         self.assertEqual(
             str(exc_info.value),
-            "All lots in the conventions must have the same type of habitat",
+            "Tous les lots des conventions doivent avoir le même type d'habitat",
         )
 
         data = {
@@ -340,7 +342,7 @@ class ConventionMixViewTests(TestCase):
             ConventionMix.as_view()(self.request)
 
         self.assertEqual(
-            str(exc_info.value), "Conventions must be from the same programme"
+            str(exc_info.value), "Les conventions doivent appartenir au même programme"
         )
 
         data = {
@@ -357,5 +359,5 @@ class ConventionMixViewTests(TestCase):
 
         self.assertEqual(
             str(exc_info.value),
-            "We can't create a mixte convention, a list of uuids conventions must be provided",
+            "Nous ne pouvons pas créer une convention mixte, une liste d'UUIDs de conventions doit être fournie",
         )

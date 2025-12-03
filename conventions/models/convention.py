@@ -62,30 +62,36 @@ class ConventionManager(models.Manager):
 
         if not uuids_conventions:
             raise ConventionGroupingError(
-                "We can't create a mixte convention, a list of uuids conventions must be provided"
+                "Nous ne pouvons pas créer une convention mixte, une liste d'UUIDs de conventions doit être fournie"
             )
 
         related_conventions = self.model.objects.filter(uuid__in=uuids_conventions)
 
         programme_ids = {conv.programme_id for conv in related_conventions}
         if len(programme_ids) > 1:
-            raise ConventionGroupingError("Conventions must be from the same programme")
+            raise ConventionGroupingError(
+                "Les conventions doivent appartenir au même programme"
+            )
 
         statut_list = {conv.statut for conv in related_conventions}
         if statut_list != {ConventionStatut.PROJET.label}:
-            raise ConventionGroupingError("Conventions must be in the same status")
+            raise ConventionGroupingError(
+                "Les conventions doivent avoir le même statut"
+            )
 
         type_habitat_list = {
             conv.lots.first().type_habitat for conv in related_conventions
         }
         if len(type_habitat_list) > 1:
             raise ConventionGroupingError(
-                "All lots in the conventions must have the same type of habitat"
+                "Tous les lots des conventions doivent avoir le même type d'habitat"
             )
 
         for conv in related_conventions:
             if conv.is_avenant():
-                raise ConventionGroupingError("Avenants cannot be grouped")
+                raise ConventionGroupingError(
+                    "Les avenants ne peuvent pas être groupés"
+                )
 
         convention, others_conventions = self._split_first_convention(
             related_conventions
@@ -115,7 +121,7 @@ class ConventionManager(models.Manager):
 
         if not list_of_uuids_conventions:
             raise ConventionGroupingError(
-                "We can't degroup convention, UUIDs list is required"
+                "Nous ne pouvons pas dégrouper la convention, une liste d'UUIDs de conventions est requise"
             )
 
         related_conventions = self.model.objects.filter(
@@ -123,15 +129,21 @@ class ConventionManager(models.Manager):
         )
 
         if any(conv.has_avenant for conv in related_conventions):
-            raise ConventionGroupingError("Conventions must not have any avenant")
+            raise ConventionGroupingError(
+                "Les conventions ne doivent pas avoir d'avenant"
+            )
 
         statut_list = {conv.statut for conv in related_conventions}
         if statut_list != {ConventionStatut.PROJET.label}:
-            raise ConventionGroupingError("Conventions must be in the same status")
+            raise ConventionGroupingError(
+                "Les conventions doivent avoir le même statut"
+            )
 
         for conv in related_conventions:
             if conv.is_avenant():
-                raise ConventionGroupingError("Avenants cannot be degrouped")
+                raise ConventionGroupingError(
+                    "Les avenants ne peuvent pas être dégroupés"
+                )
 
         return self._degroup_convention(related_conventions.first())
 
