@@ -1044,3 +1044,7 @@ class Convention(models.Model):
         return list(
             chain.from_iterable(lot.locaux_collectifs.all() for lot in self.lots.all())
         )
+
+    @property
+    def prets(self):
+        return list(chain.from_iterable(lot.prets.all() for lot in self.lots.all()))
