@@ -9,7 +9,7 @@
                         {{ opened_comments.count }} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
                     </h4>
                 </div>
-                <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments">
+                <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments_main">
                     <span class="fr-icon-refresh-line" aria-hidden="true"></span>
                     Rafraîchir
                     <span class="fr-sr-only"> la page</span>
@@ -52,7 +52,7 @@
 
         </div>
     {% else %}
-        <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments">
+        <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments_empty">
             <span class="fr-icon-refresh-line" aria-hidden="true"></span>
             Rafraîchir
             <span class="fr-sr-only"> la page</span>
@@ -60,12 +60,16 @@
     {% endif %}
     <script type="text/javascript" nonce="{{ request.csp_nonce }}">
         document.addEventListener('DOMContentLoaded', function() {
-            const btn = document.getElementById('refresh_opened_comments');
+        const btnMain = document.getElementById('refresh_opened_comments_main');
+        const btnEmpty = document.getElementById('refresh_opened_comments_empty');
+
+        [btnMain, btnEmpty].forEach(function(btn){
             if (btn) {
                 btn.addEventListener('click', function() {
                     window.location.reload(true);
                 });
             }
         });
+    });
     </script>
 {% endif %}
