@@ -1,4 +1,4 @@
-<div class="fr-col-12 fr-col-lg-3 search-select" data-field-id="{{ field_id }}">
+<div class="fr-col-12 fr-col-lg-3 search-select search-statut" data-field-id="{{ field_id }}">
     <label class="select-label" for="{{ field_id }}" id="label-{{ field_id }}">
         {{ label }}
     </label>
@@ -8,10 +8,10 @@
         id="{{ field_id }}"
         name="{{ field_id }}"
         aria-labelledby="label-{{ field_id }}">
-        {% for choice_label, choice_value in choices %}
-            <option value="{{ choice_value }}"
-                    {% if request_url and choice_value in request_url %}selected{% endif %}>
-                {{ choice_label }}
+        {% for label, value in choices %}
+            <option value="{{ value }}"
+                    {% if value in request_url %}selected{% endif %}>
+                {{ label }}
             </option>
         {% endfor %}
     </select>
@@ -19,7 +19,9 @@
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function() {
-        const element = document.querySelector('#{{ field_id }}');
+        const container = document.querySelector('.search-statut');
+        const fieldId = container.dataset.fieldId;
+        const element = document.querySelector('#' + fieldId);
 
         if (element) {
             const choices = new Choices(element, {
@@ -36,12 +38,12 @@
                 noChoicesText: 'Aucun choix disponible',
                 removeItemIconText: 'Supprimer',
                 removeItemLabelText: 'Supprimer l\'élément',
-                labelId: 'label-{{ field_id }}'
+                labelId: 'label-' + fieldId
             });
 
             const choicesInput = element.closest('.choices').querySelector('.choices__input');
             if (choicesInput) {
-                choicesInput.setAttribute('aria-labelledby', 'label-{{ field_id }}');
+                choicesInput.setAttribute('aria-labelledby', 'label-' + fieldId);
             }
 
             choices.passedElement.element.addEventListener('addItem', function() {
