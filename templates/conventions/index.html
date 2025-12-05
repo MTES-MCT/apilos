@@ -7,15 +7,11 @@
 {% block javascript_extras %}
     <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
     <script src="{% static 'choices/choices.min.js' %}"></script>
-    {% comment %} <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script> {% endcomment %}
-
 {% endblock javascript_extras %}
 
 {% block css_extras %}
     <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
     <link rel="stylesheet" href="{% static 'choices/choices.min.css' %}">
-    {% comment %} <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"> {% endcomment %}
-
 {% endblock css_extras %}
 
 {% block content %}
