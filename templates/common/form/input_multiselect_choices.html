@@ -1,4 +1,4 @@
-<div class="fr-col-12 fr-col-lg-3 search-select search-statut" data-field-id="{{ field_id }}">
+<div class="fr-col-12 fr-col-lg-3 search-select" data-field-id="{{ field_id }}">
     <label class="select-label" for="{{ field_id }}" id="label-{{ field_id }}">
         {{ label }}
     </label>
@@ -7,11 +7,11 @@
         class="fr-select fr-mt-1w"
         id="{{ field_id }}"
         name="{{ field_id }}"
-        aria-labelledby="label-{{ field_id }}">
-        {% for label, value in choices %}
-            <option value="{{ value }}"
-                    {% if value in request %}selected{% endif %}>
-                {{ label }}
+        aria-labelledby="label-{{ field_id }}"
+        data-selected-values="{{ request_url|join:',' }}">
+        {% for choice_label, choice_value in choices %}
+            <option value="{{ choice_value }}">
+                {{ choice_label }}
             </option>
         {% endfor %}
     </select>
@@ -19,11 +19,22 @@
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function() {
-        const container = document.querySelector('.search-statut');
-        const fieldId = container.dataset.fieldId;
-        const element = document.querySelector('#' + fieldId);
+        const element = document.querySelector('#{{ field_id }}');
 
         if (element) {
+            // Récupérer les valeurs sélectionnées depuis l'attribut data
+            const selectedValuesAttr = element.getAttribute('data-selected-values');
+            const selectedValues = selectedValuesAttr ? selectedValuesAttr.split(',').filter(v => v) : [];
+
+            // Marquer les options comme sélectionnées
+            if (selectedValues.length > 0) {
+                Array.from(element.options).forEach(option => {
+                    if (selectedValues.includes(option.value)) {
+                        option.selected = true;
+                    }
+                });
+            }
+
             const choices = new Choices(element, {
                 removeItemButton: true,
                 searchEnabled: false,
@@ -38,12 +49,12 @@
                 noChoicesText: 'Aucun choix disponible',
                 removeItemIconText: 'Supprimer',
                 removeItemLabelText: 'Supprimer l\'élément',
-                labelId: 'label-' + fieldId
+                labelId: 'label-{{ field_id }}'
             });
 
             const choicesInput = element.closest('.choices').querySelector('.choices__input');
             if (choicesInput) {
-                choicesInput.setAttribute('aria-labelledby', 'label-' + fieldId);
+                choicesInput.setAttribute('aria-labelledby', 'label-{{ field_id }}');
             }
 
             choices.passedElement.element.addEventListener('addItem', function() {
