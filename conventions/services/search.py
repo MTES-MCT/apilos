@@ -144,11 +144,17 @@ class ConventionSearchService(ConventionSearchServiceBase):
             self.anru = search_filters.get("anru") is not None
             self.anah = search_filters.get("anah") is not None
             self.avenant_seulement = search_filters.get("avenant_seulement") is not None
-            if search_filters.get("statuts"):
-                self.statuts = [
-                    ConventionStatut.get_by_label(s)
-                    for s in search_filters.get("statuts").split(",")
-                ]
+
+            if statuts_raw := search_filters.get("statuts"):
+                if isinstance(statuts_raw, list):
+                    self.statuts = [
+                        ConventionStatut.get_by_label(s) for s in statuts_raw
+                    ]
+                else:
+                    self.statuts = [
+                        ConventionStatut.get_by_label(s) for s in statuts_raw.split(",")
+                    ]
+
             for name in (
                 "bailleur",
                 "date_signature",
@@ -173,8 +179,6 @@ class ConventionSearchService(ConventionSearchServiceBase):
             _statut_filters = Q(statut__in=[s.label for s in self.statuts])
 
             if ConventionStatut.SIGNEE in self.statuts:
-                # Si on filtre sur les conventions signées,
-                # on inclut égaement les conventions en cours de resiliation ou de denonciation
                 if ConventionStatut.RESILIEE not in self.statuts:
                     _statut_filters |= Q(
                         statut=ConventionStatut.RESILIEE.label,

@@ -155,6 +155,11 @@ class ConventionSearchMixin:
 
         return default
 
+    def _get_multi_value_query_param(self, query_param: str) -> list[str] | None:
+        """Récupère les valeurs multiples d'un paramètre GET"""
+        values = self.request.GET.getlist(query_param)
+        return values if values else None
+
     def setup(self, *args, **kwargs) -> None:
         super().setup(*args, **kwargs)
 
@@ -162,6 +167,12 @@ class ConventionSearchMixin:
             arg: self._get_non_empty_query_param(query_param)
             for arg, query_param in self.get_search_filters_mapping()
         }
+
+        # Traitement spécial pour les statuts (paramètre multiple)
+        if "statuts" in search_filters:
+            statuts = self._get_multi_value_query_param("cstatut")
+            search_filters["statuts"] = statuts
+
         self.service = ConventionSearchService(
             user=self.request.user, search_filters=search_filters
         )
@@ -179,7 +190,7 @@ class ConventionSearchMixin:
             ("search_lieu", "search_lieu"),
             ("search_numero", "search_numero"),
             ("search_operation_nom", "search_operation_nom"),
-            ("statuts", "cstatut"),
+            ("statuts", "cstatut"),  # 'statuts' sera géré spécialement dans setup()
         ]
 
 
@@ -227,6 +238,7 @@ class ConventionSearchView(LoginRequiredMixin, ConventionSearchMixin, View):
             "bailleur_query": self.bailleurs_queryset,
             "debug_search_scoring": settings.DEBUG_SEARCH_SCORING,
             "convention_export_max_rows": CONVENTION_EXPORT_MAX_ROWS,
+            "selected_statuts": request.GET.getlist("cstatut"),
         } | {
             k: self._get_non_empty_query_param(k, default="")
             for k in (
