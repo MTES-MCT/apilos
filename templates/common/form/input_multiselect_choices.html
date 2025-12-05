@@ -8,10 +8,10 @@
         id="{{ field_id }}"
         name="{{ field_id }}"
         aria-labelledby="label-{{ field_id }}">
-        {% for label, value in choices %}
-            <option value="{{ value }}"
-                    {% if value in request_url %}selected{% endif %}>
-                {{ label }}
+        {% for choice_label, choice_value in choices %}
+            <option value="{{ choice_value }}"
+                    {% if choice_value in request_url %}selected{% endif %}>
+                {{ choice_label }}
             </option>
         {% endfor %}
     </select>
@@ -19,45 +19,43 @@
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function() {
-        const container = document.querySelector('.search-statut');
-        const fieldId = container.dataset.fieldId;
-        const element = document.querySelector('#' + fieldId);
+        const container = document.querySelector('[data-field-id="{{ field_id }}"]');
+        if (!container) return;
 
-        if (element) {
-            const choices = new Choices(element, {
-                removeItemButton: true,
-                searchEnabled: false,
-                placeholder: true,
-                placeholderValue: 'Sélectionner',
-                itemSelectText: '',
-                shouldSort: false,
-                classNames: {
-                    containerOuter: ['choices', 'fr-select', 'fr-mt-1w']
-                },
-                noResultsText: 'Aucun résultat',
-                noChoicesText: 'Aucun choix disponible',
-                removeItemIconText: 'Supprimer',
-                removeItemLabelText: 'Supprimer l\'élément',
-                labelId: 'label-' + fieldId
-            });
+        const element = document.getElementById('{{ field_id }}');
+        if (!element) return;
 
-            const choicesInput = element.closest('.choices').querySelector('.choices__input');
-            if (choicesInput) {
-                choicesInput.setAttribute('aria-labelledby', 'label-' + fieldId);
-            }
+        // Initialiser Choices.js
+        const choices = new Choices(element, {
+            removeItemButton: true,
+            searchEnabled: false,
+            placeholder: true,
+            placeholderValue: 'Sélectionner',
+            itemSelectText: '',
+            shouldSort: false,
+            classNames: {
+                containerOuter: ['choices', 'fr-select', 'fr-mt-1w']
+            },
+            noResultsText: 'Aucun résultat',
+            noChoicesText: 'Aucun choix disponible',
+            removeItemIconText: 'Supprimer',
+            removeItemLabelText: 'Supprimer l\'élément',
+            labelId: 'label-{{ field_id }}'
+        });
 
-            choices.passedElement.element.addEventListener('addItem', function() {
-                setTimeout(() => {
-                    const items = element.closest('.choices').querySelectorAll('.choices__item--selectable');
-                    items.forEach(item => {
-                        const button = item.querySelector('.choices__button');
-                        if (button) {
-                            const itemText = item.textContent.replace('Supprimer l\'élément', '').trim();
-                            button.setAttribute('aria-label', `Supprimer ${itemText}`);
-                        }
-                    });
-                }, 10);
-            });
-        }
+
+        // Gestion des labels des boutons de suppression
+        choices.passedElement.element.addEventListener('addItem', function() {
+            setTimeout(() => {
+                const items = element.closest('.choices')?.querySelectorAll('.choices__item--selectable');
+                items?.forEach(item => {
+                    const button = item.querySelector('.choices__button');
+                    if (button) {
+                        const itemText = item.textContent.replace('Supprimer l\'élément', '').trim();
+                        button.setAttribute('aria-label', `Supprimer ${itemText}`);
+                    }
+                });
+            }, 10);
+        });
     });
 </script>
