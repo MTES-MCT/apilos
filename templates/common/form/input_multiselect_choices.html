@@ -7,10 +7,10 @@
         class="fr-select fr-mt-1w"
         id="{{ field_id }}"
         name="{{ field_id }}"
-        aria-labelledby="label-{{ field_id }}"
-        data-selected-values="{{ request_url|join:',' }}">
+        aria-labelledby="label-{{ field_id }}">
         {% for choice_label, choice_value in choices %}
-            <option value="{{ choice_value }}">
+            <option value="{{ choice_value }}"
+                    {% if request_url and choice_value in request_url %}selected{% endif %}>
                 {{ choice_label }}
             </option>
         {% endfor %}
@@ -22,19 +22,6 @@
         const element = document.querySelector('#{{ field_id }}');
 
         if (element) {
-            // Récupérer les valeurs sélectionnées depuis l'attribut data
-            const selectedValuesAttr = element.getAttribute('data-selected-values');
-            const selectedValues = selectedValuesAttr ? selectedValuesAttr.split(',').filter(v => v) : [];
-
-            // Marquer les options comme sélectionnées
-            if (selectedValues.length > 0) {
-                Array.from(element.options).forEach(option => {
-                    if (selectedValues.includes(option.value)) {
-                        option.selected = true;
-                    }
-                });
-            }
-
             const choices = new Choices(element, {
                 removeItemButton: true,
                 searchEnabled: false,
