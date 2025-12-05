@@ -119,7 +119,7 @@
   }
 }
 
-/* #search_table .fr-select:has(option[selected]),
+#search_table .fr-select:has(option[selected]),
 #search_table .fr-input:not([value=""]),
 #search_table .search-select.search-bailleur:has(.vscomp-wrapper.has-value .vscomp-value:not([data-tooltip=""])) .fr-select,
 #search_table .search-select.search-statut:has(.vscomp-wrapper.has-value) .fr-select {
