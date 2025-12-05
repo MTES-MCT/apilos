@@ -174,7 +174,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "lots": lots,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
-        "logements": convention.lot.logements_import_ordered,
+        "logements": convention.logements_import_ordered,
         "logements_sans_loyer": _compute_object_list_from_each_lot(
             [lot.logements_sans_loyer_import_ordered for lot in lots]
         ),
@@ -191,8 +191,10 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "stationnements": _compute_object_list_from_each_lot(
             [lot.type_stationnements.all() for lot in lots]
         ),
-        "prets_cdc": convention.lot.prets.filter(preteur__in=["CDCF", "CDCL"]),
-        "autres_prets": convention.lot.prets.exclude(preteur__in=["CDCF", "CDCL"]),
+        "prets_cdc": [p for p in convention.prets if p.preteur in ["CDCF", "CDCL"]],
+        "autres_prets": [
+            p for p in convention.prets if p.preteur not in ["CDCF", "CDCL"]
+        ],
         "references_cadastrales": convention.programme.referencecadastrales.all(),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
@@ -201,7 +203,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         ),
         "loyer_m2": _get_loyer_par_metre_carre(convention),
         "liste_des_annexes": _compute_liste_des_annexes(
-            convention.lot.type_stationnements.all(), annexes
+            convention.stationnements, annexes
         ),
         "lc_sh_totale": _compute_total_locaux_collectifs(convention),
         "nombre_annees_conventionnement": (
