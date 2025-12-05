@@ -124,11 +124,7 @@
 #search_table .search-select.search-bailleur:has(.vscomp-wrapper.has-value .vscomp-value:not([data-tooltip=""])) .fr-select,
 #search_table .search-select.search-statut:has(.vscomp-wrapper.has-value) .fr-select {
   border: solid 1px var(--text-default-info);
-<<<<<<< HEAD
 }
-=======
-} */
->>>>>>> 47d2c0c1 (pre commit hooks)
 
 #search_table .search-select:has(.fr-select option[selected]) .select-label::after,
 #search_table .search-input:has(.fr-input:not([value=""])) .select-label::after ,
