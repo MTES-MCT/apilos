@@ -1,0 +1,63 @@
+<div class="fr-col-12 fr-col-lg-3 search-select search-statut" data-field-id="{{ field_id }}">
+    <label class="select-label" for="{{ field_id }}" id="label-{{ field_id }}">
+        {{ label }}
+    </label>
+    <select
+        multiple
+        class="fr-select fr-mt-1w"
+        id="{{ field_id }}"
+        name="{{ field_id }}"
+        aria-labelledby="label-{{ field_id }}">
+        {% for label, value in choices %}
+            <option value="{{ value }}"
+                    {% if value in request %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('.search-statut');
+        const fieldId = container.dataset.fieldId;
+        const element = document.querySelector('#' + fieldId);
+
+        if (element) {
+            const choices = new Choices(element, {
+                removeItemButton: true,
+                searchEnabled: false,
+                placeholder: true,
+                placeholderValue: 'Sélectionner',
+                itemSelectText: '',
+                shouldSort: false,
+                classNames: {
+                    containerOuter: ['choices', 'fr-select', 'fr-mt-1w']
+                },
+                noResultsText: 'Aucun résultat',
+                noChoicesText: 'Aucun choix disponible',
+                removeItemIconText: 'Supprimer',
+                removeItemLabelText: 'Supprimer l\'élément',
+                labelId: 'label-' + fieldId
+            });
+
+            const choicesInput = element.closest('.choices').querySelector('.choices__input');
+            if (choicesInput) {
+                choicesInput.setAttribute('aria-labelledby', 'label-' + fieldId);
+            }
+
+            choices.passedElement.element.addEventListener('addItem', function() {
+                setTimeout(() => {
+                    const items = element.closest('.choices').querySelectorAll('.choices__item--selectable');
+                    items.forEach(item => {
+                        const button = item.querySelector('.choices__button');
+                        if (button) {
+                            const itemText = item.textContent.replace('Supprimer l\'élément', '').trim();
+                            button.setAttribute('aria-label', `Supprimer ${itemText}`);
+                        }
+                    });
+                }, 10);
+            });
+        }
+    });
+</script>

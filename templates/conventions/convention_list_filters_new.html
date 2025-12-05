@@ -55,7 +55,9 @@
 
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
 
-                    {# Champs statut #}
+                    {% include "common/form/input_multiselect_choices.html" with field_id="cstatut" label="Statut convention ou avenant" request="request.GET.cstatut" choices="statut_choices" %}
+
+                    {% comment %} {# Champs statut #}
                     <div class="fr-col-12 fr-col-lg-3 search-select search-statut">
                         <label class="select-label" for="cstatut" id="label-cstatut">
                             Statut convention ou avenant
@@ -118,7 +120,7 @@
                                 });
                             }
                         });
-                    </script>
+                    </script> {% endcomment %}
 
                     {# Champs financement #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
