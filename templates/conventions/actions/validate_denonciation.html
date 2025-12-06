@@ -1,7 +1,7 @@
 {% load custom_filters %}
 {% if convention|display_validation:request %}
     <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-arrow-right-s-line-double h-100">
-        <p class="fr-alert__title">Valider la dénonciation</p>
+        <h4 class="fr-alert__title">Valider la dénonciation</h4>
         <p class="fr-py-3w">Si l'ensemble des informations est correcte, vous pouvez valider la dénonciation de la convention.</p>
         <form method="post" action="{% url 'conventions:denonciation_validate' convention_uuid=convention.uuid %}" data-turbo="false">
             {% csrf_token %}
@@ -18,7 +18,7 @@
 {% endif %}
 {% if convention|display_is_validated %}
     <div role="alert" class="fr-alert fr-alert--success">
-        <p class="fr-alert__title">La dénonciation a été validée pour la date du {{ convention.date_denonciation|date:"j F Y" }}</p>
+        <h4 class="fr-alert__title">La dénonciation a été validée pour la date du {{ convention.date_denonciation|date:"j F Y" }}</h4>
     </div>
     <hr>
 {% endif %}

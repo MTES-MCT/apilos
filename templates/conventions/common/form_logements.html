@@ -224,27 +224,27 @@
         <div class="fr-collapse" id="plan-financement-{{ form.uuid.value }}" data-fr-js-collapse="true">
             <div>
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-                    <div class="fr-col-md-0 fr-mb-0">
-                    {% include "common/required_fields_info.html" %}
+                    <div class="fr-col-12 fr-mb-0">
+                        {% include "common/required_fields_info.html" %}
                     </div>
 
-                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements hidden_label=form.financement.value %}
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with form_input=form.nb_logements hidden_label=form.financement.value %}
                         {{ form.nb_logements.errors }}
                     </div>
 
-                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_derogatoire hidden_label=form.financement.value %}
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with step="0.01" form_input=form.loyer_derogatoire hidden_label=form.financement.value %}
                         {{ form.loyer_derogatoire.errors }}
                     </div>
 
-                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.surface_locaux_collectifs_residentiels hidden_label=form.financement.value %}
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with step="0.01" form_input=form.surface_locaux_collectifs_residentiels hidden_label=form.financement.value %}
                         {{ form.surface_locaux_collectifs_residentiels.errors }}
                     </div>
 
-                    <div class="fr-col-12 fr-col-md-8 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True step="0.01" form_input=form.loyer_associations_foncieres hidden_label=form.financement.value %}
+                    <div class="fr-col-12 fr-mb-2w">
+                        {% include "common/form/input_number.html" with step="0.01" form_input=form.loyer_associations_foncieres hidden_label=form.financement.value %}
                         {{ form.loyer_associations_foncieres.errors }}
                     </div>
                 </div>
