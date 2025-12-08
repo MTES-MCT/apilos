@@ -1,0 +1,61 @@
+<div class="fr-col-12 fr-col-lg-3 search-select search-statut" data-field-id="{{ field_id }}">
+    <label class="select-label" for="{{ field_id }}" id="label-{{ field_id }}">
+        {{ label }}
+    </label>
+    <select
+        multiple
+        class="fr-select fr-mt-1w"
+        id="{{ field_id }}"
+        name="{{ field_id }}"
+        aria-labelledby="label-{{ field_id }}">
+        {% for choice_label, choice_value in choices %}
+            <option value="{{ choice_value }}"
+                    {% if choice_value in request_url %}selected{% endif %}>
+                {{ choice_label }}
+            </option>
+        {% endfor %}
+    </select>
+</div>
+
+<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector('[data-field-id="{{ field_id }}"]');
+        if (!container) return;
+
+        const element = document.getElementById('{{ field_id }}');
+        if (!element) return;
+
+        // Initialiser Choices.js
+        const choices = new Choices(element, {
+            removeItemButton: true,
+            searchEnabled: false,
+            placeholder: true,
+            placeholderValue: 'Sélectionner',
+            itemSelectText: '',
+            shouldSort: false,
+            classNames: {
+                containerOuter: ['choices', 'fr-select', 'fr-mt-1w']
+            },
+            noResultsText: 'Aucun résultat',
+            noChoicesText: 'Aucun choix disponible',
+            removeItemIconText: 'Supprimer',
+            removeItemLabelText: 'Supprimer l\'élément',
+            labelId: 'label-{{ field_id }}'
+        });
+
+
+        // Gestion des labels des boutons de suppression
+        choices.passedElement.element.addEventListener('addItem', function() {
+            setTimeout(() => {
+                const items = element.closest('.choices')?.querySelectorAll('.choices__item--selectable');
+                items?.forEach(item => {
+                    const button = item.querySelector('.choices__button');
+                    if (button) {
+                        const itemText = item.textContent.replace('Supprimer l\'élément', '').trim();
+                        button.setAttribute('aria-label', `Supprimer ${itemText}`);
+                    }
+                });
+            }, 10);
+        });
+    });
+</script>

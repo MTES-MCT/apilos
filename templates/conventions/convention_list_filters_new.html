@@ -3,7 +3,7 @@
         <div class="fr-col-12 fr-grid-row fr-grid-row--right">
             <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
                title="Calculatrice de loyers"
-               aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+               aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}">
                 <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
                 Calculatrice de loyers
             </a>
@@ -45,7 +45,6 @@
                         </div>
                     {% endif %}
 
-
                     {# Champs commune #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
                         <label class="select-label" for="search_lieu">Commune, code postal</label>
@@ -57,33 +56,7 @@
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
 
                     {# Champs statut #}
-                    <div class="fr-col-12 fr-col-lg-3 search-select search-statut">
-                        <label class="select-label" for="cstatut">Statut convention ou avenant</label>
-                        <select
-                            multiple
-                            class="fr-select fr-mt-1w"
-                            id="cstatut"
-                            name="cstatut">
-                            {% for label, value in statut_choices %}
-                                <option value="{{ value }}"
-                                        {% if value in request.GET.cstatut %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                        VirtualSelect.init({
-                            ele: '#cstatut',
-                            optionsCount: 5,
-                            search: false,
-                            multiple: true,
-                            placeholder: "Sélectionner",
-                            optionsSelectedText: "options sélectionnées",
-                            disableSelectAll: true,
-                            allOptionsSelectedText: "Toutes les options",
-                        });
-                    </script>
+                    {% include "common/form/input_multiselect_choices.html" with field_id="cstatut" label="Statut convention ou avenant" request_url=selected_statuts choices=statut_choices %}
 
                     {# Champs financement #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
@@ -168,7 +141,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                         <button class="fr-btn" id="search_btn">
