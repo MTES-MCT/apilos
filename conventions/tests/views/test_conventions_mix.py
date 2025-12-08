@@ -359,5 +359,5 @@ class ConventionMixViewTests(TestCase):
 
         self.assertEqual(
             str(exc_info.value),
-            "Nous ne pouvons pas créer une convention mixte, une liste d'UUIDs de conventions doit être fournie",
+            "Nous ne pouvons pas créer une convention mixte, une liste de conventions doit être fournie",
         )
