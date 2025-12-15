@@ -422,6 +422,12 @@ class Convention(models.Model):
         )
 
     @property
+    def get_adresse_display(self):
+        return ", ".join(
+            [str(lot.get_financement_display()) for lot in self.lots.all()]
+        )
+
+    @property
     def nb_logements(self):
         return sum([lot.nb_logements for lot in self.lots.all() if lot.nb_logements])
 
