@@ -422,6 +422,10 @@ class Convention(models.Model):
         )
 
     @property
+    def get_financements(self):
+        return [lot.financement for lot in self.lots.all()]
+
+    @property
     def nb_logements(self):
         return sum([lot.nb_logements for lot in self.lots.all() if lot.nb_logements])
 
@@ -722,7 +726,7 @@ class Convention(models.Model):
         with low revenu should be displayed in the interface and fill in the convention document
         Should be editable when it is a PLUS convention
         """
-        return all(
+        return any(
             lot.financement in [Financement.PLUS, Financement.PLUS_CD]
             for lot in self.lots.all()
         )
