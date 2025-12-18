@@ -451,23 +451,21 @@ class BaseLogementFormSet(BaseFormSet):
           convention doivent être déclarés dans la convention
         """
         if self.lot_id:
-            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
             lot = Lot.objects.get(id=self.lot_id)
+            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
 
             if lgts_edd.count() != 0:
                 for form in self.forms:
                     try:
                         lgt_edd = lgts_edd.get(
-                            designation=form.cleaned_data.get("designation"),
-                            financement=lot.financement,
+                            designation=form.cleaned_data.get("designation")
                         )
-                        if lgt_edd.financement != lot.financement:
+                        if lgt_edd.financement not in lot.convention.get_financements:
                             form.add_error(
                                 "designation",
                                 "Ce logement est déclaré comme "
                                 + f"{lgt_edd.financement} dans l'EDD simplifié "
-                                + "alors que vous déclarez un lot de type "
-                                + f"{lot.financement}",
+                                + "alors que la convention ne comporte aucun financement de ce type ",
                             )
                     except LogementEDD.DoesNotExist:
                         form.add_error(

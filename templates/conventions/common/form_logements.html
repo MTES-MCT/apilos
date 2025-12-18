@@ -249,7 +249,7 @@
                     </div>
                 </div>
                 <!-- Option mixité sociale -->
-                {% if convention.mixity_option %}
+                {% if form.financement.value in 'PLUS,PLUS_CD' %}
                     <hr>
                     <h4>Option de l'article sur la clause de mixité sociale</h4>
                     <div class="fr-grid-row fr-grid-row--gutters">
