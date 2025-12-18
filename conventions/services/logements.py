@@ -1,5 +1,7 @@
 import logging
 
+from django.core.exceptions import ValidationError
+
 from conventions.forms import (
     FoyerResidenceLogementFormSet,
     LogementCorrigeeFormSet,
@@ -329,7 +331,17 @@ class ConventionLogementsService(ConventionService):
             )
 
             getattr(self, formset_name).programme_id = self.convention.programme_id
-            lot_id = self.convention.lots.get(financement=financement).id
+            try:
+                lot = self.convention.lots.get(financement=financement)
+                lot_id = lot.id
+            except self.convention.lots.model.DoesNotExist as err:
+                financements_disponibles = list(
+                    self.convention.lots.values_list("financement", flat=True)
+                )
+                raise ValidationError(
+                    f"Le financement '{financement}' n'existe pas pour cette convention. "
+                    f"Financements disponibles : {financements_disponibles}"
+                ) from err
             assert lot_id is not None, f"Lot with financement {financement} not found"
             getattr(self, formset_name).lot_id = lot_id
             getattr(self, formset_name).nb_logements = int(
