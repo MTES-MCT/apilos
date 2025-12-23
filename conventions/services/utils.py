@@ -221,11 +221,15 @@ def get_convention_export_excel_header(request):
         "Statut de la convention",
         "Commune",
         "Code postal",
+        "Code INSEE",
         "Nom de l'opération",
-        "Instructeur" if request.user.is_instructeur else "Bailleur",
+        "Instructeur",
         "Type de financement",
         "Nombre de logements",
         "Nature de l'opération",
+        "Adresse",
+        "Raison sociale du bailleur",
+        "SIRET du Bailleur",
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
@@ -247,27 +251,27 @@ def get_convention_export_excel_row(request, convention):
         convention.statut,  # 4. statut de la convention
         convention.programme.ville,  # 5. Commune
         convention.programme.code_postal,  # 6. Code postal
+        convention.programme.code_insee_commune,  # 6. Code INSEE de la commune
         convention.programme.nom,  # 7. Nom de l'opération
-        (
-            convention.programme.administration.nom
-            if request.user.is_instructeur
-            else convention.programme.bailleur.nom
-        ),  # 8. Instructeur or Bailleur
+        convention.programme.administration.nom,  # 8. Instructeur
         convention.lot.get_financement_display(),  # 9. Type de financement
         convention.lot.nb_logements,  # 10. Nombre de logements
-        convention.programme.nature_logement,  # 11. Nature de l'opération dans programme
+        convention.programme.nature_logement,  # 11. Nature de l'opération dans le programme
+        convention.get_adresse_display,  # 12. Adresse
+        convention.programme.bailleur.nom,  # 13. Raison sociale du bailleur
+        convention.programme.bailleur.siret,  # 13. SIRET du Bailleur
         stringify_date(
             convention.televersement_convention_signee_le
-        ),  # 12. Date de signature
+        ),  # 14. Date de signature
         (
             convention.lot.logements.first().loyer_par_metre_carre
             if convention.lot.logements.first()
             else ""
-        ),  # 13. Montant du loyer au m2
+        ),  # 15. Montant du loyer au m2
         stringify_date(convention.programme.date_achevement_compile),  # 14. Livraison
         stringify_date(
             convention.date_fin_conventionnement
-        ),  # 15. Date de fin de conventionnement
+        ),  # 16. Date de fin de conventionnement
     ]
 
 
