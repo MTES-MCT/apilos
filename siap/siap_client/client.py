@@ -323,6 +323,8 @@ class SIAPClientRemote(SIAPClientInterface):
             habilitation_id=habilitation_id,
         )
 
+    # Cette route n'est à n'utiliser qu'à des fins de debug car
+    # le chargement de toutes les alertes consomme énormément de ressources
     @validate_response(error_message="user can't access alertes")
     def list_alertes(
         self, user_login: str, habilitation_id: int = 0
