@@ -257,7 +257,7 @@ def get_convention_export_excel_row(request, convention):
         convention.lot.get_financement_display(),  # 9. Type de financement
         convention.lot.nb_logements,  # 10. Nombre de logements
         convention.programme.nature_logement,  # 11. Nature de l'opération dans le programme
-        convention.get_adresse_display,  # 12. Adresse
+        convention.get_adresse_display(),  # 12. Adresse
         convention.programme.bailleur.nom,  # 13. Raison sociale du bailleur
         convention.programme.bailleur.siret,  # 14. SIRET du Bailleur
         stringify_date(
@@ -268,10 +268,10 @@ def get_convention_export_excel_row(request, convention):
             if convention.lot.logements.first()
             else ""
         ),  # 16. Montant du loyer au m2
-        stringify_date(convention.programme.date_achevement_compile),  # 14. Livraison
+        stringify_date(convention.programme.date_achevement_compile),  # 17. Livraison
         stringify_date(
             convention.date_fin_conventionnement
-        ),  # 17. Date de fin de conventionnement
+        ),  # 18. Date de fin de conventionnement
     ]
 
 
