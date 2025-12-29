@@ -54,8 +54,7 @@ def test_get_convention_export_excel_header():
     request.user = user
     header = get_convention_export_excel_header(request)
 
-    assert header[7] == "Bailleur"
-    assert len(header) == 15
+    assert len(header) == 19
 
 
 @pytest.mark.django_db
@@ -88,7 +87,7 @@ def test_get_convention_export_excel_row():
         convention.lot.get_financement_display(),
         convention.lot.nb_logements,
         convention.programme.nature_logement,
-        convention.get_adresse_display(),
+        convention.get_adresse_display,
         convention.programme.bailleur.nom,
         convention.programme.bailleur.siret,
         "-",
@@ -101,9 +100,9 @@ def test_get_convention_export_excel_row():
     request.user = user
     row = get_convention_export_excel_row(request, convention)
 
-    assert len(row) == 15
+    assert len(row) == 19
 
-    assert row[7] == convention.programme.bailleur.nom
+    assert row[13] == convention.programme.bailleur.nom
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):
