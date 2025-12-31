@@ -636,7 +636,7 @@ class ConventionGeneratorFicheCafTest(TestCase):
             "convention",
             "foyer_attributions",
             "logements",
-            "lot",
+            "lots",
             "lot_num",
             "loyer_m2",
             "loyer_total",
