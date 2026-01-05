@@ -5,7 +5,7 @@
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
 
-        {% include "common/form/input_search_select_native.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
+        {% include "common/form/input_search_select_unified.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
 
         {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False %}
         <div id='download_upload_block'>

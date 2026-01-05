@@ -15,7 +15,7 @@
             {% include "common/form/input_search_select_unified.html" with form_input=form.bailleur url=search_bailleur_url %}
         </div>
 
-        {% include "common/form/input_search_select_native.html" with form_input=form.administration placeholder="Rechercher votre administration..." no_results_text="Aucune administration ne correspond à votre recherche" without_empty_option=form.administration.field.choices|length_is:1 %}
+        {% include "common/form/input_search_select_unified.html" with form_input=form.administration placeholder="Rechercher votre administration..." no_results_text="Aucune administration ne correspond à votre recherche" without_empty_option=form.administration.field.choices|length_is:1 %}
 
         {% include "common/form/input_text.html" with form_input=form.nom mandatory_input=True %}
         <div class="fr-grid-row fr-grid-row--gutters">
