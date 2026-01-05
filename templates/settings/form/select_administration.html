@@ -24,7 +24,10 @@
         </p>
     {% endfor %}
 </div>
-<script type="text/javascript" nonce="{{ request.csp_nonce }}">
+
+{% comment %} Ce composant n'est jamais utilisé donc je me permet de commenter le script d'initialisation de VirtualSelect car le projet n'utilise plus VirtualSelect, il faut utiliser les nouveaux composants search_select {% endcomment %}
+
+{% comment %} <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     document.addEventListener('DOMContentLoaded', function () {
         VirtualSelect.init({
             ele: '#{{ form_input.id_for_label }}',
@@ -35,4 +38,4 @@
             noSearchResultsText: "Aucune administration ne correspond à votre recherche"
         });
     });
-</script>
+</script> {% endcomment %}

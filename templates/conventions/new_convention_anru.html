@@ -4,14 +4,6 @@
 
 {% block page_title %}Créez votre convention ANRU - APiLos{% endblock %}
 
-{% block javascript_extras %}
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
-{% endblock javascript_extras %}
-
-{% block css_extras %}
-    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock css_extras %}
-
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         <div class="fr-container">
@@ -27,19 +19,7 @@
                                 {% include "common/form/input_search_select_unified.html" with form_input=form.bailleur url=search_bailleur_url %}
                             </div>
 
-                            {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    VirtualSelect.init({
-                                        ele: '#{{ form.administration.id_for_label }}',
-                                        multiple: false,
-                                        hideClearButton: true,
-                                        search: true,
-                                        searchPlaceholderText: "Rechercher votre administration...",
-                                        noSearchResultsText: "Aucune administration ne correspond à votre recherche"
-                                    });
-                                });
-                            </script>
+                            {% include "common/form/input_search_select_native.html" with form_input=form.administration placeholder="Rechercher votre administration..." no_results_text="Aucune administration ne correspond à votre recherche" without_empty_option=form.administration.field.choices|length_is:1 %}
 
                             <div class="fr-grid-row fr-grid-row--gutters">
                                 <div class="fr-col-md-12 fr-col-lg-8 fr-mb-2w">

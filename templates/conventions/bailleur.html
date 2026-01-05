@@ -12,12 +12,7 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
-    <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
 {% endblock javascript_extras %}
-
-{% block css_extras %}
-    <link rel="stylesheet" href="{% static 'virtual-select/virtual-select.min.css' %}">
-{% endblock css_extras %}
 
 {% block content %}
     {% include "conventions/common/form_header.html" %}
