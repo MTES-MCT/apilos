@@ -842,15 +842,16 @@ def fiche_caf_doc(convention):
         "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for logement in convention.lot.logements.order_by("typologie").all():
-        logements_totale["sh_totale"] += logement.surface_habitable or 0
-        logements_totale["sa_totale"] += logement.surface_annexes or 0
-        logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
-        logements_totale["su_totale"] += logement.surface_utile or 0
-        logements_totale["loyer_total"] += logement.loyer or 0
-        if logement.get_typologie_display() not in nb_logements_par_type:
-            nb_logements_par_type[logement.get_typologie_display()] = 0
-        nb_logements_par_type[logement.get_typologie_display()] += 1
+    for lot in convention.lots.all():
+        for logement in lot.logements.order_by("typologie").all():
+            logements_totale["sh_totale"] += logement.surface_habitable or 0
+            logements_totale["sa_totale"] += logement.surface_annexes or 0
+            logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
+            logements_totale["su_totale"] += logement.surface_utile or 0
+            logements_totale["loyer_total"] += logement.loyer or 0
+            if logement.get_typologie_display() not in nb_logements_par_type:
+                nb_logements_par_type[logement.get_typologie_display()] = 0
+            nb_logements_par_type[logement.get_typologie_display()] += 1
 
     lot_num = _prepare_logement_edds(convention)
     # tester si le logement existe avant de commencer
@@ -862,7 +863,7 @@ def fiche_caf_doc(convention):
         "convention": convention,
         "bailleur": convention.programme.bailleur,
         "programme": convention.programme,
-        "lot": convention.lot,
+        "lots": convention.lots.all(),
         "administration": convention.programme.administration,
         "logements": convention.lot.logements.order_by("import_order"),
         "nb_logements_par_type": nb_logements_par_type,
