@@ -401,7 +401,12 @@ def denonciation_validate(request, convention_uuid):
 @login_required
 @currentrole_campaign_permission_required_view_function("convention.change_convention")
 def resiliation_validate(request, convention_uuid):
-    convention_resiliation_validate(convention_uuid)
+    result = convention_resiliation_validate(convention_uuid)
+    if result["success"] == ReturnStatus.ERROR:
+        messages.error(request, result["error_message"])
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[convention_uuid])
+        )
     return HttpResponseRedirect(
         reverse("conventions:post_action", args=[convention_uuid])
     )
@@ -869,7 +874,7 @@ def resiliation_start(request, convention_uuid):
     result = create_avenant(request, convention_uuid)
 
     if result["success"] == ReturnStatus.SUCCESS:
-        if request.user.is_instructeur_departemental():
+        if request.user.is_bailleur():
             return HttpResponseRedirect(
                 reverse("conventions:resiliation", args=[result["convention"].uuid])
             )
