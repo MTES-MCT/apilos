@@ -23,14 +23,18 @@
                         {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_convention_exemplaires %}
 
                         <h4>Adresse à laquelle les conventions doivent-être envoyées</h4>
-                        <span class="fr-hint-text fr-mb-3w">Il est possible de préciser le service dans le champ de l'adresse, par exemple :<br>
-                            <div class="fr-ml-3w">
+                        <p>
+                            <span class="fr-hint-text">
+                                Il est possible de préciser le service dans le champ de l'adresse, par exemple :<br>
+                            </span>
+
+                            <span class="fr-hint-text fr-mb-3w fr-ml-3w">
                                 Service du Conventionnement APL<br>
                                 Délégataire des aides à la Pierre<br>
                                 16 Rue Antoine Zattara<br>
                                 13332 Marseille
-                            </div>
-                        </span>
+                            </span>
+                        </p>
                         {% include "common/form/input_textarea.html" with form_input=form.adresse %}
                         <div class="fr-grid-row fr-grid-row--gutters">
                             <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 fr-mb-2w">
