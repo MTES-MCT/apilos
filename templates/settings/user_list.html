@@ -7,11 +7,11 @@
     {% if total_users > 3 %}
         <div class="fr-search-bar" id="header-search" role="search">
             <label class="fr-label" for="search_input">
-                Recherche
+                Rechercher un utilisateur
             </label>
             <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{ search_input }}">
             <button class="fr-btn" title="Rechercher">
-                Rechercher
+                Rechercher un utilisateur
             </button>
         </div>
     {% endif %}
@@ -28,19 +28,19 @@
                         <tr>
                             <th scope="col">
                                 Identifiant
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='username' url_target='settings:user' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='username' url_target='settings:user' link_label="Identifiant" %}
                             </th>
                             <th scope="col">
                                 Prénom
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='first_name' url_target='settings:user' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='first_name' url_target='settings:user' link_label="Prénom" %}
                             </th>
                             <th scope="col">
                                 Nom
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='last_name' url_target='settings:user' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='last_name' url_target='settings:user' link_label="Nom" %}
                             </th>
                             <th scope="col">
                                 email
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='email' url_target='settings:user' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='email' url_target='settings:user' link_label="Email" %}
                             </th>
                         </tr>
                     </thead>
@@ -48,9 +48,7 @@
                         {% for user in users %}
                             {% if user.username %}
                                 <tr>
-                                    <td>
-                                        {{ user.username }}
-                                    </td>
+                                    <td>{{ user.username }}</td>
                                     <td>{{ user.first_name }}</td>
                                     <td>{{ user.last_name }}</td>
                                     <td>{{ user.email }}</td>

@@ -20,11 +20,11 @@
                         {% if total_items > 3 %}
                             <div class="fr-search-bar" id="header-search" role="search">
                                 <label class="fr-label" for="search_input">
-                                    Recherche
+                                    Rechercher une administration
                                 </label>
                                 <input class="fr-input" placeholder="Rechercher" type="search" id="search_input" name="search_input" value="{{ search_input }}">
                                 <button class="fr-btn" title="Rechercher">
-                                    Rechercher
+                                    Rechercher une administration
                                 </button>
                             </div>
                         {% endif %}
@@ -41,15 +41,15 @@
                                             <tr>
                                                 <th scope="col">
                                                     Nom
-                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:administration' %}
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:administration' link_label="Nom" %}
                                                 </th>
                                                 <th scope="col">
                                                     Code
-                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='code' url_target='settings:administration' %}
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='code' url_target='settings:administration' link_label="Code" %}
                                                 </th>
                                                 <th scope="col">
                                                     Ville de signature
-                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' %}
+                                                    {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville_signature' url_target='settings:administration' link_label="Ville de signature" %}
                                                 </th>
                                                 <th scope="col">
                                                 </th>
@@ -60,9 +60,10 @@
                                                 <tr>
                                                     <td>{{ administration.nom }}</td>
                                                     <td>{{ administration.code }}</td>
-                                                    <td>{{ administration.ville_signature }}</td>
+                                                    <td>{{ administration.ville_signature|default:"" }}</td>
                                                     <td>
                                                         <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_administration' administration_uuid=administration.uuid %}" >
+                                                            <span class="fr-sr-only">Modifier l'administration {{ administration.nom }}</span>
                                                             <span class="fr-icon-edit-line" aria-hidden="true"></span>
                                                         </a>
                                                     </td>
