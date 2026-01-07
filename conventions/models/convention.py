@@ -889,10 +889,13 @@ class Convention(models.Model):
         ).save()
 
     def resiliation_disabled(self) -> bool:
-        return (
-            self.fichier_instruction_resiliation is None
-            or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
-        )
+        if self.cree_par._is_role(TypeRole.BAILLEUR):
+            return (
+                self.fichier_instruction_resiliation is None
+                or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
+            )
+
+        return False
 
     @classmethod
     def date_signature_choices(

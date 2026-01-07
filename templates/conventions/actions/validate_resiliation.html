@@ -31,3 +31,12 @@
     </div>
     <hr>
 {% endif %}
+{% if messages %}
+    {% for message in messages %}
+        <div role="alert"
+             class="fr-alert fr-alert--error fr-mb-3w">
+            <h4 class="fr-alert__title">Erreur</h4>
+            <p>{{ message }}</p>
+        </div>
+    {% endfor %}
+{% endif %}

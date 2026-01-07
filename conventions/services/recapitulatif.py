@@ -668,6 +668,13 @@ def convention_denonciation_validate(convention_uuid):
 
 def convention_resiliation_validate(convention_uuid):
     convention = Convention.objects.get(uuid=convention_uuid)
+    if convention.resiliation_disabled():
+        return {
+            "success": utils.ReturnStatus.ERROR,
+            "convention": convention,
+            "error_message": "Résiliation non validée : le bailleur doit"
+            "fournir l'acte administratif pour valider la résiliation.",
+        }
     parent = convention.parent
     date_resiliation = convention.date_resiliation
     parent.statut = ConventionStatut.RESILIEE.label
