@@ -62,7 +62,7 @@ class ConventionResiliationTests(TestCase):
         )
 
         # redirected to url for bailleurs and instructeurs délégataires
-        assert "/conventions/resiliation_creation/" in response["Location"]
+        assert "/conventions/resiliation/" in response["Location"]
 
     def test_resiliation_start_instructeur(self):
         convention = ConventionFactory(create_lot=True)
