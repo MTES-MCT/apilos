@@ -9,19 +9,19 @@
                         <tr>
                             <th scope="col">
                                 Nom
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='nom' url_target='settings:bailleur' link_label="Nom" %}
                             </th>
                             <th scope="col">
                                 Type
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='sous_nature_bailleur' url_target='settings:bailleur' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='sous_nature_bailleur' url_target='settings:bailleur' link_label="Type" %}
                             </th>
                             <th scope="col">
                                 Siret
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='siret' url_target='settings:bailleur' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='siret' url_target='settings:bailleur' link_label="Siret" %}
                             </th>
                             <th scope="col">
                                 Ville
-                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville' url_target='settings:bailleur' %}
+                                {% include "common/table/display_order_icon.html" with order_by=order_by order_by_column='ville' url_target='settings:bailleur' link_label="Ville" %}
                             </th>
                             <th scope="col"></th>
                         </tr>
@@ -35,6 +35,9 @@
                                 <td>{{ bailleur.ville }}</td>
                                 <td>
                                     <a class="fr-link fr-mb-1w" href="{% url 'settings:edit_bailleur' bailleur_uuid=bailleur.uuid %}" >
+                                        <span class="fr-sr-only">
+                                            Modifier le bailleur {{ bailleur.nom }}
+                                        </span>
                                         <span class="fr-icon-edit-line" aria-hidden="true"></span>
                                     </a>
                                 </td>
