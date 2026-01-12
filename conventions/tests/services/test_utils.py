@@ -26,32 +26,35 @@ def test_get_convention_export_excel_header():
 
     header = get_convention_export_excel_header(request)
 
-    expected_header_instructeur = [
+    expected_header = [
         "Numéro d'opération SIAP",
         "Numéro de convention",
         "Numéro d'avenant",
         "Statut de la convention",
         "Commune",
         "Code postal",
+        "Code INSEE",
         "Nom de l'opération",
         "Instructeur",
         "Type de financement",
         "Nombre de logements",
         "Nature de l'opération",
+        "Adresse",
+        "Raison sociale du bailleur",
+        "SIRET du Bailleur",
         "Date de signature",
         "Montant du loyer au m2",
         "Livraison",
         "Date de fin de conventionnement",
     ]
 
-    assert header == expected_header_instructeur
+    assert header == expected_header
 
     user.is_instructeur = False
     request.user = user
     header = get_convention_export_excel_header(request)
 
-    assert header[7] == "Bailleur"
-    assert len(header) == 15
+    assert len(header) == 19
 
 
 @pytest.mark.django_db
@@ -78,11 +81,15 @@ def test_get_convention_export_excel_row():
         convention.statut,
         convention.programme.ville,
         convention.programme.code_postal,
+        convention.programme.code_insee_commune,
         convention.programme.nom,
         convention.programme.administration.nom,
         convention.lot.get_financement_display(),
         convention.lot.nb_logements,
         convention.programme.nature_logement,
+        convention.get_adresse_display,
+        convention.programme.bailleur.nom,
+        convention.programme.bailleur.siret,
         "-",
         logement.loyer_par_metre_carre,
         "11/04/2024",
@@ -93,9 +100,9 @@ def test_get_convention_export_excel_row():
     request.user = user
     row = get_convention_export_excel_row(request, convention)
 
-    assert len(row) == 15
+    assert len(row) == 19
 
-    assert row[7] == convention.programme.bailleur.nom
+    assert row[13] == convention.programme.bailleur.nom
 
 
 class UtilsTest(ParametrizedTestCase, SimpleTestCase):
