@@ -38,7 +38,7 @@
                         </thead>
                         <tbody>
                             {% for convention in conventions %}
-                                <tr id="convention_redirect_{{ convention.uuid }}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
+                                <tr id="convention_redirect_{{ convention.uuid }}" tabindex="0" aria-label="Convention commune {{ convention.programme.ville }}, opération {{ convention.programme.nom }}, nombre de logements {{ convention.lot.nb_logements }}, financement {{ convention.lot.financement }}" class="clickable {% if convention|display_redirect_project and not convention.is_avenant %}project{% elif convention|display_redirect_sent %}sent{% elif convention|display_redirect_post_action and not convention.is_avenant %}signed{% endif %}">
                                     <td>{{ convention.programme.ville }}</td>
                                     <td>{{ convention.programme.nom }}</td>
                                     {% comment %} TODO: reverse relation convention lot {% endcomment %}
@@ -46,21 +46,32 @@
                                     <td>{{ convention.lot.financement }}</td>
                                     <script type="text/javascript" nonce="{{ request.csp_nonce }}">
                                         document.addEventListener('DOMContentLoaded', function () {
-                                            document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                if (this.classList.contains("sent")) {
-                                                    location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                }
-                                                else if (this.classList.contains("signed")) {
-                                                    location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                }
-                                                else if (this.classList.contains("project")) {
-                                                    location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                }
-                                                else {
-                                                    location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                }
-                                            });
+                                        const row = document.getElementById('convention_redirect_{{ convention.uuid }}');
+
+                                        function navigateToUrl() {
+                                            if (row.classList.contains("sent")) {
+                                                location.href = "{% url 'conventions:sent' convention_uuid=convention.uuid %}";
+                                            }
+                                            else if (row.classList.contains("signed")) {
+                                                location.href = "{% url 'conventions:post_action' convention_uuid=convention.uuid %}";
+                                            }
+                                            else if (row.classList.contains("project")) {
+                                                location.href = "{% url 'conventions:bailleur' convention_uuid=convention.uuid %}";
+                                            }
+                                            else {
+                                                location.href = "{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}";
+                                            }
+                                        }
+
+                                        row.addEventListener('click', navigateToUrl);
+
+                                        row.addEventListener('keydown', function(event) {
+                                            if (event.key === 'Enter' || event.key === ' ') {
+                                                event.preventDefault();
+                                                navigateToUrl();
+                                            }
                                         });
+                                    });
                                     </script>
                                 </tr>
                             {% endfor %}

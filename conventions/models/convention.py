@@ -422,6 +422,18 @@ class Convention(models.Model):
         )
 
     @property
+    def get_adresse_display(self):
+        if None in (self.adresse, self.programme.code_postal, self.programme.ville):
+            return ""
+        return (
+            self.adresse
+            + ", "
+            + self.programme.code_postal
+            + " "
+            + self.programme.ville
+        )
+
+    @property
     def get_financements(self):
         return [lot.financement for lot in self.lots.all()]
 
@@ -877,10 +889,13 @@ class Convention(models.Model):
         ).save()
 
     def resiliation_disabled(self) -> bool:
-        return (
-            self.fichier_instruction_resiliation is None
-            or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
-        )
+        if self.cree_par._is_role(TypeRole.BAILLEUR):
+            return (
+                self.fichier_instruction_resiliation is None
+                or self.fichier_instruction_resiliation == '{"files": {}, "text": ""}'
+            )
+
+        return False
 
     @classmethod
     def date_signature_choices(

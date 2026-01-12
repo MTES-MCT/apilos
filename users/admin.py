@@ -14,6 +14,12 @@ class CustomAdministrationAdmin(ApilosModelAdmin):
     list_select_related = ("administration", "bailleur", "user")
     readonly_fields = ("administration", "bailleur", "user")
     list_filter = ("group",)
+    search_fields = (
+        "user__first_name",
+        "user__last_name",
+        "perimetre_region",
+        "perimetre_departement",
+    )
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "administration":

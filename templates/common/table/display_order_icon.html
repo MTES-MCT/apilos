@@ -1,8 +1,8 @@
-<a class="fr-link fr-link--sm" id='{{ order_by_column }}' href='#'>
+<a class="fr-link fr-link--sm" id='{{ order_by_column }}' href='#' aria-label="Trier par {{ link_label|default:order_by_column }} {% if order_by == order_by_column %}dans l'ordre décroissant{% elif '-'|add:order_by_column == order_by %}dans l'ordre croissant{% else %}dans l'ordre croissant{% endif %}">
     {% if '-'|add:order_by_column == order_by %}
         <div class="table__icons--blue table__icons--active">
             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortDownIconTitle">
-                <title id="sortDownIconTitle">Tri descendant</title>
+                <title id="sortDownIconTitle">Bouton trier par ordre décroissant</title>
                 <path d="M11 9H17"></path>
                 <path d="M11 5H19"></path>
                 <path d="M11 13H15"></path>
@@ -13,7 +13,7 @@
     {% elif order_by_column == order_by %}
         <div class="table__icons--blue table__icons--active">
             <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortUpIconTitle">
-                <title id="sortUpIconTitle">Tri ascendant</title>
+                <title id="sortUpIconTitle">Bouton trier par ordre croissant</title>
                 <path d="M11 16H17"></path>
                 <path d="M11 20H19"></path>
                 <path d="M11 12H15"></path>
@@ -24,7 +24,7 @@
     {% else %}
         <div class="table__icons--darkgrey">
             <svg width="16" height="16" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-labelledby="sortUpIconTitle">
-                <title id="sortUpIconTitle">Tri ascendant</title>
+                <title id="sortUpIconTitle">Bouton trier par ordre croissant</title>
                 <path d="M11 16H17"></path>
                 <path d="M11 20H19"></path>
                 <path d="M11 12H15"></path>
