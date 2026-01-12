@@ -4,19 +4,9 @@
     <h4>Gestion des délégataires</h4>
     <form method="post" action="" enctype="multipart/form-data">
         {% csrf_token %}
-        {% include "common/form/input_select.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
-        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-            document.addEventListener('DOMContentLoaded', function () {
-                VirtualSelect.init({
-                    ele: '#{{ form.administration.id_for_label }}',
-                    multiple: false,
-                    hideClearButton: true,
-                    search: true,
-                    searchPlaceholderText: "Rechercher votre administration...",
-                    noSearchResultsText: "Aucune administration ne correspond à votre recherche"
-                });
-            });
-        </script>
+
+        {% include "common/form/input_search_select_unified.html" with form_input=form.administration without_empty_option=form.administration.field.choices|length_is:1 %}
+
         {% include "common/form/input_select.html" with form_input=form.departement editable=True required=False %}
         <div id='download_upload_block'>
             {% include "common/form/download_upload_form.html" with file_type='communes' upform=form what='communes' file_field_label='commune' %}

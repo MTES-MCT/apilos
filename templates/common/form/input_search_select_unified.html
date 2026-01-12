@@ -2,7 +2,7 @@
 
 {% if form_input %}
     {# Mode form : extraire les valeurs du form_input #}
-    {% with field_id=form_input.id_for_label field_name=form_input.html_name label=form_input.label %}
+    {% with field_id=form_input.id_for_label field_name=form_input.html_name label=form_input.label mandatory_input=form_input.field.required help_text=form_input.field.help_text %}
         {% include "common/form/_input_search_select_core.html" %}
     {% endwith %}
 {% else %}
