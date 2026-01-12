@@ -2,7 +2,13 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Financements - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Financements - APiLos
+    {% else %}
+        Étape 5 - Financements - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -24,6 +30,8 @@
                     <div class="fr-col-md-12">
 
                         <h4>Financement : Prêts et Subventions</h4>
+
+                        {% include "common/required_fields_info.html" %}
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with file_type='financement' upform=upform what='prêts et subventions' file_field_label='financement' %}
@@ -54,6 +62,7 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et subventions' %}
                                                     {% endif %}
                                                     <th scope="col">Numéro</th>
+                                                    <th scope="col">Financement</th>
                                                     <th scope="col">Date d'octroi</th>
                                                     <th scope="col">Durée (en années)</th>
                                                     <th scope="col">Montant (en €) {% if formset.total_form_count %}{% include "common/form/required_field_star.html" %}{% endif %}</th>
@@ -77,6 +86,9 @@
                                                                     name="{{ form_pret.uuid.html_name }}"
                                                                     value="{{ form_pret.uuid.value|default_if_none:'' }}">
                                                                 {% include "common/form/input_text.html" with form_input=form_pret.numero parent_object_field=main_object_field editable=editable_after_upload %}
+                                                            </td>
+                                                            <td>
+                                                                {% include "common/form/input_text.html" with form_input=form_pret.financement parent_object_field=main_object_field editable=editable_after_upload %}
                                                             </td>
                                                             <td>
                                                                 {% include "common/form/input_date.html" with form_input=form_pret.date_octroi parent_object_field=main_object_field editable=editable_after_upload %}
@@ -128,17 +140,26 @@
                                                 </summary>
                                                 <div class="fr-text--xs">
                                                     <div>
-                                                        {% if convention.is_pls_financement_type %}
-                                                            La convention bénéficie d'un financement «{{ convention.lot.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
-                                                        {% elif convention.lot.financement == 'SANS_FINANCEMENT' %}
-                                                            La convention ne bénéficie pas de financement, la durée de conventionnement doit être supérieure à 9 ans.
-                                                        {% else %}
+                                                        {% if convention.is_mixte %}
                                                             Année de signature de la convention + au moins la durée du prêt le plus long. <br>
                                                             Elle ne peut être inférieure à 9 ans.
                                                             {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
                                                                 Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
                                                             {% endif %}
+                                                        {% else %}
+                                                            {% if convention.is_pls_financement_type %}
+                                                                La convention bénéficie d'un financement «{{ convention.lot.get_financement_display }}», la durée de conventionnement doit être comprise entre 15 et 40 ans.<br>
+                                                            {% elif convention.lot.financement == 'SANS_FINANCEMENT' %}
+                                                                La convention ne bénéficie pas de financement, la durée de conventionnement doit être supérieure à 9 ans.
+                                                            {% else %}
+                                                                Année de signature de la convention + au moins la durée du prêt le plus long. <br>
+                                                                Elle ne peut être inférieure à 9 ans.
+                                                                {% if not convention.programme.is_foyer and not convention.programme.is_residence %}
+                                                                    Si la convention est signée après le 30 juin, la durée de la convention à prendre en compte débute à l'année N+1.</div>
+                                                                {% endif %}
+                                                            {% endif %}
                                                         {% endif %}
+
                                                         <div><a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7209048/Pr+alable+r+glementaire+et+informatif+-+Conventionnement+APL#Dur%C3%A9e-des-conventions-APL" target="_blank" rel="noreferrer" class="fr-link fr-text--xs">Plus d’informations sur la date de fin de convention.</a></div>
                                                     </div>
                                                 </details>
@@ -163,7 +184,6 @@
                         </div>
                     </div>
 
-                    {% include "common/required_fields_info.html" %}
                     {% include "conventions/common/form_footer_button.html" %}
                 </form>
             </div>

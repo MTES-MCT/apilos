@@ -21,7 +21,7 @@
                     {% endif %}
                     {% if not convention.is_avenant or checked %}
                         <div class="block--row-strech">
-                            {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=lot.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
+                            {% include "common/display_field_if_exists.html" with label="Nombre de logements à conventionner" value=convention.nb_logements object_field="lot__nb_logements__"|add:lot_uuid %}
                         </div>
                         {% if logements %}
                             {% if convention.is_avenant %}
@@ -39,6 +39,7 @@
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Financement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface habitable / corrigée {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
@@ -63,6 +64,9 @@
                                                                     </td>
                                                                     <td>
                                                                         {{ logement.typologie }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ logement.lot.financement }}
                                                                     </td>
                                                                     <td id="lgt_sh">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
@@ -94,6 +98,8 @@
                                                         <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
                                                         </td>
+                                                        <td>
+                                                        </td>
                                                         <td id="total_sh" class="fr-text--lg">
                                                         </td>
                                                         <td id="total_sa" class="fr-text--lg">
@@ -117,7 +123,7 @@
                             </div>
                         {% endif %}
                         {% if logements_sans_loyer %}
-                            <label for="logements-sans-loyer-table" class="fr-mt-2w"><strong>Logements en surface utile, sans loyers</strong></label>
+                            <label for="logements-sans-loyer-table" class="fr-mt-2w"><strong>Logements en surface utile, sans loyers {{ logements_sans_loyer }}</strong></label>
                             <div class="fr-table table--limited-height">
                                 <div class="fr-table__wrapper">
                                     <div class="fr-table__container">
@@ -130,6 +136,7 @@
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Financement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface des annexes réelle {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface des annexes retenue dans la SU {% include "common/form/required_field_star.html" %}</th>
@@ -152,6 +159,9 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
+                                                                    <td>
+                                                                        {{ logement.lot.financement }}
+                                                                    </td>
                                                                     <td id="lgt_sh_sl">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
                                                                     </td>
@@ -171,6 +181,8 @@
                                                     <tr>
                                                         <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
+                                                        </td>
+                                                        <td>
                                                         </td>
                                                         <td id="total_sa_sl" class="fr-text--lg">
                                                         </td>
@@ -201,6 +213,7 @@
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Financement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface corrigée {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Loyer maximum en € par m² de surface utile {% include "common/form/required_field_star.html" %}</th>
@@ -224,6 +237,9 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
+                                                                    <td>                                                               <td>
+                                                                        {{ logement.lot.financement }}
+                                                                    </td>
                                                                     <td id="lgt_sh_sc">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
                                                                     </td>
@@ -246,6 +262,8 @@
                                                     <tr>
                                                         <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
+                                                        </td>
+                                                        <td>
                                                         </td>
                                                         <td id="total_sh_sc" class="fr-text--lg">
                                                         </td>
@@ -279,6 +297,7 @@
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Désignation {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--120">Financement {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface habitable {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Surface corrigée {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
@@ -299,6 +318,9 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
+                                                                    <td>                                                               <td>
+                                                                        {{ logement.lot.financement }}
+                                                                    </td>
                                                                     <td id="lgt_sh_scsl">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
                                                                         <td id="lgt_su_scsl">
@@ -311,6 +333,8 @@
                                                     <tr>
                                                         <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
                                                             Total
+                                                        </td>
+                                                        <td>
                                                         </td>
                                                         <td id="total_sh_scsl" class="fr-text--lg">
                                                         </td>

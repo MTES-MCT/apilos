@@ -2,7 +2,7 @@
 
 {% load static %}
 
-{% block page_title %}Ajout de convention simplifié - APiLos{% endblock %}
+{% block page_title %}Étape 2 - Ajouter une convention - APiLos{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "virtual-select/virtual-select.min.js" %}" nonce="{{ request.csp_nonce }}"></script>
@@ -40,8 +40,8 @@
                                 Opération n°{{ operation.numero }}
                             </a>
                         </div>
-                        <div class="fr-px-2w fr-text--sm apilos-separator">{{ operation.commune }}</div>
-                        <div class="fr-px-2w fr-text--sm">Bailleur : {{ operation.bailleur }}</div>
+                        <p class="fr-px-2w fr-text--sm apilos-separator">{{ operation.commune }}</p>
+                        <p class="fr-px-2w fr-text--sm">Bailleur : {{ operation.bailleur }}</p>
                     </div>
                 </div>
                 {% if conventions.count > 0 %}
@@ -74,32 +74,17 @@
                                                     <td>{{ convention.lot.nb_logements }}</td>
                                                     <td>
                                                         <div class="fr-grid-row fr-grid-row--center">
-                                                            <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                                            <a
+                                                                href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                                id="convention_link_{{ convention.uuid }}"
+                                                                class="fr-link"
+                                                                aria-label="Convention numéro {{ convention.numero|default_if_none:"-" }}, Financement {{ convention.lot.financement }}, {{ convention.lot.nb_logements }} Logements">
+                                                                <span class="fr-icon-eye-line" aria-hidden="true"></span>
+                                                            </a>
                                                         </div>
                                                     </td>
                                                 </tr>
-                                                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                                    document.addEventListener('DOMContentLoaded', function () {
-                                                        document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                            if (this.classList.contains("sent")) {
-                                                                const url="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                                window.open(url, "_blank");
-                                                            }
-                                                            else if (this.classList.contains("signed")) {
-                                                                const url="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                window.open(url, "_blank");
-                                                            }
-                                                            else if (this.classList.contains("project")) {
-                                                                const url="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                                window.open(url, "_blank");
-                                                            }
-                                                            else {
-                                                                const url="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                                window.open(url, "_blank");
-                                                            }
-                                                        });
-                                                    });
-                                                </script>
+                                                {% include 'conventions/_convention_redirect_script.html' with use_dom_ready=True %}
                                             {% endfor %}
                                         </tbody>
                                     </table>
@@ -113,6 +98,8 @@
                 <h4 class="fr-pb-2w fr-toggle--border-bottom fr-mb-5w">Détails de la convention à ajouter</h4>
                 <form method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
+
+                    {% include "common/required_fields_info.html" %}
 
                     <div class="fr-grid-row fr-grid-row--gutters">
 

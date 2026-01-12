@@ -16,6 +16,7 @@ from programmes.models import (
     TypologieLogementClassique,
     TypologieLogementFoyerResidence,
 )
+from programmes.models.choices import Financement
 
 
 class LotLgtsOptionForm(forms.Form):
@@ -26,6 +27,9 @@ class LotLgtsOptionForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
         label="Logement du programme",
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     lgts_mixite_sociale_negocies = forms.IntegerField(
         required=False,
@@ -156,6 +160,10 @@ class BaseLogementForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
+
     typologie = forms.TypedChoiceField(
         required=True,
         label="",
@@ -361,8 +369,8 @@ class BaseLogementFormSet(BaseFormSet):
     # ils sont initialisés avant la validation
     programme_id: int = None
     lot_id: int = None
-    nb_logements: int = None
-    total_nb_logements: int = None
+    nb_logements: dict[str, int] | None = None
+    total_nb_logements: dict[str, int] | None = None
     optional_errors: list = []
     ignore_optional_errors = False
 
@@ -407,71 +415,84 @@ class BaseLogementFormSet(BaseFormSet):
 
     def manage_same_loyer_par_metre_carre(self):
         """
-        Validation: le loyer par mètre carré doit être le même pour tous les logements du lot
+        Validation: le loyer par mètre carré doit être le même pour tous les logements du lot/financement
         """
-        lpmc = None
-        error = None
-        for form in self.forms:
-            if lpmc is None:
-                lpmc = form.cleaned_data.get("loyer_par_metre_carre")
-            elif (
-                lpmc != form.cleaned_data.get("loyer_par_metre_carre") and error is None
-            ):
-                error = ValidationError(
-                    "Le loyer par mètre carré doit être le même pour tous les logements du lot"
-                )
-                self._non_form_errors.append(error)
-        if error is not None:
-            for form in self.forms:
-                form.add_error(
-                    "loyer_par_metre_carre",
-                    "Le loyer par mètre carré doit être le même pour tous les logements du lot",
-                )
+        financements = {form.cleaned_data.get("financement") for form in self.forms}
+
+        for financement in financements:
+            forms_financement = [
+                form
+                for form in self.forms
+                if form.cleaned_data.get("financement") == financement
+            ]
+            lpmc = None
+            error = None
+            for form in forms_financement:
+                if lpmc is None:
+                    lpmc = form.cleaned_data.get("loyer_par_metre_carre")
+                elif (
+                    lpmc != form.cleaned_data.get("loyer_par_metre_carre")
+                    and error is None
+                ):
+                    error = ValidationError(
+                        f"Le loyer par mètre carré doit être le même pour tous les logements du lot {financement}"
+                    )
+                    self._non_form_errors.append(error)
+            if error is not None:
+                for form in forms_financement:
+                    form.add_error(
+                        "loyer_par_metre_carre",
+                        f"Le loyer par mètre carré doit être le même pour tous les logements du lot {financement}",
+                    )
 
     def manage_edd_consistency(self):
         """
         Validation: les logements déclarés dans l'EDD simplifié pour le financement de la
           convention doivent être déclarés dans la convention
         """
-        lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
-        lot = Lot.objects.get(id=self.lot_id)
+        if self.lot_id:
+            lot = Lot.objects.get(id=self.lot_id)
+            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
 
-        if lgts_edd.count() != 0:
-            for form in self.forms:
-                try:
-                    lgt_edd = lgts_edd.get(
-                        designation=form.cleaned_data.get("designation"),
-                        financement=lot.financement,
-                    )
-                    if lgt_edd.financement != lot.financement:
+            if lgts_edd.count() != 0:
+                for form in self.forms:
+                    try:
+                        lgt_edd = lgts_edd.get(
+                            designation=form.cleaned_data.get("designation")
+                        )
+                        if lgt_edd.financement not in lot.convention.get_financements:
+                            form.add_error(
+                                "designation",
+                                "Ce logement est déclaré comme "
+                                + f"{lgt_edd.financement} dans l'EDD simplifié "
+                                + "alors que la convention ne comporte aucun financement de ce type ",
+                            )
+                    except LogementEDD.DoesNotExist:
+                        form.add_error(
+                            "designation", "Ce logement n'est pas dans l'EDD simplifié"
+                        )
+                    except LogementEDD.MultipleObjectsReturned:
                         form.add_error(
                             "designation",
-                            "Ce logement est déclaré comme "
-                            + f"{lgt_edd.financement} dans l'EDD simplifié "
-                            + "alors que vous déclarez un lot de type "
-                            + f"{lot.financement}",
+                            "Ce logement est présent plusieurs fois dans l'EDD simplifié",
                         )
-                except LogementEDD.DoesNotExist:
-                    form.add_error(
-                        "designation", "Ce logement n'est pas dans l'EDD simplifié"
-                    )
-                except LogementEDD.MultipleObjectsReturned:
-                    form.add_error(
-                        "designation",
-                        "Ce logement est présent plusieurs fois dans l'EDD simplifié",
-                    )
 
     def manage_nb_logement_consistency(self):
         """
         Validation: le nombre de logements déclarés pour cette convention à l'étape Opération
           doit correspondre au nombre de logements de la liste à l'étape Logements
         """
-        if self.nb_logements != self.total_nb_logements:
-            error = ValidationError(
-                f"Le nombre de logement à conventionner ({self.nb_logements}) "
-                + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements})"
-            )
-            self.optional_errors.append(error)
+        if self.nb_logements and self.total_nb_logements:
+            for financement in self.total_nb_logements:
+                if (
+                    self.nb_logements[financement]
+                    != self.total_nb_logements[financement]
+                ):
+                    error = ValidationError(
+                        f"Le nombre de logement à conventionner ({self.nb_logements[financement]}) "
+                        + f"ne correspond pas au nombre de logements déclaré ({self.total_nb_logements[financement]})"
+                    )
+                    self.optional_errors.append(error)
 
     def manage_coefficient_propre(self):
         """
@@ -489,17 +510,21 @@ class BaseLogementFormSet(BaseFormSet):
                 return
             loyer_with_coef += coeficient * surface_utile * loyer_par_metre_carre
             loyer_without_coef += surface_utile * loyer_par_metre_carre
-        if (
-            self.nb_logements is not None
-            and round_half_up(loyer_with_coef, 2)
-            > round_half_up(loyer_without_coef, 2) + self.nb_logements
-        ):
-            error = ValidationError(
-                "La somme des loyers après application des coefficients ne peut excéder "
-                + "la somme des loyers sans application des coefficients, c'est à dire "
-                + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {self.nb_logements} €)"
-            )
-            self._non_form_errors.append(error)
+
+        if self.nb_logements is not None:
+            for financement in self.nb_logements:
+                if (
+                    self.nb_logements[financement] is not None
+                    and round_half_up(loyer_with_coef, 2)
+                    > round_half_up(loyer_without_coef, 2)
+                    + self.nb_logements[financement]
+                ):
+                    error = ValidationError(
+                        f"{financement} : La somme des loyers après application des coefficients ne peut excéder "
+                        + "la somme des loyers sans application des coefficients, c'est à dire "
+                        + f"{round_half_up(loyer_without_coef,2)} € (tolérance de {self.nb_logements[financement]} €)"
+                    )
+                    self._non_form_errors.append(error)
 
 
 LogementFormSet = formset_factory(LogementForm, formset=BaseLogementFormSet, extra=0)
@@ -512,6 +537,7 @@ LogementCorrigeeFormSet = formset_factory(
 LogementCorrigeeSansLoyerFormSet = formset_factory(
     LogementCorrigeeSansLoyerForm, formset=BaseLogementFormSet, extra=0
 )
+LotLgtsOptionFormSet = formset_factory(LotLgtsOptionForm, extra=0)
 
 
 class FoyerResidenceLogementForm(forms.Form):

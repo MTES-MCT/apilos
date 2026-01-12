@@ -6,7 +6,7 @@
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button aria-controls="modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                            <button aria-controls="modal" title="Fermer" type="button" class="fr-btn fr-btn--close">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h2 id="modal-title" class="fr-modal__title">
@@ -32,7 +32,7 @@
                 <div class="fr-col-12 fr-col-md-8 fr-col-lg-6">
                     <div class="fr-modal__body">
                         <div class="fr-modal__header">
-                            <button aria-controls="export-launched-modal" title="Fermer" type="button" class="fr-btn--close fr-btn">Fermer</button>
+                            <button aria-controls="export-launched-modal" title="Fermer" type="button" class="fr-btn fr-btn--close">Fermer</button>
                         </div>
                         <div class="fr-modal__content">
                             <h2 id="export-modal-title" class="fr-modal__title">
@@ -53,214 +53,295 @@
         <div class="fr-grid-row fr-grid-row--gutters fr-card fr-card--no-border">
             <div class="fr-col-md-12">
                 {% if filtered_conventions_count > 0 %}
-                    <div class="fr-table table--vertical-lg fr-table--sm table--hover-animation">
-                        {% if filtered_conventions_count != all_conventions_count %}
-                            <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
-                                <div class="fr-grid-row fr-col-6">
-                                    <div class="fr-mr-2w notes">{{ filtered_conventions_count }} résultats</div>
-                                    <a href="/" class="fr-link">
-                                        <span class="fr-icon-close-circle-line fr-mr-1w"></span>
-                                        Réinitialiser la recherche
-                                    </a>
-                                </div>
-                                <{% if filtered_conventions_count < convention_export_max_rows %}form{% else %}div{% endif %} id='export-form'action="{% url 'conventions:export_list' %}" method="get" class="fr-col-6 fr-grid-row fr-grid-row--right">
-                                    <div
-                                        title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
-                                        style="display: inline-block;"
-                                    >
-                                        <button
-                                            id="export-button"
-                                            {% if filtered_conventions_count <= convention_export_max_rows %} type="submit" data-fr-opened="false" aria-controls="export-launched-modal" {% else %} data-fr-opened="false" aria-controls="modal" {% endif %}
-                                            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
-                                        >
-                                            Exporter la liste
-                                        </button>
+                    <form method="post" action="{% url 'conventions:convention_mix_init' %}">
+                        {% csrf_token %}
+                        <div class="fr-table table--vertical-lg fr-table--sm table--hover-animation">
+                            {% if filtered_conventions_count != all_conventions_count %}
+                                <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-2w">
+                                    <div class="fr-grid-row fr-col-6">
+                                        <h2 class="fr-mr-2w notes" style="font-size: inherit; font-weight: inherit; margin: 0;">
+                                            {{ filtered_conventions_count }} résultats
+                                        </h2>
+                                        <a href="/" class="fr-link">
+                                            <span class="fr-icon-close-circle-line fr-mr-1w"></span>
+                                            Réinitialiser la recherche
+                                        </a>
                                     </div>
-                                </{% if filtered_conventions_count < convention_export_max_rows %}form{% else %}div{% endif %} >
-                            </div>
-                        {% endif %}
-                        {% if filtered_conventions_count < convention_export_max_rows %}
-                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const exportForm = document.getElementById('export-form');
-                                    exportForm.addEventListener('submit', function (e) {
-                                        e.preventDefault();
-                                        const form = document.getElementById("search_table");
-                                        const params = new URLSearchParams(new FormData(form)).toString();
-                                        const exportUrl = `{% url 'conventions:export_list' %}?` + params;
-                                        window.location.href = exportUrl;
-                                    });
+                                    <div class="fr-col-6 fr-grid-row fr-grid-row--right">
+                                      <div id="export-form">
+                                        <div
+                                          title="{% if filtered_conventions_count > convention_export_max_rows %}Le nombre de résultats dépasse la limite autorisée pour l'export. Veuillez ajouter des filtres supplémentaires{% endif %}"
+                                          style="display: inline-block;"
+                                        >
+                                          <button
+                                            id="export-button"
+                                            {% if filtered_conventions_count <= convention_export_max_rows %}
+                                            data-fr-opened="false" aria-controls="export-launched-modal"
+                                            {% else %}
+                                            data-fr-opened="false" aria-controls="modal"
+                                            {% endif %}
+                                            class="fr-btn fr-btn--secondary fr-icon-download-line fr-btn--icon-left"
+                                            {% if filtered_conventions_count > convention_export_max_rows %}
+                                            disabled
+                                            {% endif %}
+                                          >
+                                            Exporter la liste
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if filtered_conventions_count < convention_export_max_rows %}
+                              <script nonce="{{ request.csp_nonce }}">
+                                document.addEventListener("DOMContentLoaded", function () {
+                                  const exportButton = document.getElementById("export-button");
+                                  if (!exportButton) return;
+
+                                  exportButton.addEventListener("click", function (e) {
+                                    if (exportButton.disabled) return;
+                                    e.preventDefault();
+                                    const form = document.getElementById("search_table");
+                                    const params = new URLSearchParams(new FormData(form)).toString();
+                                    const exportUrl = `{% url 'conventions:export_list' %}?` + params;
+                                    window.location.href = exportUrl;
+                                  });
                                 });
-                            </script>
-                        {% endif %}
-                        <div class="fr-table__wrapper">
-                            <div class="fr-table__container">
-                                <div class="fr-table__content">
-                                    <table aria-label="Conventions">
-                                        <thead>
-                                            <tr class="th_inline">
-                                                {% if debug_search_scoring %}
-                                                    <th title="Scoring" scope="col">
-                                                        >> Debug scoring >>>>>>>>>>>>>>
-                                                    </th>
-                                                {% endif %}
-
-                                                <th title="Statut de la convention" scope="col">
-                                                    Statut
-                                                </th>
-                                                <th title="Opération" scope="col" class="col__width--150">
-                                                    Opération
-                                                </th>
-                                                {% if request|is_instructeur %}
-                                                    <th scope="col">Bailleur</th>
-                                                {% endif %}
-                                                {% if request|display_administration %}
-                                                    <th scope="col">Instructeur</th>
-                                                {% endif %}
-                                                <th title="Financement" scope="col">
-                                                    Financement
-                                                </th>
-                                                <th title="Ville" scope="col">
-                                                    Ville
-                                                </th>
-                                                <th title="Nombre de logements à conventionner" scope="col">
-                                                    Logements
-                                                </th>
-                                                <th title="Date de livraison et mise en service" scope="col">
-                                                    Livraison
-                                                </th>
-                                                <th title="Date de signature" scope="col">
-                                                    Signature
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {% for convention in conventions %}
-                                                <tr id="convention_redirect_{{ convention.uuid }}"
-                                                    class="clickable
-                                                    {% if convention|display_redirect_project and not convention.is_avenant %}
-                                                        project
-                                                    {% elif convention|display_redirect_sent %}
-                                                        sent
-                                                    {% elif convention|display_redirect_post_action and not convention.is_avenant %}
-                                                        signed
-                                                    {% elif convention|display_redirect_convention_en_publication and not convention.is_avenant %}
-                                                        publication_en_cours
-                                                    {% elif convention|display_redirect_convention_publie and not convention.is_avenant %}
-                                                        publie
-                                                    {% endif %}">
-
+                              </script>
+                            {% endif %}
+                            <div class="fr-table__wrapper">
+                                <div class="fr-table__container">
+                                    <div class="fr-table__content">
+                                        <table aria-label="Conventions">
+                                            <caption class="fr-sr-only">{{ filtered_conventions_count }} résultats</caption>
+                                            <thead>
+                                                <tr class="th_inline">
                                                     {% if debug_search_scoring %}
-                                                        <td>
-                                                            <div>
-                                                                <b>score: {{ convention.score }}</b>
-                                                            </div>
-                                                            <div>
-                                                                op. nom (vector): {{ convention.search_vector_programme_nom_rank }}
-                                                            </div>
-                                                            <div>
-                                                                op. numero: {{ convention.programme_numero_similarity }}
-                                                            </div>
-                                                            <div>
-                                                                conv numero: {{ convention.conv_numero_similarity }}
-                                                            </div>
-                                                            <div>
-                                                                conv numero: {{ convention.parent_conv_numero_similarity }}
-                                                            </div>
-                                                            <div>
-                                                                op. ville: {{ convention.programme_ville_similarity }}
-                                                            </div>
-                                                            <div>
-                                                                op. code postal: {{ convention.programme_code_postal_similarity }}
-                                                            </div>
-                                                        </td>
+                                                        <th title="Scoring" scope="col">
+                                                            >> Debug scoring >>>>>>>>>>>>>>
+                                                        </th>
                                                     {% endif %}
-
-                                                    <td title="{{ convention.statut_for_template.statut_display }}">
-                                                        {% include "conventions/home/statut_tag.html" %}
-                                                        <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                                            document.addEventListener('DOMContentLoaded', function () {
-                                                                document.getElementById('convention_redirect_{{ convention.uuid }}').addEventListener('click', function(){
-                                                                    if (this.classList.contains("sent")) {
-                                                                        location.href="{% url 'conventions:sent' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("signed")) {
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("project")) {
-                                                                        location.href="{% url 'conventions:bailleur' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publication_en_cours")){
-                                                                        location.href="{% url 'conventions:publication' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else if (this.classList.contains("publie")){
-                                                                        location.href="{% url 'conventions:post_action' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                    else {
-                                                                        location.href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
-                                                                    }
-                                                                });
-                                                            });
-                                                        </script>
-                                                    </td>
-                                                    <td>
-                                                        <div class="apilos--flex-row-left-center">
-                                                            <div class="apilos--container_ellipsis">
-                                                                <strong class="apilos--overflow_ellipsis">
-                                                                    {{ convention.programme|highlight_if_match:search_operation_nom }}
-                                                                </strong>
-                                                            </div>
-                                                            {% if convention.is_avenant %}
-                                                                <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">{{ convention|display_kind_with_numero|capfirst }}</span>
-                                                            {% endif %}
-                                                        </div>
-                                                        {% if convention.programme.numero_operation %}
-                                                            <div>
-                                                                <em data-test-role="programme-galion-cell">
-                                                                    Op. : {{ convention.programme.numero_operation|highlight_if_match:search_numero }}
-                                                                </em>
-                                                            </div>
-                                                        {% endif %}
-                                                        <div>
-                                                            <em data-test-role="programme-galion-cell">
-                                                                {% if convention.numero and not convention.parent %}
-                                                                    Conv. : {{ convention.numero|highlight_if_match:search_numero }}
-                                                                {% elif convention.parent %}
-                                                                    Conv. : {{ convention.parent.numero|highlight_if_match:search_numero }}
-                                                                {% endif %}
-                                                            </em>
-                                                        </div>
-                                                    </td>
+                                                    {% if switch_convention_mixte_on %}
+                                                    <th title="convention mixte" scope="col">
+                                                        Grouper
+                                                    </th>
+                                                    {% endif %}
+                                                    <th title="Statut de la convention" scope="col">
+                                                        Statut
+                                                    </th>
+                                                    <th title="Opération" scope="col" class="col__width--150">
+                                                        Opération
+                                                    </th>
                                                     {% if request|is_instructeur %}
-                                                        <td>
-                                                            {{ convention.programme.bailleur.nom }}
-                                                        </td>
+                                                        <th scope="col">Bailleur</th>
                                                     {% endif %}
                                                     {% if request|display_administration %}
-                                                        <td>{{ convention.programme.administration.nom }}</td>
+                                                        <th scope="col">Instructeur</th>
                                                     {% endif %}
-                                                    <td data-test-role="programme-financement-cell">{{ convention.lot.get_financement_display }}</td>
-                                                    <td>
-                                                        <strong>
-                                                            {{ convention.programme.ville|highlight_if_match:search_lieu }}
-                                                        </strong>
-                                                        <br/>
-                                                        <em>
-                                                            {{ convention.programme.code_postal|highlight_if_match:search_lieu }}
-                                                        </em>
-                                                    </td>
-                                                    {% comment %} TODO: reverse relation convention lot {% endcomment %}
-                                                    <td>{{ convention.lot.nb_logements }}</td>
-                                                    <td>{{ convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
-                                                    <td>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
+                                                    <th title="Financement" scope="col">
+                                                        Financement
+                                                    </th>
+                                                    <th title="Ville" scope="col">
+                                                        Ville
+                                                    </th>
+                                                    <th title="Nombre de logements à conventionner" scope="col">
+                                                        Logements
+                                                    </th>
+                                                    <th title="Date de livraison et mise en service" scope="col">
+                                                        Livraison
+                                                    </th>
+                                                    <th title="Date de signature" scope="col">
+                                                        Signature
+                                                    </th>
                                                 </tr>
-                                            {% endfor %}
-                                        </tbody>
-                                    </table>
+                                            </thead>
+                                            <tbody>
+                                                {% for convention in conventions %}
+                                                    <tr data-type="{% if convention.is_mixte %}mixte{% else %}simple{% endif %}"
+                                                        id="convention_redirect_{{ convention.uuid }}"
+                                                        class="clickable
+                                                        {% if convention|display_redirect_project and not convention.is_avenant %}
+                                                            project
+                                                        {% elif convention|display_redirect_sent %}
+                                                            sent
+                                                        {% elif convention|display_redirect_post_action and not convention.is_avenant %}
+                                                            signed
+                                                        {% elif convention|display_redirect_convention_en_publication and not convention.is_avenant %}
+                                                            publication_en_cours
+                                                        {% elif convention|display_redirect_convention_publie and not convention.is_avenant %}
+                                                            publie
+                                                        {% endif %}">
+
+                                                        {% if debug_search_scoring %}
+                                                            <td>
+                                                                <div>
+                                                                    <b>score: {{ convention.score }}</b>
+                                                                </div>
+                                                                <div>
+                                                                    op. nom (vector): {{ convention.search_vector_programme_nom_rank }}
+                                                                </div>
+                                                                <div>
+                                                                    op. numero: {{ convention.programme_numero_similarity }}
+                                                                </div>
+                                                                <div>
+                                                                    conv numero: {{ convention.conv_numero_similarity }}
+                                                                </div>
+                                                                <div>
+                                                                    conv numero: {{ convention.parent_conv_numero_similarity }}
+                                                                </div>
+                                                                <div>
+                                                                    op. ville: {{ convention.programme_ville_similarity }}
+                                                                </div>
+                                                                <div>
+                                                                    op. code postal: {{ convention.programme_code_postal_similarity }}
+                                                                </div>
+                                                            </td>
+                                                        {% endif %}
+                                                        {% if switch_convention_mixte_on %}
+                                                            {% if not convention.has_avenant %}
+                                                                {% if not convention.is_avenant and convention|display_redirect_project %}
+                                                                    <td style="text-align: center; vertical-align: middle;">
+                                                                        <input type="checkbox"
+                                                                        name="uuids"
+                                                                        value="{{ convention.uuid }}"
+                                                                        class="fr-checkbox__input convention-checkbox stop-row-click"
+                                                                        id="convention_{{ convention.uuid }}"
+                                                                        aria-label="Grouper la convention {{ convention.programme }} - {{ convention.programme.ville }}">
+                                                                    </td>
+                                                                {% else %}
+                                                                    <td></td>
+                                                                {% endif %}
+                                                            {% else %}
+                                                                    <td></td>
+                                                            {% endif %}
+                                                        {% endif %}
+                                                        <td title="{{ convention.statut_for_template.statut_display }}">
+                                                            {% include "conventions/home/statut_tag.html" %}
+                                                            {% include 'conventions/_convention_redirect_script.html' with use_dom_ready=True %}
+                                                        </td>
+                                                        </td>
+                                                        <td>
+                                                            <div class="apilos--flex-row-left-center">
+                                                                <div class="apilos--container_ellipsis">
+                                                                    <strong class="apilos--overflow_ellipsis">
+                                                                        <a href="{% url 'conventions:recapitulatif' convention_uuid=convention.uuid %}"
+                                                                        id="convention_link_{{ convention.uuid }}"
+                                                                        class="fr-link">
+                                                                            <span class="fr-sr-only">
+                                                                                Convention {{ convention.programme }}{% if convention.programme.numero_operation %}, opération {{ convention.programme.numero_operation }}{% endif %}{% if convention.numero %}, numéro {{ convention.numero }}{% elif convention.parent %}, numéro {{ convention.parent.numero }}{% endif %}{% if request|is_instructeur %}, bailleur {{ convention.programme.bailleur.nom }}{% endif %}{% if request|display_administration %}, administration {{ convention.programme.administration.nom }}{% endif %}, financement {{ convention.get_financement_display }}, {{ convention.programme.ville }} {{ convention.programme.code_postal }}, {{ convention.nb_logements }} logements{% if convention.programme.date_achevement_compile %}, achèvement {{ convention.programme.date_achevement_compile|date:'d F Y' }}{% endif %}{% if convention.televersement_convention_signee_le %}, signée le {{ convention.televersement_convention_signee_le|date:'d F Y' }}{% endif %}
+                                                                            </span>
+                                                                            {{ convention.programme|highlight_if_match:search_operation_nom }}
+                                                                        </a>
+                                                                    </strong>
+                                                                </div>
+                                                                {% if convention.is_avenant %}
+                                                                    <span class="{% if convention.is_denonciation %}warning-notification {% else %}text-title-blue-france {% endif %} fr-p-1w fr-ml-1w apilos-tag-avenant background-white">
+                                                                        {{ convention|display_kind_with_numero|capfirst }}
+                                                                    </span>
+                                                                {% endif %}
+                                                            </div>
+                                                            {% if convention.programme.numero_operation %}
+                                                                <div>
+                                                                    <em data-test-role="programme-galion-cell">
+                                                                        Op. : {{ convention.programme.numero_operation|highlight_if_match:search_numero }}
+                                                                    </em>
+                                                                </div>
+                                                            {% endif %}
+                                                            <div>
+                                                                <em data-test-role="programme-galion-cell">
+                                                                    {% if convention.numero and not convention.parent %}
+                                                                        Conv. : {{ convention.numero|highlight_if_match:search_numero }}
+                                                                    {% elif convention.parent %}
+                                                                        Conv. : {{ convention.parent.numero|highlight_if_match:search_numero }}
+                                                                    {% endif %}
+                                                                </em>
+                                                            </div>
+                                                        </td>
+                                                        {% if request|is_instructeur %}
+                                                            <td>
+                                                                {{ convention.programme.bailleur.nom }}
+                                                            </td>
+                                                        {% endif %}
+                                                        {% if request|display_administration %}
+                                                            <td>{{ convention.programme.administration.nom }}</td>
+                                                        {% endif %}
+                                                        <td data-test-role="programme-financement-cell">{{ convention.get_financement_display }}</td>
+                                                        <td>
+                                                            <strong>
+                                                                {{ convention.programme.ville|highlight_if_match:search_lieu }}
+                                                            </strong>
+                                                            <br/>
+                                                            <em>
+                                                                {{ convention.programme.code_postal|highlight_if_match:search_lieu }}
+                                                            </em>
+                                                        </td>
+                                                        <td>{{ convention.nb_logements }}</td>
+                                                        <td>{{ convention.programme.date_achevement_compile|date:"d F Y"|default_if_none:'-' }}</td>
+                                                        <td>{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        {% if switch_convention_mixte_on %}
+                            <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                                <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
+                                        id="dispatch_mixte_button" name="action" value="dispatch">
+                                    Dégrouper la convention
+                                </button>
+                            </div>
+                            <div class="fr-col-12 fr-grid-row fr-grid-row--right">
+                                <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
+                                        id="create_mixte_button" name="action" value="create">
+                                    Grouper les conventions
+                                </button>
+                            </div>
+                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const checkboxes = document.querySelectorAll('.convention-checkbox');
+                                    const dispatchButton = document.getElementById('dispatch_mixte_button');
+                                    const createButton = document.getElementById('create_mixte_button');
+
+                                    function updateButtons() {
+                                        const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.closest('tr'));
+
+                                        if (!selected.length) {
+                                            dispatchButton.style.display = 'none';
+                                            createButton.style.display = 'none';
+                                            return;
+                                        }
+
+                                        const allMixte = selected.every(row => row.dataset.type === 'mixte');
+                                        const allSimple = selected.every(row => row.dataset.type === 'simple');
+
+                                        // Show degrouper only if exactly one mixte is selected
+                                        dispatchButton.style.display = (allMixte && selected.length === 1) ? 'inline-block' : 'none';
+                                        // Show grouper only if at least one simple is selected
+                                        createButton.style.display = (allSimple && selected.length >= 1) ? 'inline-block' : 'none';
+                                    }
+
+                                    checkboxes.forEach(cb => {
+                                        cb.addEventListener('change', function () {
+                                            if (cb.closest('tr').dataset.type === 'mixte') {
+                                                // Uncheck all others if selecting a mixte (single selection)
+                                                checkboxes.forEach(other => {
+                                                    if (other !== cb) other.checked = false;
+                                                });
+                                            }
+                                            updateButtons();
+                                        });
+                                    });
+
+                                    // initialize buttons as hidden
+                                    dispatchButton.style.display = 'none';
+                                    createButton.style.display = 'none';
+                                });
+                            </script>
+                        {% endif %}
+                    </form>
                     {% include 'common/table/pagination.html' with paginate_list=conventions %}
                 {% else %}
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
@@ -272,10 +353,17 @@
                     </div>
                     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-mb-5w">
                         <div class="fr-col-9">
-                            <div class="fr-text--lg">Aucune convention ou avenant ne correspond à votre recherche</div>
-                            <div>Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
-                                Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
-                                Dans ce cas, nous vous invitons à l'ajouter.
+                            <div>
+                                <p class="fr-text--lg">
+                                    Aucune convention ou avenant ne correspond à votre recherche
+                                </p>
+                            </div>
+                            <div>
+                                <p>
+                                    Si vous avez plusieurs habilitations, relancez votre recherche avec un autre profil.<br/>
+                                    Sinon, peut-être que la convention que vous recherchez n’est pas référencée dans le SIAP / Apilos.
+                                    Dans ce cas, nous vous invitons à l'ajouter.
+                                </p>
                             </div>
                             <div class="fr-mt-5w fr-ml-1w">
                                 <div class="fr-grid-row fr-grid-row--gutters" >

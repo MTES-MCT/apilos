@@ -25,6 +25,7 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='type_stationnement' label="Type de stationnements" callback_click="refresh_opened_comments" %}
                                                     {% endif %}
                                                     <th scope="col" class="col__width--150">Type de stationnement {% include "common/form/required_field_star.html" %}</th>
+                                                    <th scope="col" class="col__width--150">Financement {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--200">Nombre de stationnements {% include "common/form/required_field_star.html" %}</th>
                                                     <th scope="col" class="col__width--150">Loyer maximum en € {% include "common/form/required_field_star.html" %}</th>
                                                 </tr>
@@ -39,8 +40,11 @@
                                                                         {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Type de stationnement" callback_click="refresh_opened_comments" %}
                                                                     </td>
                                                                 {% endif %}
-                                                                <td>
+                                                                <th scope="row">
                                                                     {{ stationnement.get_typologie_display }}
+                                                                </th>
+                                                                <td>
+                                                                    {{ stationnement.lot.financement }}
                                                                 </td>
                                                                 <td>
                                                                     {{ stationnement.nb_stationnements }}

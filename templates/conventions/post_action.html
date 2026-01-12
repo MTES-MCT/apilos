@@ -1,10 +1,14 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %} Actions - APiLos{% endblock %}
+{% block page_title %} Convention - Vue d'ensemble - APiLos{% endblock %}
 
 {% load display_filters static %}
 
 {% block message %}{% endblock %}
+
+{% block javascript_extras %}
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
@@ -16,56 +20,58 @@
         <div class="fr-container fr-py-5w">
             {% if not convention.is_avenant %}
                 <div class="fr-col-12 fr-mt-2w fr-mb-4w">
-                    <p class="fr-alert__title">
+                    <h2 class="fr-alert__title">
                         Historique
-                    </p>
-                    {% if convention.date_publication_spf %}
-                    <div class="fr-grid-row">
-                        <div class="apilos-step-post-action fr-mr-2w">
-                            <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
-                            {% if total_avenants > 0 %}
-                                <div class="apilos-step-post-action--line"></div>
-                            {% endif %}
-                        </div>
-                        <div class="fr-col-11">
-                            {% if convention.date_publication_spf and convention|display_redirect_convention_publie %}
-                                <div class="fr-grid-row">
-                                    {{ convention|display_kind|capfirst }} n° <span class="fr-mr-1v"><strong>{{ convention.numero|default_if_none:'-' }}</strong></span> publié{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.date_publication_spf|date:"d F Y"|default_if_none:'-' }} sous la référence <strong>{{ convention.reference_spf }}</strong></span>
-                                </div>
-                            {% else %}
-                                {% if convention.date_publication_spf %}
-                                    <div class="fr-grid-row">Votre convention a été précédemment publiée sous la référence <strong>{{ convention.reference_spf }}</strong>, puis annulée en vue d’une rectification.</div>
+                    </h2>
+                    <ol class="apilos-history-list">
+                        {% if convention.date_publication_spf %}
+                        <li class="fr-grid-row">
+                            <div class="apilos-step-post-action fr-mr-2w">
+                                <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                                {% if total_avenants > 0 %}
+                                    <div class="apilos-step-post-action--line"></div>
                                 {% endif %}
-                            {% endif %}
-                            <div class="fr-mb-3w">
-                                <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type='publication' %}"> Voir en PDF</a>
                             </div>
-                        </div>
-                    </div>
-                    {% endif %}
-                    <div class="fr-grid-row">
-                        <div class="apilos-step-post-action fr-mr-2w">
-                            <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
-                            {% if total_avenants > 0 %}
-                                <div class="apilos-step-post-action--line"></div>
-                            {% endif %}
-                        </div>
-                        <div class="fr-col-11">
-                            {% if convention.televersement_convention_signee_le %}
-                                <div class="fr-grid-row">
-                                    {{ convention|display_kind|capfirst }} n° <span class="fr-mr-1v"><strong>{{ convention.numero|default_if_none:'-' }}</strong></span> signé{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</span>
+                            <div class="fr-col-11">
+                                {% if convention.date_publication_spf and convention|display_redirect_convention_publie %}
+                                    <p class="fr-grid-row">
+                                        {{ convention|display_kind|capfirst }} n° <span class="fr-mr-1v"><strong>{{ convention.numero|default_if_none:'-' }}</strong></span> publié{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.date_publication_spf|date:"d F Y"|default_if_none:'-' }} sous la référence <strong>{{ convention.reference_spf }}</strong></span>
+                                    </p>
+                                {% else %}
+                                    {% if convention.date_publication_spf %}
+                                        <p class="fr-grid-row">Votre convention a été précédemment publiée sous la référence <strong>{{ convention.reference_spf }}</strong>, puis annulée en vue d'une rectification.</p>
+                                    {% endif %}
+                                {% endif %}
+                                <div class="fr-mb-3w">
+                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type='publication' %}"> Voir en PDF</a>
                                 </div>
-                            {% else %}
-                                <div class="fr-grid-row">Votre convention signée a déjà été déposée</div>
-                            {% endif %}
-                            <div class="fr-mb-3w">
-                                <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
                             </div>
-                        </div>
-                    </div>
-                    {% include "conventions/avenant_list.html" with conventions=avenants %}
-                    {% include "conventions/denonciation_list.html" with conventions=denonciation %}
-                    {% include "conventions/resiliation_list.html" with conventions=resiliation %}
+                        </li>
+                        {% endif %}
+                        <li class="fr-grid-row">
+                            <div class="apilos-step-post-action fr-mr-2w">
+                                <div class="apilos-step-post-action--bubble fr-mr-2w"></div>
+                                {% if total_avenants > 0 %}
+                                    <div class="apilos-step-post-action--line"></div>
+                                {% endif %}
+                            </div>
+                            <div class="fr-col-11">
+                                {% if convention.televersement_convention_signee_le %}
+                                    <p class="fr-grid-row">
+                                        {{ convention|display_kind|capfirst }} n° <span class="fr-mr-1v"><strong>{{ convention.numero|default_if_none:'-' }}</strong></span> signé{{ convention|display_gender_terminaison }} le <span class="fr-ml-1v">{{ convention.televersement_convention_signee_le|date:"d F Y"|default_if_none:'-' }}</span>
+                                    </p>
+                                {% else %}
+                                    <p class="fr-grid-row">Votre convention signée a déjà été déposée</p>
+                                {% endif %}
+                                <div class="fr-mb-3w">
+                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
+                                </div>
+                            </div>
+                        </li>
+                        {% include "conventions/avenant_list.html" with conventions=avenants %}
+                        {% include "conventions/denonciation_list.html" with conventions=denonciation %}
+                        {% include "conventions/resiliation_list.html" with conventions=resiliation %}
+                    </ol>
                 </div>
             {% else %}
                 <div class="fr-py-3w">
@@ -75,9 +81,9 @@
             {% if convention|display_is_not_resiliated_or_denonciated %}
                 <div class="fr-col-12 fr-mb-4w">
                     <div role="alert" class="fr-alert fr-alert--info  fr-icon-arrow-right-s-line-double">
-                        <p class="fr-alert__title">
+                        <h2 class="fr-alert__title">
                             Créer un {% if convention.is_avenant %}autre {% endif %}avenant
-                        </p>
+                        </h2>
                         <p>Votre projet a évolué. Vous avez identifié des informations erronées ou caduques ?</p>
                         <div class="block--row-strech">
                             {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant %}
@@ -126,7 +132,7 @@
             <div class="fr-col-12">
                 <div class="fr-mb-2w block--row-strech">
                     <div class="block--row-strech-1 fr-my-2w">
-                        <p class="fr-alert__title">
+                        <h2 class="fr-alert__title">
                             {% if convention.is_denonciation %}
                                 Déposer l'acte de dénonciation
                             {% elif convention|display_redirect_convention_publie and request|is_instructeur %}
@@ -134,7 +140,7 @@
                             {% else %}
                                 Déposer à nouveau {{ convention|display_kind_with_pronom }}
                             {% endif %}
-                        </p>
+                        </h2>
                         <p class="fr-mb-0">
                             {% if convention.is_denonciation %}
                                 Vous pouvez déposer l'acte de dénonciation ici. Il sera accessible sur la page de visualisation de la dénonciation.
@@ -193,9 +199,9 @@
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-5w fr-pt-2w">
-                        <p class="fr-alert__title">
+                        <h2 class="fr-alert__title">
                             Date de signature
-                        </p>
+                        </h2>
                         {% include "conventions/actions/update_date_signature.html" %}
                     </div>
                 </div>
@@ -204,9 +210,9 @@
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-5w fr-pt-2w">
-                        <p class="fr-alert__title">
+                        <h2 class="fr-alert__title">
                             Date de publication
-                        </p>
+                        </h2>
                         {% include "conventions/actions/update_date_publication.html" %}
                     </div>
                 </div>
@@ -215,9 +221,9 @@
                 <hr>
                 <div class="fr-col-12">
                     <div class="fr-mb-5w fr-pt-2w">
-                        <p class="fr-alert__title">
+                        <h2 class="fr-alert__title">
                             Date de résiliation
-                        </p>
+                        </h2>
                         {% include "conventions/actions/update_date_resiliation.html" %}
                     </div>
                 </div>

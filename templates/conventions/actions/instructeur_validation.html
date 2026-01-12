@@ -4,7 +4,7 @@
     <div role="alert" class="fr-alert fr-alert--A_signer fr-icon-arrow-right-s-line-double h-100">
         {% if convention.is_avenant %}
             {% flag "override_cerfa" %}
-                <p class="fr-alert__title fr-mb-3w">Finaliser l'avenant en trois étapes</p>
+                <h4 class="fr-alert__title fr-mb-3w">Finaliser l'avenant en trois étapes</h4>
                 <p class="fr-mb-3w">Toutes les corrections sont terminées ?</p>
                 <p class="fr-mb-3w">Nous vous invitons à vérifier le document CERFA de l'avenant avant sa validation finale.</p>
                 <a class="fr-btn fr-btn--primary" href="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}" data-turbo="false">Finaliser l'avenant</a>
@@ -15,7 +15,7 @@
             {% flag "override_cerfa" %}
                 {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}
                     {% if editable_validation %}
-                        <p class="fr-alert__title fr-mb-3w">Finaliser la convention en trois étapes</p>
+                        <h4 class="fr-alert__title fr-mb-3w">Finaliser la convention en trois étapes</h4>
                         <p class="fr-mb-3w">Toutes les corrections sont terminées ?</p>
                         <p class="fr-mb-3w">Nous vous invitons à vérifier le document CERFA de la convention avant sa validation finale.</p>
                         <a class="fr-btn fr-btn--primary" href="{% url 'conventions:finalisation_numero' convention_uuid=convention.uuid %}" data-turbo="false">Finaliser la convention</a>
@@ -30,7 +30,7 @@
                     {% endif %}
                 {% endwith %}
             {% else %}
-                <p class="fr-alert__title">Valider la convention</p>
+                <h4 class="fr-alert__title">Valider la convention</h4>
                 {% with editable_validation=convention|display_deactivated_because_type1and2_config_is_needed|not_op %}
                     {% if editable_validation %}
                         <p class="fr-mb-3w">Vous pouvez associer un numéro de convention et valider celle-ci. Elle sera automatiquement transmise au bailleur par email pour signature.</p>
@@ -64,7 +64,7 @@
 
 {% if convention|display_is_validated %}
     <div role="alert" class="fr-alert fr-alert--success">
-        <p class="fr-alert__title">{{ convention|display_kind_with_pronom }} a été validé{{ convention|display_gender_terminaison }} le {{ convention.valide_le|date:"j F Y" }}</p>
+        <h4 class="fr-alert__title">{{ convention|display_kind_with_pronom }} a été validé{{ convention|display_gender_terminaison }} le {{ convention.valide_le|date:"j F Y" }}</h4>
         <p class="fr-alert__title">avec le numéro {{ convention.numero }}</p>
     </div>
     <hr>

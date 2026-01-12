@@ -3,7 +3,7 @@
         <div class="fr-col-12 fr-grid-row fr-grid-row--right">
             <a href="{% url 'conventions:loyer_simulateur' %}" class="fr-link fr-ml-2w"
                title="Calculatrice de loyers"
-               aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}"                                >
+               aria-selected="{% if request.resolver_match.view_name == "conventions:loyer_simulateur" %}true{% else %}false{% endif %}">
                 <span aria-hidden="true" class="fr-icon-equalizer-fill"></span>
                 Calculatrice de loyers
             </a>
@@ -11,6 +11,7 @@
 
         <div class="fr-col-md-12 fr-mb-1w">
             <hr>
+            <h2 class="fr-sr-only">Filtres de recherche</h2>
             <form class="fr-mt-2w" method="get" action="" id="search_table">
                 <input type="hidden" id="order_by" name="order_by" value="{{ order_by }}">
                 <input type="hidden" id="page" name="page" value="{{ page }}">
@@ -19,13 +20,13 @@
 
                     {# Champs nom de l'opération #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Nom de l'opération</div>
+                        <label class="select-label" for="search_operation_nom">Nom de l'opération</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_operation_nom" name="search_operation_nom" value="{{ request.GET.search_operation_nom }}" placeholder="Rechercher"/>
                     </div>
 
                     {# Champs numéro de l'opération ou de la convention #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Numéro de l'opération ou de la convention</div>
+                        <label class="select-label" for="search_numero">Numéro de l'opération ou de la convention</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_numero" name="search_numero" value="{{ request.GET.search_numero }}" placeholder="Rechercher"/>
                     </div>
 
@@ -36,42 +37,17 @@
                     {# Champs bailleur #}
                     {% if bailleur_query %}
                         <div class="fr-col-12 fr-col-md-12 fr-col-lg-6 search-select search-bailleur">
-                            <div class="select-label">Bailleur (nom ou SIREN)</div>
-                            <div class="fr-mt-1w">
-                                {% url 'users:search_bailleur' as search_bailleur_url %}
-                                <select class="fr-select" name="bailleur" id="search-field-bailleur">
-                                    {% if request.GET.bailleur %}
-                                        <option selected value="{{ request.GET.bailleur }}">{% bailleur_from request.GET.bailleur %}</option>
-                                        {% endwith }
-                                    {% else %}
-                                        <option selected value></option>
-                                        {% for bailleur in bailleur_query %}
-                                            <option value="{{ bailleur.uuid }}">
-                                                {{ bailleur }}
-                                            </option>
-                                        {% endfor %}
-                                    {% endif %}
-                                </select>
-                            </div>
-                            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                                VirtualSelect.init({
-                                    ele: '#search-field-bailleur',
-                                    search: true,
-                                    placeholder: "Rechercher",
-                                    searchPlaceholderText: "Nom du bailleur ( SIREN )",
-                                    onServerSearch: function (search, select) {
-                                        fetch('{{ search_bailleur_url }}?q=' + search)
-                                            .then((response) => response.json())
-                                            .then(data => select.setServerOptions(data));
-                                    },
-                                });
-                            </script>
+                            {% url 'users:search_bailleur' as search_bailleur_url %}
+                            {% if request.GET.bailleur %}
+                                {% bailleur_from request.GET.bailleur as bailleur_initial %}
+                            {% endif %}
+                            {% include "common/form/input_search_select_unified.html" with field_id="search-field-bailleur" field_name="bailleur" label="Bailleur (nom ou SIREN)" placeholder="Rechercher" search_url=search_bailleur_url initial_value=request.GET.bailleur initial_text=bailleur_initial initial_queryset=bailleur_query %}
                         </div>
                     {% endif %}
 
                     {# Champs commune #}
                     <div class="fr-col-12 fr-col-lg-6 search-input">
-                        <div class="select-label">Commune, code postal</div>
+                        <label class="select-label" for="search_lieu">Commune, code postal</label>
                         <input class="fr-input fr-mt-1w" type="search" id="search_lieu" name="search_lieu" value="{{ request.GET.search_lieu }}" placeholder="Rechercher"/>
                     </div>
 
@@ -80,38 +56,12 @@
                 <div class="fr-grid-row fr-grid-row--gutters fr-mb-2w">
 
                     {# Champs statut #}
-                    <div class="fr-col-12 fr-col-lg-3 search-select search-statut">
-                        <div class="select-label">Statut convention ou avenant</div>
-                        <select
-                            multiple
-                            class="fr-select fr-mt-1w"
-                            id="cstatut"
-                            name="cstatut">
-                            {% for label, value in statut_choices %}
-                                <option value="{{ value }}"
-                                        {% if value in request.GET.cstatut %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                        VirtualSelect.init({
-                            ele: '#cstatut',
-                            optionsCount: 5,
-                            search: false,
-                            multiple: true,
-                            placeholder: "Sélectionner",
-                            optionsSelectedText: "options sélectionnées",
-                            disableSelectAll: true,
-                            allOptionsSelectedText: "Toutes les options",
-                        });
-                    </script>
+                    {% include "common/form/input_multiselect_choices.html" with field_id="cstatut" label="Statut convention ou avenant" request_url=selected_statuts choices=statut_choices %}
 
                     {# Champs financement #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
-                        <div class="select-label">Type de financement</div>
-                        <select class="fr-select fr-mt-1w" name="financement">
+                        <label class="select-label" for="financement">Type de financement</label>
+                        <select class="fr-select fr-mt-1w" name="financement" id="financement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in financement_choices %}
                                 <option value="{{ value }}"
@@ -125,8 +75,8 @@
                     {# Champs date de signature #}
                     {% if date_signature_choices %}
                         <div class="fr-col-12 fr-col-lg-3 search-select">
-                            <div class="select-label">Année de signature</div>
-                            <select class="fr-select fr-mt-1w" name="date_signature">
+                            <label class="select-label" for="date_signature">Année de signature</label>
+                            <select class="fr-select fr-mt-1w" name="date_signature" id="date_signature">
                                 <option value="">Sélectionner une période</option>
                                 {% for value, label in date_signature_choices %}
                                     <option value="{{ value }}"
@@ -140,8 +90,8 @@
 
                     {# Champs nature des logements #}
                     <div class="fr-col-12 fr-col-lg-3 search-select">
-                        <div class="select-label">Nature des logements</div>
-                        <select class="fr-select fr-mt-1w" name="nature_logement">
+                        <label class="select-label" for="nature_logement">Nature des logements</label>
+                        <select class="fr-select fr-mt-1w" name="nature_logement" id="nature_logement">
                             <option value="">Sélectionner une option</option>
                             {% for value, label in nature_logement_choices %}
                                 <option value="{{ value }}"
@@ -191,7 +141,6 @@
                             </div>
                         </div>
                     </div>
-
 
                     <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                         <button class="fr-btn" id="search_btn">

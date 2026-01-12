@@ -1,5 +1,4 @@
 name: "Test and deploy to Recette environment"
-
 on:
   push:
     branches:

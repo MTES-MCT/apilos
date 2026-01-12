@@ -30,6 +30,7 @@
                                                         {% include 'common/utils/comments_header.html' with object_name='pret' label='Prêts et Subventions' callback_click="refresh_opened_comments" %}
                                                     {% endif %}
                                                     <th scope="col">Numéro</th>
+                                                    <th scope="col">Financement</th>
                                                     <th scope="col">Date d'octroi</th>
                                                     <th scope="col">Durée (en années)</th>
                                                     <th scope="col">Montant (en €) {% include "common/form/required_field_star.html" %}</th>
@@ -38,36 +39,41 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for pret in convention.lot.prets.all %}
-                                                    {% with pret_uuid=pret.uuid|slugify %}
-                                                        {% with main_object_field="pret__uuid__"|add:pret_uuid %}
-                                                            <tr id="{{ main_object_field }}_group">
-                                                                {% if convention|display_comments %}
-                                                                    <td id="{{ main_object_field }}_div">
-                                                                        {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
+                                                {% for lot in convention.lots.all %}
+                                                    {% for pret in lot.prets.all %}
+                                                        {% with pret_uuid=pret.uuid|slugify %}
+                                                            {% with main_object_field="pret__uuid__"|add:pret_uuid %}
+                                                                <tr id="{{ main_object_field }}_group">
+                                                                    {% if convention|display_comments %}
+                                                                        <td id="{{ main_object_field }}_div">
+                                                                            {% include 'common/utils/comments_field.html' with object_field=main_object_field label="Prêt ou financement" callback_click="refresh_opened_comments" %}
+                                                                        </td>
+                                                                    {% endif %}
+                                                                    <td>
+                                                                        {{ pret.numero|default_if_none:'-' }}
                                                                     </td>
-                                                                {% endif %}
-                                                                <td>
-                                                                    {{ pret.numero|default_if_none:'-' }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.date_octroi|default_if_none:'-' }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.duree|default_if_none:'-' }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.montant }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.preteur }}
-                                                                </td>
-                                                                <td>
-                                                                    {{ pret.autre }}
-                                                                </td>
-                                                            </tr>
+                                                                    <td>
+                                                                        {{ pret.lot.financement }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.date_octroi|default_if_none:'-' }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.duree|default_if_none:'-' }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.montant }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.preteur }}
+                                                                    </td>
+                                                                    <td>
+                                                                        {{ pret.autre }}
+                                                                    </td>
+                                                                </tr>
+                                                            {% endwith %}
                                                         {% endwith %}
-                                                    {% endwith %}
+                                                    {% endfor %}
                                                 {% endfor %}
                                             </tbody>
                                         </table>

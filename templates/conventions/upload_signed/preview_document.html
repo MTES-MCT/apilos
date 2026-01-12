@@ -4,6 +4,10 @@
 
 {% load static %}
 
+{% block javascript_extras %}
+    <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
+{% endblock javascript_extras %}
+
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" %}
@@ -33,7 +37,7 @@
                 </li>
                 <li>
                     <a class="fr-btn" href="{% url 'conventions:date_upload_signed' convention_uuid=convention.uuid %}">
-                        Etape suivante
+                        Étape suivante
                     </a>
                 </li>
             </ul>

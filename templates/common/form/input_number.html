@@ -5,6 +5,9 @@
             <label class="fr-label" for="{{ form_input.id_for_label }}">
                 {{ form_input.label }}
                 {% include "common/form/required_field.html" with form_input=form_input %}
+                {% if hidden_label %}
+                    <span class="fr-sr-only"> {{ hidden_label }} </span>
+                {% endif %}
                 {% include "common/help_field.html" with form_input=form_input %}
             </label>
         {% endif %}

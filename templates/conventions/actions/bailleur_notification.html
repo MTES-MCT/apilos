@@ -1,11 +1,11 @@
 {% load custom_filters %}
 
 {% if convention|display_notification_new_convention_instructeur_to_bailleur:request %}
-    <div class="fr-col-6 fr-py-5w fr-px-3w">
+    <div class="fr-py-5w fr-px-3w">
         <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
-            <p class="fr-alert__title">Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture</p>
-            <p>Faites en part au bailleur, cette convention passera en statut « En attente de corrections » et
-                le bailleur pourra vous la renvoyer avec le statut « A instruire »</p>
+            <h4 class="fr-alert__title">Vous avez créé cette convention en lieu et place du bailleur et vous souhaitez sa relecture</h4>
+            <p>Faites-en part au bailleur, cette convention passera en statut « En attente de corrections » et
+                le bailleur pourra vous la renvoyer avec le statut « À instruire »</p>
             <div>
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
                     {% csrf_token %}
@@ -31,21 +31,20 @@
             </div>
         </div>
     </div>
-    <hr>
 {% endif %}
 
 {% if convention|display_notification_instructeur_to_bailleur:request %}
-    <div class="fr-col-6 fr-py-5w fr-px-3w">
+    <div class="fr-py-5w fr-px-3w">
         <div role="alert" class="fr-alert fr-alert--Corrections_requises fr-icon-arrow-right-s-line-double h-100">
             {% if convention.get_last_instructeur_notification %}
-                <p>Denière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
+                <p>Dernière notification du bailleur : {{ convention.get_last_instructeur_notification.cree_le }}</p>
             {% endif %}
             {% if convention|display_demande_correction %}
-                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                    Demandez des corrections ou précisions</p>
+                <h4 class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Demandez des corrections ou précisions</h4>
             {% else %}
-                <p class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
-                    Faites en part au bailleur</p>
+                <h4 class="fr-alert__title">Vous avez ajouté des commentaires à l'attention du bailleur<br>
+                    Faites-en part au bailleur</h4>
             {% endif %}
             <div>
                 <form method="post" action="{% url 'conventions:feedback' convention_uuid=convention.uuid %}" data-turbo="false">
@@ -81,5 +80,4 @@
             </div>
         </div>
     </div>
-    <hr>
 {% endif %}

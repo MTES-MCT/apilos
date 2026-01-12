@@ -5,13 +5,15 @@
         <div role="alert" class="fr-alert fr-alert--info fr-my-3w">
             <div class="block--row-strech" id="{{ object_field }}_div">
                 <div class="block--row-strech-1">
-                    <p class="fr-alert__title">
+                    <h4 class="fr-alert__title">
                         {{ opened_comments.count }} Commentaire{{ opened_comments|pluralize }} Ouvert{{ opened_comments|pluralize }} (Non-résolu{{ opened_comments|pluralize }})
-                    </p>
+                    </h4>
                 </div>
-                <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments">
-                    <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
-                </a>
+                <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments_main">
+                    <span class="fr-icon-refresh-line" aria-hidden="true"></span>
+                    Rafraîchir
+                    <span class="fr-sr-only"> la page</span>
+                </button>
             </div>
 
             <div class="fr-table table--limited-height fr-table--no-caption">
@@ -50,8 +52,24 @@
 
         </div>
     {% else %}
-        <a class="fr-link fr-mb-1w" href='{% url "conventions:recapitulatif" convention_uuid=convention.uuid %}' id="refresh_opened_comments" hidden>
-            <span class="fr-icon-refresh-line" aria-hidden="true">Rafraichir</span>
-        </a>
+        <button type="button" class="fr-link fr-mb-1w" id="refresh_opened_comments_empty">
+            <span class="fr-icon-refresh-line" aria-hidden="true"></span>
+            Rafraîchir
+            <span class="fr-sr-only"> la page</span>
+        </button>
     {% endif %}
+    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+        document.addEventListener('DOMContentLoaded', function() {
+        const btnMain = document.getElementById('refresh_opened_comments_main');
+        const btnEmpty = document.getElementById('refresh_opened_comments_empty');
+
+        [btnMain, btnEmpty].forEach(function(btn){
+            if (btn) {
+                btn.addEventListener('click', function() {
+                    globalThis.location.reload(true);
+                });
+            }
+        });
+    });
+    </script>
 {% endif %}

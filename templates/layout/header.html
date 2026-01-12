@@ -1,5 +1,5 @@
 {% load custom_filters static %}
-<header role="banner" class="fr-header">
+<header role="banner" id="header-navigation" class="fr-header">
     {% if ENVIRONMENT != 'production' %}
         <div role="alert" class="fr-alert fr-alert--info">
             <p>Attention, vous utilisez actuellement la plateforme <strong>{{ ENVIRONMENT|upper }}</strong></p>

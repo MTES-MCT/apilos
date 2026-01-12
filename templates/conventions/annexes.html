@@ -2,7 +2,13 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Annexes - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Étape 2 - Avenant - Annexes - APiLos
+    {% else %}
+        Étape 7 - Annexes - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

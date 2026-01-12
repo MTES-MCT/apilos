@@ -1,6 +1,12 @@
 {% extends "layout/base.html" %}
 
-{% block page_title %}EDD - APiLos{% endblock %}
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - EDD - APiLos
+    {% else %}
+        Étape 4 - EDD - APiLos
+    {% endif %}
+{% endblock page_title %}
 
 {% load custom_filters static %}
 
@@ -33,10 +39,13 @@
                             <p>Pour rappel, l'EDD peut être demandé quand une opération comporte plusieurs financements et donc plusieurs conventions.</p>
                             <a href="https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/8061055/EDD" class='fr-link' target="_blank" rel="noreferrer">Plus d'informations</a>
                         </div>
+
                         <h4 class="fr-mb-1w">EDD Simplifié</h4>
                         <p class="fr-text--xs notes fr-mb-1w">
                             <em>L'EDD simplifié doit comporter tous les logements du programme quels que soient leurs financements.</em>
                         </p>
+
+                        {% include "common/required_fields_info.html" %}
 
                         <div id='download_upload_block' {% if not editable %}hidden{% endif %}>
                             {% include "common/form/download_upload_form.html" with file_type='logements_edd' upform=upform what="logements pour l'EDD simplifié" file_field_label='edd' %}
@@ -126,7 +135,6 @@
                     </div>
                 </div>
 
-                {% include "common/required_fields_info.html" %}
                 {% include "conventions/common/form_footer_button.html" %}
             </form>
         </div>

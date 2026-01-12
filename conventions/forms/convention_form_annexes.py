@@ -12,6 +12,7 @@ from programmes.models import (
     TypologieAnnexe,
     TypologieLogementClassique,
 )
+from programmes.models.choices import Financement
 
 
 class LotAnnexeForm(forms.Form):
@@ -20,6 +21,9 @@ class LotAnnexeForm(forms.Form):
     """
 
     uuid = forms.UUIDField(required=False)
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
     annexe_caves = forms.BooleanField(
         required=False,
         label="Caves",
@@ -92,6 +96,9 @@ class AnnexeForm(forms.Form):
             "max_length": "La designation du logement ne doit pas excéder 255 caractères",
         },
     )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
+    )
     logement_typologie = forms.TypedChoiceField(
         required=True, label="", choices=TypologieLogementClassique.choices
     )
@@ -122,6 +129,26 @@ class AnnexeForm(forms.Form):
             "max_digits": "La loyer doit-être inférieur à 10000 €",
         },
     )
+
+    def clean_financement(self):
+        """
+        Validation du financement
+        """
+        financement = self.cleaned_data.get("financement", None)
+        financement_exist = False
+
+        if financement:
+            for choices in list(Financement.choices):
+                if financement in choices:
+                    financement_exist = True
+                    break
+
+        if not financement_exist:
+            raise ValidationError(
+                "Vérifiez si le financement est pris en charge par Apilos ou s'il s'agit d'une erreur de saisie."
+            )
+
+        return financement
 
     def clean_loyer(self):
         """
@@ -165,7 +192,7 @@ class BaseAnnexeFormSet(BaseFormSet):
             - le logement doit exister dans le lot
         """
         if self.convention:
-            lgts = self.convention.lot.logements.all()
+            lgts = Logement.objects.filter(lot__convention=self.convention)
             for form in self.forms:
                 try:
                     lgts.get(designation=form.cleaned_data.get("logement_designation"))
@@ -176,3 +203,5 @@ class BaseAnnexeFormSet(BaseFormSet):
 
 
 AnnexeFormSet = formset_factory(AnnexeForm, formset=BaseAnnexeFormSet, extra=0)
+
+LotAnnexeFormSet = formset_factory(LotAnnexeForm, extra=0)
