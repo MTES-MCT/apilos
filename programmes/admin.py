@@ -70,6 +70,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
         "zone_123",
         "zone_abc",
         "nature_logement",
+        "seconde_vie",
         "date_achevement",
         "surface_utile_totale",
         "type_operation",
@@ -85,6 +86,7 @@ class ProgrammeAdmin(ApilosModelAdmin):
     list_filter = (
         IsCloneFilter,
         "nature_logement",
+        "seconde_vie",
     )
     search_fields = (
         "nom",
