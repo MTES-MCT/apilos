@@ -1,5 +1,3 @@
-import logging
-
 from django.core.exceptions import ValidationError
 
 from conventions.forms import (
@@ -17,8 +15,6 @@ from conventions.services import upload_objects, utils
 from conventions.services.conventions import ConventionService
 from programmes.models import Logement, LogementCorrigee, LogementCorrigeeSansLoyer
 from programmes.models.models import LogementSansLoyer
-
-logger = logging.getLogger(__name__)
 
 
 class ConventionLogementsService(ConventionService):
@@ -427,9 +423,6 @@ class ConventionLogementsService(ConventionService):
                     )
                 )
             )
-            logger.error(
-                f"financement : {financement}, total_nb_logements = {total_nb_logements[financement]}"
-            )
 
         self.formset.nb_logements = {}
         for form in self.formset_convention_mixte:
@@ -438,12 +431,7 @@ class ConventionLogementsService(ConventionService):
                 self.formset.nb_logements[financement] = form.cleaned_data.get(
                     "nb_logements", 0
                 )
-                logger.error(
-                    f"self.formset.nb_logements : {self.formset.nb_logements[financement]}"
-                )
 
-        # self.formset.nb_logements = int(self.request.POST.get("nb_logements") or 0)
-        logger.error(f"self.formset.nb_logements {self.formset.nb_logements}")
         self.formset.total_nb_logements = total_nb_logements
         self.formset_sans_loyer.total_nb_logements = total_nb_logements
         self.formset_corrigee.total_nb_logements = total_nb_logements
