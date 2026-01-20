@@ -14,6 +14,15 @@
     <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde
         vie.</p>
 
+    <!-- Choice Alert -->
+    <div class="fr-alert fr-alert--info fr-my-4w">
+        <p><strong>Les logements concernés n'ont jamais été conventionnés ?</strong></p>
+        <p>Nous allons réaliser les conventions APL.</p>
+        <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary">
+            Créer une nouvelle convention
+        </a>
+    </div>
+
     <!-- Search Section -->
     <div class="fr-my-4w">
         <form id="convention-search-form" method="get" action="">
@@ -32,9 +41,6 @@
                 </div>
                 <div class="fr-col-12 fr-col-md-3">
                     <div class="fr-select-group">
-                        <label class="fr-label" for="status-filter">
-                            Filtrer par statut
-                        </label>
                         <select class="fr-select" id="status-filter" name="status">
                             <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
                             <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée
