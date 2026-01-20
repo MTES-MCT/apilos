@@ -186,6 +186,13 @@ class Convention(models.Model):
         blank=True,
         related_name="avenants",
     )
+    parents = models.ManyToManyField(
+        "self",
+        blank=True,
+        related_name="seconde_vie_children",
+        symmetrical=False,
+    )
+
     numero = models.CharField(max_length=255, null=True, blank=True)
     numero_pour_recherche = models.CharField(max_length=255, null=True, blank=True)
     programme = models.ForeignKey(
@@ -522,7 +529,7 @@ class Convention(models.Model):
 
     @property
     def has_avenant(self):
-        return self.avenants.exists()
+        return self.avenants.exists() or self.seconde_vie_children.exists()
 
     def get_email_bailleur_users(self):
         """
