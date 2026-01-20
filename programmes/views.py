@@ -3,6 +3,9 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -10,7 +13,9 @@ from django.views.decorators.http import require_safe
 from django.views.generic import TemplateView
 from waffle import switch_is_active
 
+from conventions.models import Convention, ConventionGroupingError, ConventionStatut
 from conventions.services.search import (
+    ConventionSearchService,
     OperationConventionSearchService,
     ProgrammeConventionSearchService,
 )
@@ -64,15 +69,16 @@ def operation_conventions(request, numero_operation):
         )
 
     # Seconde vie : on ne crée pas les conventions automatiquement
-    if operation_service.is_seconde_vie() and not operation_service.has_conventions():
-        return render(
-            request,
-            "operations/seconde_vie/choice.html",
-            {
-                "programme": programme,
-                "is_seconde_vie": operation_service.is_seconde_vie(),
-            },
-        )
+    if operation_service.is_seconde_vie():
+
+        all_conventions = Convention.objects.filter(
+            programme__numero_operation=numero_operation
+        ).exclude(statut="11. Annulée")
+
+        if not all_conventions.exists():
+            return HttpResponseRedirect(
+                reverse("programmes:seconde_vie_existing", args=[numero_operation])
+            )
 
     # collect des conventions par financement
     conventions_by_financements = (
@@ -97,6 +103,7 @@ def operation_conventions(request, numero_operation):
     context["switch_convention_mixte_on"] = switch_is_active(
         settings.SWITCH_CONVENTION_MIXTE_ON
     )
+    context["is_seconde_vie"] = operation_service.is_seconde_vie()
     return render(
         request,
         "operations/conventions.html",
@@ -110,34 +117,112 @@ class SecondeVieBaseView(TemplateView):
         service = OperationService(
             request=self.request, numero_operation=kwargs["numero_operation"]
         )
-        context["programme"] = service.get_or_create_programme()
-        context["is_seconde_vie"] = service.is_seconde_vie()
+
+        is_readonly = (
+            "readonly" in self.request.session and self.request.session["readonly"]
+        )
+
+        # For readonly users without SIAP access, try to get existing programme
+        if is_readonly and service.operation is None:
+            try:
+                context["programme"] = Programme.objects.filter(
+                    numero_operation=kwargs["numero_operation"]
+                ).first()
+                context["is_seconde_vie"] = (
+                    context["programme"].seconde_vie if context["programme"] else False
+                )
+            except Programme.DoesNotExist:
+                context["programme"] = None
+                context["is_seconde_vie"] = False
+        else:
+            context["programme"] = service.get_or_create_programme()
+            context["is_seconde_vie"] = service.is_seconde_vie()
+
         return context
 
 
 class SecondeVieExistingView(SecondeVieBaseView):
     template_name = "operations/seconde_vie/existing.html"
 
+    def get(self, request, *args, **kwargs):
+
+        operation_service = OperationService(
+            request=request, numero_operation=kwargs["numero_operation"]
+        )
+
+        is_readonly = "readonly" in request.session and request.session["readonly"]
+
+        # CHECK HABILITAION FOR USER
+        if operation_service.operation is None:
+            # For readonly users, allow access if programme exists in database
+            if is_readonly:
+                existing_programmes = Programme.objects.filter(
+                    numero_operation=kwargs["numero_operation"]
+                )
+                if not existing_programmes.exists():
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        f"L'opération {kwargs['numero_operation']} n'existe pas dans APiLos",
+                    )
+                    return HttpResponseRedirect(
+                        reverse("conventions:search")
+                        + f"?search_numero={kwargs['numero_operation']}"
+                    )
+            else:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f"L'opération {kwargs['numero_operation']} n'existe pas dans le SIAP",
+                )
+                return HttpResponseRedirect(
+                    reverse("conventions:search")
+                    + f"?search_numero={kwargs['numero_operation']}"
+                )
+
+        # If conventions already exist, redirect to operation conventions page
+        if not is_readonly and operation_service.has_conventions():
+            return HttpResponseRedirect(
+                reverse(
+                    "programmes:operation_conventions",
+                    args=[kwargs["numero_operation"]],
+                )
+            )
+
+        context = self.get_context_data(**kwargs)
+        if request.headers.get("x-requested-with") == "XMLHttpRequest":
+            return render(
+                request, "operations/seconde_vie/_search_results.html", context
+            )
+        return render(request, self.template_name, context)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         query = self.request.GET.get("q")
         status_filter = self.request.GET.get("status")
 
+        # Get pre-selected parent UUIDs from query parameters (for edit mode)
+        pre_selected_uuids = self.request.GET.getlist("parent_uuid")
+        pre_selected_conventions = []
+        if pre_selected_uuids:
+            pre_selected_conventions = list(
+                Convention.objects.filter(uuid__in=pre_selected_uuids)
+            )
+
+            # Find the existing Seconde Vie convention for this programme
+            existing_seconde_vie = Convention.objects.filter(
+                programme=context["programme"], parents__isnull=False
+            ).first()
+            context["existing_seconde_vie_convention"] = existing_seconde_vie
+
+        context["pre_selected_conventions"] = pre_selected_conventions
+
         if query:
-            # Search for conventions across all programmes
-            from django.core.paginator import Paginator
-            from django.db.models import Q
-
-            from conventions.models import Convention, ConventionStatut
-            from conventions.services.search import ConventionSearchService
-
             filters = {}
             service = ConventionSearchService(self.request.user, filters)
 
-            # Exclude conventions of the current programme
             queryset = service.get_queryset().exclude(programme=context["programme"])
 
-            # Filter by allowed statuses for Seconde Vie
             allowed_statuses = [
                 ConventionStatut.SIGNEE.label,
                 ConventionStatut.PUBLICATION_EN_COURS.label,
@@ -168,105 +253,89 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 .distinct()
             )
 
-            # Pagination
             page_number = self.request.GET.get("page", 1)
             paginator = Paginator(conventions_queryset, 10)
             page_obj = paginator.get_page(page_number)
 
             context["conventions"] = page_obj
             context["query"] = query
-
         context["status_filter"] = status_filter
+
+        context["is_readonly"] = (
+            "readonly" in self.request.session and self.request.session["readonly"]
+        )
 
         return context
 
-    def _clone_lot_with_children(self, lot, new_convention):
-        """Clone a lot and its children (Logements, RepartitionSurface) to a new convention."""
-        from programmes.models.models import RepartitionSurface
+    def _create_and_link_conventions(
+        self, selected_conventions, target_programme, operation_service
+    ):
+        """Create conventions for each financement and link them to parents."""
 
-        new_lot = lot.clone(new_convention)
+        new_convention_uuids = []
 
-        # Clone children (Logements)
-        for logement in lot.logements.all():
-            logement.clone(new_lot)
-
-        # Clone RepartitionSurface
-        for surface in lot.surfaces.all():
-            RepartitionSurface.objects.create(
-                lot=new_lot,
-                typologie=surface.typologie,
-                type_habitat=surface.type_habitat,
-                quantite=surface.quantite,
-            )
-        return new_lot
-
-    def _merge_lot_into_existing(self, lot, existing_lot):
-        """Merge a lot's data into an existing lot with the same financement."""
-        from programmes.models.models import RepartitionSurface
-
-        # Sum numeric fields
-        existing_lot.nb_logements = (existing_lot.nb_logements or 0) + (
-            lot.nb_logements or 0
+        conventions_by_financements = (
+            operation_service.collect_conventions_by_financements()
         )
-        existing_lot.surface_habitable_totale = (
-            existing_lot.surface_habitable_totale or 0
-        ) + (lot.surface_habitable_totale or 0)
-        existing_lot.surface_locaux_collectifs_residentiels = (
-            existing_lot.surface_locaux_collectifs_residentiels or 0
-        ) + (lot.surface_locaux_collectifs_residentiels or 0)
-        existing_lot.lgts_mixite_sociale_negocies = (
-            existing_lot.lgts_mixite_sociale_negocies or 0
-        ) + (lot.lgts_mixite_sociale_negocies or 0)
-        existing_lot.save()
 
-        # Clone Logements and attach to existing lot
-        for logement in lot.logements.all():
-            logement.clone(existing_lot)
-
-        # Merge RepartitionSurface
-        for surface in lot.surfaces.all():
-            existing_surface = existing_lot.surfaces.filter(
-                typologie=surface.typologie,
-                type_habitat=surface.type_habitat,
-            ).first()
-
-            if existing_surface:
-                existing_surface.quantite += surface.quantite
-                existing_surface.save()
-            else:
-                RepartitionSurface.objects.create(
-                    lot=existing_lot,
-                    typologie=surface.typologie,
-                    type_habitat=surface.type_habitat,
-                    quantite=surface.quantite,
+        # Create conventions for each financement
+        for financement, conventions in conventions_by_financements.items():
+            if len(conventions) == 0:
+                operation_service.create_convention_by_financement(
+                    target_programme, financement
                 )
 
-    def _merge_lots_from_conventions(self, selected_conventions, new_convention):
-        """Merge lots from parent conventions into the new convention."""
-        merged_lots_by_financement = {}
+        # Refresh and find newly created conventions
+        updated_conventions_by_financements = (
+            operation_service.collect_conventions_by_financements()
+        )
 
-        for parent in selected_conventions:
-            for lot in parent.lots.all():
-                if lot.financement not in merged_lots_by_financement:
-                    new_lot = self._clone_lot_with_children(lot, new_convention)
-                    merged_lots_by_financement[lot.financement] = new_lot
-                else:
-                    existing_lot = merged_lots_by_financement[lot.financement]
-                    self._merge_lot_into_existing(lot, existing_lot)
+        for financement, conventions in updated_conventions_by_financements.items():
+            original_count = len(conventions_by_financements.get(financement, []))
+            if len(conventions) > original_count:
+                for convention in conventions:
+                    if convention not in conventions_by_financements.get(
+                        financement, []
+                    ):
+                        new_convention_uuids.append(str(convention.uuid))
+                        convention.parents.set(selected_conventions)
+                        convention.save()
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context_data(**kwargs)
-        if request.headers.get("x-requested-with") == "XMLHttpRequest":
-            return render(
-                request, "operations/seconde_vie/_search_results.html", context
-            )
-        return render(request, self.template_name, context)
+        return new_convention_uuids
+
+    def _group_or_get_final_convention(self, new_convention_uuids):
+        """Group conventions as mixte if multiple, otherwise get single."""
+
+        final_convention = None
+
+        if len(new_convention_uuids) > 1:
+            try:
+                _, _, final_convention = Convention.objects.group_conventions(
+                    new_convention_uuids
+                )
+            except ConventionGroupingError:
+                # If grouping fails, use first convention
+                final_convention = Convention.objects.get(uuid=new_convention_uuids[0])
+        elif len(new_convention_uuids) == 1:
+            final_convention = Convention.objects.get(uuid=new_convention_uuids[0])
+
+        return final_convention
 
     def post(self, request, *args, **kwargs):
-        from django.db import transaction
-        from django.forms import model_to_dict
-
-        from conventions.models import Convention, ConventionStatut
+        # Check if user has readonly access
+        if "readonly" in request.session and request.session["readonly"]:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Vous n'avez pas les droits pour effectuer cette action.",
+            )
+            return HttpResponseRedirect(
+                reverse(
+                    request.resolver_match.view_name,
+                    args=request.resolver_match.args,
+                    kwargs=request.resolver_match.kwargs,
+                )
+            )
 
         context = self.get_context_data(**kwargs)
         action = request.POST.get("action")
@@ -287,54 +356,34 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 if not selected_conventions:
                     return render(request, self.template_name, context)
 
-                # Use the first one as template
-                template_convention = selected_conventions[0]
-
-                # Create new convention from template
-                convention_fields = model_to_dict(
-                    template_convention,
-                    exclude=[
-                        "id",
-                        "uuid",
-                        "programme",
-                        "pk",
-                        "avenant_types",
-                        "commentaires",
-                        "statut",
-                        "cree_le",
-                        "mis_a_jour_le",
-                        "numero",
-                        "parent",
-                        "parents",
-                        "cree_par",
-                        "valide_le",
-                        "televersement_convention_signee_le",
-                        "donnees_validees",
-                        "nom_fichier_signe",
-                        "soumis_le",
-                        "premiere_soumission_le",
-                    ],
+                operation_service = OperationService(
+                    request=request, numero_operation=kwargs["numero_operation"]
                 )
-                convention_fields["programme"] = target_programme
-                convention_fields["cree_par"] = request.user
-                convention_fields["statut"] = ConventionStatut.PROJET.label
 
-                new_convention = Convention.objects.create(**convention_fields)
+                # Check if a Seconde Vie convention already exists for this programme
+                existing_seconde_vie_conventions = Convention.objects.filter(
+                    programme=target_programme, parents__isnull=False
+                ).distinct()
 
-                # Link to all parent conventions
-                new_convention.parents.set(selected_conventions)
-                new_convention.save()
+                if existing_seconde_vie_conventions.exists():
+                    for convention in existing_seconde_vie_conventions:
+                        convention.parents.set(selected_conventions)
+                    final_convention = existing_seconde_vie_conventions.first()
+                else:
+                    new_convention_uuids = self._create_and_link_conventions(
+                        selected_conventions, target_programme, operation_service
+                    )
 
-                # Merge lots from parent conventions
-                self._merge_lots_from_conventions(selected_conventions, new_convention)
+                    final_convention = self._group_or_get_final_convention(
+                        new_convention_uuids
+                    )
 
-            # Clear logical session if we were using it (optional now)
-            if "seconde_vie_selection" in request.session:
-                del request.session["seconde_vie_selection"]
+            if final_convention:
+                return HttpResponseRedirect(
+                    reverse("conventions:bailleur", args=[final_convention.uuid])
+                )
 
-            return HttpResponseRedirect(
-                reverse("conventions:bailleur", args=[new_convention.uuid])
-            )
+            return render(request, self.template_name, context)
 
         return render(request, self.template_name, context)
 
@@ -344,6 +393,14 @@ class SecondeVieExistingView(SecondeVieBaseView):
 def seconde_vie_new(request, numero_operation):
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
+
+    if "readonly" in request.session and request.session["readonly"]:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Vous n'avez pas les droits pour créer de nouvelles conventions.",
+        )
+        return HttpResponseRedirect(reverse("conventions:search"))
 
     operation_service = OperationService(
         request=request, numero_operation=numero_operation
@@ -355,6 +412,31 @@ def seconde_vie_new(request, numero_operation):
     except DuplicatedOperationSIAPException as exc:
         return HttpResponseRedirect(
             f"{reverse('conventions:search')}?search_numero={exc.numero_operation}"
+        )
+
+    new_conventions = Convention.objects.filter(
+        programme=programme,
+        parent__isnull=True,
+        statut="1. Projet",
+    ).order_by("-cree_le")
+
+    # Group multiple conventions as mixte convention if needed
+    if new_conventions.count() > 1:
+        new_convention_uuids = [str(conv.uuid) for conv in new_conventions]
+        try:
+            programme, lots, final_convention = Convention.objects.group_conventions(
+                new_convention_uuids
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:bailleur", args=[final_convention.uuid])
+            )
+        except ConventionGroupingError:
+            return HttpResponseRedirect(
+                reverse("conventions:bailleur", args=[new_conventions.first().uuid])
+            )
+    elif new_conventions.count() == 1:
+        return HttpResponseRedirect(
+            reverse("conventions:bailleur", args=[new_conventions.first().uuid])
         )
 
     service = ProgrammeConventionSearchService(programme)

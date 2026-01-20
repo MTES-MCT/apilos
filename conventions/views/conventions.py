@@ -182,6 +182,7 @@ class ConventionSearchMixin:
             ("anru", "anru"),
             ("anah", "anah"),
             ("avenant_seulement", "avenant_seulement"),
+            ("seconde_vie", "seconde_vie"),
             ("bailleur", "bailleur"),
             ("date_signature", "date_signature"),
             ("financement", "financement"),

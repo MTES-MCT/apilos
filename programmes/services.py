@@ -97,6 +97,12 @@ class OperationService:
         if self.siap_error:
             raise self.siap_exception_detail
         self.programme = get_or_create_programme_from_siap_operation(self.operation)
+
+        # Mark programme as seconde_vie if it's a seconde_vie operation
+        if self.is_seconde_vie() and not self.programme.seconde_vie:
+            self.programme.seconde_vie = True
+            self.programme.save(update_fields=["seconde_vie"])
+
         return self.programme
 
     def collect_conventions_by_financements(self):
