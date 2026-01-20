@@ -1,0 +1,83 @@
+{% load custom_filters %}
+
+{% if conventions %}
+<form id="search-results-form">
+    <div class="fr-table fr-table--no-caption">
+        <table>
+            <caption>Conventions trouvées</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Numéro</th>
+                    <th scope="col">Programme</th>
+                    <th scope="col">Ville</th>
+                    <th scope="col">Statut</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for convention in conventions %}
+                <tr>
+                    <td>{{ convention.numero }}</td>
+                    <td>{{ convention.programme.nom }}</td>
+                    <td>{{ convention.programme.ville }}</td>
+                    <td>
+                        <span class="fr-badge fr-badge--success">{{ convention.statut_neutre }}</span>
+                    </td>
+                    <td>
+                        <button type="button" class="fr-btn fr-btn--sm js-add-convention"
+                            data-uuid="{{ convention.uuid }}" data-numero="{{ convention.numero }}"
+                            data-programme="{{ convention.programme.nom }}"
+                            data-ville="{{ convention.programme.ville }}" data-statut="{{ convention.statut_neutre }}">
+                            Sélectionner
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination (Simplified for AJAX - relying on main page to handle full reload if needed, or implement JS pagination later. For now, we assume search narrows down enough or we replicate pagination links to trigger AJAX) -->
+    {% if conventions.has_other_pages %}
+    <nav role="navigation" class="fr-pagination" aria-label="Pagination">
+        <ul class="fr-pagination__list">
+            {% if conventions.has_previous %}
+            <li>
+                <a class="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label js-pagination-link"
+                    href="?q={{ query }}{% if status_filter %}&status={{ status_filter }}{% endif %}&page={{ conventions.previous_page_number }}">
+                    Page précédente
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in conventions.paginator.page_range %}
+            {% if conventions.number == num %}
+            <li>
+                <a class="fr-pagination__link" aria-current="page" title="Page {{ num }}">{{ num }}</a>
+            </li>
+            {% elif num > conventions.number|add:"-3" and num < conventions.number|add:"3" %} <li>
+                <a class="fr-pagination__link js-pagination-link"
+                    href="?q={{ query }}{% if status_filter %}&status={{ status_filter }}{% endif %}&page={{ num }}"
+                    title="Page {{ num }}">{{ num }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if conventions.has_next %}
+                <li>
+                    <a class="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label js-pagination-link"
+                        href="?q={{ query }}{% if status_filter %}&status={{ status_filter }}{% endif %}&page={{ conventions.next_page_number }}">
+                        Page suivante
+                    </a>
+                </li>
+                {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</form>
+{% else %}
+<div class="fr-alert fr-alert--info">
+    <p>Aucune convention trouvée pour votre recherche "{{ query }}".</p>
+    <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
+</div>
+{% endif %}
