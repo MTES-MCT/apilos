@@ -121,7 +121,7 @@
                                                             >> Debug scoring >>>>>>>>>>>>>>
                                                         </th>
                                                     {% endif %}
-                                                    {% if switch_convention_mixte_on %}
+                                                    {% if switch_convention_mixte_on and not is_seconde_vie %}
                                                     <th title="convention mixte" scope="col">
                                                         Grouper
                                                     </th>
@@ -197,7 +197,7 @@
                                                                 </div>
                                                             </td>
                                                         {% endif %}
-                                                        {% if switch_convention_mixte_on %}
+                                                        {% if switch_convention_mixte_on and not is_seconde_vie and convention.parents.all|length == 0 %}
                                                             {% if not convention.has_avenant %}
                                                                 {% if not convention.is_avenant and convention|display_redirect_project %}
                                                                     <td style="text-align: center; vertical-align: middle;">
@@ -287,7 +287,7 @@
                                 </div>
                             </div>
                         </div>
-                        {% if switch_convention_mixte_on %}
+                        {% if switch_convention_mixte_on and not is_seconde_vie %}
                             <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                                 <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
                                         id="dispatch_mixte_button" name="action" value="dispatch"

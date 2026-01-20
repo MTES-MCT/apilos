@@ -21,13 +21,20 @@
                     <td>{{ convention.programme.nom }}</td>
                     <td>{{ convention.programme.ville }}</td>
                     <td>
-                        <span class="fr-badge fr-badge--success">{{ convention.statut_neutre }}</span>
+                        <div class="apilos-badge">
+                            <div class="fr-badge apilos-badge-{{ convention.statut_for_template.key_statut }} fr-icon-{{ convention.statut_icone }}-fill fr-badge--icon-{{ convention.statut_icone }} fr-text--xs">
+                                {{ convention.short_statut_neutre }}
+                            </div>
+                        </div>
                     </td>
                     <td>
                         <button type="button" class="fr-btn fr-btn--sm js-add-convention"
                             data-uuid="{{ convention.uuid }}" data-numero="{{ convention.numero }}"
                             data-programme="{{ convention.programme.nom }}"
-                            data-ville="{{ convention.programme.ville }}" data-statut="{{ convention.statut_neutre }}">
+                            data-ville="{{ convention.programme.ville }}"
+                            data-statut-text="{{ convention.short_statut_neutre }}"
+                            data-statut-key="{{ convention.statut_for_template.key_statut }}"
+                            data-statut-icone="{{ convention.statut_icone }}"{% if is_readonly %} disabled{% endif %}>
                             Sélectionner
                         </button>
                     </td>
@@ -37,7 +44,6 @@
         </table>
     </div>
 
-    <!-- Pagination (Simplified for AJAX - relying on main page to handle full reload if needed, or implement JS pagination later. For now, we assume search narrows down enough or we replicate pagination links to trigger AJAX) -->
     {% if conventions.has_other_pages %}
     <nav role="navigation" class="fr-pagination" aria-label="Pagination">
         <ul class="fr-pagination__list">

@@ -779,6 +779,7 @@ class Convention(models.Model):
                 "nom_fichier_signe",
                 "numero",
                 "parent",
+                "parents",
                 "premiere_soumission_le",
                 "programme",
                 "soumis_le",
