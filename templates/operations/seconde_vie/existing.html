@@ -2,16 +2,268 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Seconde Vie - APiLos{% endblock %}
+{% block page_title %}Seconde Vie - Conventions existantes - APiLos{% endblock %}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
-        {% include "operations/common/form_header.html" %}
+<div class="fr-container-fluid ds_banner">
+    {% include "operations/common/form_header.html" %}
+</div>
+
+<div class="fr-container fr-my-5w">
+    <h2>Seconde Vie - Conventions existantes</h2>
+    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde
+        vie.</p>
+
+    <!-- Search Section -->
+    <div class="fr-my-4w">
+        <form id="convention-search-form" method="get" action="">
+            <div class="fr-grid-row fr-grid-row--gutters">
+                <div class="fr-col-12 fr-col-md-9">
+                    <div class="fr-search-bar" id="convention-search" role="search">
+                        <label class="fr-label" for="search_input">
+                            Rechercher une convention
+                        </label>
+                        <input class="fr-input" placeholder="Numéro de convention, nom du programme ou ville"
+                            type="search" id="search_input" name="q" value="{{ query|default:'' }}">
+                        <button class="fr-btn" type="submit" title="Rechercher">
+                            Rechercher
+                        </button>
+                    </div>
+                </div>
+                <div class="fr-col-12 fr-col-md-3">
+                    <div class="fr-select-group">
+                        <label class="fr-label" for="status-filter">
+                            Filtrer par statut
+                        </label>
+                        <select class="fr-select" id="status-filter" name="status">
+                            <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
+                            <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée
+                            </option>
+                            <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>Publication en cours</option>
+                            <option value="7. Publié" {% if status_filter|statut_is_in_publication %}selected{% endif %}>
+                                Publié</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 
-    <div class="fr-container fr-my-5w">
-        <h2>Seconde Vie - Conventions existantes</h2>
-        <p>Cette fonctionnalité n'est pas encore disponible.</p>
-        <p>Revenez plus tard pour réaliser l'avenant seconde vie.</p>
+    <!-- Search Results Container -->
+    <div id="search-results-container" class="fr-my-4w">
+        <!-- Results will be injected here via AJAX -->
+        {% if query and conventions %}
+        {% include "operations/seconde_vie/_search_results.html" %}
+        {% elif query %}
+        <div class="fr-alert fr-alert--info">
+            <p>Aucune convention trouvée pour votre recherche "{{ query }}".</p>
+            <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
+        </div>
+        {% else %}
+        <div class="fr-alert fr-alert--info">
+            <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
+        </div>
+        {% endif %}
     </div>
+
+
+    <!-- Selected Conventions Section -->
+    <div id="selected-conventions-container" class="fr-my-6w" style="display: none;">
+        <hr>
+        <h3>Conventions sélectionnées (<span id="selected-count">0</span>)</h3>
+        <p>Ces conventions seront utilisées comme conventions parentes pour créer l'avenant seconde vie.</p>
+
+        <div class="fr-table fr-table--no-caption fr-my-3w">
+            <table>
+                <caption>Conventions sélectionnées</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Numéro</th>
+                        <th scope="col">Programme</th>
+                        <th scope="col">Ville</th>
+                        <th scope="col">Statut</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="selected-conventions-body">
+                    <!-- Selected rows will be injected here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Validate Form -->
+        <form method="post" action="{% url 'programmes:seconde_vie_existing' programme.numero_operation %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="validate">
+            <!-- This input will hold the comma-separated list of selected UUIDs -->
+            <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
+
+            <div class="fr-alert fr-alert--warning fr-my-3w">
+                <p><strong>Attention :</strong> En validant, vous allez créer une nouvelle convention seconde vie basée
+                    sur les conventions sélectionnées.</p>
+            </div>
+            <button type="submit" class="fr-btn">
+                Valider et créer la convention seconde vie
+            </button>
+        </form>
+    </div>
+</div>
+
+<script nonce="{{ request.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchForm = document.getElementById('convention-search-form');
+        const statusFilter = document.getElementById('status-filter');
+
+        // Handle Change on select to submit form
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function () {
+                searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            });
+        }
+
+        const resultsContainer = document.getElementById('search-results-container');
+        const selectedContainer = document.getElementById('selected-conventions-container');
+        const selectedBody = document.getElementById('selected-conventions-body');
+        const selectedInput = document.getElementById('selected-conventions-input');
+        const selectedCount = document.getElementById('selected-count');
+
+        // State to hold selected conventions objects
+        // Initialize from template context if needed, but for now we start empty or re-populate if provided
+        let selectedConventions = [];
+
+        // Function to update the UI based on selectedConventions state
+        function updateSelectedUI() {
+            // Update Hidden Input
+            const uuids = selectedConventions.map(c => c.uuid);
+            selectedInput.value = uuids.join(',');
+
+            // Update Count
+            selectedCount.textContent = selectedConventions.length;
+
+            // Show/Hide Container
+            if (selectedConventions.length > 0) {
+                selectedContainer.style.display = 'block';
+            } else {
+                selectedContainer.style.display = 'none';
+            }
+
+            // Render Rows
+            selectedBody.innerHTML = '';
+            selectedConventions.forEach(conv => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${conv.numero}</td>
+                    <td>${conv.programme}</td>
+                    <td>${conv.ville}</td>
+                    <td><span class="fr-badge fr-badge--success">${conv.statut}</span></td>
+                    <td>
+                        <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm js-remove-convention" data-uuid="${conv.uuid}">
+                            Retirer
+                        </button>
+                    </td>
+                `;
+                selectedBody.appendChild(tr);
+            });
+
+            // Re-attach Remove listeners
+            document.querySelectorAll('.js-remove-convention').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const uuid = this.dataset.uuid;
+                    removeConvention(uuid);
+                });
+            });
+
+            // Disable "Select" buttons for already selected items in search results
+            document.querySelectorAll('.js-add-convention').forEach(btn => {
+                if (uuids.includes(btn.dataset.uuid)) {
+                    btn.disabled = true;
+                    btn.textContent = 'Sélectionnée';
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Sélectionner';
+                }
+            });
+        }
+
+        function addConvention(convention) {
+            if (!selectedConventions.find(c => c.uuid === convention.uuid)) {
+                selectedConventions.push(convention);
+                updateSelectedUI();
+            }
+        }
+
+        function removeConvention(uuid) {
+            selectedConventions = selectedConventions.filter(c => c.uuid !== uuid);
+            updateSelectedUI();
+        }
+
+        // Handle Search Submit via AJAX
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData);
+
+            // Add AJAX header
+            // Add AJAX header
+            const url = window.location.pathname;
+            fetch(`${url}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    resultsContainer.innerHTML = html;
+                    attachResultListeners();
+                    updateSelectedUI(); // Refresh state of buttons in new results
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        // Function to submit search form when pagination links are clicked
+        function handlePagination(e) {
+            e.preventDefault();
+            const url = e.target.href;
+            if (url) {
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        resultsContainer.innerHTML = html;
+                        attachResultListeners();
+                        updateSelectedUI();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+
+        function attachResultListeners() {
+            // Pagination Links
+            document.querySelectorAll('.js-pagination-link').forEach(link => {
+                link.addEventListener('click', handlePagination);
+            });
+
+            // Add Buttons
+            document.querySelectorAll('.js-add-convention').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const convention = {
+                        uuid: this.dataset.uuid,
+                        numero: this.dataset.numero,
+                        programme: this.dataset.programme,
+                        ville: this.dataset.ville,
+                        statut: this.dataset.statut
+                    };
+                    addConvention(convention);
+                });
+            });
+        }
+
+        // Attach listeners on initial load (if any results)
+        attachResultListeners();
+    });
+</script>
 {% endblock content %}
