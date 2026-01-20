@@ -101,6 +101,7 @@ def operation_conventions(request, numero_operation):
     context["switch_convention_mixte_on"] = switch_is_active(
         settings.SWITCH_CONVENTION_MIXTE_ON
     )
+    context["is_seconde_vie"] = operation_service.is_seconde_vie()
     return render(
         request,
         "operations/conventions.html",
