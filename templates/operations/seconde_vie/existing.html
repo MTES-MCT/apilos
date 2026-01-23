@@ -10,108 +10,137 @@
 </div>
 
 <div class="fr-container fr-my-5w">
-    <h2>Seconde Vie - Conventions existantes</h2>
-    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde
-        vie.</p>
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12">
+            <!-- Header Section -->
+            <div class="fr-mb-4w">
+                {% if existing_seconde_vie_convention %}
+                    <div class="fr-grid-row fr-grid-row--space-between fr-grid-row--middle">
+                        <div class="fr-col">
+                            <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
+                            <p class="fr-text--lead fr-mb-0">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                        </div>
+                        <div class="fr-col fr-col--right">
+                            <a href="{% url 'conventions:recapitulatif' convention_uuid=existing_seconde_vie_convention.uuid %}"
+                               class="fr-link">
+                                <span class="fr-icon-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>
+                                Retour au récapitulatif
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
+                    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                {% endif %}
+            </div>
 
-    <!-- Choice Alert -->
-    <div class="fr-alert fr-alert--info fr-my-4w">
-        <p><strong>Les logements concernés n'ont jamais été conventionnés ?</strong></p>
-        <p>Nous allons réaliser les conventions APL.</p>
-        <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary">
-            Créer une nouvelle convention
-        </a>
-    </div>
+            <!-- Choice Alert (only when creating, not editing) -->
+            {% if not pre_selected_conventions %}
+                <div class="fr-alert fr-alert--info fr-my-4w">
+                    <h3 class="fr-alert__title">Les logements concernés n'ont jamais été conventionnés ?</h3>
+                    <p>Nous allons réaliser les conventions APL pour ces logements.</p>
+                    <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary">
+                        <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
+                        Créer une nouvelle convention
+                    </a>
+                </div>
+            {% endif %}
 
-    <!-- Search Section -->
-    <div class="fr-my-4w">
-        <form id="convention-search-form" method="get" action="">
-            <div class="fr-grid-row fr-grid-row--gutters">
-                <div class="fr-col-12 fr-col-md-9">
-                    <div class="fr-search-bar" id="convention-search" role="search">
-                        <label class="fr-label" for="search_input">
-                            Rechercher une convention
-                        </label>
-                        <input class="fr-input" placeholder="Numéro de convention, nom du programme ou ville"
-                            type="search" id="search_input" name="q" value="{{ query|default:'' }}">
-                        <button class="fr-btn" type="submit" title="Rechercher">
-                            Rechercher
+            <!-- Search Section -->
+            <div class="fr-my-4w">
+                <h2 class="fr-h3">Rechercher des conventions</h2>
+                <form id="convention-search-form" method="get" action="">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <label class="fr-label" for="search_input">Numéro, programme ou ville</label>
+                            <input class="fr-input" placeholder="" type="search" id="search_input" name="q" value="{{ query|default:'' }}">
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-3">
+                            <label class="fr-label" for="status-filter">Statut</label>
+                            <select class="fr-select" id="status-filter" name="status">
+                                <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
+                                <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée</option>
+                                <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>Publication en cours</option>
+                                <option value="7. Publié" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
+                            </select>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-3">
+                            <button class="fr-btn fr-btn--icon-left fr-mt-4w" type="submit" title="Rechercher">
+                                <span class="fr-icon-search-line" aria-hidden="true"></span>
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Search Results Container -->
+            <div id="search-results-container" class="fr-my-4w">
+                <!-- Results will be injected here via AJAX -->
+                {% if query and conventions %}
+                    {% include "operations/seconde_vie/_search_results.html" %}
+                {% elif query %}
+                    <div class="fr-alert fr-alert--warning">
+                        <p><strong>Aucune convention trouvée</strong></p>
+                        <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
+                    </div>
+                {% else %}
+                    <div class="fr-alert fr-alert--info">
+                        <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Selected Conventions Section -->
+            <div id="selected-conventions-container" class="fr-my-6w" style="display: none;">
+                <div class="fr-alert fr-alert--success fr-mb-3w">
+                    <p class="fr-mb-0"><strong>Conventions sélectionnées : <span id="selected-count">0</span></strong></p>
+                </div>
+
+                <div class="fr-table fr-table--no-caption fr-my-3w">
+                    <table>
+                        <caption>Conventions sélectionnées</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Numéro</th>
+                                <th scope="col">Programme</th>
+                                <th scope="col">Ville</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="selected-conventions-body">
+                            <!-- Selected rows will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Validate Form -->
+                <form method="post" action="{% url 'programmes:seconde_vie_existing' programme.numero_operation %}" class="fr-my-3w">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="validate">
+                    <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
+
+                    {% if pre_selected_conventions %}
+                        <div class="fr-alert fr-alert--info fr-mb-3w">
+                            <p><strong>Vous modifiez</strong> la sélection des conventions parentes de cette convention seconde vie.</p>
+                        </div>
+                        <button type="submit" class="fr-btn fr-btn--lg">
+                            <span class="fr-icon-check-line fr-mr-1w" aria-hidden="true"></span>
+                            Mettre à jour la sélection
                         </button>
-                    </div>
-                </div>
-                <div class="fr-col-12 fr-col-md-3">
-                    <div class="fr-select-group">
-                        <select class="fr-select" id="status-filter" name="status">
-                            <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
-                            <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée
-                            </option>
-                            <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>Publication en cours</option>
-                            <option value="7. Publié" {% if status_filter|statut_is_in_publication %}selected{% endif %}>
-                                Publié</option>
-                        </select>
-                    </div>
-                </div>
+                    {% else %}
+                        <div class="fr-alert fr-alert--info fr-mb-3w">
+                            <p><strong>Attention :</strong> Vous allez créer une nouvelle convention seconde vie basée sur les conventions sélectionnées.</p>
+                        </div>
+                        <button type="submit" class="fr-btn fr-btn--lg">
+                            <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
+                            Créer la convention seconde vie
+                        </button>
+                    {% endif %}
+                </form>
             </div>
-        </form>
-    </div>
-
-    <!-- Search Results Container -->
-    <div id="search-results-container" class="fr-my-4w">
-        <!-- Results will be injected here via AJAX -->
-        {% if query and conventions %}
-        {% include "operations/seconde_vie/_search_results.html" %}
-        {% elif query %}
-        <div class="fr-alert fr-alert--info">
-            <p>Aucune convention trouvée pour votre recherche "{{ query }}".</p>
-            <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
         </div>
-        {% else %}
-        <div class="fr-alert fr-alert--info">
-            <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
-        </div>
-        {% endif %}
-    </div>
-
-
-    <!-- Selected Conventions Section -->
-    <div id="selected-conventions-container" class="fr-my-6w" style="display: none;">
-        <hr>
-        <h3>Conventions sélectionnées (<span id="selected-count">0</span>)</h3>
-        <p>Ces conventions seront utilisées comme conventions parentes pour créer l'avenant seconde vie.</p>
-
-        <div class="fr-table fr-table--no-caption fr-my-3w">
-            <table>
-                <caption>Conventions sélectionnées</caption>
-                <thead>
-                    <tr>
-                        <th scope="col">Numéro</th>
-                        <th scope="col">Programme</th>
-                        <th scope="col">Ville</th>
-                        <th scope="col">Statut</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-                <tbody id="selected-conventions-body">
-                    <!-- Selected rows will be injected here -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Validate Form -->
-        <form method="post" action="{% url 'programmes:seconde_vie_existing' programme.numero_operation %}">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="validate">
-            <!-- This input will hold the comma-separated list of selected UUIDs -->
-            <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
-
-            <div class="fr-alert fr-alert--warning fr-my-3w">
-                <p><strong>Attention :</strong> En validant, vous allez créer une nouvelle convention seconde vie basée
-                    sur les conventions sélectionnées.</p>
-            </div>
-            <button type="submit" class="fr-btn">
-                Valider et créer la convention seconde vie
-            </button>
-        </form>
     </div>
 </div>
 
@@ -137,6 +166,21 @@
         // Initialize from template context if needed, but for now we start empty or re-populate if provided
         let selectedConventions = [];
 
+        // Initialize with pre-selected conventions if in edit mode
+        {% if pre_selected_conventions %}
+            selectedConventions = [
+                {% for conv in pre_selected_conventions %}
+                    {
+                        uuid: '{{ conv.uuid }}',
+                        numero: '{{ conv.numero|default_if_none:"-" }}',
+                        programme: '{{ conv.programme.nom }}',
+                        ville: '{{ conv.programme.ville }}',
+                        statut: '{{ conv.statut }}'
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+        {% endif %}
+
         // Function to update the UI based on selectedConventions state
         function updateSelectedUI() {
             // Update Hidden Input
@@ -161,7 +205,13 @@
                     <td>${conv.numero}</td>
                     <td>${conv.programme}</td>
                     <td>${conv.ville}</td>
-                    <td><span class="fr-badge fr-badge--success">${conv.statut}</span></td>
+                    <td>
+                        <div class="apilos-badge">
+                            <div class="fr-badge fr-text--xs">
+                                ${conv.statutText || conv.statut}
+                            </div>
+                        </div>
+                    </td>
                     <td>
                         <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm js-remove-convention" data-uuid="${conv.uuid}">
                             Retirer
@@ -261,7 +311,8 @@
                         numero: this.dataset.numero,
                         programme: this.dataset.programme,
                         ville: this.dataset.ville,
-                        statut: this.dataset.statut
+                        statutText: this.dataset.statutText,
+                        statut: this.dataset.statutBadge
                     };
                     addConvention(convention);
                 });
@@ -270,6 +321,11 @@
 
         // Attach listeners on initial load (if any results)
         attachResultListeners();
+
+        // Display pre-selected conventions if in edit mode
+        if (selectedConventions.length > 0) {
+            updateSelectedUI();
+        }
     });
 </script>
 {% endblock content %}
