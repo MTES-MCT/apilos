@@ -151,6 +151,24 @@ class SecondeVieExistingView(SecondeVieBaseView):
         query = self.request.GET.get("q")
         status_filter = self.request.GET.get("status")
 
+        # Get pre-selected parent UUIDs from query parameters (for edit mode)
+        pre_selected_uuids = self.request.GET.getlist("parent_uuid")
+        pre_selected_conventions = []
+        if pre_selected_uuids:
+            from conventions.models import Convention
+
+            pre_selected_conventions = list(
+                Convention.objects.filter(uuid__in=pre_selected_uuids)
+            )
+
+            # Find the existing Seconde Vie convention for this programme
+            existing_seconde_vie = Convention.objects.filter(
+                programme=context["programme"], parents__isnull=False
+            ).first()
+            context["existing_seconde_vie_convention"] = existing_seconde_vie
+
+        context["pre_selected_conventions"] = pre_selected_conventions
+
         if query:
             # Search for conventions across all programmes
             from django.core.paginator import Paginator
@@ -292,15 +310,26 @@ class SecondeVieExistingView(SecondeVieBaseView):
                     request=request, numero_operation=kwargs["numero_operation"]
                 )
 
-                # Create conventions and get UUIDs
-                new_convention_uuids = self._create_and_link_conventions(
-                    selected_conventions, target_programme, operation_service
-                )
+                # Check if a Seconde Vie convention already exists for this programme
+                existing_seconde_vie_conventions = Convention.objects.filter(
+                    programme=target_programme, parents__isnull=False
+                ).distinct()
 
-                # Group or get final convention
-                final_convention = self._group_or_get_final_convention(
-                    new_convention_uuids
-                )
+                if existing_seconde_vie_conventions.exists():
+                    # Update existing convention's parent links
+                    for convention in existing_seconde_vie_conventions:
+                        convention.parents.set(selected_conventions)
+                    final_convention = existing_seconde_vie_conventions.first()
+                else:
+                    # Create new conventions and link to parents
+                    new_convention_uuids = self._create_and_link_conventions(
+                        selected_conventions, target_programme, operation_service
+                    )
+
+                    # Group or get final convention
+                    final_convention = self._group_or_get_final_convention(
+                        new_convention_uuids
+                    )
 
             # Clear logical session if we were using it (optional now)
             if "seconde_vie_selection" in request.session:

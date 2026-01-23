@@ -197,7 +197,7 @@
                                                                 </div>
                                                             </td>
                                                         {% endif %}
-                                                        {% if switch_convention_mixte_on and not is_seconde_vie %}
+                                                        {% if switch_convention_mixte_on and not is_seconde_vie and convention.parents.all|length == 0 %}
                                                             {% if not convention.has_avenant %}
                                                                 {% if not convention.is_avenant and convention|display_redirect_project %}
                                                                     <td style="text-align: center; vertical-align: middle;">

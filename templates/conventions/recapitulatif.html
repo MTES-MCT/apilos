@@ -36,6 +36,9 @@
                 {% if not convention.is_avenant %}
                     {% include "conventions/recapitulatif/alert_convention.html" %}
                 {% endif %}
+                {% if convention.parents.all %}
+                    {% include "conventions/recapitulatif/seconde_vie_parents.html" with parents=convention.parents.all %}
+                {% endif %}
                 {% if convention|display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">
                         {% include "comments/opened_comments.html" %}

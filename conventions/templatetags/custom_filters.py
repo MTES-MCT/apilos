@@ -593,3 +593,15 @@ def siap_convention_step_doc_url(step: str) -> str | None:
             return "https://siap-logement.atlassian.net/wiki/spaces/ABDCS/pages/7962747/Commentaires+-+Conventionnement+APL"
         case _:
             return None
+
+
+@register.filter
+def clean_status(value: str) -> str:
+    """Remove the number prefix from status strings like '5. Signée' -> 'Signée'"""
+    if not isinstance(value, str):
+        return str(value)
+
+    # Remove number prefix like "5. " or "7. "
+    if ". " in value:
+        return value.split(". ", 1)[1]
+    return value
