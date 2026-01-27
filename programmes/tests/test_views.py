@@ -1,5 +1,5 @@
 import copy
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 import pytest
 from django.contrib.sessions.middleware import SessionMiddleware
@@ -61,8 +61,8 @@ def test_operation_conventions(render_mock):
 
 
 @pytest.mark.django_db
-@patch("programmes.views.render")
-def test_operation_conventions_seconde_vie_choice(render_mock):
+def test_operation_conventions_seconde_vie_existing():
+    """Test that seconde vie operations with no conventions redirect to existing.html"""
     url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
     request = _get_habilited_request(url)
 
@@ -70,15 +70,21 @@ def test_operation_conventions_seconde_vie_choice(render_mock):
         mock_instance = mock_get_instance.return_value
         mock_instance.get_operation.return_value = _get_seconde_vie_operation()
 
-        operation_conventions(request, numero_operation="1")
-        render_mock.assert_called_once()
-        args, _ = render_mock.call_args
-        assert args[1] == "operations/seconde_vie/choice.html"
+        response = operation_conventions(request, numero_operation="1")
+        assert response.status_code == 302
+        assert "operations/1/seconde_vie/existing" in response.url
 
 
 @pytest.mark.django_db
 @patch("programmes.views.render")
-def test_operation_conventions_seconde_vie_create_conventions(render_mock):
+@patch("conventions.models.Convention")
+def test_operation_conventions_seconde_vie_create_conventions(
+    mock_convention_model, render_mock
+):
+    new_conventions_qs = MagicMock()
+    new_conventions_qs.count.return_value = 0
+    new_conventions_qs.order_by.return_value = new_conventions_qs
+    mock_convention_model.objects.filter.return_value = new_conventions_qs
 
     url = reverse("programmes:seconde_vie_new", kwargs={"numero_operation": "1"})
     request = _get_habilited_request(url)
@@ -86,7 +92,7 @@ def test_operation_conventions_seconde_vie_create_conventions(render_mock):
     with patch.object(SIAPClient, "get_instance") as mock_get_instance:
         mock_instance = mock_get_instance.return_value
         get_operation_return_value = _get_seconde_vie_operation()
-        mock_instance.get_operation.return_value = _get_seconde_vie_operation()
+        mock_instance.get_operation.return_value = get_operation_return_value
         numero_operation = get_operation_return_value["donneesOperation"][
             "numeroOperation"
         ]
@@ -122,8 +128,6 @@ def test_seconde_vie_existing_view():
         mock_instance = mock_get_instance.return_value
         mock_instance.get_operation.return_value = operation_mock
 
-        response = SecondeVieExistingView.as_view()(
-            request, numero_operation="1"
-        ).render()
+        response = SecondeVieExistingView.as_view()(request, numero_operation="1")
         assert response.status_code == 200
         assert b"Seconde Vie - Conventions existantes" in response.content
