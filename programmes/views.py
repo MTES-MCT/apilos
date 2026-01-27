@@ -134,7 +134,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
         if operation_service.has_conventions():
             return HttpResponseRedirect(
                 reverse(
-                    "operations:operation_conventions",
+                    "programmes:operation_conventions",
                     args=[kwargs["numero_operation"]],
                 )
             )
