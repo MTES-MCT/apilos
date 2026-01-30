@@ -19,26 +19,22 @@
                                     <div class="fr-pr-2w">{% include "conventions/home/statut_tag.html" %}</div>
                                 {% endif %}
                                 {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.date_resiliation %}
-                                    <div class="fr-pr-2w">
-                                        <p>
-                                            {% if convention.is_resiliation_due %}
-                                                Convention résiliée depuis le {{ convention.date_resiliation }}
-                                            {% else %}
-                                                Résiliation de la convention prévue le {{ convention.date_resiliation }}
-                                            {% endif %}
-                                        </p>
-                                    </div>
+                                    <p>
+                                        {% if convention.is_resiliation_due %}
+                                            Convention résiliée depuis le {{ convention.date_resiliation }}
+                                        {% else %}
+                                            Résiliation de la convention prévue le {{ convention.date_resiliation }}
+                                        {% endif %}
+                                    </p>
                                 {% endif %}
                                 {% if convention.statut == CONVENTION_STATUT.DENONCEE and convention.date_denonciation %}
-                                    <div class="fr-pr-2w">
-                                        <p>
-                                            {% if convention.is_denonciation_due %}
-                                                Convention dénoncée depuis le {{ convention.date_denonciation }}
-                                            {% else %}
-                                                Dénonciation de la convention prévue le {{ convention.date_denonciation }}
-                                            {% endif %}
-                                        </p>
-                                    </div>
+                                    <p>
+                                        {% if convention.is_denonciation_due %}
+                                            Convention dénoncée depuis le {{ convention.date_denonciation }}
+                                        {% else %}
+                                            Dénonciation de la convention prévue le {{ convention.date_denonciation }}
+                                        {% endif %}
+                                    </p>
                                 {% endif %}
                                 <a class='fr-link apilos-link fr-text--sm' href="{% url 'conventions:post_action' convention_uuid=convention.parent.uuid %}">Consulter la convention originale n°{{ convention.parent.numero }} <span class="fr-pl-2w fr-icon-arrow-right-line fr-icon--sm" aria-hidden="true"></span></a>
                             </div>
@@ -91,22 +87,22 @@
                                 </div>
                             {% endif %}
                             {% if convention.statut == CONVENTION_STATUT.RESILIEE and convention.date_resiliation %}
-                                <div class="fr-mt-2w fr-text--sm apilos-text--black">
+                                <p class="fr-mt-2w fr-text--sm apilos-text--black">
                                     {% if convention.is_resiliation_due %}
                                         Convention résiliée depuis le {{ convention.date_resiliation }}
                                     {% else %}
                                         Résiliation de la convention prévue le {{ convention.date_resiliation }}
                                     {% endif %}
-                                </div>
+                                </p>
                             {% endif %}
                             {% if convention.statut == CONVENTION_STATUT.DENONCEE and convention.date_denonciation %}
-                                <div class="fr-mt-2w fr-text--sm apilos-text--black">
+                                <p class="fr-mt-2w fr-text--sm apilos-text--black">
                                     {% if convention.is_denonciation_due %}
                                         Convention dénoncée depuis le {{ convention.date_denonciation }}
                                     {% else %}
                                         Dénonciation de la convention prévue le {{ convention.date_denonciation }}
                                     {% endif %}
-                                </div>
+                                </p>
                             {% endif %}
                         {% endif %}
                     </div>
