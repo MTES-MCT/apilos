@@ -16,9 +16,9 @@
                     <div class="fr-header__navbar">
                         {% if user.is_authenticated %}
                             </li>
-                            <a class="fr-btn fr-icon-close-circle-line" href="{% url 'logout' %}"></a>
+                            <a class="fr-btn fr-icon-close-circle-line" href="{% url 'logout' %}" aria-label="Se déconnecter"></a>
                         {% else %}
-                            <a class="fr-btn fr-icon-account-circle-line apilos-mobile-header" href="{% url 'login' %}"></a>
+                            <a class="fr-btn fr-icon-account-circle-line apilos-mobile-header" href="{% url 'login' %}" aria-label="Se connecter"></a>
                         {% endif %}
                     </div>
                 </div>

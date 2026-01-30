@@ -43,7 +43,7 @@
                                     {% endif %}
                                 {% endif %}
                                 <div class="fr-mb-3w">
-                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type='publication' %}"> Voir en PDF</a>
+                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid doc_type='publication' %}">Visualiser la convention publiée en PDF</a>
                                 </div>
                             </div>
                         </li>
@@ -64,7 +64,7 @@
                                     <p class="fr-grid-row">Votre convention signée a déjà été déposée</p>
                                 {% endif %}
                                 <div class="fr-mb-3w">
-                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}"> Voir en PDF</a>
+                                    <a class="fr-link" href="{% url 'conventions:preview' convention_uuid=convention.uuid %}">Visualiser la convention signée en PDF</a>
                                 </div>
                             </div>
                         </li>
