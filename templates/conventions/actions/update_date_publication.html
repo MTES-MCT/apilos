@@ -10,8 +10,9 @@
             </p>
             {% include "common/form/input_date.html" with form_input=publication_spf_date_form.date_publication_spf editable=True %}
         </div>
-        <button class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %}>
+        <button class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %} type="submit">
             Mettre à jour la date
+            <span class="fr-sr-only">de publication</span>
         </button>
     </div>
 </form>

@@ -11,8 +11,9 @@
             </p>
             {% include "common/form/input_date.html" with form_input=resiliation_date_form.date_resiliation editable=True %}
         </div>
-        <button class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %}>
+        <button class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %} type="submit">
             Mettre à jour la date
+            <span class="fr-sr-only">de résiliation</span>
         </button>
     </div>
 </form>

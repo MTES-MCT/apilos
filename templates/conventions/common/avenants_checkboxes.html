@@ -65,10 +65,17 @@
 
 <script type="text/javascript" nonce="{{ request.csp_nonce }}">
     {% if not checked %}
-        document.getElementById("toggle-{{ id }}-link").onclick = (e) => {
+        const toggleLink = document.getElementById("toggle-{{ id }}-link");
+        const handleToggle = (e) => {
             e.preventDefault();
             document.getElementById("form-toggle-{{ id }}").submit();
-        }
+        };
+        toggleLink.onclick = handleToggle;
+        toggleLink.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                handleToggle(e);
+            }
+        });
     {% endif %}
 </script>
 {% else %}
