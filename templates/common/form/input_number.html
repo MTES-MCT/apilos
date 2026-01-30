@@ -18,7 +18,7 @@
                 min=0
                 step="{% if step %}{{ step }}{% else %}1{% endif %}"
                 inputmode="numeric"
-                {% if form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
+                {% if form_input.help_text %}aria-describedby="{{ form_input.id_for_label }}_help {% if form_input.errors %}text-input-error-desc-error{% endif %}"{% elif form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
                 type="number"
                 id="{{ form_input.id_for_label }}"
                 name="{{ form_input.html_name }}"

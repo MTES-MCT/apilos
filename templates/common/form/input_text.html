@@ -11,7 +11,7 @@
     <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
         <input
             class="fr-input {% if form_input.errors %}fr-input--error{% endif %}"
-            aria-describedby="text-input-error-desc-error"
+            {% if form_input.help_text %}aria-describedby="{{ form_input.id_for_label }}_help {% if form_input.errors %}text-input-error-desc-error{% endif %}"{% elif form_input.errors %}aria-describedby="text-input-error-desc-error"{% endif %}
             type="text"
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"

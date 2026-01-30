@@ -10,6 +10,7 @@
     <div class="fr-mt-1w block--row-strech" id="{{ form_input.id_for_label }}_div">
         <select
             class="fr-select {% if form_input.errors %}fr-select--error{% endif %}"
+            {% if form_input.help_text %}aria-describedby="{{ form_input.id_for_label }}_help {% if form_input.errors %}select-error-desc-error{% endif %}"{% elif form_input.errors %}aria-describedby="select-error-desc-error"{% endif %}
             id="{{ form_input.id_for_label }}"
             name="{{ form_input.html_name }}"
             {% if form_input.required %}required{% endif %}
