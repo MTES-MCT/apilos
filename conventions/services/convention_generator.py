@@ -25,6 +25,7 @@ from conventions.templatetags.custom_filters import (
 )
 from core.utils import get_key_from_json_field, round_half_up
 from programmes.models import Annexe, TypologieLogement
+from programmes.models.choices import Financement
 from upload.models import UploadedFile
 from upload.services import UploadService
 
@@ -69,24 +70,34 @@ def get_convention_template_path(convention):
     )
 
 
-def _compute_total_logement(convention):
+def _compute_total_logement(convention, financement=None):
+    prefix = ""
+    if not (financement):
+        lots = convention.lots.all()
+    else:
+        lots = convention.lots.filter(financement=financement)
+        prefix = financement + "_"
+
     logements_totale = {
-        "sh_totale": 0,
-        "sa_totale": 0,
-        "sar_totale": 0,
-        "su_totale": 0,
-        "sc_totale": 0,
-        "loyer_total": 0,
+        prefix + "sh_totale": 0,
+        prefix + "sa_totale": 0,
+        prefix + "sar_totale": 0,
+        prefix + "su_totale": 0,
+        prefix + "sc_totale": 0,
+        prefix + "loyer_total": 0,
     }
     nb_logements_par_type = {}
-    for lot in convention.lots.all():
+
+    for lot in lots:
         for logement in lot.logements.order_by("typologie").all():
-            logements_totale["sh_totale"] += logement.surface_habitable or 0
-            logements_totale["sa_totale"] += logement.surface_annexes or 0
-            logements_totale["sar_totale"] += logement.surface_annexes_retenue or 0
-            logements_totale["su_totale"] += logement.surface_utile or 0
-            logements_totale["sc_totale"] += logement.surface_corrigee or 0
-            logements_totale["loyer_total"] += logement.loyer or 0
+            logements_totale[prefix + "sh_totale"] += logement.surface_habitable or 0
+            logements_totale[prefix + "sa_totale"] += logement.surface_annexes or 0
+            logements_totale[prefix + "sar_totale"] += (
+                logement.surface_annexes_retenue or 0
+            )
+            logements_totale[prefix + "su_totale"] += logement.surface_utile or 0
+            logements_totale[prefix + "sc_totale"] += logement.surface_corrigee or 0
+            logements_totale[prefix + "loyer_total"] += logement.loyer or 0
             if logement.get_typologie_display() not in nb_logements_par_type:
                 nb_logements_par_type[logement.get_typologie_display()] = 0
             nb_logements_par_type[logement.get_typologie_display()] += 1
@@ -153,6 +164,9 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     filepath = get_convention_template_path(convention)
     doc = DocxTemplate(filepath)
     (logements_totale, nb_logements_par_type) = _compute_total_logement(convention)
+    (pls_logements_totale, _) = _compute_total_logement(convention, Financement.PLS)
+    (plus_logements_totale, _) = _compute_total_logement(convention, Financement.PLUS)
+    (plai_logements_totale, _) = _compute_total_logement(convention, Financement.PLAI)
 
     logement_edds, lot_num = _prepare_logement_edds(convention)
     # tester si il logement exists avant de commencer
@@ -229,6 +243,9 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
     }
     context.update(compute_mixte(convention))
     context.update(logements_totale)
+    context.update(pls_logements_totale)
+    context.update(plus_logements_totale)
+    context.update(plai_logements_totale)
     context.update(object_images)
     context.update(adresse)
     # Dans le cas d'un avenant, c'est toujours le bailleur de la précédente convention
