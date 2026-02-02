@@ -1089,3 +1089,22 @@ class TypeStationnement(models.Model):
         return self.loyer
 
     l = property(_get_loyer)  # noqa: E741
+
+    def clone(self, lot: "Lot", **kwargs: dict[str, Any]) -> "TypeStationnement":
+        type_stationnement_fields = (
+            model_to_dict(
+                self,
+                exclude=[
+                    "uuid",
+                    "id",
+                    "cree_le",
+                    "mis_a_jour_le",
+                ],
+            )
+            | {"lot": lot}
+            | kwargs
+        )
+        cloned_type_stationnement = TypeStationnement.objects.create(
+            **type_stationnement_fields
+        )
+        return cloned_type_stationnement
