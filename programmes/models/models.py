@@ -951,6 +951,10 @@ class Annexe(models.Model):
     cree_le = models.DateTimeField(auto_now_add=True)
     mis_a_jour_le = models.DateTimeField(auto_now=True)
 
+    @property
+    def financement(self):
+        return self.logement.lot.financement
+
     import_mapping = {
         "Type d'annexe": "typologie",
         "Financement": "financement",
