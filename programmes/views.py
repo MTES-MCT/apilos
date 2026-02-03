@@ -130,6 +130,18 @@ class SecondeVieExistingView(SecondeVieBaseView):
             request=request, numero_operation=kwargs["numero_operation"]
         )
 
+        # CHECK HABILITAION FOR USER
+        if operation_service.operation is None:
+            messages.add_message(
+                request,
+                messages.INFO,
+                f"L'opération {kwargs['numero_operation']} n'existe pas dans le SIAP",
+            )
+            return HttpResponseRedirect(
+                reverse("conventions:search")
+                + f"?search_numero={kwargs['numero_operation']}"
+            )
+
         # If conventions already exist, redirect to operation conventions page
         if operation_service.has_conventions():
             return HttpResponseRedirect(
