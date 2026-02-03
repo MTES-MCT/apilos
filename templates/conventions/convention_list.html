@@ -206,7 +206,8 @@
                                                                         value="{{ convention.uuid }}"
                                                                         class="fr-checkbox__input convention-checkbox stop-row-click"
                                                                         id="convention_{{ convention.uuid }}"
-                                                                        aria-label="Grouper la convention {{ convention.programme }} - {{ convention.programme.ville }}">
+                                                                        aria-label="Grouper la convention {{ convention.programme }} - {{ convention.programme.ville }}"
+                                                                        {% if request|is_readonly %}disabled{% endif %}>
                                                                     </td>
                                                                 {% else %}
                                                                     <td></td>
@@ -289,13 +290,15 @@
                         {% if switch_convention_mixte_on %}
                             <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                                 <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
-                                        id="dispatch_mixte_button" name="action" value="dispatch">
+                                        id="dispatch_mixte_button" name="action" value="dispatch"
+                                        {% if request|is_readonly %}disabled{% endif %}>
                                     Dégrouper la convention
                                 </button>
                             </div>
                             <div class="fr-col-12 fr-grid-row fr-grid-row--right">
                                 <button type="submit" class="fr-btn fr-btn--icon-left fr-mb-1w"
-                                        id="create_mixte_button" name="action" value="create">
+                                        id="create_mixte_button" name="action" value="create"
+                                        {% if request|is_readonly %}disabled{% endif %}>
                                     Grouper les conventions
                                 </button>
                             </div>
