@@ -340,9 +340,7 @@ class ConventionLogementsService(ConventionService):
                 ) from err
             assert lot_id is not None, f"Lot with financement {financement} not found"
             getattr(self, formset_name).lot_id = lot_id
-            getattr(self, formset_name).nb_logements = int(
-                nb_logements[financement] or 0
-            )
+            getattr(self, formset_name).nb_logements = int(nb_logements[financement])
             getattr(self, formset_name).ignore_optional_errors = self.request.POST.get(
                 "ignore_optional_errors", False
             )
