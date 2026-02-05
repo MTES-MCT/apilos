@@ -787,6 +787,10 @@ class Logement(models.Model):
     def bailleur(self):
         return self.lot.convention.programme.bailleur
 
+    @property
+    def financement(self):
+        return self.lot.financement
+
     def clone(self, lot: Lot, **kwargs: dict[str, Any]) -> "Logement":
         logement_fields = (
             model_to_dict(
