@@ -229,7 +229,7 @@
                     </div>
 
                     <div class="fr-col-12 fr-mb-2w">
-                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value hidden_label=form.financement.value %}
+                        {% include "common/form/input_number.html" with display_inline=True form_input=form.nb_logements object_field="lot__nb_logements__"|add:form.uuid.value hidden_label=form.financement.value editable=editable_after_upload %}
                         {{ form.nb_logements.errors }}
                     </div>
 
