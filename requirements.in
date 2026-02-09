@@ -36,3 +36,4 @@ tqdm
 typing-extensions
 unidecode
 whitenoise
+setuptools<70
