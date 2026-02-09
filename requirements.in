@@ -18,6 +18,7 @@ django-waffle
 djangorestframework
 djangorestframework-simplejwt
 docxtpl
+docxcompose>=1.4.0
 drf-spectacular
 gunicorn
 Jinja2
@@ -31,6 +32,7 @@ python-docx
 pyyaml>=6.0
 redis
 sentry-sdk
+setuptools
 tenacity
 tqdm
 typing-extensions
