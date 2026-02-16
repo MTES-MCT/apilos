@@ -39,6 +39,7 @@ def _get_habilited_request(url):
     middleware = SessionMiddleware(lambda x: None)
     middleware.process_request(request)
     request.session["habilitation_id"] = "1"
+    request.session["readonly"] = False
     request.session.save()
     request.user = user
     return request
@@ -82,7 +83,7 @@ def test_operation_conventions_seconde_vie_existing():
 
 @pytest.mark.django_db
 @mock.patch("programmes.views.render")
-@mock.patch("conventions.models.Convention")
+@mock.patch("programmes.views.Convention")
 def test_operation_conventions_seconde_vie_create_conventions(
     mock_convention_model, render_mock
 ):
