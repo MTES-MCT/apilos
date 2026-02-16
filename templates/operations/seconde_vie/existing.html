@@ -59,9 +59,9 @@
                             <label class="fr-label" for="status-filter">Statut</label>
                             <select class="fr-select" id="status-filter" name="status"{% if request|is_readonly %} disabled{% endif %}>
                                 <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
-                                <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Valide</option>
-                                <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>En Publication</option>
-                                <option value="7. Publié" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
+                                <option value="{{ CONVENTION_STATUT.SIGNEE }}" {% if status_filter|statut_is_signee %}selected{% endif %}>Valide</option>
+                                <option value="{{ CONVENTION_STATUT.PUBLICATION_EN_COURS }}" {% if status_filter|statut_is_publied %}selected{% endif %}>En Publication</option>
+                                <option value="{{ CONVENTION_STATUT.PUBLIE }}" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
                             </select>
                         </div>
                         <div class="fr-col-12 fr-col-lg-3">
