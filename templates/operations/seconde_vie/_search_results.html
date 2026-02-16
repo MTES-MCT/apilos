@@ -33,7 +33,7 @@
                             data-programme="{{ convention.programme.nom }}"
                             data-ville="{{ convention.programme.ville }}"
                             data-statut-text="{{ convention.short_statut_neutre }}"
-                            data-statut-badge="{{ convention.short_statut_neutre }}">
+                            data-statut-badge="{{ convention.short_statut_neutre }}"{% if is_readonly %} disabled{% endif %}>
                             Sélectionner
                         </button>
                     </td>

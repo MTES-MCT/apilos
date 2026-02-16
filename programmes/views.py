@@ -3,6 +3,9 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -10,7 +13,9 @@ from django.views.decorators.http import require_safe
 from django.views.generic import TemplateView
 from waffle import switch_is_active
 
+from conventions.models import Convention, ConventionGroupingError, ConventionStatut
 from conventions.services.search import (
+    ConventionSearchService,
     OperationConventionSearchService,
     ProgrammeConventionSearchService,
 )
@@ -64,16 +69,13 @@ def operation_conventions(request, numero_operation):
         )
 
     # Seconde vie : on ne crée pas les conventions automatiquement
-    # For seconde vie, check if there are ANY conventions (including those with parents)
     if operation_service.is_seconde_vie():
-        from conventions.models import Convention
 
         all_conventions = Convention.objects.filter(
             programme__numero_operation=numero_operation
         ).exclude(statut="11. Annulée")
 
         if not all_conventions.exists():
-            # No conventions at all, redirect to selection page
             return HttpResponseRedirect(
                 reverse("programmes:seconde_vie_existing", args=[numero_operation])
             )
@@ -115,8 +117,27 @@ class SecondeVieBaseView(TemplateView):
         service = OperationService(
             request=self.request, numero_operation=kwargs["numero_operation"]
         )
-        context["programme"] = service.get_or_create_programme()
-        context["is_seconde_vie"] = service.is_seconde_vie()
+
+        is_readonly = (
+            "readonly" in self.request.session and self.request.session["readonly"]
+        )
+
+        # For readonly users without SIAP access, try to get existing programme
+        if is_readonly and service.operation is None:
+            try:
+                context["programme"] = Programme.objects.filter(
+                    numero_operation=kwargs["numero_operation"]
+                ).first()
+                context["is_seconde_vie"] = (
+                    context["programme"].seconde_vie if context["programme"] else False
+                )
+            except Programme.DoesNotExist:
+                context["programme"] = None
+                context["is_seconde_vie"] = False
+        else:
+            context["programme"] = service.get_or_create_programme()
+            context["is_seconde_vie"] = service.is_seconde_vie()
+
         return context
 
 
@@ -124,26 +145,43 @@ class SecondeVieExistingView(SecondeVieBaseView):
     template_name = "operations/seconde_vie/existing.html"
 
     def get(self, request, *args, **kwargs):
-        # Check if conventions already exist for this operation
 
         operation_service = OperationService(
             request=request, numero_operation=kwargs["numero_operation"]
         )
 
+        is_readonly = "readonly" in request.session and request.session["readonly"]
+
         # CHECK HABILITAION FOR USER
         if operation_service.operation is None:
-            messages.add_message(
-                request,
-                messages.INFO,
-                f"L'opération {kwargs['numero_operation']} n'existe pas dans le SIAP",
-            )
-            return HttpResponseRedirect(
-                reverse("conventions:search")
-                + f"?search_numero={kwargs['numero_operation']}"
-            )
+            # For readonly users, allow access if programme exists in database
+            if is_readonly:
+                existing_programmes = Programme.objects.filter(
+                    numero_operation=kwargs["numero_operation"]
+                )
+                if not existing_programmes.exists():
+                    messages.add_message(
+                        request,
+                        messages.INFO,
+                        f"L'opération {kwargs['numero_operation']} n'existe pas dans APiLos",
+                    )
+                    return HttpResponseRedirect(
+                        reverse("conventions:search")
+                        + f"?search_numero={kwargs['numero_operation']}"
+                    )
+            else:
+                messages.add_message(
+                    request,
+                    messages.INFO,
+                    f"L'opération {kwargs['numero_operation']} n'existe pas dans le SIAP",
+                )
+                return HttpResponseRedirect(
+                    reverse("conventions:search")
+                    + f"?search_numero={kwargs['numero_operation']}"
+                )
 
         # If conventions already exist, redirect to operation conventions page
-        if operation_service.has_conventions():
+        if not is_readonly and operation_service.has_conventions():
             return HttpResponseRedirect(
                 reverse(
                     "programmes:operation_conventions",
@@ -167,8 +205,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
         pre_selected_uuids = self.request.GET.getlist("parent_uuid")
         pre_selected_conventions = []
         if pre_selected_uuids:
-            from conventions.models import Convention
-
             pre_selected_conventions = list(
                 Convention.objects.filter(uuid__in=pre_selected_uuids)
             )
@@ -183,12 +219,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
 
         if query:
             # Search for conventions across all programmes
-            from django.core.paginator import Paginator
-            from django.db.models import Q
-
-            from conventions.models import Convention, ConventionStatut
-            from conventions.services.search import ConventionSearchService
-
             filters = {}
             service = ConventionSearchService(self.request.user, filters)
 
@@ -235,6 +265,11 @@ class SecondeVieExistingView(SecondeVieBaseView):
             context["query"] = query
         context["status_filter"] = status_filter
 
+        # Add readonly flag for templates
+        context["is_readonly"] = (
+            "readonly" in self.request.session and self.request.session["readonly"]
+        )
+
         return context
 
     def _create_and_link_conventions(
@@ -276,7 +311,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
 
     def _group_or_get_final_convention(self, new_convention_uuids):
         """Group conventions as mixte if multiple, otherwise get single."""
-        from conventions.models import Convention, ConventionGroupingError
 
         final_convention = None
 
@@ -294,9 +328,14 @@ class SecondeVieExistingView(SecondeVieBaseView):
         return final_convention
 
     def post(self, request, *args, **kwargs):
-        from django.db import transaction
-
-        from conventions.models import Convention
+        # Check if user has readonly access
+        if "readonly" in request.session and request.session["readonly"]:
+            messages.add_message(
+                request,
+                messages.ERROR,
+                "Vous n'avez pas les droits pour effectuer cette action.",
+            )
+            return HttpResponseRedirect(request.path)
 
         context = self.get_context_data(**kwargs)
         action = request.POST.get("action")
@@ -343,7 +382,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
                         new_convention_uuids
                     )
 
-            # Clear logical session if we were using it (optional now)
             if "seconde_vie_selection" in request.session:
                 del request.session["seconde_vie_selection"]
 
@@ -364,6 +402,14 @@ def seconde_vie_new(request, numero_operation):
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
 
+    if "readonly" in request.session and request.session["readonly"]:
+        messages.add_message(
+            request,
+            messages.ERROR,
+            "Vous n'avez pas les droits pour créer de nouvelles conventions.",
+        )
+        return HttpResponseRedirect(reverse("conventions:search"))
+
     operation_service = OperationService(
         request=request, numero_operation=numero_operation
     )
@@ -375,9 +421,6 @@ def seconde_vie_new(request, numero_operation):
         return HttpResponseRedirect(
             f"{reverse('conventions:search')}?search_numero={exc.numero_operation}"
         )
-
-    # Get all conventions just created for this programme
-    from conventions.models import Convention, ConventionGroupingError
 
     new_conventions = Convention.objects.filter(
         programme=programme,

@@ -39,7 +39,7 @@
                 <div class="fr-alert fr-alert--info fr-my-4w">
                     <h3 class="fr-alert__title">Les logements concernés n'ont jamais été conventionnés ?</h3>
                     <p>Nous allons réaliser les conventions APL pour ces logements.</p>
-                    <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary">
+                    <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %}>
                         <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
                         Créer une nouvelle convention
                     </a>
@@ -53,11 +53,11 @@
                     <div class="fr-grid-row fr-grid-row--gutters">
                         <div class="fr-col-12 fr-col-lg-6">
                             <label class="fr-label" for="search_input">Numéro, programme ou ville</label>
-                            <input class="fr-input" placeholder="" type="search" id="search_input" name="q" value="{{ query|default:'' }}">
+                            <input class="fr-input" placeholder="" type="search" id="search_input" name="q" value="{{ query|default:'' }}"{% if request|is_readonly %} disabled{% endif %}>
                         </div>
                         <div class="fr-col-12 fr-col-lg-3">
                             <label class="fr-label" for="status-filter">Statut</label>
-                            <select class="fr-select" id="status-filter" name="status">
+                            <select class="fr-select" id="status-filter" name="status"{% if request|is_readonly %} disabled{% endif %}>
                                 <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
                                 <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée</option>
                                 <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>Publication en cours</option>
@@ -65,7 +65,7 @@
                             </select>
                         </div>
                         <div class="fr-col-12 fr-col-lg-3">
-                            <button class="fr-btn fr-btn--icon-left fr-mt-4w" type="submit" title="Rechercher">
+                            <button class="fr-btn fr-btn--icon-left fr-mt-4w" type="submit" title="Rechercher"{% if request|is_readonly %} disabled{% endif %}>
                                 <span class="fr-icon-search-line" aria-hidden="true"></span>
                                 Rechercher
                             </button>
@@ -86,7 +86,11 @@
                     </div>
                 {% else %}
                     <div class="fr-alert fr-alert--info">
-                        <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
+                        {% if request|is_readonly %}
+                                <p class="fr-mb-0"><strong>Mode consultation :</strong> Vous consultez cette page en lecture seule. Les modifications ne sont pas autorisées avec votre profil.</p>
+                        {% else %}
+                                <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
+                        {% endif %}
                     </div>
                 {% endif %}
             </div>
@@ -122,10 +126,12 @@
                     <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
 
                     {% if pre_selected_conventions %}
-                        <div class="fr-alert fr-alert--info fr-mb-3w">
-                            <p><strong>Vous modifiez</strong> la sélection des conventions parentes de cette convention seconde vie.</p>
-                        </div>
-                        <button type="submit" class="fr-btn fr-btn--lg">
+                        {% if not request|is_readonly %}
+                            <div class="fr-alert fr-alert--info fr-mb-3w">
+                                <p><strong>Vous modifiez</strong> la sélection des conventions parentes de cette convention seconde vie.</p>
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="fr-btn fr-btn--lg"{% if request|is_readonly %} disabled{% endif %}>
                             <span class="fr-icon-check-line fr-mr-1w" aria-hidden="true"></span>
                             Mettre à jour la sélection
                         </button>
@@ -133,7 +139,7 @@
                         <div class="fr-alert fr-alert--info fr-mb-3w">
                             <p><strong>Attention :</strong> Vous allez créer une nouvelle convention seconde vie basée sur les conventions sélectionnées.</p>
                         </div>
-                        <button type="submit" class="fr-btn fr-btn--lg">
+                        <button type="submit" class="fr-btn fr-btn--lg"{% if request|is_readonly %} disabled{% endif %}>
                             <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
                             Créer la convention seconde vie
                         </button>
@@ -148,6 +154,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const searchForm = document.getElementById('convention-search-form');
         const statusFilter = document.getElementById('status-filter');
+        const isReadonly = {% if request|is_readonly %}true{% else %}false{% endif %};
 
         // Handle Change on select to submit form
         if (statusFilter) {
@@ -213,7 +220,7 @@
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm js-remove-convention" data-uuid="${conv.uuid}">
+                        <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm js-remove-convention" data-uuid="${conv.uuid}"${isReadonly ? ' disabled' : ''}>
                             Retirer
                         </button>
                     </td>
@@ -242,6 +249,7 @@
         }
 
         function addConvention(convention) {
+            if (isReadonly) return;
             if (!selectedConventions.find(c => c.uuid === convention.uuid)) {
                 selectedConventions.push(convention);
                 updateSelectedUI();
@@ -249,6 +257,7 @@
         }
 
         function removeConvention(uuid) {
+            if (isReadonly) return;
             selectedConventions = selectedConventions.filter(c => c.uuid !== uuid);
             updateSelectedUI();
         }
