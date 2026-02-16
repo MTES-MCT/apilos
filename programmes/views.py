@@ -335,7 +335,13 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 messages.ERROR,
                 "Vous n'avez pas les droits pour effectuer cette action.",
             )
-            return HttpResponseRedirect(request.path)
+            return HttpResponseRedirect(
+                reverse(
+                    request.resolver_match.view_name,
+                    args=request.resolver_match.args,
+                    kwargs=request.resolver_match.kwargs,
+                )
+            )
 
         context = self.get_context_data(**kwargs)
         action = request.POST.get("action")
