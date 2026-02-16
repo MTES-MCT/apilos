@@ -9,7 +9,7 @@ from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 
-from conventions.models import ConventionGroupingError
+from conventions.models import Convention, ConventionGroupingError
 from core.tests.factories import ConventionFactory, ProgrammeFactory
 from instructeurs.tests.factories import AdministrationFactory
 from programmes.views import (
@@ -68,7 +68,6 @@ def test_operation_conventions(render_mock):
 
 @pytest.mark.django_db
 def test_operation_conventions_seconde_vie_existing():
-    """Test that seconde vie operations with no conventions redirect to existing.html"""
     url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
     request = _get_habilited_request(url)
 
@@ -142,7 +141,6 @@ def test_seconde_vie_existing_view():
 @pytest.mark.django_db
 @mock.patch("programmes.views.render")
 def test_operation_conventions_no_programmes(render_mock):
-    """Test operation_conventions when no programmes are found"""
     numero_operation = "1"
     url = reverse(
         "programmes:operation_conventions",
@@ -172,7 +170,6 @@ def test_operation_conventions_no_programmes(render_mock):
 
 @pytest.mark.django_db
 def test_seconde_vie_new_with_multiple_conventions():
-    """Test seconde_vie_new when multiple conventions exist and grouping fails"""
     numero_operation = "20220600006"
     url = reverse(
         "programmes:seconde_vie_new", kwargs={"numero_operation": numero_operation}
@@ -208,7 +205,6 @@ def test_seconde_vie_new_with_multiple_conventions():
 
 @pytest.mark.django_db
 def test_seconde_vie_new_with_successful_convention_grouping():
-    """Test successful convention grouping with robust validation of correctness"""
     numero_operation = "20220600007"
     url = reverse(
         "programmes:seconde_vie_new", kwargs={"numero_operation": numero_operation}
@@ -220,7 +216,6 @@ def test_seconde_vie_new_with_successful_convention_grouping():
     operation = _get_seconde_vie_operation()
     operation["donneesOperation"]["numeroOperation"] = numero_operation
 
-    # Create conventions and grouped result
     conv_1 = ConventionFactory(programme=programme, statut="1. Projet", parent=None)
     conv_2 = ConventionFactory(programme=programme, statut="1. Projet", parent=None)
     grouped_convention_result = ConventionFactory(
@@ -242,28 +237,23 @@ def test_seconde_vie_new_with_successful_convention_grouping():
 
                 response = seconde_vie_new(request, numero_operation=numero_operation)
 
-                # ASSERTION 1: Response should redirect with 302 status
                 assert (
                     response.status_code == 302
                 ), f"Expected 302 redirect, got {response.status_code}"
 
-                # ASSERTION 2: Redirect URL should contain the grouped convention UUID
                 assert (
                     str(grouped_convention_result.uuid) in response.url
                 ), f"Grouped convention UUID {grouped_convention_result.uuid} not in redirect URL {response.url}"
 
-                # ASSERTION 3: Verify group_conventions was called exactly once
                 assert (
                     mock_group.call_count == 1
                 ), f"Expected group_conventions to be called once, was called {mock_group.call_count} times"
 
-                # ASSERTION 4: Verify correct number of conventions passed to group_conventions
                 called_uuids = mock_group.call_args[0][0]
                 assert (
                     len(called_uuids) == 2
                 ), f"Expected 2 convention UUIDs to be grouped, got {len(called_uuids)}"
 
-                # ASSERTION 5: Verify database state consistency
                 current_convention_count = programme.conventions.count()
                 expected_total = initial_convention_count + 3  # 2 created + 1 grouped
                 assert current_convention_count == expected_total, (
@@ -271,13 +261,11 @@ def test_seconde_vie_new_with_successful_convention_grouping():
                     "This ensures conventions were actually created in the database."
                 )
 
-                # ASSERTION 6: Verify grouped convention belongs to the correct programme
                 assert grouped_convention_result.programme_id == programme.id, (
                     f"Grouped convention doesn't belong to expected programme {programme.id}. "
                     "The result of grouping should preserve the programme association."
                 )
 
-                # ASSERTION 7: Verify grouped convention has correct attributes
                 assert (
                     grouped_convention_result.numero == "GROUPED"
                 ), f"Grouped convention numero should be 'GROUPED', got '{grouped_convention_result.numero}'"
@@ -287,7 +275,6 @@ def test_seconde_vie_new_with_successful_convention_grouping():
 
 
 class SecondeVieConventionGroupingTests(TestCase):
-    """Tests for Seconde Vie convention grouping using real database objects"""
 
     fixtures = [
         "auth.json",
@@ -301,12 +288,9 @@ class SecondeVieConventionGroupingTests(TestCase):
     ]
 
     def setUp(self):
-        """Set up test data with real factories"""
-        from conventions.models import Convention
 
         self.factory = RequestFactory()
 
-        # Create programme for seconde vie operation
         self.programme = ProgrammeFactory(
             numero_operation="20220600100",
             seconde_vie=True,
@@ -315,7 +299,6 @@ class SecondeVieConventionGroupingTests(TestCase):
             ville="Paris",
         )
 
-        # Create two real conventions for grouping
         self.convention_1 = ConventionFactory(
             programme=self.programme,
             numero="SV0001",
@@ -329,12 +312,10 @@ class SecondeVieConventionGroupingTests(TestCase):
             parent=None,
         )
 
-        # Create user
         self.user = User.objects.get(username="raph")
         self.Convention = Convention
 
     def _get_seconde_vie_operation_mock(self):
-        """Helper to create seconde vie operation mock"""
         operation = copy.deepcopy(operation_mock)
         operation["donneesOperation"]["aides"] = [{"code": "SECD_VIE"}]
         operation["donneesOperation"]["numeroOperation"] = "20220600100"
@@ -342,14 +323,11 @@ class SecondeVieConventionGroupingTests(TestCase):
 
     @mock.patch.object(SIAPClient, "get_instance")
     def test_grouping_conventions_exist(self, mock_siap):
-        """Test that grouping conventions are created correctly"""
-        # Setup mocks
         mock_instance = mock_siap.return_value
         mock_instance.get_operation.return_value = (
             self._get_seconde_vie_operation_mock()
         )
 
-        # Create request
         request = self.factory.post(
             reverse(
                 "programmes:seconde_vie_new", kwargs={"numero_operation": "20220600100"}
@@ -360,24 +338,20 @@ class SecondeVieConventionGroupingTests(TestCase):
         middleware.process_request(request)
         request.session.save()
 
-        # Verify both conventions exist
         conventions = list(self.programme.conventions.filter(parent__isnull=True))
         self.assertEqual(len(conventions), 2)
 
-        # Verify they have the correct statuses
         for convention in conventions:
             self.assertEqual(convention.statut, "1. Projet")
 
     @mock.patch.object(SIAPClient, "get_instance")
     def test_seconde_vie_operation_has_secd_vie_code(self, mock_siap):
         """Test that seconde vie operations have SECD_VIE code"""
-        # Setup mocks
         mock_instance = mock_siap.return_value
         mock_instance.get_operation.return_value = (
             self._get_seconde_vie_operation_mock()
         )
 
-        # Verify the mock has the correct aide code
         operation = self._get_seconde_vie_operation_mock()
         aides = operation["donneesOperation"]["aides"]
         aide_codes = [aide["code"] for aide in aides]
@@ -386,7 +360,6 @@ class SecondeVieConventionGroupingTests(TestCase):
 
 @pytest.mark.django_db
 def test_seconde_vie_existing_view_with_ajax():
-    """Test seconde vie existing view with AJAX request"""
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
     user = UserFactory()
     user.cerbere_login = True
