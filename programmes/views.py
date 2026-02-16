@@ -382,9 +382,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
                         new_convention_uuids
                     )
 
-            if "seconde_vie_selection" in request.session:
-                del request.session["seconde_vie_selection"]
-
             # Redirect to the created/grouped convention
             if final_convention:
                 return HttpResponseRedirect(

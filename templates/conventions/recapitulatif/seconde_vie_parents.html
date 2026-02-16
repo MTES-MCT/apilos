@@ -49,9 +49,11 @@
                                                     <td>{{ parent.programme.ville }}</td>
                                                     <td>{{ parent.get_financement_display }}</td>
                                                     <td>
-                                                        <span class="fr-badge fr-badge--success">
-                                                            {{ parent.statut|truncatechars:20 }}
-                                                        </span>
+                                                        <div class="apilos-badge">
+                                                            <div class="fr-badge apilos-badge-{{ parent.statut_for_template.key_statut }} fr-icon-{{ parent.statut_icone }}-fill fr-badge--icon-{{ parent.statut_icone }} fr-text--xs">
+                                                                {{ parent.short_statut_neutre }}
+                                                            </div>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             {% endfor %}

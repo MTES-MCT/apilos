@@ -59,8 +59,8 @@
                             <label class="fr-label" for="status-filter">Statut</label>
                             <select class="fr-select" id="status-filter" name="status"{% if request|is_readonly %} disabled{% endif %}>
                                 <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
-                                <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Signée</option>
-                                <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>Publication en cours</option>
+                                <option value="5. Signée" {% if status_filter|statut_is_signee %}selected{% endif %}>Valide</option>
+                                <option value="5. Publication en cours" {% if status_filter|statut_is_publied %}selected{% endif %}>En Publication</option>
                                 <option value="7. Publié" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
                             </select>
                         </div>
@@ -182,7 +182,9 @@
                         numero: '{{ conv.numero|default_if_none:"-" }}',
                         programme: '{{ conv.programme.nom }}',
                         ville: '{{ conv.programme.ville }}',
-                        statut: '{{ conv.statut }}'
+                        statutText: '{{ conv.short_statut_neutre }}',
+                        statutKey: '{{ conv.statut_for_template.key_statut }}',
+                        statutIcone: '{{ conv.statut_icone }}'
                     }{% if not forloop.last %},{% endif %}
                 {% endfor %}
             ];
@@ -214,8 +216,8 @@
                     <td>${conv.ville}</td>
                     <td>
                         <div class="apilos-badge">
-                            <div class="fr-badge fr-text--xs">
-                                ${conv.statutText || conv.statut}
+                            <div class="fr-badge apilos-badge-${conv.statutKey} fr-icon-${conv.statutIcone}-fill fr-badge--icon-${conv.statutIcone} fr-text--xs">
+                                ${conv.statutText}
                             </div>
                         </div>
                     </td>
@@ -320,7 +322,8 @@
                         programme: this.dataset.programme,
                         ville: this.dataset.ville,
                         statutText: this.dataset.statutText,
-                        statut: this.dataset.statutBadge
+                        statutKey: this.dataset.statutKey,
+                        statutIcone: this.dataset.statutIcone
                     };
                     addConvention(convention);
                 });
