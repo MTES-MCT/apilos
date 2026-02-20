@@ -151,7 +151,7 @@ def _compute_object_list_from_each_lot(object_list):
 def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemplate:
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
+        .filter(logement__lot__in=convention.lots.all())
         .all()
     )
 
@@ -484,7 +484,7 @@ def _save_convention_donnees_validees(
 ):
     annexes = (
         Annexe.objects.prefetch_related("logement")
-        .filter(logement__lot_id=convention.lot.id)
+        .filter(logement__lot__in=convention.lots.all())
         .all()
     )
 
