@@ -2,16 +2,319 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Seconde Vie - APiLos{% endblock %}
+{% block page_title %}Seconde Vie - Conventions existantes - APiLos{% endblock %}
 
 {% block content %}
-    <div class="fr-container-fluid ds_banner">
-        {% include "operations/common/form_header.html" %}
-    </div>
+<div class="fr-container-fluid ds_banner">
+    {% include "operations/common/form_header.html" %}
+</div>
 
-    <div class="fr-container fr-my-5w">
-        <h2>Seconde Vie - Conventions existantes</h2>
-        <p>Cette fonctionnalité n'est pas encore disponible.</p>
-        <p>Revenez plus tard pour réaliser l'avenant seconde vie.</p>
+<div class="fr-container fr-my-5w">
+    <div class="fr-grid-row fr-grid-row--gutters">
+        <div class="fr-col-12">
+            <!-- Header Section -->
+            <div class="fr-mb-4w">
+                {% if existing_seconde_vie_convention %}
+                    <div class="fr-grid-row fr-grid-row--space-between fr-grid-row--middle">
+                        <div class="fr-col">
+                            <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
+                            <p class="fr-text--lead fr-mb-0">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                        </div>
+                        <div class="fr-col fr-col--right">
+                            <a href="{% url 'conventions:recapitulatif' convention_uuid=existing_seconde_vie_convention.uuid %}"
+                               class="fr-link">
+                                <span class="fr-icon-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>
+                                Retour au récapitulatif
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
+                    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                {% endif %}
+            </div>
+
+            {% if not pre_selected_conventions %}
+                <div class="fr-alert fr-alert--info fr-my-4w">
+                    <h3 class="fr-alert__title">Les logements concernés n'ont jamais été conventionnés ?</h3>
+                    <p>Nous allons réaliser les conventions APL pour ces logements.</p>
+                    <a href="{% url 'programmes:seconde_vie_new' programme.numero_operation %}" class="fr-btn fr-btn--secondary"{% if request|is_readonly %} disabled{% endif %}>
+                        <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
+                        Créer une nouvelle convention
+                    </a>
+                </div>
+            {% endif %}
+
+            <!-- Search Section -->
+            <div class="fr-my-4w">
+                <h2 class="fr-h3">Rechercher des conventions</h2>
+                <form id="convention-search-form" method="get" action="">
+                    <div class="fr-grid-row fr-grid-row--gutters">
+                        <div class="fr-col-12 fr-col-lg-6">
+                            <label class="fr-label" for="search_input">Numéro, programme ou ville</label>
+                            <input class="fr-input" placeholder="" type="search" id="search_input" name="q" value="{{ query|default:'' }}"{% if request|is_readonly %} disabled{% endif %}>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-3">
+                            <label class="fr-label" for="status-filter">Statut</label>
+                            <select class="fr-select" id="status-filter" name="status"{% if request|is_readonly %} disabled{% endif %}>
+                                <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
+                                <option value="{{ CONVENTION_STATUT.SIGNEE }}" {% if status_filter|statut_is_signee %}selected{% endif %}>Valide</option>
+                                <option value="{{ CONVENTION_STATUT.PUBLICATION_EN_COURS }}" {% if status_filter|statut_is_publied %}selected{% endif %}>En Publication</option>
+                                <option value="{{ CONVENTION_STATUT.PUBLIE }}" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
+                            </select>
+                        </div>
+                        <div class="fr-col-12 fr-col-lg-3">
+                            <button class="fr-btn fr-btn--icon-left fr-mt-4w" type="submit" title="Rechercher"{% if request|is_readonly %} disabled{% endif %}>
+                                <span class="fr-icon-search-line" aria-hidden="true"></span>
+                                Rechercher
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div id="search-results-container" class="fr-my-4w">
+                {% if query and conventions %}
+                    {% include "operations/seconde_vie/_search_results.html" %}
+                {% elif query %}
+                    <div class="fr-alert fr-alert--warning">
+                        <p><strong>Aucune convention trouvée</strong></p>
+                        <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
+                    </div>
+                {% else %}
+                    <div class="fr-alert fr-alert--info">
+                        {% if request|is_readonly %}
+                                <p class="fr-mb-0"><strong>Mode consultation :</strong> Vous consultez cette page en lecture seule. Les modifications ne sont pas autorisées avec votre profil.</p>
+                        {% else %}
+                                <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Selected Conventions Section -->
+            <div id="selected-conventions-container" class="fr-my-6w" style="display: none;">
+                <div class="fr-alert fr-alert--success fr-mb-3w">
+                    <p class="fr-mb-0"><strong>Conventions sélectionnées : <span id="selected-count">0</span></strong></p>
+                </div>
+
+                <div class="fr-table fr-table--no-caption fr-my-3w">
+                    <table>
+                        <caption>Conventions sélectionnées</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">Numéro</th>
+                                <th scope="col">Programme</th>
+                                <th scope="col">Ville</th>
+                                <th scope="col">Statut</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="selected-conventions-body">
+                        </tbody>
+                    </table>
+                </div>
+
+                <form method="post" action="{% url 'programmes:seconde_vie_existing' programme.numero_operation %}" class="fr-my-3w">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="validate">
+                    <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
+
+                    {% if pre_selected_conventions %}
+                        {% if not request|is_readonly %}
+                            <div class="fr-alert fr-alert--info fr-mb-3w">
+                                <p><strong>Vous modifiez</strong> la sélection des conventions parentes de cette convention seconde vie.</p>
+                            </div>
+                        {% endif %}
+                        <button type="submit" class="fr-btn fr-btn--lg"{% if request|is_readonly %} disabled{% endif %}>
+                            <span class="fr-icon-check-line fr-mr-1w" aria-hidden="true"></span>
+                            Mettre à jour la sélection
+                        </button>
+                    {% else %}
+                        <div class="fr-alert fr-alert--info fr-mb-3w">
+                            <p><strong>Attention :</strong> Vous allez créer une nouvelle convention seconde vie basée sur les conventions sélectionnées.</p>
+                        </div>
+                        <button type="submit" class="fr-btn fr-btn--lg"{% if request|is_readonly %} disabled{% endif %}>
+                            <span class="fr-icon-add-circle-line fr-mr-1w" aria-hidden="true"></span>
+                            Créer la convention seconde vie
+                        </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
     </div>
+</div>
+
+<script nonce="{{ request.csp_nonce }}">
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchForm = document.getElementById('convention-search-form');
+        const statusFilter = document.getElementById('status-filter');
+        const isReadonly = {% if request|is_readonly %}true{% else %}false{% endif %};
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', function () {
+                searchForm.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+            });
+        }
+
+        const resultsContainer = document.getElementById('search-results-container');
+        const selectedContainer = document.getElementById('selected-conventions-container');
+        const selectedBody = document.getElementById('selected-conventions-body');
+        const selectedInput = document.getElementById('selected-conventions-input');
+        const selectedCount = document.getElementById('selected-count');
+
+        let selectedConventions = [];
+
+        // Initialize with pre-selected conventions if in edit mode
+        {% if pre_selected_conventions %}
+            selectedConventions = [
+                {% for conv in pre_selected_conventions %}
+                    {
+                        uuid: '{{ conv.uuid }}',
+                        numero: '{{ conv.numero|default_if_none:"-" }}',
+                        programme: '{{ conv.programme.nom }}',
+                        ville: '{{ conv.programme.ville }}',
+                        statutText: '{{ conv.short_statut_neutre }}',
+                        statutKey: '{{ conv.statut_for_template.key_statut }}',
+                        statutIcone: '{{ conv.statut_icone }}'
+                    }{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ];
+        {% endif %}
+
+        function updateSelectedUI() {
+            const uuids = selectedConventions.map(c => c.uuid);
+            selectedInput.value = uuids.join(',');
+
+            selectedCount.textContent = selectedConventions.length;
+
+            if (selectedConventions.length > 0) {
+                selectedContainer.style.display = 'block';
+            } else {
+                selectedContainer.style.display = 'none';
+            }
+
+            selectedBody.innerHTML = '';
+            selectedConventions.forEach(conv => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${conv.numero}</td>
+                    <td>${conv.programme}</td>
+                    <td>${conv.ville}</td>
+                    <td>
+                        <div class="apilos-badge">
+                            <div class="fr-badge apilos-badge-${conv.statutKey} fr-icon-${conv.statutIcone}-fill fr-badge--icon-${conv.statutIcone} fr-text--xs">
+                                ${conv.statutText}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="fr-btn fr-btn--secondary fr-btn--sm js-remove-convention" data-uuid="${conv.uuid}"${isReadonly ? ' disabled' : ''}>
+                            Retirer
+                        </button>
+                    </td>
+                `;
+                selectedBody.appendChild(tr);
+            });
+
+            document.querySelectorAll('.js-remove-convention').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const uuid = this.dataset.uuid;
+                    removeConvention(uuid);
+                });
+            });
+
+            document.querySelectorAll('.js-add-convention').forEach(btn => {
+                if (uuids.includes(btn.dataset.uuid)) {
+                    btn.disabled = true;
+                    btn.textContent = 'Sélectionnée';
+                } else {
+                    btn.disabled = false;
+                    btn.textContent = 'Sélectionner';
+                }
+            });
+        }
+
+        function addConvention(convention) {
+            if (isReadonly) return;
+            if (!selectedConventions.find(c => c.uuid === convention.uuid)) {
+                selectedConventions.push(convention);
+                updateSelectedUI();
+            }
+        }
+
+        function removeConvention(uuid) {
+            if (isReadonly) return;
+            selectedConventions = selectedConventions.filter(c => c.uuid !== uuid);
+            updateSelectedUI();
+        }
+
+        searchForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const params = new URLSearchParams(formData);
+
+            const url = window.location.pathname;
+            fetch(`${url}?${params.toString()}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+                .then(response => response.text())
+                .then(html => {
+                    resultsContainer.innerHTML = html;
+                    attachResultListeners();
+                    updateSelectedUI();
+                })
+                .catch(error => console.error('Error:', error));
+        });
+
+        function handlePagination(e) {
+            e.preventDefault();
+            const url = e.target.href;
+            if (url) {
+                fetch(url, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                    .then(response => response.text())
+                    .then(html => {
+                        resultsContainer.innerHTML = html;
+                        attachResultListeners();
+                        updateSelectedUI();
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        }
+
+
+        function attachResultListeners() {
+            document.querySelectorAll('.js-pagination-link').forEach(link => {
+                link.addEventListener('click', handlePagination);
+            });
+
+            document.querySelectorAll('.js-add-convention').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const convention = {
+                        uuid: this.dataset.uuid,
+                        numero: this.dataset.numero,
+                        programme: this.dataset.programme,
+                        ville: this.dataset.ville,
+                        statutText: this.dataset.statutText,
+                        statutKey: this.dataset.statutKey,
+                        statutIcone: this.dataset.statutIcone
+                    };
+                    addConvention(convention);
+                });
+            });
+        }
+
+        attachResultListeners();
+
+        if (selectedConventions.length > 0) {
+            updateSelectedUI();
+        }
+    });
+</script>
 {% endblock content %}

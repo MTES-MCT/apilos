@@ -1,0 +1,87 @@
+{% load custom_filters %}
+
+<div class="fr-grid-row fr-grid-row--gutters fr-mt-1w">
+    <div class="fr-col-12 fr-col-lg-12">
+        <div class="fr-card fr-card--no-arrow">
+            <div class="fr-card__body fr-my-2w">
+                {% url 'programmes:seconde_vie_existing' convention.programme.numero_operation as seconde_vie_url %}
+                <div class="block--row-strech">
+                    <div class="block--row-strech-1">
+                        <h3 class="fr-card__title">
+                            <span class="fr-icon-link-line fr-mr-1w" aria-hidden="true"></span>
+                            Conventions parentes (Seconde Vie)
+                        </h3>
+                    </div>
+                    {% if parents %}
+                        <a href="{{ seconde_vie_url }}?{% for parent in parents %}parent_uuid={{ parent.uuid }}&{% endfor %}edit=1"
+                           class="fr-link fr-mb-1w"
+                           title="Modifier les conventions parentes">
+                            <span class="fr-icon-edit-line">Aller à cette étape</span>
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if parents %}
+                    <div class="fr-table fr-table--no-caption fr-my-2w">
+                        <div class="fr-table__wrapper">
+                            <div class="fr-table__container">
+                                <div class="fr-table__content">
+                                    <table aria-label="Conventions parentes">
+                                        <caption class="fr-sr-only">{{ parents|length }} convention{{ parents|pluralize }} parente{{ parents|pluralize }}</caption>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Numéro</th>
+                                                <th scope="col">Programme</th>
+                                                <th scope="col">Ville</th>
+                                                <th scope="col">Financement</th>
+                                                <th scope="col">Statut</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {% for parent in parents %}
+                                                <tr>
+                                                    <td>
+                                                        <a href="{% url 'conventions:recapitulatif' convention_uuid=parent.uuid %}" class="fr-link">
+                                                            {{ parent.numero|default_if_none:'-' }}
+                                                        </a>
+                                                    </td>
+                                                    <td>{{ parent.programme.nom }}</td>
+                                                    <td>{{ parent.programme.ville }}</td>
+                                                    <td>{{ parent.get_financement_display }}</td>
+                                                    <td>
+                                                        <div class="apilos-badge">
+                                                            <div class="fr-badge apilos-badge-{{ parent.statut_for_template.key_statut }} fr-icon-{{ parent.statut_icone }}-fill fr-badge--icon-{{ parent.statut_icone }} fr-text--xs">
+                                                                {{ parent.short_statut_neutre }}
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fr-alert fr-alert--info fr-mt-2w">
+                        <p class="fr-text--sm fr-mb-0">
+                            <span class="fr-icon-info-line fr-mr-1w" aria-hidden="true"></span>
+                            Vous pouvez <strong>modifier la sélection</strong> des conventions parentes.
+                        </p>
+                    </div>
+                {% else %}
+                    <div class="fr-alert fr-alert--warning fr-my-2w">
+                        <p class="fr-text--sm fr-mb-0">
+                            <span class="fr-icon-warning-line fr-mr-1w" aria-hidden="true"></span>
+                            Aucune convention parente liée.
+                            <a href="{% url 'programmes:seconde_vie_existing' convention.programme.numero_operation %}" class="fr-link">
+                                Ajouter des conventions parentes
+                            </a>
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -62,6 +62,29 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
             create_lot__financement=Financement.PLAI,
         )
 
+        ConventionFactory(
+            uuid="cc1b1111-171b-402d-a35e-71e1bd791b73",
+            numero="99/2020/2021-111/050S",
+            statut=ConventionStatut.SIGNEE.label,
+            programme=ProgrammeFactory(
+                anru=False,
+                anah=False,
+                seconde_vie=True,
+                numero_operation="20240800500050",
+                nom="SECONDE VIE - Programme de test",
+                ville="Lyon",
+                adresse="10 rue de la Paix",
+                code_postal="69000",
+                nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+                bailleur=BailleurFactory(
+                    nom="BAILLEUR SECONDE VIE",
+                    siret="111222333444555",
+                ),
+            ),
+            create_lot=True,
+            create_lot__financement=Financement.PLUS,
+        )
+
         convention = ConventionFactory(
             uuid="fbb9890f-171b-402d-a35e-71e1bd791b72",
             numero="32O665408Y777889",
@@ -198,6 +221,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 {"nature_logement": NatureLogement.LOGEMENTSORDINAIRES},
                 [
                     "fbb9890f-171b-402d-a35e-71e1bd791b72",
+                    "cc1b1111-171b-402d-a35e-71e1bd791b73",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                     "a6862260-5afa-4e2c-ae07-a39276c55e46",
                 ],
@@ -212,6 +236,11 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 {"bailleur": "9eaece28-e15f-4d23-94f5-20902f5b0180"},
                 ["fbb9890f-171b-402d-a35e-71e1bd791b70"],
                 id="bailleur",
+            ),
+            param(
+                {"seconde_vie": "on"},
+                ["cc1b1111-171b-402d-a35e-71e1bd791b73"],
+                id="seconde_vie",
             ),
             param(
                 {"search_operation_nom": "rue occitanie"},
@@ -287,6 +316,7 @@ class TestUserConventionSearchService(PGTrgmTestMixin, ParametrizedTestCase, Tes
                 [
                     "60511ac3-f979-4a13-917d-1c746b4e4390",
                     "53702e67-60c1-431e-baa9-449960cf8bcb",
+                    "cc1b1111-171b-402d-a35e-71e1bd791b73",
                     "fbb9890f-171b-402d-a35e-71e1bd791b70",
                 ],
                 id="conv_en_resiliation",
