@@ -70,12 +70,11 @@ def operation_conventions(request, numero_operation):
 
     # Seconde vie : on ne crée pas les conventions automatiquement
     if operation_service.is_seconde_vie():
-
-        all_conventions = Convention.objects.filter(
-            programme__numero_operation=numero_operation
-        ).exclude(statut="11. Annulée")
-
-        if not all_conventions.exists():
+        has_sv_with_parents = Convention.objects.filter(
+            programme__numero_operation=numero_operation,
+            parents__isnull=False,
+        ).exists()
+        if not has_sv_with_parents:
             return HttpResponseRedirect(
                 reverse("programmes:seconde_vie_existing", args=[numero_operation])
             )
@@ -180,15 +179,6 @@ class SecondeVieExistingView(SecondeVieBaseView):
                     + f"?search_numero={kwargs['numero_operation']}"
                 )
 
-        # If conventions already exist, redirect to operation conventions page
-        if not is_readonly and operation_service.has_conventions():
-            return HttpResponseRedirect(
-                reverse(
-                    "programmes:operation_conventions",
-                    args=[kwargs["numero_operation"]],
-                )
-            )
-
         context = self.get_context_data(**kwargs)
         if request.headers.get("x-requested-with") == "XMLHttpRequest":
             return render(
@@ -201,6 +191,27 @@ class SecondeVieExistingView(SecondeVieBaseView):
         query = self.request.GET.get("q")
         status_filter = self.request.GET.get("status")
 
+        # Existing Seconde Vie convention for this programme
+        programme = context["programme"]
+        seconde_vie_convention = None
+        if programme:
+            # Prefer a convention already linked to parents
+            seconde_vie_convention = Convention.objects.filter(
+                programme=programme, parents__isnull=False
+            ).first()
+
+            if not seconde_vie_convention and programme.seconde_vie:
+                seconde_vie_convention = (
+                    Convention.objects.filter(programme=programme, parent__isnull=True)
+                    .order_by("-cree_le")
+                    .first()
+                )
+
+        context["has_seconde_vie_convention"] = bool(seconde_vie_convention)
+        context["seconde_vie_convention_uuid"] = (
+            str(seconde_vie_convention.uuid) if seconde_vie_convention else None
+        )
+
         # Get pre-selected parent UUIDs from query parameters (for edit mode)
         pre_selected_uuids = self.request.GET.getlist("parent_uuid")
         pre_selected_conventions = []
@@ -208,12 +219,8 @@ class SecondeVieExistingView(SecondeVieBaseView):
             pre_selected_conventions = list(
                 Convention.objects.filter(uuid__in=pre_selected_uuids)
             )
-
-            # Find the existing Seconde Vie convention for this programme
-            existing_seconde_vie = Convention.objects.filter(
-                programme=context["programme"], parents__isnull=False
-            ).first()
-            context["existing_seconde_vie_convention"] = existing_seconde_vie
+        elif seconde_vie_convention:
+            pre_selected_conventions = list(seconde_vie_convention.parents.all())
 
         context["pre_selected_conventions"] = pre_selected_conventions
 
@@ -321,6 +328,94 @@ class SecondeVieExistingView(SecondeVieBaseView):
 
         return final_convention
 
+    def _extract_selected_uuids(self, request, context):
+        raw = request.POST.get("selected_conventions")
+        selected = [uuid for uuid in raw.split(",") if uuid] if raw is not None else []
+
+        if raw is None and not selected and context.get("seconde_vie_convention_uuid"):
+            existing_sv = Convention.objects.filter(
+                uuid=context["seconde_vie_convention_uuid"]
+            ).first()
+            if existing_sv:
+                selected = list(existing_sv.parents.values_list("uuid", flat=True))
+
+        return selected
+
+    def _clear_parents_if_empty(self, context, target_programme):
+        filters = Q(parents__isnull=False) | Q(seconde_vie_children__isnull=False)
+        if context.get("seconde_vie_convention_uuid"):
+            filters = filters | Q(uuid=context["seconde_vie_convention_uuid"])
+
+        qs_to_clear = (
+            Convention.objects.filter(programme=target_programme)
+            .filter(filters)
+            .distinct()
+        )
+
+        if qs_to_clear.exists():
+            for conv in qs_to_clear:
+                conv.parents.clear()
+            first_cleared = qs_to_clear.first()
+            return HttpResponseRedirect(
+                reverse("conventions:recapitulatif", args=[first_cleared.uuid])
+            )
+
+        if target_programme and getattr(target_programme, "seconde_vie", False):
+            candidate = (
+                Convention.objects.filter(
+                    programme=target_programme, parent__isnull=True
+                )
+                .order_by("-cree_le")
+                .first()
+            )
+            if candidate:
+                candidate.parents.clear()
+                return HttpResponseRedirect(
+                    reverse("conventions:recapitulatif", args=[candidate.uuid])
+                )
+
+        return None
+
+    def _update_conventions_with_parents(
+        self, selected_uuids, context, target_programme, kwargs
+    ):
+        with transaction.atomic():
+            selected_conventions = list(
+                Convention.objects.filter(uuid__in=selected_uuids)
+            )
+            if not selected_conventions:
+                return None
+
+            operation_service = OperationService(
+                request=self.request, numero_operation=kwargs["numero_operation"]
+            )
+
+            existing_seconde_vie_conventions = Convention.objects.filter(
+                programme=target_programme, parents__isnull=False
+            ).distinct()
+
+            final_convention = None
+            if existing_seconde_vie_conventions.exists():
+                for convention in existing_seconde_vie_conventions:
+                    convention.parents.set(selected_conventions)
+                final_convention = existing_seconde_vie_conventions.first()
+            elif context.get("seconde_vie_convention_uuid"):
+                final_convention = Convention.objects.filter(
+                    uuid=context["seconde_vie_convention_uuid"]
+                ).first()
+                if final_convention:
+                    final_convention.parents.set(selected_conventions)
+                    final_convention.save()
+            else:
+                new_convention_uuids = self._create_and_link_conventions(
+                    selected_conventions, target_programme, operation_service
+                )
+                final_convention = self._group_or_get_final_convention(
+                    new_convention_uuids
+                )
+
+            return final_convention
+
     def post(self, request, *args, **kwargs):
         # Check if user has readonly access
         if "readonly" in request.session and request.session["readonly"]:
@@ -342,41 +437,24 @@ class SecondeVieExistingView(SecondeVieBaseView):
         target_programme = context["programme"]
 
         if action == "validate":
-            selected_uuids_str = request.POST.get("selected_conventions", "")
-            selected_uuids = [uuid for uuid in selected_uuids_str.split(",") if uuid]
+            selected_uuids = self._extract_selected_uuids(request, context)
 
             if not selected_uuids:
+                cleared_response = self._clear_parents_if_empty(
+                    context, target_programme
+                )
+                if cleared_response:
+                    return cleared_response
+                messages.add_message(
+                    request,
+                    messages.ERROR,
+                    "Veuillez sélectionner au moins une convention parente avant de valider.",
+                )
                 return render(request, self.template_name, context)
 
-            with transaction.atomic():
-                # Get all selected conventions
-                selected_conventions = list(
-                    Convention.objects.filter(uuid__in=selected_uuids)
-                )
-                if not selected_conventions:
-                    return render(request, self.template_name, context)
-
-                operation_service = OperationService(
-                    request=request, numero_operation=kwargs["numero_operation"]
-                )
-
-                # Check if a Seconde Vie convention already exists for this programme
-                existing_seconde_vie_conventions = Convention.objects.filter(
-                    programme=target_programme, parents__isnull=False
-                ).distinct()
-
-                if existing_seconde_vie_conventions.exists():
-                    for convention in existing_seconde_vie_conventions:
-                        convention.parents.set(selected_conventions)
-                    final_convention = existing_seconde_vie_conventions.first()
-                else:
-                    new_convention_uuids = self._create_and_link_conventions(
-                        selected_conventions, target_programme, operation_service
-                    )
-
-                    final_convention = self._group_or_get_final_convention(
-                        new_convention_uuids
-                    )
+            final_convention = self._update_conventions_with_parents(
+                selected_uuids, context, target_programme, kwargs
+            )
 
             if final_convention:
                 return HttpResponseRedirect(

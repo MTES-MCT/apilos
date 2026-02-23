@@ -14,19 +14,21 @@
         <div class="fr-col-12">
             <!-- Header Section -->
             <div class="fr-mb-4w">
-                {% if existing_seconde_vie_convention %}
+                {% if has_seconde_vie_convention %}
                     <div class="fr-grid-row fr-grid-row--space-between fr-grid-row--middle">
                         <div class="fr-col">
                             <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
                             <p class="fr-text--lead fr-mb-0">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
                         </div>
-                        <div class="fr-col fr-col--right">
-                            <a href="{% url 'conventions:recapitulatif' convention_uuid=existing_seconde_vie_convention.uuid %}"
-                               class="fr-link">
-                                <span class="fr-icon-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>
-                                Retour au récapitulatif
-                            </a>
-                        </div>
+                            {% if seconde_vie_convention_uuid %}
+                                <div class="fr-col fr-col--right">
+                                    <a href="{% url 'conventions:recapitulatif' convention_uuid=seconde_vie_convention_uuid %}"
+                                       class="fr-link">
+                                        <span class="fr-icon-arrow-left-s-line fr-mr-1w" aria-hidden="true"></span>
+                                        Retour au récapitulatif
+                                    </a>
+                                </div>
+                            {% endif %}
                     </div>
                 {% else %}
                     <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
@@ -34,7 +36,7 @@
                 {% endif %}
             </div>
 
-            {% if not pre_selected_conventions %}
+            {% if not has_seconde_vie_convention %}
                 <div class="fr-alert fr-alert--info fr-my-4w">
                     <h3 class="fr-alert__title">Les logements concernés n'ont jamais été conventionnés ?</h3>
                     <p>Nous allons réaliser les conventions APL pour ces logements.</p>
@@ -120,7 +122,7 @@
                     <input type="hidden" name="action" value="validate">
                     <input type="hidden" name="selected_conventions" id="selected-conventions-input" value="">
 
-                    {% if pre_selected_conventions %}
+                    {% if has_seconde_vie_convention %}
                         {% if not request|is_readonly %}
                             <div class="fr-alert fr-alert--info fr-mb-3w">
                                 <p><strong>Vous modifiez</strong> la sélection des conventions parentes de cette convention seconde vie.</p>
@@ -150,6 +152,7 @@
         const searchForm = document.getElementById('convention-search-form');
         const statusFilter = document.getElementById('status-filter');
         const isReadonly = {% if request|is_readonly %}true{% else %}false{% endif %};
+        const hasSecondeVie = {% if has_seconde_vie_convention %}true{% else %}false{% endif %};
 
         if (statusFilter) {
             statusFilter.addEventListener('change', function () {
@@ -188,7 +191,7 @@
 
             selectedCount.textContent = selectedConventions.length;
 
-            if (selectedConventions.length > 0) {
+            if (selectedConventions.length > 0 || hasSecondeVie) {
                 selectedContainer.style.display = 'block';
             } else {
                 selectedContainer.style.display = 'none';
