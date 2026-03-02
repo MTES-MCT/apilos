@@ -12,6 +12,7 @@ from django.urls import reverse
 from conventions.models import Convention, ConventionGroupingError
 from core.tests.factories import ConventionFactory, ProgrammeFactory
 from instructeurs.tests.factories import AdministrationFactory
+from programmes.models.models import Programme
 from programmes.views import (
     SecondeVieExistingView,
     operation_conventions,
@@ -65,6 +66,69 @@ def test_operation_conventions(render_mock):
         render_mock.assert_called_once()
         args, _ = render_mock.call_args
         assert args[1] == "operations/conventions.html"
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.services.SIAPClient")
+def test_operation_conventions_non_cerbere_user(mock_siap_class):
+    url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
+    user = UserFactory(cerbere_login=None)
+    request = RequestFactory().get(url)
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.user = user
+
+    with pytest.raises(
+        PermissionError, match="this function is available only for CERBERE user"
+    ):
+        operation_conventions(request, numero_operation="1")
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.views.render")
+@mock.patch("programmes.views.OperationService")
+def test_operation_conventions_multiple_programmes(mock_service_class, render_mock):
+    url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
+    request = _get_habilited_request(url)
+
+    mock_service = mock_service_class.return_value
+    p1 = MagicMock(spec=Programme)
+    p1.conventions.all.return_value = [1]
+    p2 = MagicMock(spec=Programme)
+    p2.conventions.all.return_value = [1, 2, 3]
+    mock_service.programmes = [p1, p2]
+    mock_service.operation = MagicMock()
+    mock_service.is_seconde_vie.return_value = False
+    mock_service.collect_conventions_by_financements.return_value = {}
+
+    operation_conventions(request, numero_operation="1")
+
+    mock_service.collect_conventions_by_financements.assert_called_once()
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.views.render")
+@mock.patch("programmes.views.OperationService")
+def test_operation_conventions_multiple_conventions_warning(
+    mock_service_class, render_mock
+):
+    url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
+    request = _get_habilited_request(url)
+    message_middleware = MessageMiddleware(lambda x: None)
+    message_middleware.process_request(request)
+
+    mock_service = mock_service_class.return_value
+    programme = MagicMock(spec=Programme)
+    mock_service.programmes = [programme]
+    mock_service.operation = MagicMock()
+    mock_service.is_seconde_vie.return_value = False
+    mock_service.collect_conventions_by_financements.return_value = {"F1": [1, 2]}
+
+    operation_conventions(request, numero_operation="1")
+
+    storage = get_messages(request)
+    messages_list = [m.message for m in storage]
+    assert any("plusieurs conventions actives" in m for m in messages_list)
 
 
 @pytest.mark.django_db
@@ -137,6 +201,199 @@ def test_seconde_vie_existing_view():
         response = SecondeVieExistingView.as_view()(request, numero_operation="1")
         assert response.status_code == 200
         assert b"Seconde Vie - Conventions existantes" in response.content
+
+
+@pytest.mark.django_db
+def test_seconde_vie_existing_view_readonly_no_siap():
+    url = reverse(
+        "programmes:seconde_vie_existing", kwargs={"numero_operation": "20220600100"}
+    )
+    user = UserFactory()
+    request = RequestFactory().get(url)
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.session["readonly"] = True
+    request.session["habilitation_id"] = "1"
+    request.session.save()
+    request.user = user
+
+    # Create programme in DB but SIAP returns None
+    ProgrammeFactory(numero_operation="20220600100")
+
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_instance = mock_get_instance.return_value
+        mock_instance.get_operation.return_value = None
+
+        response = SecondeVieExistingView.as_view()(
+            request, numero_operation="20220600100"
+        )
+        assert response.status_code == 200
+        assert b"Seconde Vie - Conventions existantes" in response.content
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.views.OperationService")
+def test_seconde_vie_existing_view_search_and_filter(mock_op_service_class):
+    url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
+    url += "?q=test&status=5. Publiée"
+    request = _get_habilited_request(url)
+
+    programme = ProgrammeFactory(numero_operation="1")
+
+    mock_service = mock_op_service_class.return_value
+    mock_service.operation = operation_mock
+    mock_service.siap_error = False
+    mock_service.programme = programme
+    mock_service.programmes = [programme]
+    mock_service.get_context_list_conventions.return_value = {
+        "url_name": "seconde_vie_existing",
+        "order_by": "",
+        "numero_operation": "1",
+        "programme": programme,
+        "conventions": [],
+        "filtered_conventions_count": 0,
+        "all_conventions_count": 0,
+        "search_operation_nom": "",
+        "search_numero": "",
+        "search_lieu": "",
+    }
+
+    request.user.is_superuser = True
+    request.user.cerbere_login = None
+    request.user.save()
+
+    with patch("programmes.views.ConventionSearchService") as mock_search, patch(
+        "programmes.views.Paginator"
+    ) as mock_pag:
+        mock_search.return_value.get_queryset.return_value = (
+            programme.conventions.none()
+        )
+        mock_pag.return_value.get_page.return_value = []
+        mock_pag.return_value.count = 0
+
+        response = SecondeVieExistingView.as_view()(request, numero_operation="1")
+        assert response.status_code == 200
+
+
+@pytest.mark.django_db
+def test_seconde_vie_existing_view_post_readonly():
+    url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
+    request = RequestFactory().post(url)
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.session["readonly"] = True
+    request.session.save()
+    request.user = UserFactory()
+    # Mock message middleware
+    message_middleware = MessageMiddleware(lambda x: None)
+    message_middleware.process_request(request)
+
+    view = SecondeVieExistingView()
+    view.request = request
+    view.kwargs = {"numero_operation": "1"}
+
+    with patch("programmes.views.reverse", side_effect=reverse):
+        from django.urls import ResolverMatch
+
+        request.resolver_match = ResolverMatch(
+            lambda: None, (), {"numero_operation": "1"}, url_name="seconde_vie_existing"
+        )
+        request.resolver_match.args = ()
+        request.resolver_match.kwargs = {"numero_operation": "1"}
+        request.resolver_match.view_name = "programmes:seconde_vie_existing"
+
+        response = SecondeVieExistingView.as_view()(request, numero_operation="1")
+        assert response.status_code == 302
+        storage = get_messages(request)
+        assert any("n'avez pas les droits" in m.message for m in storage)
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.views.OperationService")
+def test_seconde_vie_existing_view_post_validate(mock_service_class):
+    url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
+    p1 = ConventionFactory()
+    request = RequestFactory().post(
+        url, {"action": "validate", "selected_conventions": str(p1.uuid)}
+    )
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.session["readonly"] = False
+    request.session["habilitation_id"] = "1"
+    request.session.save()
+    request.user = UserFactory(cerbere_login=None)
+
+    # Ensure user has a role with a group to avoid IntegrityError
+    administration = AdministrationFactory()
+    group = GroupFactory()
+    RoleFactory(
+        user=request.user,
+        administration=administration,
+        typologie=TypeRole.INSTRUCTEUR,
+        group=group,
+    )
+
+    programme = ProgrammeFactory(numero_operation="1")
+    mock_service = mock_service_class.return_value
+    mock_service.get_or_create_programme.return_value = programme
+    mock_service.operation = operation_mock
+    mock_service.is_seconde_vie.return_value = True
+
+    with patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_instance = mock_get_instance.return_value
+        mock_instance.get_operation.return_value = operation_mock
+
+        with patch(
+            "programmes.views.SecondeVieExistingView._update_conventions_with_parents"
+        ) as mock_update:
+            final_conv = ConventionFactory()
+            mock_update.return_value = final_conv
+
+            response = SecondeVieExistingView.as_view()(request, numero_operation="1")
+            assert response.status_code == 302
+            assert str(final_conv.uuid) in response.url
+
+
+@pytest.mark.django_db
+def test_seconde_vie_new_readonly():
+    url = reverse("programmes:seconde_vie_new", kwargs={"numero_operation": "1"})
+    user = UserFactory(cerbere_login=True)
+    request = RequestFactory().get(url)
+    middleware = SessionMiddleware(lambda x: None)
+    middleware.process_request(request)
+    request.session["readonly"] = True
+    request.session.save()
+    request.user = user
+    message_middleware = MessageMiddleware(lambda x: None)
+    message_middleware.process_request(request)
+
+    response = seconde_vie_new(request, numero_operation="1")
+    assert response.status_code == 302
+    assert response.url == reverse("conventions:search")
+
+
+@pytest.mark.django_db
+@mock.patch("programmes.services.SIAPClient")
+def test_seconde_vie_new_duplicated_operation(mock_siap_class):
+    url = reverse("programmes:seconde_vie_new", kwargs={"numero_operation": "1"})
+    request = _get_habilited_request(url)
+
+    op_mock_with_siren = copy.deepcopy(operation_mock)
+    op_mock_with_siren["donneesMo"]["siren"] = "123456789"
+
+    mock_instance = mock_siap_class.get_instance.return_value
+    mock_instance.get_operation.return_value = op_mock_with_siren
+
+    from siap.exceptions import DuplicatedOperationSIAPException
+
+    with patch(
+        "programmes.views.OperationService.get_or_create_conventions"
+    ) as mock_get:
+        mock_get.side_effect = DuplicatedOperationSIAPException(numero_operation="1")
+
+        response = seconde_vie_new(request, numero_operation="1")
+        assert response.status_code == 302
+        assert "search_numero=1" in response.url
 
 
 @pytest.mark.django_db
