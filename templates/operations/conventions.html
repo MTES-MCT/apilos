@@ -13,6 +13,22 @@
         {% include "common/messages.html" %}
     </div>
 
+    {% if seconde_vie_feature_disabled %}
+    <div class="fr-container fr-my-4w">
+        <div class="fr-notice fr-notice--info">
+            <div class="fr-container">
+                <div class="fr-notice__body">
+                    <p class="fr-notice__title">
+                        La fonctionnalité Seconde Vie n'est pas disponible pour le moment.
+                    </p>
+                    <p class="fr-notice__desc">
+                        Cette opération est de type Seconde Vie. La gestion des conventions Seconde Vie sera disponible prochainement.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
     <div class="fr-container">
         <div class="fr-grid-row fr-grid-row--gutters">
             <div class="fr-my-5w fr-table">
@@ -20,4 +36,5 @@
             </div>
         </div>
     </div>
+    {% endif %}
 {% endblock content %}

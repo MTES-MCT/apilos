@@ -556,6 +556,21 @@ def can_use_expert_mode(request, convention):
 
 
 @register.filter
+def statut_is_signee(statut):
+    return statut == ConventionStatut.SIGNEE.label
+
+
+@register.filter
+def statut_is_publied(statut):
+    return statut == ConventionStatut.PUBLIE.label
+
+
+@register.filter
+def statut_is_in_publication(statut):
+    return statut == ConventionStatut.PUBLICATION_EN_COURS.label
+
+
+@register.filter
 def siap_convention_step_doc_url(step: str) -> str | None:
     match strip_accents(step.lower()).replace(" ", "_"):
         case "bailleur":

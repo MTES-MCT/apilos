@@ -27,6 +27,7 @@ class ConventionProgrammeService(ConventionService):
                 "type_operation": programme.type_operation,
                 "anru": programme.anru,
                 "anah": programme.anah,
+                "seconde_vie": programme.seconde_vie,
                 "autres_locaux_hors_convention": programme.autres_locaux_hors_convention,
                 "nb_locaux_commerciaux": programme.nb_locaux_commerciaux,
                 "nb_bureaux": programme.nb_bureaux,
@@ -71,7 +72,10 @@ class ConventionProgrammeService(ConventionService):
                         "nb_bureaux",
                     ],
                 ),
-            }
+            },
+            initial={
+                "seconde_vie": self.convention.programme.seconde_vie,
+            },
         )
         if self.form.is_valid():
             _save_convention_adresse(self.convention, self.form)

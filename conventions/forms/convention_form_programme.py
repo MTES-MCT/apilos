@@ -81,6 +81,11 @@ class ProgrammeForm(ProgrammeMinimalForm):
         required=False,
         label="L'opération bénéficie d'un financement&nbsp;<strong>ANAH</strong>",
     )
+    seconde_vie = forms.BooleanField(
+        required=False,
+        disabled=True,
+        label="Seconde vie",
+    )
     nb_locaux_commerciaux = forms.IntegerField(
         required=False,
         label="Locaux commerciaux",

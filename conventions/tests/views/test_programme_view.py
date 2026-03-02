@@ -65,3 +65,16 @@ class ConventionProgrammeViewTests(AbstractEditViewTestCase, TestCase):
             "123 rue du fake",
             msg=f"{self.msg_prefix}",
         )
+
+    def test_displays_seconde_vie_as_read_only_information(self):
+        self.client.login(username="nicolas", password="12345")
+        self.convention_75.programme.seconde_vie = True
+        self.convention_75.programme.save(update_fields=["seconde_vie"])
+
+        response = self.client.get(self.target_path)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Seconde vie")
+        self.assertContains(response, 'name="seconde_vie"')
+        self.assertContains(response, 'id="seconde_vie"')
+        self.assertContains(response, "disabled")

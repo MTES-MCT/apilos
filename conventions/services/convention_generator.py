@@ -46,10 +46,26 @@ class DocxGenerationError(Exception):
 
 def get_convention_template_path(convention):
     # pylint: disable=R0911
+    return _get_avenant_or_seconde_vie_template_path(
+        convention
+    ) or _get_standard_template_path(convention)
+
+
+def _get_avenant_or_seconde_vie_template_path(convention):
     if convention.is_avenant():
         if convention.programme.is_foyer or convention.programme.is_residence:
             return f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx"
         return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
+
+    if convention.programme.seconde_vie:
+        if convention.programme.is_foyer:
+            return f"{settings.BASE_DIR}/documents/Avenant2ndeVie-Foyer-template.docx"
+        return f"{settings.BASE_DIR}/documents/Avenant2ndeVie-HLM-template.docx"
+
+    return None
+
+
+def _get_standard_template_path(convention):
     if convention.programme.is_foyer:
         return f"{settings.BASE_DIR}/documents/Foyer-template.docx"
     if convention.programme.is_residence:
