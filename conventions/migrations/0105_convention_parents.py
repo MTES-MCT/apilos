@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="convention",
-            name="parents",
+            name="parents_2nd_vie",
             field=models.ManyToManyField(
                 blank=True,
                 related_name="seconde_vie_children",

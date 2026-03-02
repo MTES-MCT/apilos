@@ -34,7 +34,7 @@ def _handle_seconde_vie(request, operation_service, numero_operation):
     if switch_is_active(settings.SWITCH_SECONDE_VIE_ON):
         has_sv_with_parents = Convention.objects.filter(
             programme__numero_operation=numero_operation,
-            parents__isnull=False,
+            parents_2nd_vie__isnull=False,
         ).exists()
         if not has_sv_with_parents:
             return HttpResponseRedirect(
@@ -217,9 +217,9 @@ class SecondeVieExistingView(SecondeVieBaseView):
         programme = context["programme"]
         seconde_vie_convention = None
         if programme:
-            # Prefer a convention already linked to parents
+            # Prefer a convention already linked to parents_2nd_vie
             seconde_vie_convention = Convention.objects.filter(
-                programme=programme, parents__isnull=False
+                programme=programme, parents_2nd_vie__isnull=False
             ).first()
 
             if not seconde_vie_convention and programme.seconde_vie:
@@ -242,7 +242,9 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 Convention.objects.filter(uuid__in=pre_selected_uuids)
             )
         elif seconde_vie_convention:
-            pre_selected_conventions = list(seconde_vie_convention.parents.all())
+            pre_selected_conventions = list(
+                seconde_vie_convention.parents_2nd_vie.all()
+            )
 
         context["pre_selected_conventions"] = pre_selected_conventions
 
@@ -264,11 +266,11 @@ class SecondeVieExistingView(SecondeVieBaseView):
             else:
                 queryset = queryset.filter(statut__in=allowed_statuses)
 
-            # Only non-avenants (parent is None and parents is empty)
+            # Only non-avenants (parent is None and parents_2nd_vie is empty)
             queryset = queryset.filter(parent__isnull=True).exclude(
-                id__in=Convention.objects.filter(parents__isnull=False).values_list(
-                    "id", flat=True
-                )
+                id__in=Convention.objects.filter(
+                    parents_2nd_vie__isnull=False
+                ).values_list("id", flat=True)
             )
 
             # Search by numero, programme name, or ville
@@ -299,7 +301,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
     def _create_and_link_conventions(
         self, selected_conventions, target_programme, operation_service
     ):
-        """Create conventions for each financement and link them to parents."""
+        """Create conventions for each financement and link them to parents_2nd_vie."""
 
         new_convention_uuids = []
 
@@ -327,7 +329,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
                         financement, []
                     ):
                         new_convention_uuids.append(str(convention.uuid))
-                        convention.parents.set(selected_conventions)
+                        convention.parents_2nd_vie.set(selected_conventions)
                         convention.save()
 
         return new_convention_uuids
@@ -359,12 +361,16 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 uuid=context["seconde_vie_convention_uuid"]
             ).first()
             if existing_sv:
-                selected = list(existing_sv.parents.values_list("uuid", flat=True))
+                selected = list(
+                    existing_sv.parents_2nd_vie.values_list("uuid", flat=True)
+                )
 
         return selected
 
     def _clear_parents_if_empty(self, context, target_programme):
-        filters = Q(parents__isnull=False) | Q(seconde_vie_children__isnull=False)
+        filters = Q(parents_2nd_vie__isnull=False) | Q(
+            seconde_vie_children__isnull=False
+        )
         if context.get("seconde_vie_convention_uuid"):
             filters = filters | Q(uuid=context["seconde_vie_convention_uuid"])
 
@@ -376,7 +382,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
 
         if qs_to_clear.exists():
             for conv in qs_to_clear:
-                conv.parents.clear()
+                conv.parents_2nd_vie.clear()
             first_cleared = qs_to_clear.first()
             return HttpResponseRedirect(
                 reverse("conventions:recapitulatif", args=[first_cleared.uuid])
@@ -391,7 +397,7 @@ class SecondeVieExistingView(SecondeVieBaseView):
                 .first()
             )
             if candidate:
-                candidate.parents.clear()
+                candidate.parents_2nd_vie.clear()
                 return HttpResponseRedirect(
                     reverse("conventions:recapitulatif", args=[candidate.uuid])
                 )
@@ -413,20 +419,20 @@ class SecondeVieExistingView(SecondeVieBaseView):
             )
 
             existing_seconde_vie_conventions = Convention.objects.filter(
-                programme=target_programme, parents__isnull=False
+                programme=target_programme, parents_2nd_vie__isnull=False
             ).distinct()
 
             final_convention = None
             if existing_seconde_vie_conventions.exists():
                 for convention in existing_seconde_vie_conventions:
-                    convention.parents.set(selected_conventions)
+                    convention.parents_2nd_vie.set(selected_conventions)
                 final_convention = existing_seconde_vie_conventions.first()
             elif context.get("seconde_vie_convention_uuid"):
                 final_convention = Convention.objects.filter(
                     uuid=context["seconde_vie_convention_uuid"]
                 ).first()
                 if final_convention:
-                    final_convention.parents.set(selected_conventions)
+                    final_convention.parents_2nd_vie.set(selected_conventions)
                     final_convention.save()
             else:
                 new_convention_uuids = self._create_and_link_conventions(

@@ -37,7 +37,7 @@
                     {% include "conventions/recapitulatif/alert_convention.html" %}
                 {% endif %}
                 {% if convention.programme.seconde_vie and switch_seconde_vie_on %}
-                    {% include "conventions/recapitulatif/seconde_vie_parents.html" with parents=convention.parents.all %}
+                    {% include "conventions/recapitulatif/seconde_vie_parents.html" with parents_2nd_vie=convention.parents_2nd_vie.all %}
                 {% endif %}
                 {% if convention|display_comments %}
                     <turbo-frame id="opened_comments_block" data-turbo="true">

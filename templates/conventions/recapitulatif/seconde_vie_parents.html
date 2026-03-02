@@ -11,8 +11,8 @@
                             Conventions parentes (Seconde Vie)
                         </h3>
                     </div>
-                    {% if parents %}
-                        <a href="{{ seconde_vie_url }}?{% for parent in parents %}parent_uuid={{ parent.uuid }}&{% endfor %}edit=1"
+                    {% if parents_2nd_vie %}
+                        <a href="{{ seconde_vie_url }}?{% for parent in parents_2nd_vie %}parent_uuid={{ parent.uuid }}&{% endfor %}edit=1"
                            class="fr-link fr-mb-1w"
                            title="Modifier les conventions parentes">
                             <span class="fr-icon-edit-line">Aller à cette étape</span>
@@ -20,13 +20,13 @@
                     {% endif %}
                 </div>
 
-                {% if parents %}
+                {% if parents_2nd_vie %}
                     <div class="fr-table fr-table--no-caption fr-my-2w">
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
                                     <table aria-label="Conventions parentes">
-                                        <caption class="fr-sr-only">{{ parents|length }} convention{{ parents|pluralize }} parente{{ parents|pluralize }}</caption>
+                                        <caption class="fr-sr-only">{{ parents_2nd_vie|length }} convention{{ parents_2nd_vie|pluralize }} parente{{ parents_2nd_vie|pluralize }}</caption>
                                         <thead>
                                             <tr>
                                                 <th scope="col">Numéro</th>
@@ -37,7 +37,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {% for parent in parents %}
+                                            {% for parent in parents_2nd_vie %}
                                                 <tr>
                                                     <td>
                                                         <a href="{% url 'conventions:recapitulatif' convention_uuid=parent.uuid %}" class="fr-link">

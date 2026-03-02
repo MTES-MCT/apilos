@@ -186,7 +186,7 @@ class Convention(models.Model):
         blank=True,
         related_name="avenants",
     )
-    parents = models.ManyToManyField(
+    parents_2nd_vie = models.ManyToManyField(
         "self",
         blank=True,
         related_name="seconde_vie_children",
@@ -779,7 +779,7 @@ class Convention(models.Model):
                 "nom_fichier_signe",
                 "numero",
                 "parent",
-                "parents",
+                "parents_2nd_vie",
                 "premiere_soumission_le",
                 "programme",
                 "soumis_le",
