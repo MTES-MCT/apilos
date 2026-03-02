@@ -69,7 +69,9 @@ def operation_conventions(request, numero_operation):
         )
 
     # Seconde vie : on ne crée pas les conventions automatiquement
-    if operation_service.is_seconde_vie():
+    if operation_service.is_seconde_vie() and switch_is_active(
+        settings.SWITCH_SECONDE_VIE_ON
+    ):
         has_sv_with_parents = Convention.objects.filter(
             programme__numero_operation=numero_operation,
             parents__isnull=False,
@@ -144,6 +146,8 @@ class SecondeVieExistingView(SecondeVieBaseView):
     template_name = "operations/seconde_vie/existing.html"
 
     def get(self, request, *args, **kwargs):
+        if not switch_is_active(settings.SWITCH_SECONDE_VIE_ON):
+            return HttpResponseRedirect(reverse("conventions:search"))
 
         operation_service = OperationService(
             request=request, numero_operation=kwargs["numero_operation"]
@@ -417,6 +421,9 @@ class SecondeVieExistingView(SecondeVieBaseView):
             return final_convention
 
     def post(self, request, *args, **kwargs):
+        if not switch_is_active(settings.SWITCH_SECONDE_VIE_ON):
+            return HttpResponseRedirect(reverse("conventions:search"))
+
         # Check if user has readonly access
         if "readonly" in request.session and request.session["readonly"]:
             messages.add_message(
@@ -471,6 +478,9 @@ class SecondeVieExistingView(SecondeVieBaseView):
 def seconde_vie_new(request, numero_operation):
     if not request.user.is_cerbere_user():
         raise PermissionError("this function is available only for CERBERE user")
+
+    if not switch_is_active(settings.SWITCH_SECONDE_VIE_ON):
+        return HttpResponseRedirect(reverse("conventions:search"))
 
     if "readonly" in request.session and request.session["readonly"]:
         messages.add_message(

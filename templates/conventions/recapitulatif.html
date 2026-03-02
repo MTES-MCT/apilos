@@ -36,7 +36,7 @@
                 {% if not convention.is_avenant %}
                     {% include "conventions/recapitulatif/alert_convention.html" %}
                 {% endif %}
-                {% if convention.programme.seconde_vie %}
+                {% if convention.programme.seconde_vie and switch_seconde_vie_on %}
                     {% include "conventions/recapitulatif/seconde_vie_parents.html" with parents=convention.parents.all %}
                 {% endif %}
                 {% if convention|display_comments %}

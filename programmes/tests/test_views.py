@@ -8,6 +8,7 @@ from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
+from waffle.testutils import override_switch
 
 from conventions.models import Convention, ConventionGroupingError
 from core.tests.factories import ConventionFactory, ProgrammeFactory
@@ -132,6 +133,7 @@ def test_operation_conventions_multiple_conventions_warning(
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_operation_conventions_seconde_vie_existing():
     url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
     request = _get_habilited_request(url)
@@ -146,6 +148,7 @@ def test_operation_conventions_seconde_vie_existing():
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 @mock.patch("programmes.views.render")
 @mock.patch("programmes.views.Convention")
 def test_operation_conventions_seconde_vie_create_conventions(
@@ -189,6 +192,7 @@ def test_operation_conventions_seconde_vie_create_conventions(
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view():
 
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
@@ -204,6 +208,7 @@ def test_seconde_vie_existing_view():
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view_readonly_no_siap():
     url = reverse(
         "programmes:seconde_vie_existing", kwargs={"numero_operation": "20220600100"}
@@ -233,6 +238,7 @@ def test_seconde_vie_existing_view_readonly_no_siap():
 
 @pytest.mark.django_db
 @mock.patch("programmes.views.OperationService")
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view_search_and_filter(mock_op_service_class):
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
     url += "?q=test&status=5. Publiée"
@@ -245,6 +251,7 @@ def test_seconde_vie_existing_view_search_and_filter(mock_op_service_class):
     mock_service.siap_error = False
     mock_service.programme = programme
     mock_service.programmes = [programme]
+    mock_service.get_or_create_programme.return_value = programme
     mock_service.get_context_list_conventions.return_value = {
         "url_name": "seconde_vie_existing",
         "order_by": "",
@@ -276,6 +283,7 @@ def test_seconde_vie_existing_view_search_and_filter(mock_op_service_class):
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view_post_readonly():
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
     request = RequestFactory().post(url)
@@ -310,6 +318,7 @@ def test_seconde_vie_existing_view_post_readonly():
 
 @pytest.mark.django_db
 @mock.patch("programmes.views.OperationService")
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view_post_validate(mock_service_class):
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
     p1 = ConventionFactory()
@@ -373,6 +382,7 @@ def test_seconde_vie_new_readonly():
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 @mock.patch("programmes.services.SIAPClient")
 def test_seconde_vie_new_duplicated_operation(mock_siap_class):
     url = reverse("programmes:seconde_vie_new", kwargs={"numero_operation": "1"})
@@ -427,6 +437,7 @@ def test_operation_conventions_no_programmes(render_mock):
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_new_with_multiple_conventions():
     numero_operation = "20220600006"
     url = reverse(
@@ -462,6 +473,7 @@ def test_seconde_vie_new_with_multiple_conventions():
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_new_with_successful_convention_grouping():
     numero_operation = "20220600007"
     url = reverse(
@@ -617,6 +629,7 @@ class SecondeVieConventionGroupingTests(TestCase):
 
 
 @pytest.mark.django_db
+@override_switch("seconde_vie_on", active=True)
 def test_seconde_vie_existing_view_with_ajax():
     url = reverse("programmes:seconde_vie_existing", kwargs={"numero_operation": "1"})
     user = UserFactory()
