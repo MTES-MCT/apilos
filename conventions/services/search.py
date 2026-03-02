@@ -121,6 +121,7 @@ class ConventionSearchService(ConventionSearchServiceBase):
     anru: bool
     anah: bool
     avenant_seulement: bool
+    seconde_vie: bool
 
     date_signature: str | None = None
     financement: str | None = None
@@ -138,12 +139,14 @@ class ConventionSearchService(ConventionSearchServiceBase):
         self.anru = False
         self.anah = False
         self.avenant_seulement = False
+        self.seconde_vie = False
         self.statuts = None
 
         if search_filters:
             self.anru = search_filters.get("anru") is not None
             self.anah = search_filters.get("anah") is not None
             self.avenant_seulement = search_filters.get("avenant_seulement") is not None
+            self.seconde_vie = search_filters.get("seconde_vie") is not None
 
             if statuts_raw := search_filters.get("statuts"):
                 if isinstance(statuts_raw, list):
@@ -197,6 +200,9 @@ class ConventionSearchService(ConventionSearchServiceBase):
 
         if self.anah:
             queryset = queryset.filter(programme__anah=True)
+
+        if self.seconde_vie:
+            queryset = queryset.filter(programme__seconde_vie=True)
 
         if self.avenant_seulement:
             queryset = queryset.filter(parent_id__isnull=False)

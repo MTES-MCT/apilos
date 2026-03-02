@@ -34,6 +34,9 @@
                         {% include "common/form/input_checkbox.html" with form_input=form.anru object_field="programme__anru__"|add:form.uuid.value %}
 
                         {% include "common/form/input_checkbox.html" with form_input=form.anah object_field="programme__anah__"|add:form.uuid.value %}
+                        {% if convention.programme.seconde_vie %}
+                            {% include "common/form/input_checkbox.html" with form_input=form.seconde_vie editable=False %}
+                        {% endif %}
                         <div class="fr-my-3w">
                             {% with convention_uuid=convention.uuid|stringformat:'s' %}
                                 {% include "common/form/input_textarea.html" with form_input=form.adresse helptext_visible="True" object_field="convention__adresse__"|add:convention_uuid %}
