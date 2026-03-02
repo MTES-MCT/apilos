@@ -148,6 +148,26 @@ def test_operation_conventions_seconde_vie_existing():
 
 
 @pytest.mark.django_db
+@mock.patch("programmes.views.render")
+def test_operation_conventions_seconde_vie_feature_disabled(render_mock):
+    """When seconde_vie_on switch is OFF, no conventions are created and the
+    disabled notice context flag is passed to the template."""
+    url = reverse("programmes:operation_conventions", kwargs={"numero_operation": "1"})
+    request = _get_habilited_request(url)
+
+    with mock.patch.object(SIAPClient, "get_instance") as mock_get_instance:
+        mock_instance = mock_get_instance.return_value
+        mock_instance.get_operation.return_value = _get_seconde_vie_operation()
+
+        operation_conventions(request, numero_operation="1")
+        render_mock.assert_called_once()
+        args, kwargs = render_mock.call_args
+        assert args[1] == "operations/conventions.html"
+        assert args[2].get("seconde_vie_feature_disabled") is True
+        assert args[2].get("is_seconde_vie") is True
+
+
+@pytest.mark.django_db
 @override_switch("seconde_vie_on", active=True)
 @mock.patch("programmes.views.render")
 @mock.patch("programmes.views.Convention")

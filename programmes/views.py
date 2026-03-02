@@ -26,6 +26,32 @@ from siap.exceptions import DuplicatedOperationSIAPException
 logger = logging.getLogger(__name__)
 
 
+def _handle_seconde_vie(request, operation_service, numero_operation):
+    """Return an HttpResponse if the operation is Seconde Vie, else None."""
+    if not operation_service.is_seconde_vie():
+        return None
+
+    if switch_is_active(settings.SWITCH_SECONDE_VIE_ON):
+        has_sv_with_parents = Convention.objects.filter(
+            programme__numero_operation=numero_operation,
+            parents__isnull=False,
+        ).exists()
+        if not has_sv_with_parents:
+            return HttpResponseRedirect(
+                reverse("programmes:seconde_vie_existing", args=[numero_operation])
+            )
+        return None
+
+    # Feature flag off — show a notice, do not create any conventions
+    service = OperationConventionSearchService(numero_operation)
+    paginator = service.paginate()
+    context = operation_service.get_context_list_conventions(paginator=paginator)
+    context["switch_convention_mixte_on"] = False
+    context["is_seconde_vie"] = True
+    context["seconde_vie_feature_disabled"] = True
+    return render(request, "operations/conventions.html", context)
+
+
 @login_required
 def operation_conventions(request, numero_operation):
     if not request.user.is_cerbere_user():
@@ -69,17 +95,9 @@ def operation_conventions(request, numero_operation):
         )
 
     # Seconde vie : on ne crée pas les conventions automatiquement
-    if operation_service.is_seconde_vie() and switch_is_active(
-        settings.SWITCH_SECONDE_VIE_ON
-    ):
-        has_sv_with_parents = Convention.objects.filter(
-            programme__numero_operation=numero_operation,
-            parents__isnull=False,
-        ).exists()
-        if not has_sv_with_parents:
-            return HttpResponseRedirect(
-                reverse("programmes:seconde_vie_existing", args=[numero_operation])
-            )
+    sv_response = _handle_seconde_vie(request, operation_service, numero_operation)
+    if sv_response is not None:
+        return sv_response
 
     # collect des conventions par financement
     conventions_by_financements = (
