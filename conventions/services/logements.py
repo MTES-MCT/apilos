@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+from django.db import transaction
 
 from conventions.forms import (
     FoyerResidenceLogementFormSet,
@@ -348,6 +349,7 @@ class ConventionLogementsService(ConventionService):
             )
         return nb_logements
 
+    @transaction.atomic
     def _logements_atomic_update(self):
         initail_post = [
             {
@@ -559,13 +561,13 @@ class ConventionLogementsService(ConventionService):
             # Clear all logements avec loyer
             for lot in self.convention.lots.all():
                 lot.logements.filter(
-                    surface_corrigee__isnull=True, loyer__isnull=False
+                    surface_corrigee__isnull=True, loyer__gt=0
                 ).delete()
             return
         else:
             for lot in self.convention.lots.all():
                 lot.logements.exclude(uuid__in=lgt_uuids).filter(
-                    surface_corrigee__isnull=True, loyer__isnull=False
+                    surface_corrigee__isnull=True, loyer__gt=0
                 ).delete()
         for form_logement in self.formset:
             if form_logement.cleaned_data["uuid"]:
@@ -615,12 +617,12 @@ class ConventionLogementsService(ConventionService):
         if form_item.cleaned_data["formset_corrigee_disabled"]:
             # Clear all logements with surface corrigée and loyer
             self.convention.lot.logements.filter(
-                surface_corrigee__isnull=False, loyer__isnull=False
+                surface_corrigee__isnull=False, loyer__gt=0
             ).delete()
             return
         else:
             self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
-                surface_corrigee__isnull=False, loyer__isnull=False
+                surface_corrigee__isnull=False, loyer__gt=0
             ).delete()
         for form_logement in self.formset_corrigee:
             if form_logement.cleaned_data["uuid"]:
