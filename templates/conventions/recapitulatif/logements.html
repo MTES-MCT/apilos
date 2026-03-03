@@ -187,11 +187,12 @@
                                                         <td id="total_sa_sl" class="fr-text--lg">
                                                         </td>
                                                         <td id="total_sar_sl" class="fr-text--lg">
-                                                            <td id="total_sh_sl" class="fr-text--lg">
-                                                            </td>
-                                                            <td id="total_su_sl" class="fr-text--lg">
-                                                            </td>
-                                                        </tr>
+                                                        </td>
+                                                        <td id="total_sh_sl" class="fr-text--lg">
+                                                        </td>
+                                                        <td id="total_su_sl" class="fr-text--lg">
+                                                        </td>
+                                                    </tr>
                                                     </tbody>
                                                 </table>
                                             </div>
@@ -237,7 +238,7 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
-                                                                    <td>                                                               <td>
+                                                                    <td>
                                                                         {{ logement.lot.financement }}
                                                                     </td>
                                                                     <td id="lgt_sh_sc">
@@ -318,14 +319,15 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
-                                                                    <td>                                                               <td>
+                                                                    <td>
                                                                         {{ logement.lot.financement }}
                                                                     </td>
                                                                     <td id="lgt_sh_scsl">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
-                                                                        <td id="lgt_su_scsl">
-                                                                            {{ logement.surface_corrigee|floatformat:2 }}
-                                                                        </td>
+                                                                    </td>
+                                                                    <td id="lgt_su_scsl">
+                                                                        {{ logement.surface_corrigee|floatformat:2 }}
+                                                                    </td>
                                                                     </tr>
                                                             {% endwith %}
                                                         {% endwith %}
