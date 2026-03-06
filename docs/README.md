@@ -38,9 +38,9 @@ Les solutions tierces utilisées par APiLos:
 - CERBERE : SSO - Authentification des utilisateurs
 - Scalingo : hébergement de la solution (cloud souverain)
 - Scaleway : stockage de fichiers compatible avec le protocole S3
-- Brevo : envoi de courriels transactionnels (En cours de dépréciation)
 - Sentry : monitoring logiciel
 - Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)
+> - Brevo : Déprécié. Code legacy toujours présent (en attente de suppression ou de migration).
 
 ### Qualité de code
 
@@ -95,9 +95,6 @@ Pour en plus de détails, merci de se référer à la documentation sur [DEPLOIE
 
 Trouver les détails d'installation de l'application en local pour le développement et les détails techniques sur la documentation dédiée : [DEVELOPPEUR.md](DEVELOPPEUR.md)
 
-### Envoi de mails
-
-Nous utilisons [Brevo](https://app.brevo.com/) (anciennement sendinblue). Si la variable d'environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)
 
 ### DNS (uniquement pour la gestion des emails et emailists)
 
@@ -211,12 +208,12 @@ Tous les détails concernant les interactions entre APiLos et la platefome SIAP 
 
 ## Protection des données
 
-Les CGU sont publiés [sur le site APiLos](https://apilos.beta.gouv.fr/cgu) et inclus les obligations relatives au RGPD
-Le rapport d'accessibilité est publié [sur le site APiLos](https://apilos.beta.gouv.fr/accessibilite)
+Les CGU sont publiés [sur le site APiLos](https://apilos.logement.gouv.fr/cgu) et inclus les obligations relatives au RGPD
+Le rapport d'accessibilité est publié [sur le site APiLos](https://apilos.logement.gouv.fr/accessibilite)
 
 ## Statistique de la plateforme
 
-Les statistiques d'usage et le suivi des KPIs de la start up d'état sont disponibles sur la [page de statistique](https://apilos.beta.gouv.fr/stats)
+Les statistiques d'usage et le suivi des KPIs de la start up d'état sont disponibles sur la [page de statistique](https://apilos.logement.gouv.fr/stats)
 
 ## Administration métier
 
