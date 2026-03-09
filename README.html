@@ -386,10 +386,14 @@
 <li><p>CERBERE : SSO - Authentification des utilisateurs</p></li>
 <li><p>Scalingo : hébergement de la solution (cloud souverain)</p></li>
 <li><p>Scaleway : stockage de fichiers compatible avec le protocole S3</p></li>
-<li><p>Brevo : envoi de courriels transactionnels (En cours de dépréciation)</p></li>
 <li><p>Sentry : monitoring logiciel</p></li>
 <li><p>Github : gestion des versions du code source d’ APiLos et chaîne de tests et de mise en production (CI/CD)</p></li>
 </ul>
+<blockquote>
+<div><ul class="simple">
+<li><p>Brevo : Déprécié. Code legacy toujours présent (en attente de suppression ou de migration).</p></li>
+</ul>
+</div></blockquote>
 <section id="qualite-de-code">
 <h3>Qualité de code<a class="headerlink" href="#qualite-de-code" title="Lien vers cette rubrique">¶</a></h3>
 <p>Plusieurs outils et processus sont utilisés pour gérer la qualité de code.</p>
@@ -435,10 +439,6 @@
 <section id="installation-de-la-plateforme-en-local-developpeurs">
 <h3>Installation de la plateforme en local (Developpeurs)<a class="headerlink" href="#installation-de-la-plateforme-en-local-developpeurs" title="Lien vers cette rubrique">¶</a></h3>
 <p>Trouver les détails d’installation de l’application en local pour le développement et les détails techniques sur la documentation dédiée : <a class="reference internal" href="DEVELOPPEUR.html"><span class="std std-doc">DEVELOPPEUR.md</span></a></p>
-</section>
-<section id="envoi-de-mails">
-<h3>Envoi de mails<a class="headerlink" href="#envoi-de-mails" title="Lien vers cette rubrique">¶</a></h3>
-<p>Nous utilisons <a class="reference external" href="https://app.brevo.com/">Brevo</a> (anciennement sendinblue). Si la variable d’environnement SENDINBLUE_API_KEY est configurée, le backend email SendInBlue est utilisé. Sinon, le backend email console est utilisé et les emails sont imprimés dans a console (dans les logs)</p>
 </section>
 <section id="dns-uniquement-pour-la-gestion-des-emails-et-emailists">
 <h3>DNS (uniquement pour la gestion des emails et emailists)<a class="headerlink" href="#dns-uniquement-pour-la-gestion-des-emails-et-emailists" title="Lien vers cette rubrique">¶</a></h3>
@@ -543,12 +543,12 @@ flowchart RL
 </section>
 <section id="protection-des-donnees">
 <h2>Protection des données<a class="headerlink" href="#protection-des-donnees" title="Lien vers cette rubrique">¶</a></h2>
-<p>Les CGU sont publiés <a class="reference external" href="https://apilos.beta.gouv.fr/cgu">sur le site APiLos</a> et inclus les obligations relatives au RGPD
-Le rapport d’accessibilité est publié <a class="reference external" href="https://apilos.beta.gouv.fr/accessibilite">sur le site APiLos</a></p>
+<p>Les CGU sont publiés <a class="reference external" href="https://apilos.logement.gouv.fr/cgu">sur le site APiLos</a> et inclus les obligations relatives au RGPD
+Le rapport d’accessibilité est publié <a class="reference external" href="https://apilos.logement.gouv.fr/accessibilite">sur le site APiLos</a></p>
 </section>
 <section id="statistique-de-la-plateforme">
 <h2>Statistique de la plateforme<a class="headerlink" href="#statistique-de-la-plateforme" title="Lien vers cette rubrique">¶</a></h2>
-<p>Les statistiques d’usage et le suivi des KPIs de la start up d’état sont disponibles sur la <a class="reference external" href="https://apilos.beta.gouv.fr/stats">page de statistique</a></p>
+<p>Les statistiques d’usage et le suivi des KPIs de la start up d’état sont disponibles sur la <a class="reference external" href="https://apilos.logement.gouv.fr/stats">page de statistique</a></p>
 </section>
 <section id="administration-metier">
 <h2>Administration métier<a class="headerlink" href="#administration-metier" title="Lien vers cette rubrique">¶</a></h2>
@@ -615,7 +615,6 @@ Le rapport d’accessibilité est publié <a class="reference external" href="ht
 </li>
 <li><a class="reference internal" href="#deploiement-staging-et-production">Déploiement (Staging et Production)</a></li>
 <li><a class="reference internal" href="#installation-de-la-plateforme-en-local-developpeurs">Installation de la plateforme en local (Developpeurs)</a></li>
-<li><a class="reference internal" href="#envoi-de-mails">Envoi de mails</a></li>
 <li><a class="reference internal" href="#dns-uniquement-pour-la-gestion-des-emails-et-emailists">DNS (uniquement pour la gestion des emails et emailists)</a></li>
 <li><a class="reference internal" href="#bases-de-donnees">Bases de données</a><ul>
 <li><a class="reference internal" href="#diagramme-des-statuts-d-une-convention">Diagramme des statuts d’une convention</a></li>
