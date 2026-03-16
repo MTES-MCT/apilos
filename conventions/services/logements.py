@@ -219,6 +219,13 @@ class ConventionLogementsService(ConventionService):
                 self.import_warnings = result["import_warnings"]
                 self.editable_after_upload = True
 
+    def _update_logement_lot_if_needed(self, logement, form_logement):
+        financement = form_logement.cleaned_data.get("financement")
+        if financement and logement.lot.financement != financement:
+            new_lot = self.convention.lots.filter(financement=financement).first()
+            if new_lot:
+                logement.lot = new_lot
+
     def _get_form_value(self, form_logement, field: str):
         if form_logement["uuid"].value():
             logement = Logement.objects.get(uuid=form_logement["uuid"].value())
@@ -526,13 +533,7 @@ class ConventionLogementsService(ConventionService):
         for form_logement in self.formset_sans_loyer:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
-                financement = form_logement.cleaned_data.get("financement")
-                if financement and logement.lot.financement != financement:
-                    new_lot = self.convention.lots.filter(
-                        financement=financement
-                    ).first()
-                    if new_lot:
-                        logement.lot = new_lot
+                self._update_logement_lot_if_needed(logement, form_logement)
                 logement.designation = form_logement.cleaned_data["designation"]
                 logement.typologie = form_logement.cleaned_data["typologie"]
                 logement.surface_habitable = form_logement.cleaned_data[
@@ -579,13 +580,7 @@ class ConventionLogementsService(ConventionService):
         for form_logement in self.formset:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
-                financement = form_logement.cleaned_data.get("financement")
-                if financement and logement.lot.financement != financement:
-                    new_lot = self.convention.lots.filter(
-                        financement=financement
-                    ).first()
-                    if new_lot:
-                        logement.lot = new_lot
+                self._update_logement_lot_if_needed(logement, form_logement)
                 logement.designation = form_logement.cleaned_data["designation"]
                 logement.typologie = form_logement.cleaned_data["typologie"]
                 logement.surface_habitable = form_logement.cleaned_data[
@@ -641,13 +636,7 @@ class ConventionLogementsService(ConventionService):
         for form_logement in self.formset_corrigee:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
-                financement = form_logement.cleaned_data.get("financement")
-                if financement and logement.lot.financement != financement:
-                    new_lot = self.convention.lots.filter(
-                        financement=financement
-                    ).first()
-                    if new_lot:
-                        logement.lot = new_lot
+                self._update_logement_lot_if_needed(logement, form_logement)
                 logement.designation = form_logement.cleaned_data["designation"]
                 logement.typologie = form_logement.cleaned_data["typologie"]
                 logement.surface_habitable = form_logement.cleaned_data[
@@ -700,13 +689,7 @@ class ConventionLogementsService(ConventionService):
         for form_logement in self.formset_corrigee_sans_loyer:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
-                financement = form_logement.cleaned_data.get("financement")
-                if financement and logement.lot.financement != financement:
-                    new_lot = self.convention.lots.filter(
-                        financement=financement
-                    ).first()
-                    if new_lot:
-                        logement.lot = new_lot
+                self._update_logement_lot_if_needed(logement, form_logement)
                 logement.designation = form_logement.cleaned_data["designation"]
                 logement.typologie = form_logement.cleaned_data["typologie"]
                 logement.surface_habitable = form_logement.cleaned_data[
