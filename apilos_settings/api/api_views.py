@@ -196,6 +196,17 @@ class ConventionKPI(APIView):
             .filter(parent_id__isnull=True)
             .values("statut"),
         )
+        logger.warning(
+            "list_conv_kpi: %s",
+            [
+                (
+                    item.indicateur_label,
+                    item.indicateur_redirection_url,
+                    item.indicateur_valeur,
+                )
+                for item in list_conv_kpi
+            ],
+        )
         return Response(ConventionKPISerializer(list_conv_kpi, many=True).data)
 
     def _build_conv_kpi(
@@ -218,6 +229,7 @@ class ConventionKPI(APIView):
     ) -> list[ConvKPI]:
 
         if request.user.is_administration():
+            logger.warning("user is administration")
             return [
                 self._build_conv_kpi(
                     conv_queryset=queryset,
@@ -232,6 +244,7 @@ class ConventionKPI(APIView):
             ]
 
         if request.user.is_instructeur():
+            logger.warning("user is instructeur")
             return [
                 self._build_conv_kpi(
                     conv_queryset=queryset,
@@ -251,6 +264,7 @@ class ConventionKPI(APIView):
             ]
 
         if request.user.is_bailleur():
+            logger.warning("user is bailleur")
             return [
                 self._build_conv_kpi(
                     conv_queryset=queryset,
@@ -268,5 +282,5 @@ class ConventionKPI(APIView):
                     label="à signer",
                 ),
             ]
-
+        logger.warning("user role not recognized")
         return []
