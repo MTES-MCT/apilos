@@ -8,7 +8,7 @@
                 <div class="block--row-strech">
                     <div class="block--row-strech-1">
                         <h3 class="fr-card__title">
-                            Conventions parentes (Seconde Vie)
+                            Conventions d'origine (Seconde Vie)
                         </h3>
                     </div>
                     {% if parents_2nd_vie %}
@@ -25,8 +25,8 @@
                         <div class="fr-table__wrapper">
                             <div class="fr-table__container">
                                 <div class="fr-table__content">
-                                    <table aria-label="Conventions parentes">
-                                        <caption class="fr-sr-only">{{ parents_2nd_vie|length }} convention{{ parents_2nd_vie|pluralize }} parente{{ parents_2nd_vie|pluralize }}</caption>
+                                    <table aria-label="Conventions d'origine">
+                                        <caption class="fr-sr-only">{{ parents_2nd_vie|length }} convention{{ parents_2nd_vie|pluralize }} d'origine</caption>
                                         <thead>
                                             <tr>
                                                 <th scope="col">Numéro</th>
@@ -66,16 +66,16 @@
                     <div class="fr-alert fr-alert--info fr-mt-2w">
                         <p class="fr-text--sm fr-mb-0">
                             <span class="fr-icon-info-line fr-mr-1w" aria-hidden="true"></span>
-                            Vous pouvez <strong>modifier la sélection</strong> des conventions parentes.
+                            Vous pouvez <strong>modifier la sélection</strong> des conventions d'origine à avenanter.
                         </p>
                     </div>
                 {% else %}
                     <div class="fr-alert fr-alert--warning fr-my-2w">
                         <p class="fr-text--sm fr-mb-0">
                             <span class="fr-icon-warning-line fr-mr-1w" aria-hidden="true"></span>
-                            Aucune convention parente liée.
+                            Aucune convention d'origine à avenanter.
                             <a href="{% url 'programmes:seconde_vie_existing' convention.programme.numero_operation %}" class="fr-link">
-                                Ajouter des conventions parentes
+                                Ajouter des conventions à avenanter
                             </a>
                         </p>
                     </div>
