@@ -57,7 +57,7 @@ def _get_avenant_or_seconde_vie_template_path(convention):
             return f"{settings.BASE_DIR}/documents/FoyerResidence-Avenant-template.docx"
         return f"{settings.BASE_DIR}/documents/Avenant-template.docx"
 
-    if convention.programme.seconde_vie:
+    if convention.programme.seconde_vie and convention.parents_2nd_vie.exists():
         if convention.programme.is_foyer:
             return f"{settings.BASE_DIR}/documents/Avenant2ndeVie-Foyer-template.docx"
         return f"{settings.BASE_DIR}/documents/Avenant2ndeVie-HLM-template.docx"
