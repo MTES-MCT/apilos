@@ -18,7 +18,7 @@
                     <div class="fr-grid-row fr-grid-row--space-between fr-grid-row--middle">
                         <div class="fr-col">
                             <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
-                            <p class="fr-text--lead fr-mb-0">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                            <p class="fr-text--lead fr-mb-0">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant à l'issue de travaux "seconde vie".</p>
                         </div>
                             {% if seconde_vie_convention_uuid %}
                                 <div class="fr-col fr-col--right">
@@ -32,7 +32,7 @@
                     </div>
                 {% else %}
                     <h1 class="fr-h2 fr-mb-1w">Seconde Vie - Conventions existantes</h1>
-                    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant seconde vie.</p>
+                    <p class="fr-text--lead">Recherchez et sélectionnez les conventions qui doivent faire l'objet d'un avenant à l'issue de travaux "seconde vie".</p>
                 {% endif %}
             </div>
 
@@ -62,7 +62,7 @@
                                 <option value="" {% if not status_filter %}selected{% endif %}>Tous les statuts</option>
                                 <option value="{{ CONVENTION_STATUT.SIGNEE }}" {% if status_filter|statut_is_signee %}selected{% endif %}>Valide</option>
                                 <option value="{{ CONVENTION_STATUT.PUBLICATION_EN_COURS }}" {% if status_filter|statut_is_publied %}selected{% endif %}>En Publication</option>
-                                <option value="{{ CONVENTION_STATUT.PUBLIE }}" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publié</option>
+                                <option value="{{ CONVENTION_STATUT.PUBLIE }}" {% if status_filter|statut_is_in_publication %}selected{% endif %}>Publiée</option>
                             </select>
                         </div>
                         <div class="fr-col-12 fr-col-lg-3">
@@ -81,16 +81,14 @@
                 {% elif query %}
                     <div class="fr-alert fr-alert--warning">
                         <p><strong>Aucune convention trouvée</strong></p>
-                        <p>Vérifiez que la convention est bien à l'état "Signée" ou "Publiée" et qu'elle n'est pas un avenant.</p>
+                        <p>Vérifiez que la convention est bien à l'état "Valide", "En Publication" ou "Publiée" et qu'elle n'est pas un avenant.</p>
                     </div>
                 {% else %}
+                    {% if request|is_readonly %}
                     <div class="fr-alert fr-alert--info">
-                        {% if request|is_readonly %}
                                 <p class="fr-mb-0"><strong>Mode consultation :</strong> Vous consultez cette page en lecture seule. Les modifications ne sont pas autorisées avec votre profil.</p>
-                        {% else %}
-                                <p>Utilisez le champ de recherche ci-dessus pour trouver les conventions concernées par la seconde vie.</p>
-                        {% endif %}
                     </div>
+                    {% endif %}
                 {% endif %}
             </div>
 
