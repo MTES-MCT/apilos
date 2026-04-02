@@ -1,4 +1,8 @@
+import io
+
 import openpyxl
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.management.base import BaseCommand, CommandError
 from django.http import HttpRequest
 from openpyxl.styles import Font
@@ -34,6 +38,12 @@ class Command(BaseCommand):
             type=str,
             default=None,
             help="Filtrer par statut (ex: Signée, Instruction, Projet...)",
+        )
+        parser.add_argument(
+            "--s3",
+            action="store_true",
+            default=False,
+            help="Uploader le fichier sur le stockage S3 (récupérable via l'URL media)",
         )
 
     def handle(self, *args, **options):
@@ -114,11 +124,27 @@ class Command(BaseCommand):
         if not output:
             output = f"conventions_{code_departement}.xlsx"
 
-        wb.save(output)
+        if options["s3"]:
+            buffer = io.BytesIO()
+            wb.save(buffer)
+            s3_path = f"exports/{output}"
+            default_storage.save(s3_path, ContentFile(buffer.getvalue()))
+            url = default_storage.url(s3_path)
 
-        self.stdout.write(
-            self.style.SUCCESS(f"{exported} convention(s) exportée(s) dans '{output}'.")
-        )
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{exported} convention(s) exportée(s) sur S3.\n"
+                    f"Téléchargeable ici : {url}"
+                )
+            )
+        else:
+            wb.save(output)
+
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{exported} convention(s) exportée(s) dans '{output}'."
+                )
+            )
         if errors:
             self.stdout.write(
                 self.style.WARNING(f"{errors} convention(s) en erreur (ignorées).")
