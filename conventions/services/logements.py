@@ -375,6 +375,11 @@ class ConventionLogementsService(ConventionService):
 
     @transaction.atomic
     def _logements_atomic_update(self):
+        # Précharger les lots une seule fois pour toute l'opération de sauvegarde
+        all_lots = list(self.convention.lots.all())
+        self._lots_by_uuid = {str(lot.uuid): lot for lot in all_lots}
+        self._lots_by_financement = {lot.financement: lot for lot in all_lots}
+
         initail_post = [
             {
                 "uuid": lot.uuid,
@@ -396,7 +401,7 @@ class ConventionLogementsService(ConventionService):
                     ],
                 ),
             }
-            for lot in self.convention.lots.all()
+            for lot in all_lots
         ]
 
         self.formset_convention_mixte = LotLgtsOptionFormSet(
