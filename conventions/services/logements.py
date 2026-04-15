@@ -48,7 +48,7 @@ class ConventionLogementsService(ConventionService):
         initial_corrigee = []
         initial_corrigee_sans_loyer = []
         initial_convention_mixte = []
-        lots = self.convention.lots.all()
+        lots = self.convention.lots.prefetch_related("logements").all()
         for lot in lots:
             initial_convention_mixte.append(
                 {
@@ -226,9 +226,12 @@ class ConventionLogementsService(ConventionService):
             if new_lot:
                 logement.lot = new_lot
 
-    def _get_form_value(self, form_logement, field: str):
+    def _get_form_value(self, form_logement, field: str, logement=None):
         if form_logement["uuid"].value():
-            logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+            if logement is None:
+                logement = self._logements_cache.get(form_logement["uuid"].value())
+            if logement is None:
+                logement = Logement.objects.get(uuid=form_logement["uuid"].value())
             if field == "uuid":
                 return logement.uuid
             return utils.get_form_value(form_logement, logement, field)
@@ -240,59 +243,64 @@ class ConventionLogementsService(ConventionService):
     def _add_logement_to_initformset(
         self, form_logement, idx, initformset, nb_logement, prefix
     ):
+        # Résoudre le logement une seule fois par ligne de formulaire au lieu de le faire pour chaque colonne
+        uuid_value = form_logement["uuid"].value()
+        logement = self._logements_cache.get(uuid_value) if uuid_value else None
+
         initformset = {
             **initformset,
             f"{prefix}-{idx}-designation": self._get_form_value(
-                form_logement, "designation"
+                form_logement, "designation", logement
             ),
             f"{prefix}-{idx}-financement": self._get_form_value(
-                form_logement, "financement"
+                form_logement, "financement", logement
             ),
             f"{prefix}-{idx}-typologie": self._get_form_value(
-                form_logement, "typologie"
+                form_logement, "typologie", logement
             ),
             f"{prefix}-{idx}-surface_habitable": self._get_form_value(
-                form_logement, "surface_habitable"
+                form_logement, "surface_habitable", logement
             ),
             f"{prefix}-{idx}-import_order": self._get_form_value(
-                form_logement, "import_order"
+                form_logement, "import_order", logement
             ),
         }
-        if form_logement["uuid"].value():
-            logement = Logement.objects.get(uuid=form_logement["uuid"].value())
+        if uuid_value:
             initformset = {
                 **initformset,
-                f"{prefix}-{idx}-uuid": logement.uuid,
+                f"{prefix}-{idx}-uuid": logement.uuid if logement else uuid_value,
             }
         if "sans_loyer" not in prefix:
             initformset = {
                 **initformset,
                 f"{prefix}-{idx}-loyer_par_metre_carre": self._get_form_value(
-                    form_logement, "loyer_par_metre_carre"
+                    form_logement, "loyer_par_metre_carre", logement
                 ),
                 f"{prefix}-{idx}-coeficient": self._get_form_value(
-                    form_logement, "coeficient"
+                    form_logement, "coeficient", logement
                 ),
-                f"{prefix}-{idx}-loyer": self._get_form_value(form_logement, "loyer"),
+                f"{prefix}-{idx}-loyer": self._get_form_value(
+                    form_logement, "loyer", logement
+                ),
             }
         if "corrigee" in prefix:
             initformset = {
                 **initformset,
                 f"{prefix}-{idx}-surface_corrigee": self._get_form_value(
-                    form_logement, "surface_corrigee"
+                    form_logement, "surface_corrigee", logement
                 ),
             }
         else:
             initformset = {
                 **initformset,
                 f"{prefix}-{idx}-surface_annexes": self._get_form_value(
-                    form_logement, "surface_annexes"
+                    form_logement, "surface_annexes", logement
                 ),
                 f"{prefix}-{idx}-surface_annexes_retenue": self._get_form_value(
-                    form_logement, "surface_annexes_retenue"
+                    form_logement, "surface_annexes_retenue", logement
                 ),
                 f"{prefix}-{idx}-surface_utile": self._get_form_value(
-                    form_logement, "surface_utile"
+                    form_logement, "surface_utile", logement
                 ),
             }
         nb_logement = nb_logement + 1
@@ -302,6 +310,15 @@ class ConventionLogementsService(ConventionService):
         setattr(self, formset_name, formset_class(self.request.POST, prefix=prefix))
         initformset = {}
         nb_logements = {}
+
+        # Précharger tous les logements de cette convention
+        if not hasattr(self, "_logements_cache"):
+            self._logements_cache = {
+                str(lgt.uuid): lgt
+                for lgt in Logement.objects.filter(
+                    lot__in=self.convention.lots.all()
+                ).select_related("lot")
+            }
 
         for idx, form_logement in enumerate(getattr(self, formset_name)):
             financement = self._get_form_value(form_logement, "financement")
