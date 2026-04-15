@@ -222,7 +222,7 @@ class ConventionLogementsService(ConventionService):
     def _update_logement_lot_if_needed(self, logement, form_logement):
         financement = form_logement.cleaned_data.get("financement")
         if financement and logement.lot.financement != financement:
-            new_lot = self.convention.lots.filter(financement=financement).first()
+            new_lot = self._lots_by_financement.get(financement)
             if new_lot:
                 logement.lot = new_lot
 
@@ -353,16 +353,16 @@ class ConventionLogementsService(ConventionService):
 
             getattr(self, formset_name).programme_id = self.convention.programme_id
             try:
-                lot = self.convention.lots.get(financement=financement)
+                lot = self._lots_by_financement.get(financement)
+                if not lot:
+                    financements_disponibles = list(self._lots_by_financement.keys())
+                    raise ValidationError(
+                        f"Le financement '{financement}' n'existe pas pour cette convention. "
+                        f"Financements disponibles : {financements_disponibles}"
+                    )
                 lot_id = lot.id
-            except self.convention.lots.model.DoesNotExist as err:
-                financements_disponibles = list(
-                    self.convention.lots.values_list("financement", flat=True)
-                )
-                raise ValidationError(
-                    f"Le financement '{financement}' n'existe pas pour cette convention. "
-                    f"Financements disponibles : {financements_disponibles}"
-                ) from err
+            except ValidationError:
+                raise
             assert lot_id is not None, f"Lot with financement {financement} not found"
             getattr(self, formset_name).lot_id = lot_id
             getattr(self, formset_name).nb_logements = int(
@@ -511,7 +511,7 @@ class ConventionLogementsService(ConventionService):
                     self.return_status = utils.ReturnStatus.SUCCESS
 
     def _save_lot_lgts_option(self, form_item):
-        lot = self.convention.lots.get(uuid=form_item.cleaned_data["uuid"])
+        lot = self._lots_by_uuid[str(form_item.cleaned_data["uuid"])]
         lot.lgts_mixite_sociale_negocies = (
             form_item.cleaned_data["lgts_mixite_sociale_negocies"] or 0
         )
