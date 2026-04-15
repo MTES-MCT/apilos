@@ -636,14 +636,16 @@ class ConventionLogementsService(ConventionService):
 
         if form_item.cleaned_data["formset_corrigee_disabled"]:
             # Clear all logements with surface corrigée and loyer
-            self.convention.lot.logements.filter(
-                surface_corrigee__isnull=False, loyer__gt=0
-            ).delete()
+            for lot in self._lots_by_uuid.values():
+                lot.logements.filter(
+                    surface_corrigee__isnull=False, loyer__gt=0
+                ).delete()
             return
         else:
-            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
-                surface_corrigee__isnull=False, loyer__gt=0
-            ).delete()
+            for lot in self._lots_by_uuid.values():
+                lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                    surface_corrigee__isnull=False, loyer__gt=0
+                ).delete()
         for form_logement in self.formset_corrigee:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
@@ -689,14 +691,16 @@ class ConventionLogementsService(ConventionService):
 
         if form_item.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
             # Clear all logements with surface corrigée and loyer
-            self.convention.lot.logements.filter(
-                surface_corrigee__isnull=False, loyer__isnull=True
-            ).delete()
+            for lot in self._lots_by_uuid.values():
+                lot.logements.filter(
+                    surface_corrigee__isnull=False, loyer__isnull=True
+                ).delete()
             return
         else:
-            self.convention.lot.logements.exclude(uuid__in=lgt_uuids).filter(
-                surface_corrigee__isnull=False, loyer__isnull=True
-            ).delete()
+            for lot in self._lots_by_uuid.values():
+                lot.logements.exclude(uuid__in=lgt_uuids).filter(
+                    surface_corrigee__isnull=False, loyer__isnull=True
+                ).delete()
         for form_logement in self.formset_corrigee_sans_loyer:
             if form_logement.cleaned_data["uuid"]:
                 logement = Logement.objects.get(uuid=form_logement.cleaned_data["uuid"])
