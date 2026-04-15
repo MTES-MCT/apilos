@@ -433,21 +433,10 @@ class ConventionLogementsService(ConventionService):
         total_nb_logements = {}
         for financement in nb_logements:
             total_nb_logements[financement] = (
-                nb_logements[financement]
-                if nb_logements
-                else (
-                    0 + nb_logements_sans_loyer[financement]
-                    if nb_logements_sans_loyer
-                    else (
-                        0 + nb_logements_corrigee[financement]
-                        if nb_logements_corrigee
-                        else (
-                            0 + nb_logements_corrigee_sans_loyer[financement]
-                            if nb_logements_corrigee_sans_loyer
-                            else 0
-                        )
-                    )
-                )
+                nb_logements.get(financement, 0)
+                + nb_logements_sans_loyer.get(financement, 0)
+                + nb_logements_corrigee.get(financement, 0)
+                + nb_logements_corrigee_sans_loyer.get(financement, 0)
             )
 
         self.formset.nb_logements = {}
