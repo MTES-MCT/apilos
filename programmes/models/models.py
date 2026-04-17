@@ -781,6 +781,9 @@ class Logement(models.Model):
         "surface_habitable",
         "loyer",
     ]
+    import_property_choices = {
+        "financement": Financement.choices,
+    }
 
     # Needed for admin
     @property
@@ -969,6 +972,9 @@ class Annexe(models.Model):
         "Loyer maximum en €": "loyer",
     }
     sheet_name = "Annexes"
+    import_property_choices = {
+        "financement": Financement.choices,
+    }
 
     # Needed for admin
     @property

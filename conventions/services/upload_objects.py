@@ -215,6 +215,16 @@ def _extract_row(row, column_from_index, cls, *, class_field_mapping):
         if isinstance(model_field, str):
             key = model_field
             value = cell.value
+            # Gestion des propriétés portées par des champs à choix (ex. logement.financement)
+            if (
+                value is not None
+                and hasattr(cls, "import_property_choices")
+                and key in cls.import_property_choices
+            ):
+                choices = cls.import_property_choices[key]
+                mapped = next((x[0] for x in choices if x[1] == str(value)), None)
+                if mapped is not None:
+                    value = mapped
         else:
             key = model_field.name
 
