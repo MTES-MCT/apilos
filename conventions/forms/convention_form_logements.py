@@ -85,6 +85,17 @@ class LotLgtsOptionForm(forms.Form):
             "required": "Le nombre de logements est obligatoire",
         },
     )
+    surface_habitable_totale = forms.DecimalField(
+        required=False,
+        label="Surface habitable totale en m²",
+        help_text="concerne la surface habitable de tout le bâti, y compris les locaux"
+        + " auxquels ne s'applique pas la convention",
+        max_digits=7,
+        decimal_places=2,
+        error_messages={
+            "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
+        },
+    )
     formset_sans_loyer_disabled = forms.BooleanField(
         required=False,
     )
@@ -549,6 +560,9 @@ class FoyerResidenceLogementForm(forms.Form):
     uuid = forms.UUIDField(
         required=False,
         label="Logement",
+    )
+    financement = forms.TypedChoiceField(
+        required=False, label="", choices=Financement.choices
     )
     designation = forms.CharField(
         label="",
