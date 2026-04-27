@@ -36,9 +36,11 @@ class ConventionLogementsViewTests(AbstractEditViewTestCase, TestCase):
         self.target_template = "conventions/foyer_residence_logements.html"
         self.error_payload = {
             **foyer_residence_logements_success_payload,
-            "surface_habitable_totale": "1",
+            "lots-0-uuid": str(self.convention_75.lot.uuid),
+            "form-0-loyer": "",
         }
-        self.success_payload = foyer_residence_logements_success_payload
+        self.success_payload = {**foyer_residence_logements_success_payload}
+        self.success_payload["lots-0-uuid"] = str(self.convention_75.lot.uuid)
 
         self.msg_prefix = "[ConventionFoyerResidenceLogementsViewTests] "
 
