@@ -772,8 +772,12 @@ def compute_mixte(convention):
         "mixPLUS_30pc": 0,
         "mixPLUS_10pc": 0,
     }
-    nb_logements = convention.lot.nb_logements or 0
     if convention.mixity_option():
+        nb_logements = sum(
+            lot.nb_logements or 0
+            for lot in convention.lots.all()
+            if lot.financement in [Financement.PLUS, Financement.PLUS_CD]
+        )
         # cf. convention : 30 % au moins des logements
         if nb_logements < 10:
             # cf. convention : 30 % au moins des logements (ce nombre s'obtenant en arrondissant
@@ -783,11 +787,14 @@ def compute_mixte(convention):
             mixite["mixPLUSinf10_30pc"] = round_half_up(nb_logements * 0.3)
             # cf. convention : 10 % des logements
             mixite["mixPLUSinf10_10pc"] = round_half_up(nb_logements * 0.1)
+            mixite["mixPLUSsup10_30pc"] = math.ceil(nb_logements * 0.3)
         else:
             # cf. convention : 30 % au moins des logements
             mixite["mixPLUS_10pc"] = math.floor(nb_logements * 0.1)
             mixite["mixPLUSsup10_30pc"] = math.ceil(nb_logements * 0.3)
             mixite["mixPLUS_30pc"] = math.ceil(nb_logements * 0.3)
+            mixite["mixPLUSinf10_30pc"] = round_half_up(nb_logements * 0.3)
+            mixite["mixPLUSinf10_10pc"] = round_half_up(nb_logements * 0.1)
 
     return mixite
 

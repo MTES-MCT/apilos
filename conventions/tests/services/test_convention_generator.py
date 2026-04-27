@@ -154,7 +154,7 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUS_30pc": 3,
                 "mixPLUSinf10_10pc": 1,
                 "mixPLUSinf10_30pc": 3,
-                "mixPLUSsup10_30pc": 0,
+                "mixPLUSsup10_30pc": 3,
             },
         )
         lot_convention.nb_logements = 5
@@ -166,7 +166,7 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUS_30pc": 2,
                 "mixPLUSinf10_10pc": 1,
                 "mixPLUSinf10_30pc": 2,
-                "mixPLUSsup10_30pc": 0,
+                "mixPLUSsup10_30pc": 2,
             },
         )
         lot_convention.nb_logements = 4
@@ -178,7 +178,7 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
                 "mixPLUS_30pc": 1,
                 "mixPLUSinf10_10pc": 0,
                 "mixPLUSinf10_30pc": 1,
-                "mixPLUSsup10_30pc": 0,
+                "mixPLUSsup10_30pc": 2,
             },
         )
 
@@ -192,8 +192,8 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
             {
                 "mixPLUS_10pc": 1,
                 "mixPLUS_30pc": 3,
-                "mixPLUSinf10_10pc": 0,
-                "mixPLUSinf10_30pc": 0,
+                "mixPLUSinf10_10pc": 1,
+                "mixPLUSinf10_30pc": 3,
                 "mixPLUSsup10_30pc": 3,
             },
         )
@@ -204,8 +204,8 @@ class ConventionGeneratorComputeMixiteTest(TestCase):
             {
                 "mixPLUS_10pc": 1,
                 "mixPLUS_30pc": 4,
-                "mixPLUSinf10_10pc": 0,
-                "mixPLUSinf10_30pc": 0,
+                "mixPLUSinf10_10pc": 1,
+                "mixPLUSinf10_30pc": 3,
                 "mixPLUSsup10_30pc": 4,
             },
         )
