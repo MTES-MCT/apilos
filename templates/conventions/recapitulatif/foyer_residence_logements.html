@@ -36,6 +36,7 @@
                                                         {% endif %}
                                                         <th scope="col" class="col__width--150">Numéro du logement (désignation) {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Type {% include "common/form/required_field_star.html" %}</th>
+                                                        <th scope="col" class="col__width--150">Financement</th>
                                                         <th scope="col" class="col__width--120">Surface habitable par local {% include "common/form/required_field_star.html" %}</th>
                                                         <th scope="col" class="col__width--120">Redevance maximale en € {% include "common/form/required_field_star.html" %}</th>
                                                     </tr>
@@ -56,6 +57,9 @@
                                                                     <td>
                                                                         {{ logement.typologie }}
                                                                     </td>
+                                                                    <td>
+                                                                        {{ logement.lot.financement }}
+                                                                    </td>
                                                                     <td id="lgt_sh">
                                                                         {{ logement.surface_habitable|floatformat:2 }}
                                                                     </td>
@@ -67,7 +71,7 @@
                                                         {% endwith %}
                                                     {% endfor %}
                                                     <tr>
-                                                        <td colspan=" {% if convention|display_comments %}3{% else %}2{% endif %}" class="fr-text--lg">
+                                                        <td colspan=" {% if convention|display_comments %}4{% else %}3{% endif %}" class="fr-text--lg">
                                                             Total
                                                         </td>
                                                         <td id="total_sh" class="fr-text--lg">
