@@ -426,11 +426,7 @@ class ConventionView(ABC, BaseConventionView):
             self.target_template,
             {
                 **base_convention_response_error(request, service.convention),
-                **(
-                    {"form": service.form}
-                    if service.form and not service.formset_convention_mixte
-                    else {}
-                ),
+                **({"form": service.form} if service.form else {}),
                 **({"extra_forms": service.extra_forms} if service.extra_forms else {}),
                 **({"formset": service.formset} if service.formset else {}),
                 **(
@@ -496,11 +492,7 @@ class ConventionView(ABC, BaseConventionView):
             self.target_template,
             {
                 **base_convention_response_error(request, self.service.convention),
-                **(
-                    {"form": self.service.form}
-                    if self.service.form and not self.service.formset_convention_mixte
-                    else {}
-                ),
+                **({"form": self.service.form} if self.service.form else {}),
                 **(
                     {"formset_convention_mixte": self.service.formset_convention_mixte}
                     if self.service.formset_convention_mixte

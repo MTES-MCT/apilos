@@ -110,6 +110,9 @@ class RecapitulatifView(BaseConventionView):
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention, request=request
                 ),
+                "switch_seconde_vie_on": switch_is_active(
+                    settings.SWITCH_SECONDE_VIE_ON
+                ),
             },
         )
 
@@ -143,6 +146,9 @@ class RecapitulatifView(BaseConventionView):
                 **result,
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention, request=request
+                ),
+                "switch_seconde_vie_on": switch_is_active(
+                    settings.SWITCH_SECONDE_VIE_ON
                 ),
             },
         )
@@ -182,6 +188,7 @@ class ConventionSearchMixin:
             ("anru", "anru"),
             ("anah", "anah"),
             ("avenant_seulement", "avenant_seulement"),
+            ("seconde_vie", "seconde_vie"),
             ("bailleur", "bailleur"),
             ("date_signature", "date_signature"),
             ("financement", "financement"),

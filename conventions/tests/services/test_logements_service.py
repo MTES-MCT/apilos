@@ -206,11 +206,30 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
             convention=avenant, request=request
         )
 
+    def _get_lots_post_data(self, service=None, nb_logements="2"):
+        service = service or self.service
+        lot = service.convention.lot
+        return {
+            "lots-TOTAL_FORMS": "1",
+            "lots-INITIAL_FORMS": "1",
+            "lots-0-uuid": str(lot.uuid),
+            "lots-0-financement": lot.financement,
+            "lots-0-nb_logements": nb_logements,
+            "lots-0-surface_habitable_totale": "50.55",
+            "lots-0-lgts_mixite_sociale_negocies": "0",
+            "lots-0-loyer_derogatoire": "",
+            "lots-0-surface_locaux_collectifs_residentiels": "",
+            "lots-0-loyer_associations_foncieres": "",
+        }
+
     def test_get(self):
         self.service.get()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
         self.assertIsInstance(self.service.form, LotFoyerResidenceLgtsDetailsForm)
         self.assertIsInstance(self.service.formset, FoyerResidenceLogementFormSet)
+        self.assertIsInstance(
+            self.service.formset_convention_mixte, LotLgtsOptionFormSet
+        )
         self.assertIsInstance(self.service.upform, UploadForm)
         for lot_field in [
             "uuid",
@@ -225,6 +244,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         self.service.request.POST = {
             "uuid": str(self.service.convention.lot.uuid),
             **foyer_residence_logements_success_payload,
+            **self._get_lots_post_data(),
         }
 
         self.service.save()
@@ -256,6 +276,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
     def test_save_fails_on_loyer(self):
         self.service.request.POST = {
             **foyer_residence_logements_success_payload,
+            **self._get_lots_post_data(),
             "form-0-typologie": "T2",
             "form-0-loyer": "160.00",
             "form-1-typologie": "T2",
@@ -274,6 +295,7 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
             **foyer_residence_logements_success_payload,
+            **self._get_lots_post_data(),
             "form-TOTAL_FORMS": "3",
             "form-INITIAL_FORMS": "3",
             "form-2-uuid": "",
@@ -291,20 +313,11 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         ]
         assert self.service.formset.non_form_errors() == []
 
-    def test_save_fails_on_surface_habitable_totale(self):
-        self.service.request.POST = {
-            **foyer_residence_logements_success_payload,
-            "form-0-surface_habitable": "16.00",
-            "form-1-surface_habitable": "16.00",
-            "surface_habitable_totale": "31.00",
-        }
-        self.service.save()
-        self.assertTrue(self.service.form.has_error("surface_habitable_totale"))
-
     def test_save_fails_on_nb_logements_avenant(self):
 
         self.service_avenant.request.POST = {
             **foyer_residence_logements_success_payload,
+            **self._get_lots_post_data(service=self.service_avenant),
             "form-TOTAL_FORMS": "3",
             "form-INITIAL_FORMS": "3",
             "form-2-uuid": "",

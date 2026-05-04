@@ -763,6 +763,7 @@ class Logement(models.Model):
     foyer_residence_import_mapping = {
         "Numéro du logement": "designation",
         "Type": "typologie",
+        "Financement": "financement",
         "Surface habitable": "surface_habitable",
         "Redevance maximale": "loyer",
     }

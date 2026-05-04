@@ -68,6 +68,10 @@ class TestOperationService:
         }
         assert operation_service.is_seconde_vie() == expected
 
+    def test_is_seconde_vie_with_none_operation(self, operation_service):
+        operation_service.operation = None
+        assert operation_service.is_seconde_vie() is False
+
     def test_has_conventions(self, operation_service):
         programme = ProgrammeFactory(numero_operation="num1")
         operation_service.programmes = [programme]
@@ -77,6 +81,16 @@ class TestOperationService:
         ConventionFactory.create_batch(2, programme=programme)
 
         assert operation_service.has_conventions()
+
+    def test_get_active_conventions(self, operation_service):
+        programme = ProgrammeFactory(numero_operation="20220600016")
+        active_conventions = ConventionFactory.create_batch(2, programme=programme)
+        ConventionFactory(programme=programme, statut="8. Annulée en suivi")
+
+        result = operation_service.get_active_conventions()
+        assert result.count() == 2
+        for conv in result:
+            assert conv in active_conventions
 
 
 class LoyerRedevanceUpdateComputerTest(TestCase):
