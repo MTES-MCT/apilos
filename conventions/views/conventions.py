@@ -41,7 +41,7 @@ from conventions.permissions import (
 from conventions.services import convention_generator, utils
 from conventions.services.alertes import AlerteService
 from conventions.services.avenants import create_avenant
-from conventions.services.convention_generator import fiche_caf_doc
+from conventions.services.convention_generator import DocxGenerationError, fiche_caf_doc
 from conventions.services.conventions import convention_post_action
 from conventions.services.file import ConventionFileService, FileType
 from conventions.services.recapitulatif import (
@@ -466,7 +466,14 @@ def generate_convention(request, convention_uuid):
     if request.POST.get("without_filigram"):
         convention.statut = ConventionStatut.A_SIGNER.label
 
-    doc = convention_generator.generate_convention_doc(convention)
+    try:
+        doc = convention_generator.generate_convention_doc(convention)
+    except DocxGenerationError as e:
+        messages.error(request, str(e))
+        return HttpResponseRedirect(
+            reverse("conventions:recapitulatif", args=[convention_uuid])
+        )
+
     data = io.BytesIO()
     doc.save(data)
     data.seek(0)
