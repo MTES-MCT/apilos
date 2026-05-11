@@ -908,7 +908,6 @@ def fiche_caf_doc(convention):
         "logements": convention.lot.logements.order_by("import_order"),
         "nb_logements_par_type": nb_logements_par_type,
         "lot_num": lot_num,
-        "loyer_m2": _get_loyer_par_metre_carre(convention),
         "residence_attributions": residence_attributions,
         "foyer_attributions": foyer_attributions,
     }
