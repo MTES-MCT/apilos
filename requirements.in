@@ -21,7 +21,7 @@ docxtpl
 drf-spectacular
 gunicorn
 Jinja2
-lxml>=5.0
+lxml>=6.1.0
 openpyxl
 psycopg[binary]
 pyjwt
