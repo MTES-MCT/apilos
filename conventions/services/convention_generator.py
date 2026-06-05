@@ -1,6 +1,7 @@
 import datetime
 import io
 import json
+import logging
 import math
 import os
 import subprocess
@@ -8,6 +9,7 @@ from functools import reduce
 from pathlib import Path
 
 import jinja2
+from PIL import Image
 from django.conf import settings
 from django.core.files.storage import default_storage
 from django.forms.models import model_to_dict
@@ -28,6 +30,8 @@ from programmes.models import Annexe, TypologieLogement
 from programmes.models.choices import Financement
 from upload.models import UploadedFile
 from upload.services import UploadService
+
+logger = logging.getLogger(__name__)
 
 foyer_attributions_mapping = {
     "agees": "Personnes âgées seules ou en ménage",
@@ -278,7 +282,15 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
                 "Cela est probablement dû à un fichier png incomplet."
             ) from e
         else:
-            raise e
+            raise
+    except Exception as e:
+        if "unexpected char" in str(e):
+            raise DocxGenerationError(
+                "Une erreur est survenue lors de la génération du document docx. "
+                "Une des images déposées a un encodage incompatible. "
+                "Veuillez vérifier vos images et les ré-exporter au format PNG ou JPEG standard."
+            ) from e
+        raise
     if convention.programme.is_outre_mer:
         # Remove doc cerfa header for outre mer
         doc.sections[0].first_page_header.is_linked_to_previous = True
@@ -635,6 +647,37 @@ def pluralize(value):
     return ""
 
 
+def _normalize_image(input_path: Path) -> Path:
+    """
+    Normalize an image file to a format compatible with python-docx (PNG or JPEG).
+
+    Opens the image with Pillow and re-saves it to ensure compatible encoding.
+    RGBA/LA/P images are saved as PNG, others as JPEG.
+
+    Returns the path to the normalized image (may be the same or a new path).
+    """
+    normalized_path = input_path.with_suffix(".normalized.png")
+    try:
+        with Image.open(input_path) as img:
+            if img.mode in ("RGBA", "LA", "P", "PA"):
+                img.save(normalized_path, format="PNG")
+            else:
+                normalized_path = input_path.with_suffix(".normalized.jpg")
+                img = img.convert("RGB")
+                img.save(normalized_path, format="JPEG", quality=95)
+        return normalized_path
+    except Exception:
+        logger.exception(
+            "Impossible de normaliser l'image %s",
+            input_path.name,
+        )
+        raise DocxGenerationError(
+            f"L'image « {input_path.name} » n'a pas pu être traitée. "
+            "Veuillez vérifier que le fichier est une image valide "
+            "(PNG, JPEG) et réessayer."
+        ) from None
+
+
 def _build_files_for_docx(doc, convention_uuid, file_list):
     # pylint: disable=R1732
     local_pathes = []
@@ -652,10 +695,13 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
                 local_file = open(local_path, "wb")
                 local_file.write(file.read())
                 local_file.close()
+            normalized_path = _normalize_image(local_path)
             docx_images.append(
-                InlineImage(doc, image_descriptor=f"{local_path}", width=Inches(5))
+                InlineImage(doc, image_descriptor=f"{normalized_path}", width=Inches(5))
             )
             local_pathes.append(f"{local_path}")
+            if str(normalized_path) != str(local_path):
+                local_pathes.append(f"{normalized_path}")
     return docx_images, local_pathes
 
 
