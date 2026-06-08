@@ -9,7 +9,7 @@ from admin.filters import IsCloneFilter
 from conventions.models.choices import ConventionStatut
 from conventions.models.piece_jointe import PieceJointe
 
-from .models import AvenantType, Convention, Pret
+from .models import AlerteSIAPLog, AvenantType, Convention, Pret
 
 
 @admin.display(description="Programme")
@@ -194,3 +194,33 @@ class PretAdmin(ApilosModelAdmin):
 class AvenantTypeAdmin(ApilosModelAdmin):
     staff_user_can_change = False
     staff_user_can_add = False
+
+
+@admin.register(AlerteSIAPLog)
+class AlerteSIAPLogAdmin(ApilosModelAdmin):
+    staff_user_can_change = False
+    staff_user_can_add = False
+    list_display = (
+        "cree_le",
+        "convention",
+        "operation",
+        "statut",
+        "description",
+        "etiquette",
+        "user_login",
+    )
+    list_filter = ("statut", "operation", "cree_le")
+    search_fields = ("convention__uuid", "description", "user_login", "erreur")
+    readonly_fields = (
+        "convention",
+        "operation",
+        "statut",
+        "description",
+        "destinataires",
+        "etiquette",
+        "user_login",
+        "habilitation_id",
+        "erreur",
+        "payload",
+        "cree_le",
+    )

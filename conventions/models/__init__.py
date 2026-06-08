@@ -1,3 +1,4 @@
+from conventions.models.alerte_siap_log import *
 from conventions.models.avenant_type import *
 from conventions.models.choices import *
 from conventions.models.convention import *
