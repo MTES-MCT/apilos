@@ -399,3 +399,35 @@ sphinx-build -M html docs _build
 ```
 
 La documentation est viualisable avec un navigateur à partir du fichier [_build/html/README.html](_build/html/README.html)
+
+## Commandes de diagnostic
+
+### Lister les utilisateurs par administration
+
+La commande `list_users_by_administration` permet de lister les utilisateurs bailleur et instructeur liés à une administration donnée. Elle est utile pour diagnostiquer les problèmes de notification par email.
+
+#### Utilisation
+
+```sh
+python manage.py list_users_by_administration <code_administration>
+```
+
+#### Exemple
+
+```sh
+python manage.py list_users_by_administration 33063
+```
+
+#### Informations affichées
+
+- Nom de l'administration
+- Nombre de conventions liées
+- Liste des bailleurs (nom + SIREN) ayant des conventions gérées par cette administration
+- Utilisateurs bailleur : email, préférence email (`TOUS`, `PARTIEL`, `AUCUN`), dernière connexion
+- Utilisateurs instructeur : email, préférence email, dernière connexion
+
+#### Cas d'usage
+
+- Vérifier qu'un utilisateur signalant un problème de notification a bien un rôle local dans APiLos
+- Vérifier que sa préférence email est compatible avec l'envoi de notifications (`TOUS` ou `PARTIEL`)
+- Identifier les utilisateurs qui ne se sont jamais connectés à APiLos (pas de rôle local créé)
