@@ -1,17 +1,21 @@
 """
 Commande de diagnostic : liste les utilisateurs bailleur et instructeur
-liés à une administration donnée (par son code).
+liés à une administration donnée (par son code), et optionnellement les
+détails d'une opération spécifique.
 
 Utile pour investiguer les problèmes de notification par email :
 - Vérifie quels utilisateurs ont un rôle local dans APiLos
 - Affiche leur préférence email (TOUS, PARTIEL, AUCUN)
 - Affiche leur dernière connexion
+- Affiche les destinataires email pour une convention donnée
 
 Utilisation :
     python manage.py list_users_by_administration <code_administration>
+    python manage.py list_users_by_administration <code_administration> --operation <numero_operation>
 
-Exemple :
+Exemples :
     python manage.py list_users_by_administration 33063
+    python manage.py list_users_by_administration 33063 --operation 2021330630053
 """
 
 from django.core.management.base import BaseCommand, CommandError
@@ -19,6 +23,7 @@ from django.core.management.base import BaseCommand, CommandError
 from bailleurs.models import Bailleur
 from conventions.models import Convention
 from instructeurs.models import Administration
+from programmes.models import Programme
 from users.models import User
 from users.type_models import TypeRole
 
@@ -35,14 +40,23 @@ class Command(BaseCommand):
             type=str,
             help="Code de l'administration (ex: 33063 pour Bordeaux Métropole)",
         )
+        parser.add_argument(
+            "--operation",
+            type=str,
+            default=None,
+            help="Numéro d'opération pour afficher le détail d'une convention spécifique",
+        )
 
     def handle(self, *args, **options):
         code = options["code"]
+        operation = options["operation"]
 
         try:
             admin = Administration.objects.get(code=code)
         except Administration.DoesNotExist as err:
-            raise CommandError(f"Administration with code '{code}' not found.") from err
+            raise CommandError(
+                f"Administration avec le code '{code}' introuvable."
+            ) from err
 
         self.stdout.write(self.style.SUCCESS(f"Administration: {admin}"))
 
@@ -94,3 +108,49 @@ class Command(BaseCommand):
             self.stdout.write(
                 f"  {u.email} | pref_email={u.preferences_email} | last_login={u.last_login}"
             )
+
+        # Détail d'une opération spécifique
+        if operation:
+            self._display_operation_details(operation)
+
+    def _display_operation_details(self, numero_operation: str):
+        self.stdout.write(
+            self.style.SUCCESS(f"\n--- Détail opération {numero_operation} ---")
+        )
+
+        programmes = Programme.objects.filter(numero_operation=numero_operation)
+        if not programmes.exists():
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Aucun programme trouvé pour l'opération {numero_operation}"
+                )
+            )
+            return
+
+        for programme in programmes:
+            self.stdout.write(
+                f"\nProgramme: {programme.nom} | Bailleur: {programme.bailleur.nom} "
+                f"(SIREN: {programme.bailleur.siren})"
+            )
+
+            convs = programme.conventions.all()
+            for conv in convs:
+                self.stdout.write(f"\n  Convention: {conv.uuid} | statut={conv.statut}")
+                self.stdout.write(
+                    f"    Emails bailleur destinataires: {conv.get_email_bailleur_users()}"
+                )
+                self.stdout.write(
+                    f"    Emails instructeur destinataires: {conv.get_email_instructeur_users()}"
+                )
+
+                # Historique des interactions
+                histories = conv.conventionhistories.select_related("user").order_by(
+                    "-cree_le"
+                )[:10]
+                if histories:
+                    self.stdout.write("    Dernières interactions:")
+                    for h in histories:
+                        email = h.user.email if h.user else "N/A"
+                        self.stdout.write(
+                            f"      {email} | statut={h.statut_convention} | {h.cree_le}"
+                        )
