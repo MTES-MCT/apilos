@@ -634,13 +634,23 @@ def _update_convention_for_finalisation(
         convention.valide_le = datetime.date.today()
     convention.save()
 
+    siap_credentials = get_siap_credentials_from_request(request)
+
+    # Envoyer les alertes SIAP immédiatement, sans dépendre de la génération PDF
+    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
+        service = AlerteService(
+            convention=convention, siap_credentials=siap_credentials
+        )
+        service.delete_action_alertes()
+        service.create_alertes_valide()
+
     task_generate_and_send.delay(
         convention_uuid=str(convention.uuid),
         convention_url=request.build_absolute_uri(
             reverse("conventions:preview", args=[convention.uuid])
         ),
         convention_email_validator=request.user.email,
-        siap_credentials=get_siap_credentials_from_request(request),
+        siap_credentials=siap_credentials,
     )
 
     return {

@@ -10,7 +10,6 @@ from waffle import switch_is_active
 from zipfile import ZipFile
 
 from conventions.models import Convention, PieceJointe
-from conventions.services.alertes import AlerteService
 from conventions.services.convention_generator import (
     PDFConversionError,
     generate_pdf,
@@ -134,13 +133,6 @@ def task_send_email_to_bailleur(  # noqa: C901
             f"Email not sent for the convention {convention_uuid}: attached file is too big: {email_file_path}"
         )
         return
-
-    if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-        service = AlerteService(
-            convention=convention, siap_credentials=siap_credentials
-        )
-        service.delete_action_alertes()
-        service.create_alertes_valide()
 
     if not switch_is_active(settings.SWITCH_TRANSACTIONAL_EMAILS_OFF):
 
