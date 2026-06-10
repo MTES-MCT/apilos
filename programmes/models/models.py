@@ -334,6 +334,18 @@ class Programme(models.Model):
     def is_logements_ordinaires(self):
         return self.nature_logement == NatureLogement.LOGEMENTSORDINAIRES
 
+    @property
+    def is_residence_universitaire(self):
+        return self.nature_logement == NatureLogement.RESIDENCEUNIVERSITAIRE
+
+    @property
+    def is_not_spf(self):
+        return (
+            self.is_residence_universitaire
+            or self.is_logements_ordinaires
+            or self.is_residence
+        )
+
 
 class LogementEDD(models.Model):
     id = models.AutoField(primary_key=True)

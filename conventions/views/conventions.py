@@ -71,6 +71,7 @@ from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile
 
 template_sent = "conventions/sent.html"
+template_post = "conventions/post.html"
 
 
 class RecapitulatifView(BaseConventionView):
@@ -569,32 +570,29 @@ def preview(request, convention_uuid, doc_type=0):
 class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.get()
+        if not self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
         return render(
             request,
-            "conventions/post.html",
+            template_post,
             {
-                **result,
+                "convention": self.convention,
             },
         )
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.save(as_type=FileType.PUBLICATION)
-        if result["success"] == ReturnStatus.SUCCESS:
+        if not self.convention.programme.is_not_spf:
             return HttpResponseRedirect(
-                reverse(
-                    "conventions:preview_upload_publication", args=[convention_uuid]
-                )
+                reverse("conventions:post_action", args=[convention_uuid])
             )
-
         return render(
             request,
-            "conventions/post.html",
+            template_post,
             {
-                **result,
+                "convention": self.convention,
             },
         )
 
@@ -663,6 +661,11 @@ class ConventionBaseUploadPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
@@ -687,6 +690,11 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
@@ -758,6 +766,19 @@ class ConventionSendForPublicationView(BaseConventionView):
                     "convention": self.convention,
                 },
             )
+
+        if self.convention.programme.is_not_spf:
+
+            return render(
+                request,
+                "conventions/post_action.html",
+                {
+                    "error_message": "Oups ! la nature du logement de ce programme ne permet "
+                    "pas la publication de cette convention.",
+                    "convention": self.convention,
+                },
+            )
+
         self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
         self.convention.save()
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):

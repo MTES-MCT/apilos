@@ -16,6 +16,7 @@ from conventions.services.utils import (
     editable_convention,
 )
 from core.views import SetupLoginRequiredMixin
+from programmes.models import NatureLogement
 
 
 @dataclass
@@ -234,6 +235,17 @@ hlm_sem_type_steps = [
     commentaires_step,
 ]
 
+hlm_sem_log_ordi_type_steps = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    financement_step,
+    logements_step,
+    annexes_step,
+    stationnements_step,
+    commentaires_step,
+]
+
 foyer_steps = [
     bailleur_step,
     programme_step,
@@ -251,7 +263,6 @@ residence_steps = [
     bailleur_step,
     programme_step,
     cadastre_step,
-    edd_step,
     financement_step,
     foyer_residence_logements_step,
     collectif_step,
@@ -277,46 +288,7 @@ class ConventionFormSteps:
         active_classname=None
     ) -> None:
         self.convention = convention
-        self.steps = steps
-
-        if not self.steps:
-            if convention.is_avenant():
-                varying_steps = (
-                    [
-                        avenant_foyer_residence_logements_step,
-                        avenant_collectif_step,
-                        (
-                            avenant_foyer_attribution_step
-                            if convention.programme.is_foyer
-                            else avenant_residence_attribution_step
-                        ),
-                        avenant_variantes_step,
-                    ]
-                    if convention.programme.is_foyer
-                    or convention.programme.is_residence
-                    else [
-                        avenant_logements_step,
-                        avenant_annexes_step,
-                        avenant_stationnement_step,
-                    ]
-                )
-                self.steps = [
-                    avenant_bailleur_step,
-                    avenant_programme_step,
-                    avenant_cadastre_step,
-                    avenant_edd_step,
-                    avenant_financement_step,
-                    *varying_steps,
-                    avenant_champ_libre_step,
-                    avenant_commentaires_step,
-                ]
-
-            elif convention.programme.is_foyer:
-                self.steps = foyer_steps
-            elif convention.programme.is_residence:
-                self.steps = residence_steps
-            else:
-                self.steps = hlm_sem_type_steps
+        self.steps = steps or self._resolve_step(convention)
 
         if active_classname:
             self.step_index = [
@@ -324,6 +296,51 @@ class ConventionFormSteps:
                 for i, elem in enumerate(self.steps)
                 if elem.classname == active_classname
             ][0]
+
+    def _resolve_step(self, convention):
+
+        if convention.is_avenant():
+            return self._resolve_step_avenant(convention)
+        if convention.programme.is_foyer:
+            return foyer_steps
+        if convention.programme.is_residence:
+            return residence_steps
+        if convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES:
+            return hlm_sem_log_ordi_type_steps
+
+        return hlm_sem_type_steps
+
+    def _resolve_step_avenant(self, convention):
+
+        if convention.programme.is_foyer or convention.programme.is_residence:
+            varying_steps = [
+                avenant_foyer_residence_logements_step,
+                avenant_collectif_step,
+                (
+                    avenant_foyer_attribution_step
+                    if convention.programme.is_foyer
+                    else avenant_residence_attribution_step
+                ),
+                avenant_variantes_step,
+            ]
+
+        else:
+            varying_steps = [
+                avenant_logements_step,
+                avenant_annexes_step,
+                avenant_stationnement_step,
+            ]
+
+        return [
+            avenant_bailleur_step,
+            avenant_programme_step,
+            avenant_cadastre_step,
+            avenant_edd_step,
+            avenant_financement_step,
+            *varying_steps,
+            avenant_champ_libre_step,
+            avenant_commentaires_step,
+        ]
 
     @property
     def total_step_number(self) -> int:

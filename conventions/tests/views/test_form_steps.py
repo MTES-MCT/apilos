@@ -18,6 +18,7 @@ from conventions.views.convention_form import (
     avenant_logements_step,
     avenant_programme_step,
     avenant_residence_attribution_step,
+    avenant_stationnement_step,
     avenant_variantes_step,
     bailleur_step,
     cadastre_step,
@@ -79,7 +80,6 @@ class ConventionFormStepsTests(TestCase):
                 bailleur_step,
                 programme_step,
                 cadastre_step,
-                edd_step,
                 financement_step,
                 logements_step,
                 annexes_step,
@@ -129,6 +129,30 @@ class ConventionFormStepsTests(TestCase):
                 avenant_collectif_step,
                 avenant_residence_attribution_step,
                 avenant_variantes_step,
+                avenant_champ_libre_step,
+                avenant_commentaires_step,
+            ],
+        )
+
+    def test_avenant_hlm_sem_steps(self):
+        # Avenant for a programme that is neither foyer nor residence
+        self.avenant.programme.nature_logement = NatureLogement.LOGEMENTSORDINAIRES
+        self.avenant.programme.save()
+        self.assertFalse(self.avenant.programme.is_foyer)
+        self.assertFalse(self.avenant.programme.is_residence)
+
+        form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
+        self.assertEqual(
+            form_steps.steps,
+            [
+                avenant_bailleur_step,
+                avenant_programme_step,
+                avenant_cadastre_step,
+                avenant_edd_step,
+                avenant_financement_step,
+                avenant_logements_step,
+                avenant_annexes_step,
+                avenant_stationnement_step,
                 avenant_champ_libre_step,
                 avenant_commentaires_step,
             ],
@@ -195,6 +219,32 @@ class ConventionFormStepsTests(TestCase):
             ],
         )
 
+    def test_programme_residence_universitaire_steps(self):
+        self.convention.programme.nature_logement = (
+            NatureLogement.RESIDENCEUNIVERSITAIRE
+        )
+        self.convention.programme.save()
+        self.assertTrue(self.convention.programme.is_residence_universitaire)
+
+        form_steps = ConventionFormSteps(
+            convention=self.convention, request=self.request
+        )
+
+        self.assertEqual(
+            form_steps.steps,
+            [
+                bailleur_step,
+                programme_step,
+                cadastre_step,
+                edd_step,
+                financement_step,
+                logements_step,
+                annexes_step,
+                stationnements_step,
+                commentaires_step,
+            ],
+        )
+
     def test_programme_residence_steps(self):
         self.convention.programme.nature_logement = NatureLogement.HEBERGEMENT
         self.convention.programme.save()
@@ -210,7 +260,6 @@ class ConventionFormStepsTests(TestCase):
                 bailleur_step,
                 programme_step,
                 cadastre_step,
-                edd_step,
                 financement_step,
                 foyer_residence_logements_step,
                 collectif_step,
