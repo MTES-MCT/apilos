@@ -71,6 +71,7 @@ from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile
 
 template_sent = "conventions/sent.html"
+template_post = "conventions/post.html"
 
 
 class RecapitulatifView(BaseConventionView):
@@ -569,46 +570,29 @@ def preview(request, convention_uuid, doc_type=0):
 class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        if self.convention.programme.is_not_spf:
-            return render(
-                request,
-                "conventions/post.html",
-                {
-                    "convention": self.convention,
-                },
+        if not self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
             )
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.get()
         return render(
             request,
-            "conventions/post.html",
+            template_post,
             {
-                **result,
+                "convention": self.convention,
             },
         )
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        if self.convention.programme.is_not_spf:
-            return render(
-                request,
-                "conventions/post.html",
-            )
-
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.save(as_type=FileType.PUBLICATION)
-        if result["success"] == ReturnStatus.SUCCESS:
+        if not self.convention.programme.is_not_spf:
             return HttpResponseRedirect(
-                reverse(
-                    "conventions:preview_upload_publication", args=[convention_uuid]
-                )
+                reverse("conventions:post_action", args=[convention_uuid])
             )
-
         return render(
             request,
-            "conventions/post.html",
+            template_post,
             {
-                **result,
+                "convention": self.convention,
             },
         )
 
@@ -677,23 +661,14 @@ class ConventionBaseUploadPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
-        # Note : vérifier le context !
-        # FIXME: vérifier si on a besoin vraiment de ça
-        if self.convention.programme.is_not_spf:
-            return render(
-                request,
-                self.template_path,
-                {
-                    "convention": self.convention,
-                    "error_message": service.get_error_message(
-                        instructeurs_error=False
-                    ),
-                },
-            )
-
         result = service.get()
         return render(
             request,
@@ -715,23 +690,14 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return HttpResponseRedirect(
+                reverse("conventions:post_action", args=[convention_uuid])
+            )
+
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
-        # Note : vérifier le context !
-        # FIXME: également il faut vérifier si on a besoin vraiment de ça
-        if self.convention.programme.is_not_spf:
-            return render(
-                request,
-                self.template_path,
-                {
-                    "convention": self.convention,
-                    "error_message": service.get_error_message(
-                        instructeurs_error=False
-                    ),
-                },
-            )
-
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
             messages.add_message(
