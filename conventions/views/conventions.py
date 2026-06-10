@@ -569,6 +569,14 @@ def preview(request, convention_uuid, doc_type=0):
 class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return render(
+                request,
+                "conventions/post.html",
+                {
+                    "convention": self.convention,
+                },
+            )
         service = ConventionSentService(convention=self.convention, request=request)
         result = service.get()
         return render(
@@ -581,6 +589,12 @@ class ConventionPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
+        if self.convention.programme.is_not_spf:
+            return render(
+                request,
+                "conventions/post.html",
+            )
+
         service = ConventionSentService(convention=self.convention, request=request)
         result = service.save(as_type=FileType.PUBLICATION)
         if result["success"] == ReturnStatus.SUCCESS:
@@ -666,6 +680,20 @@ class ConventionBaseUploadPublicationView(BaseConventionView):
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
+        # Note : vérifier le context !
+        # FIXME: vérifier si on a besoin vraiment de ça
+        if self.convention.programme.is_not_spf:
+            return render(
+                request,
+                self.template_path,
+                {
+                    "convention": self.convention,
+                    "error_message": service.get_error_message(
+                        instructeurs_error=False
+                    ),
+                },
+            )
+
         result = service.get()
         return render(
             request,
@@ -690,6 +718,20 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
         service = ConventionUploadPublicationService(
             convention=self.convention, request=request, step_number=self.step_number
         )
+        # Note : vérifier le context !
+        # FIXME: également il faut vérifier si on a besoin vraiment de ça
+        if self.convention.programme.is_not_spf:
+            return render(
+                request,
+                self.template_path,
+                {
+                    "convention": self.convention,
+                    "error_message": service.get_error_message(
+                        instructeurs_error=False
+                    ),
+                },
+            )
+
         result = service.save()
         if result["success"] == ReturnStatus.SUCCESS:
             messages.add_message(
@@ -758,6 +800,19 @@ class ConventionSendForPublicationView(BaseConventionView):
                     "convention": self.convention,
                 },
             )
+
+        if self.convention.programme.is_not_spf:
+
+            return render(
+                request,
+                "conventions/post_action.html",
+                {
+                    "error_message": "Oups ! la nature du logement de ce programme ne permet "
+                    "pas la publication de cette convention.",
+                    "convention": self.convention,
+                },
+            )
+
         self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
         self.convention.save()
         if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):

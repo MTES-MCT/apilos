@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from conventions.tests.views.abstract import AbstractEditViewTestCase
+from programmes.models import NatureLogement
 
 
 class ConventionEDDViewTests(AbstractEditViewTestCase, TestCase):
@@ -20,6 +21,10 @@ class ConventionEDDViewTests(AbstractEditViewTestCase, TestCase):
 
     def setUp(self):
         super().setUp()
+        # L'étape EDD est spécifique à la nature de logement "Autre" et "RHVS"
+        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        self.convention_75.programme.save()
+
         self.target_path = reverse("conventions:edd", args=[self.convention_75.uuid])
         self.next_target_path = reverse(
             "conventions:financement", args=[self.convention_75.uuid]

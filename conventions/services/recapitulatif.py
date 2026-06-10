@@ -883,5 +883,7 @@ class ConventionUploadPublicationService(ConventionService):
     def get_success_message(self):
         return "le document de publication à été ajouté sur Apilos"
 
-    def get_error_message(self):
-        return "Oups ! Seuls les instructeurs peuvent effectuer cette action."
+    def get_error_message(self, instructeurs_error=True):
+        if instructeurs_error:
+            return "Oups ! Seuls les instructeurs peuvent effectuer cette action."
+        return "Oups ! la nature de logement de la convention ne permet pas la publication de la convention."

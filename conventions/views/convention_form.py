@@ -16,6 +16,7 @@ from conventions.services.utils import (
     editable_convention,
 )
 from core.views import SetupLoginRequiredMixin
+from programmes.models import NatureLogement
 
 
 @dataclass
@@ -234,6 +235,17 @@ hlm_sem_type_steps = [
     commentaires_step,
 ]
 
+hlm_sem_log_ordi_type_steps = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    financement_step,
+    logements_step,
+    annexes_step,
+    stationnements_step,
+    commentaires_step,
+]
+
 foyer_steps = [
     bailleur_step,
     programme_step,
@@ -251,7 +263,6 @@ residence_steps = [
     bailleur_step,
     programme_step,
     cadastre_step,
-    edd_step,
     financement_step,
     foyer_residence_logements_step,
     collectif_step,
@@ -316,7 +327,13 @@ class ConventionFormSteps:
             elif convention.programme.is_residence:
                 self.steps = residence_steps
             else:
-                self.steps = hlm_sem_type_steps
+                if (
+                    convention.programme.nature_logement
+                    == NatureLogement.LOGEMENTSORDINAIRES
+                ):
+                    self.steps = hlm_sem_log_ordi_type_steps
+                else:
+                    self.steps = hlm_sem_type_steps
 
         if active_classname:
             self.step_index = [
