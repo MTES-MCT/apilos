@@ -316,18 +316,20 @@ class ConventionFormSteps:
             return self._resolve_step_avenant(convention)
         if convention.programme.is_foyer:
             return foyer_steps
-        if convention.programme.is_residence:
-            if convention.statut not in [
+        if convention.programme.is_residence and convention.statut not in [
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+        ]:
+            return residence_steps_sans_spf
+        if (
+            convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES
+            and convention.statut
+            not in [
                 ConventionStatut.PUBLIE.label,
                 ConventionStatut.PUBLICATION_EN_COURS.label,
-            ]:
-                return residence_steps_sans_spf
-        if convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES:
-            if convention.statut not in [
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.PUBLICATION_EN_COURS.label,
-            ]:
-                return hlm_sem_log_ordi_type_steps
+            ]
+        ):
+            return hlm_sem_log_ordi_type_steps
 
         return hlm_sem_type_steps
 
