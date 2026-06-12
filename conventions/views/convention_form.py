@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import View
 
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from conventions.permissions import currentrole_campaign_permission_required
 from conventions.services.conventions import ConventionService
 from conventions.services.utils import (
@@ -259,10 +259,23 @@ foyer_steps = [
     commentaires_step,
 ]
 
-residence_steps = [
+residence_steps_sans_spf = [
     bailleur_step,
     programme_step,
     cadastre_step,
+    financement_step,
+    foyer_residence_logements_step,
+    collectif_step,
+    residence_attribution_step,
+    foyer_variante_step,
+    commentaires_step,
+]
+
+residence_steps_avec_spf = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    edd_step,
     financement_step,
     foyer_residence_logements_step,
     collectif_step,
@@ -304,9 +317,17 @@ class ConventionFormSteps:
         if convention.programme.is_foyer:
             return foyer_steps
         if convention.programme.is_residence:
-            return residence_steps
+            if convention.statut not in [
+                ConventionStatut.PUBLIE.label,
+                ConventionStatut.PUBLICATION_EN_COURS.label,
+            ]:
+                return residence_steps_sans_spf
         if convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES:
-            return hlm_sem_log_ordi_type_steps
+            if convention.statut not in [
+                ConventionStatut.PUBLIE.label,
+                ConventionStatut.PUBLICATION_EN_COURS.label,
+            ]:
+                return hlm_sem_log_ordi_type_steps
 
         return hlm_sem_type_steps
 
