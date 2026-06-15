@@ -83,7 +83,7 @@ class AlerteService:
             )
             return True
         except SIAPException as e:
-            logger.error(
+            logger.exception(
                 "[ALERTE SIAP] ECHEC %s | convention=%s | erreur=%s",
                 description,
                 self.convention.uuid,
