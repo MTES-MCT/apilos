@@ -321,6 +321,11 @@ class ConventionFormSteps:
             ConventionStatut.PUBLICATION_EN_COURS.label,
         ]:
             return residence_steps_sans_spf
+        if convention.programme.is_residence and convention.statut in [
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+        ]:
+            return residence_steps_avec_spf
         if (
             convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES
             and convention.statut
