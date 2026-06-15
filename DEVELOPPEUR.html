@@ -612,6 +612,56 @@ sphinx-build<span class="w"> </span>-M<span class="w"> </span>html<span class="w
 <p>La documentation est viualisable avec un navigateur à partir du fichier <a class="reference internal" href="#_build/html/README.html"><span class="xref myst">_build/html/README.html</span></a></p>
 </section>
 </section>
+<section id="commandes-de-diagnostic">
+<h2>Commandes de diagnostic<a class="headerlink" href="#commandes-de-diagnostic" title="Lien vers cette rubrique">¶</a></h2>
+<section id="lister-les-utilisateurs-par-administration">
+<h3>Lister les utilisateurs par administration<a class="headerlink" href="#lister-les-utilisateurs-par-administration" title="Lien vers cette rubrique">¶</a></h3>
+<p>La commande <code class="docutils literal notranslate"><span class="pre">list_users_by_administration</span></code> permet de lister les utilisateurs bailleur et instructeur liés à une administration donnée. Elle est utile pour diagnostiquer les problèmes de notification par email.</p>
+<section id="utilisation">
+<h4>Utilisation<a class="headerlink" href="#utilisation" title="Lien vers cette rubrique">¶</a></h4>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>manage.py<span class="w"> </span>list_users_by_administration<span class="w"> </span>&lt;code_administration&gt;
+python<span class="w"> </span>manage.py<span class="w"> </span>list_users_by_administration<span class="w"> </span>&lt;code_administration&gt;<span class="w"> </span>--operation<span class="w"> </span>&lt;numero_operation&gt;
+</pre></div>
+</div>
+</section>
+<section id="exemples">
+<h4>Exemples<a class="headerlink" href="#exemples" title="Lien vers cette rubrique">¶</a></h4>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lister tous les utilisateurs liés à Bordeaux Métropole</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>list_users_by_administration<span class="w"> </span><span class="m">33063</span>
+
+<span class="c1"># Lister les utilisateurs + détail d&#39;une opération spécifique</span>
+python<span class="w"> </span>manage.py<span class="w"> </span>list_users_by_administration<span class="w"> </span><span class="m">33063</span><span class="w"> </span>--operation<span class="w"> </span><span class="m">2021330630053</span>
+</pre></div>
+</div>
+</section>
+<section id="informations-affichees">
+<h4>Informations affichées<a class="headerlink" href="#informations-affichees" title="Lien vers cette rubrique">¶</a></h4>
+<ul class="simple">
+<li><p>Nom de l’administration</p></li>
+<li><p>Nombre de conventions liées</p></li>
+<li><p>Liste des bailleurs (nom + SIREN) ayant des conventions gérées par cette administration</p></li>
+<li><p>Utilisateurs bailleur : email, préférence email (<code class="docutils literal notranslate"><span class="pre">TOUS</span></code>, <code class="docutils literal notranslate"><span class="pre">PARTIEL</span></code>, <code class="docutils literal notranslate"><span class="pre">AUCUN</span></code>), dernière connexion</p></li>
+<li><p>Utilisateurs instructeur : email, préférence email, dernière connexion</p></li>
+</ul>
+<p>Avec l’option <code class="docutils literal notranslate"><span class="pre">--operation</span></code> :</p>
+<ul class="simple">
+<li><p>Programme et bailleur associés à l’opération</p></li>
+<li><p>Conventions liées avec leur statut</p></li>
+<li><p>Destinataires email (bailleur et instructeur) calculés par APiLos pour chaque convention</p></li>
+<li><p>Historique des 10 dernières interactions (qui a changé le statut)</p></li>
+</ul>
+</section>
+<section id="cas-d-usage">
+<h4>Cas d’usage<a class="headerlink" href="#cas-d-usage" title="Lien vers cette rubrique">¶</a></h4>
+<ul class="simple">
+<li><p>Vérifier qu’un utilisateur signalant un problème de notification a bien un rôle local dans APiLos</p></li>
+<li><p>Vérifier que sa préférence email est compatible avec l’envoi de notifications (<code class="docutils literal notranslate"><span class="pre">TOUS</span></code> ou <code class="docutils literal notranslate"><span class="pre">PARTIEL</span></code>)</p></li>
+<li><p>Identifier les utilisateurs qui ne se sont jamais connectés à APiLos (pas de rôle local créé)</p></li>
+<li><p>Vérifier quel bailleur est associé à une opération spécifique (un utilisateur peut avoir un rôle sur un bailleur différent de celui de l’opération)</p></li>
+</ul>
+</section>
+</section>
+</section>
 </section>
 
         </article>
