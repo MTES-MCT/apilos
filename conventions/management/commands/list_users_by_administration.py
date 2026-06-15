@@ -133,24 +133,26 @@ class Command(BaseCommand):
                 f"(SIREN: {programme.bailleur.siren})"
             )
 
-            convs = programme.conventions.all()
-            for conv in convs:
-                self.stdout.write(f"\n  Convention: {conv.uuid} | statut={conv.statut}")
-                self.stdout.write(
-                    f"    Emails bailleur destinataires: {conv.get_email_bailleur_users()}"
-                )
-                self.stdout.write(
-                    f"    Emails instructeur destinataires: {conv.get_email_instructeur_users()}"
-                )
+            for conv in programme.conventions.all():
+                self._display_convention_details(conv)
 
-                # Historique des interactions
-                histories = conv.conventionhistories.select_related("user").order_by(
-                    "-cree_le"
-                )[:10]
-                if histories:
-                    self.stdout.write("    Dernières interactions:")
-                    for h in histories:
-                        email = h.user.email if h.user else "N/A"
-                        self.stdout.write(
-                            f"      {email} | statut={h.statut_convention} | {h.cree_le}"
-                        )
+    def _display_convention_details(self, conv):
+        self.stdout.write(f"\n  Convention: {conv.uuid} | statut={conv.statut}")
+        self.stdout.write(
+            f"    Emails bailleur destinataires: {conv.get_email_bailleur_users()}"
+        )
+        self.stdout.write(
+            f"    Emails instructeur destinataires: {conv.get_email_instructeur_users()}"
+        )
+
+        # Historique des interactions
+        histories = conv.conventionhistories.select_related("user").order_by(
+            "-cree_le"
+        )[:10]
+        if histories:
+            self.stdout.write("    Dernières interactions:")
+            for h in histories:
+                email = h.user.email if h.user else "N/A"
+                self.stdout.write(
+                    f"      {email} | statut={h.statut_convention} | {h.cree_le}"
+                )
