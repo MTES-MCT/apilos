@@ -333,6 +333,7 @@ class ConventionFormSteps:
                 ConventionStatut.PUBLIE.label,
                 ConventionStatut.PUBLICATION_EN_COURS.label,
             ]
+            and not convention.programme.bailleur.is_type1and2()
         ):
             return hlm_sem_log_ordi_type_steps
 
