@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
+from bailleurs.models import NatureBailleur
 from conventions.tests.views.abstract import AbstractEditViewTestCase
 from programmes.models import NatureLogement
 
@@ -72,53 +73,87 @@ class ConventionCadastreViewTests(AbstractEditViewTestCase, TestCase):
     def _test_data_integrity(self):
         pass
 
-    def _set_nature_logement_and_post(self, nature_logement):
+    def _set_properties_and_post(self, **kwargs):
         """Helper: set nature_logement, save, login, POST success_payload."""
-        self.convention_75.programme.nature_logement = nature_logement
+        if "nature_logement" in kwargs:
+            self.convention_75.programme.nature_logement = kwargs["nature_logement"]
+            self.convention_75.programme.save()
+        if "type_bailleur" in kwargs:
+            self.convention_75.programme.bailleur.nature_bailleur = kwargs[
+                "type_bailleur"
+            ]
+            self.convention_75.programme.save()
+
         self.convention_75.programme.save()
         self.client.login(username="nicolas", password="12345")
         return self.client.post(self.target_path, self.success_payload)
 
     def test_next_step_is_financement_for_residence_universitaire(self):
-        response = self._set_nature_logement_and_post(
-            NatureLogement.RESIDENCEUNIVERSITAIRE
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE
         )
         expected = reverse("conventions:edd", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
 
     def test_next_step_is_financement_for_hebergement(self):
-        response = self._set_nature_logement_and_post(NatureLogement.HEBERGEMENT)
-        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
-        self.assertRedirects(response, expected)
-
-    def test_next_step_is_financement_for_residence_sociale(self):
-        response = self._set_nature_logement_and_post(NatureLogement.RESISDENCESOCIALE)
-        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
-        self.assertRedirects(response, expected)
-
-    def test_next_step_is_financement_for_pensions_de_famille(self):
-        response = self._set_nature_logement_and_post(NatureLogement.PENSIONSDEFAMILLE)
-        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
-        self.assertRedirects(response, expected)
-
-    def test_next_step_is_financement_for_residence_accueil(self):
-        response = self._set_nature_logement_and_post(NatureLogement.RESIDENCEDACCUEIL)
-        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
-        self.assertRedirects(response, expected)
-
-    def test_next_step_is_financement_for_logements_ordinaires(self):
-        response = self._set_nature_logement_and_post(
-            NatureLogement.LOGEMENTSORDINAIRES
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.HEBERGEMENT
         )
         expected = reverse("conventions:financement", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
 
+    def test_next_step_is_financement_for_residence_sociale(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.RESISDENCESOCIALE
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_pensions_de_famille(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.PENSIONSDEFAMILLE
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_residence_accueil(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.RESIDENCEDACCUEIL
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_logements_ordinaires_bailleur_is_hlm(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+            type_bailleur=NatureBailleur.HLM,
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_logements_ordinaires_bailleur_is_sem(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.LOGEMENTSORDINAIRES,
+            type_bailleur=NatureBailleur.SEM,
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_logements_ordinaires_bailleur_is_type_1_2(
+        self,
+    ):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.LOGEMENTSORDINAIRES
+        )
+        expected = reverse("conventions:edd", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
     def test_next_step_is_edd_for_rhvs(self):
-        response = self._set_nature_logement_and_post(NatureLogement.RHVS)
+        response = self._set_properties_and_post(nature_logement=NatureLogement.RHVS)
         expected = reverse("conventions:edd", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
 
     def test_next_step_is_edd_for_autre(self):
-        response = self._set_nature_logement_and_post(NatureLogement.AUTRE)
+        response = self._set_properties_and_post(nature_logement=NatureLogement.AUTRE)
         expected = reverse("conventions:edd", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
