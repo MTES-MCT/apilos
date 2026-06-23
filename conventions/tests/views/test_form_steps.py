@@ -1,6 +1,7 @@
 from django.http.request import HttpRequest
 from django.test import TestCase
 
+from bailleurs.models import NatureBailleur
 from conventions.models import Convention
 from conventions.views.convention_form import (
     ConventionFormSteps,
@@ -80,6 +81,7 @@ class ConventionFormStepsTests(TestCase):
                 bailleur_step,
                 programme_step,
                 cadastre_step,
+                edd_step,
                 financement_step,
                 logements_step,
                 annexes_step,
@@ -268,3 +270,63 @@ class ConventionFormStepsTests(TestCase):
                 commentaires_step,
             ],
         )
+
+        def test_bailleur_hlm_steps(self):
+            self.convention.programme.nature_logement = (
+                NatureLogement.LOGEMENTSORDINAIRES
+            )
+            self.convention.programme.save()
+            self.assertTrue(self.convention.programme.is_logements_ordinaires)
+
+            self.covention.programme.bailleur.nature_bailleur = NatureBailleur.HLM
+            self.convention.programme.bailleur.save()
+            self.assertTrue(self.convention.programme.bailleur.is_hlm)
+
+            form_steps = ConventionFormSteps(
+                convention=self.convention, request=self.request
+            )
+
+            self.assertEqual(
+                form_steps.steps,
+                [
+                    bailleur_step,
+                    programme_step,
+                    cadastre_step,
+                    financement_step,
+                    foyer_residence_logements_step,
+                    collectif_step,
+                    residence_attribution_step,
+                    foyer_variante_step,
+                    commentaires_step,
+                ],
+            )
+
+        def test_bailleur_sem_steps(self):
+            self.convention.programme.nature_logement = (
+                NatureLogement.LOGEMENTSORDINAIRES
+            )
+            self.convention.programme.save()
+            self.assertTrue(self.convention.programme.is_logements_ordinaires)
+
+            self.covention.programme.bailleur.nature_bailleur = NatureBailleur.SEM
+            self.convention.programme.bailleur.save()
+            self.assertTrue(self.convention.programme.bailleur.is_sem)
+
+            form_steps = ConventionFormSteps(
+                convention=self.convention, request=self.request
+            )
+
+            self.assertEqual(
+                form_steps.steps,
+                [
+                    bailleur_step,
+                    programme_step,
+                    cadastre_step,
+                    financement_step,
+                    foyer_residence_logements_step,
+                    collectif_step,
+                    residence_attribution_step,
+                    foyer_variante_step,
+                    commentaires_step,
+                ],
+            )

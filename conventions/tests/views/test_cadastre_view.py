@@ -82,9 +82,8 @@ class ConventionCadastreViewTests(AbstractEditViewTestCase, TestCase):
             self.convention_75.programme.bailleur.nature_bailleur = kwargs[
                 "type_bailleur"
             ]
-            self.convention_75.programme.save()
+            self.convention_75.programme.bailleur.save()
 
-        self.convention_75.programme.save()
         self.client.login(username="nicolas", password="12345")
         return self.client.post(self.target_path, self.success_payload)
 
