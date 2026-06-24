@@ -261,24 +261,26 @@ class CustomFiltersTest(TestCase):
         with mock.patch.object(
             Programme, "is_not_spf", new_callable=mock.PropertyMock, return_value=True
         ):
-            self.convention.statut = ConventionStatut.SIGNEE.label
-            self.assertFalse(custom_filters.display_publication_button(self.convention))
+            with mock.patch(
+                "bailleurs.models.Bailleur.is_type1and2", return_value=False
+            ):
 
-            for statut in [
-                ConventionStatut.PROJET.label,
-                ConventionStatut.INSTRUCTION.label,
-                ConventionStatut.CORRECTION.label,
-                ConventionStatut.A_SIGNER.label,
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.PUBLICATION_EN_COURS.label,
-                ConventionStatut.RESILIEE.label,
-                ConventionStatut.DENONCEE.label,
-                ConventionStatut.ANNULEE.label,
-            ]:
-                self.convention.statut = statut
-                self.assertFalse(
-                    custom_filters.display_publication_button(self.convention)
-                )
+                for statut in [
+                    ConventionStatut.PROJET.label,
+                    ConventionStatut.INSTRUCTION.label,
+                    ConventionStatut.CORRECTION.label,
+                    ConventionStatut.A_SIGNER.label,
+                    ConventionStatut.SIGNEE.label,
+                    ConventionStatut.PUBLIE.label,
+                    ConventionStatut.PUBLICATION_EN_COURS.label,
+                    ConventionStatut.RESILIEE.label,
+                    ConventionStatut.DENONCEE.label,
+                    ConventionStatut.ANNULEE.label,
+                ]:
+                    self.convention.statut = statut
+                    self.assertFalse(
+                        custom_filters.display_publication_button(self.convention)
+                    )
 
     def test_display_redirect_post_action(self):
         self.convention.statut = ConventionStatut.PROJET.label
