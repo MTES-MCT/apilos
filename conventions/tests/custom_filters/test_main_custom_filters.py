@@ -3,7 +3,7 @@ from unittest import mock
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.test import RequestFactory, TestCase, override_settings
 
-from bailleurs.models import NatureBailleur, SousNatureBailleur
+from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionStatut, ConventionType1and2
 from conventions.templatetags import custom_filters
 from conventions.views import ConventionFormSteps
@@ -262,47 +262,28 @@ class CustomFiltersTest(TestCase):
             Programme, "is_not_spf", new_callable=mock.PropertyMock, return_value=True
         ):
             self.convention.statut = ConventionStatut.SIGNEE.label
-            self.convention.programme.bailleur.nature_bailleur = NatureBailleur.HLM
-            self.assertFalse(custom_filters.display_publication_button(self.convention))
-
-            for statut in [
-                ConventionStatut.PROJET.label,
-                ConventionStatut.INSTRUCTION.label,
-                ConventionStatut.CORRECTION.label,
-                ConventionStatut.A_SIGNER.label,
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.PUBLICATION_EN_COURS.label,
-                ConventionStatut.RESILIEE.label,
-                ConventionStatut.DENONCEE.label,
-                ConventionStatut.ANNULEE.label,
-            ]:
-                self.convention.statut = statut
+            with mock.patch(
+                "bailleurs.models.Bailleur.is_type1and2", return_value=False
+            ):
                 self.assertFalse(
                     custom_filters.display_publication_button(self.convention)
                 )
 
-        with mock.patch.object(
-            Programme, "is_not_spf", new_callable=mock.PropertyMock, return_value=True
-        ):
-            self.convention.statut = ConventionStatut.SIGNEE.label
-            self.convention.programme.bailleur.nature_bailleur = NatureBailleur.SEM
-            self.assertFalse(custom_filters.display_publication_button(self.convention))
-
-            for statut in [
-                ConventionStatut.PROJET.label,
-                ConventionStatut.INSTRUCTION.label,
-                ConventionStatut.CORRECTION.label,
-                ConventionStatut.A_SIGNER.label,
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.PUBLICATION_EN_COURS.label,
-                ConventionStatut.RESILIEE.label,
-                ConventionStatut.DENONCEE.label,
-                ConventionStatut.ANNULEE.label,
-            ]:
-                self.convention.statut = statut
-                self.assertFalse(
-                    custom_filters.display_publication_button(self.convention)
-                )
+                for statut in [
+                    ConventionStatut.PROJET.label,
+                    ConventionStatut.INSTRUCTION.label,
+                    ConventionStatut.CORRECTION.label,
+                    ConventionStatut.A_SIGNER.label,
+                    ConventionStatut.PUBLIE.label,
+                    ConventionStatut.PUBLICATION_EN_COURS.label,
+                    ConventionStatut.RESILIEE.label,
+                    ConventionStatut.DENONCEE.label,
+                    ConventionStatut.ANNULEE.label,
+                ]:
+                    self.convention.statut = statut
+                    self.assertFalse(
+                        custom_filters.display_publication_button(self.convention)
+                    )
 
     def test_display_redirect_post_action(self):
         self.convention.statut = ConventionStatut.PROJET.label
