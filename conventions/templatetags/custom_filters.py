@@ -380,7 +380,7 @@ def display_redirect_convention_publie(convention):
 def display_redirect_convention_en_publication(convention):
     if (
         convention.programme.is_not_spf
-        and not convention.programme.bailleur.is_type1and2
+        and not convention.programme.bailleur.is_type1and2()
         and convention.statut
         not in [
             ConventionStatut.PUBLIE.label,
