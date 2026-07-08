@@ -21,7 +21,7 @@ docxtpl
 drf-spectacular
 gunicorn
 Jinja2
-lxml>=5.0
+lxml>=6.1.0
 openpyxl
 Pillow
 psycopg[binary]
@@ -37,4 +37,4 @@ tqdm
 typing-extensions
 unidecode
 whitenoise
-setuptools<70
+setuptools<79
