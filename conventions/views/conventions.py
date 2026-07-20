@@ -570,7 +570,10 @@ def preview(request, convention_uuid, doc_type=0):
 class ConventionPublicationView(BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        if not self.convention.programme.is_not_spf:
+        if (
+            not self.convention.programme.is_not_spf
+            and not self.convention.programme.is_foyer
+        ):
             return HttpResponseRedirect(
                 reverse("conventions:post_action", args=[convention_uuid])
             )
@@ -584,7 +587,10 @@ class ConventionPublicationView(BaseConventionView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        if not self.convention.programme.is_not_spf:
+        if (
+            not self.convention.programme.is_not_spf
+            and not self.convention.programme.is_foyer
+        ):
             return HttpResponseRedirect(
                 reverse("conventions:post_action", args=[convention_uuid])
             )
