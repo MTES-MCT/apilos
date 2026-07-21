@@ -577,11 +577,13 @@ class ConventionPublicationView(BaseConventionView):
             return HttpResponseRedirect(
                 reverse("conventions:post_action", args=[convention_uuid])
             )
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.get()
         return render(
             request,
             template_post,
             {
-                "convention": self.convention,
+                **result,
             },
         )
 
@@ -594,11 +596,21 @@ class ConventionPublicationView(BaseConventionView):
             return HttpResponseRedirect(
                 reverse("conventions:post_action", args=[convention_uuid])
             )
+
+        service = ConventionSentService(convention=self.convention, request=request)
+        result = service.save(as_type=FileType.PUBLICATION)
+
+        if result["success"] == ReturnStatus.SUCCESS:
+            return HttpResponseRedirect(
+                reverse(
+                    "conventions:preview_upload_publication", args=[convention_uuid]
+                )
+            )
         return render(
             request,
             template_post,
             {
-                "convention": self.convention,
+                **result,
             },
         )
 
