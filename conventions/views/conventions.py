@@ -574,7 +574,7 @@ class ConventionPublicationView(BaseConventionView):
         ) or (
             self.convention.programme.is_not_spf
             and (
-                self.convention.bailleur.is_type1and2
+                self.convention.bailleur.is_type1and2()
                 or (
                     self.convention.statut
                     in [
@@ -689,23 +689,42 @@ class ConventionBaseUploadPublicationView(BaseConventionView):
     step_number: int
     template_path: str
 
+    def pouvoir_publier(self):
+        return (
+            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
+        ) or (
+            self.convention.programme.is_not_spf
+            and (
+                self.convention.bailleur.is_type1and2()
+                or (
+                    self.convention.statut
+                    in [
+                        ConventionStatut.PUBLICATION_EN_COURS.label,
+                        ConventionStatut.PUBLIE.label,
+                    ]
+                )
+            )
+        )
+
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        if self.convention.programme.is_not_spf:
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
+        if self.pouvoir_publier():
+            service = ConventionUploadPublicationService(
+                convention=self.convention,
+                request=request,
+                step_number=self.step_number,
+            )
+            result = service.get()
+            return render(
+                request,
+                self.template_path,
+                {
+                    **result,
+                },
             )
 
-        service = ConventionUploadPublicationService(
-            convention=self.convention, request=request, step_number=self.step_number
-        )
-        result = service.get()
-        return render(
-            request,
-            self.template_path,
-            {
-                **result,
-            },
+        return HttpResponseRedirect(
+            reverse("conventions:post_action", args=[convention_uuid])
         )
 
 
@@ -720,32 +739,34 @@ class ConventionDateUploadPublicationView(ConventionBaseUploadPublicationView):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        if self.convention.programme.is_not_spf:
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
-            )
+        if self.pouvoir_publier():
 
-        service = ConventionUploadPublicationService(
-            convention=self.convention, request=request, step_number=self.step_number
-        )
-        result = service.save()
-        if result["success"] == ReturnStatus.SUCCESS:
-            messages.add_message(
+            service = ConventionUploadPublicationService(
+                convention=self.convention,
+                request=request,
+                step_number=self.step_number,
+            )
+            result = service.save()
+            if result["success"] == ReturnStatus.SUCCESS:
+                messages.add_message(
+                    request,
+                    messages.SUCCESS,
+                    service.get_success_message(),
+                )
+                return HttpResponseRedirect(
+                    reverse("conventions:post_action", args=[convention_uuid])
+                )
+
+            return render(
                 request,
-                messages.SUCCESS,
-                service.get_success_message(),
+                self.template_path,
+                {
+                    **result,
+                    "convention": self.convention,
+                },
             )
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
-            )
-
-        return render(
-            request,
-            self.template_path,
-            {
-                **result,
-                "convention": self.convention,
-            },
+        return HttpResponseRedirect(
+            reverse("conventions:post_action", args=[convention_uuid])
         )
 
 
@@ -784,6 +805,22 @@ class ConventionCancelUploadPublicationView(BaseConventionView):
 
 
 class ConventionSendForPublicationView(BaseConventionView):
+    def pouvoir_publier(self):
+        return (
+            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
+        ) or (
+            self.convention.programme.is_not_spf
+            and (
+                self.convention.bailleur.is_type1and2()
+                or (
+                    self.convention.statut
+                    in [
+                        ConventionStatut.PUBLICATION_EN_COURS.label,
+                        ConventionStatut.PUBLIE.label,
+                    ]
+                )
+            )
+        )
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
@@ -797,28 +834,31 @@ class ConventionSendForPublicationView(BaseConventionView):
                 },
             )
 
-        if self.convention.programme.is_not_spf:
+        if self.pouvoir_publier():
+            self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+            self.convention.save()
+            if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
 
-            return render(
-                request,
-                "conventions/post_action.html",
-                {
-                    "error_message": "Oups ! la nature du logement de ce programme ne permet "
-                    "pas la publication de cette convention.",
-                    "convention": self.convention,
-                },
+                siap_credentials = get_siap_credentials_from_request(self.request)
+                service = AlerteService(self.convention, siap_credentials)
+                service.delete_action_alertes()
+                service.create_alertes_publication_en_cours()
+            return HttpResponseRedirect(
+                reverse("conventions:publication", args=[convention_uuid])
             )
 
-        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
-        self.convention.save()
-        if switch_is_active(settings.SWITCH_SIAP_ALERTS_ON):
-
-            siap_credentials = get_siap_credentials_from_request(self.request)
-            service = AlerteService(self.convention, siap_credentials)
-            service.delete_action_alertes()
-            service.create_alertes_publication_en_cours()
-        return HttpResponseRedirect(
-            reverse("conventions:publication", args=[convention_uuid])
+        return render(
+            request,
+            "conventions/post_action.html",
+            {
+                "error_message": (
+                    "Oups ! Cette convention ne peut pas être publiée. "
+                    "La publication n'est possible que si le programme est un foyer "
+                    "ou un logement RHVS, ou si le bailleur est de type 1 ou 2, "
+                    "ou si la convention est déjà en cours de publication ou publiée."
+                ),
+                "convention": self.convention,
+            },
         )
 
 
