@@ -568,50 +568,62 @@ def preview(request, convention_uuid, doc_type=0):
 
 
 class ConventionPublicationView(BaseConventionView):
+    def pouvoir_publier(self):
+        return (
+            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
+        ) or (
+            self.convention.programme.is_not_spf
+            and (
+                self.convention.bailleur.is_type1and2
+                or (
+                    self.convention.statut
+                    in [
+                        ConventionStatut.PUBLICATION_EN_COURS.label,
+                        ConventionStatut.PUBLIE.label,
+                    ]
+                )
+            )
+        )
+
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
-        if (
-            not self.convention.programme.is_not_spf
-            and not self.convention.programme.is_foyer
-        ):
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
+        if self.pouvoir_publier():
+            service = ConventionSentService(convention=self.convention, request=request)
+            result = service.get()
+            return render(
+                request,
+                template_post,
+                {
+                    **result,
+                },
             )
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.get()
-        return render(
-            request,
-            template_post,
-            {
-                **result,
-            },
+
+        return HttpResponseRedirect(
+            reverse("conventions:post_action", args=[convention_uuid])
         )
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
-        if (
-            not self.convention.programme.is_not_spf
-            and not self.convention.programme.is_foyer
-        ):
-            return HttpResponseRedirect(
-                reverse("conventions:post_action", args=[convention_uuid])
-            )
+        if self.pouvoir_publier():
+            service = ConventionSentService(convention=self.convention, request=request)
+            result = service.save(as_type=FileType.PUBLICATION)
 
-        service = ConventionSentService(convention=self.convention, request=request)
-        result = service.save(as_type=FileType.PUBLICATION)
-
-        if result["success"] == ReturnStatus.SUCCESS:
-            return HttpResponseRedirect(
-                reverse(
-                    "conventions:preview_upload_publication", args=[convention_uuid]
+            if result["success"] == ReturnStatus.SUCCESS:
+                return HttpResponseRedirect(
+                    reverse(
+                        "conventions:preview_upload_publication", args=[convention_uuid]
+                    )
                 )
+            return render(
+                request,
+                template_post,
+                {
+                    **result,
+                },
             )
-        return render(
-            request,
-            template_post,
-            {
-                **result,
-            },
+
+        return HttpResponseRedirect(
+            reverse("conventions:post_action", args=[convention_uuid])
         )
 
 
