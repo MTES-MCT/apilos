@@ -339,6 +339,10 @@ class Programme(models.Model):
         return self.nature_logement == NatureLogement.RESIDENCEUNIVERSITAIRE
 
     @property
+    def is_rhvs(self):
+        return self.nature_logement == NatureLogement.RHVS
+
+    @property
     def is_not_spf(self):
         return (
             self.is_residence_universitaire
