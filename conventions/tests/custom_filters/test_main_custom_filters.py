@@ -7,7 +7,7 @@ from bailleurs.models import SousNatureBailleur
 from conventions.models import Convention, ConventionStatut, ConventionType1and2
 from conventions.templatetags import custom_filters
 from conventions.views import ConventionFormSteps
-from programmes.models import ActiveNatureLogement, Programme
+from programmes.models import ActiveNatureLogement
 from users.models import GroupProfile, User
 
 
@@ -211,9 +211,20 @@ class CustomFiltersTest(TestCase):
     def test_display_redirect_convention_en_publication(self):
 
         self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
-        self.assertTrue(
-            custom_filters.display_redirect_convention_en_publication(self.convention)
-        )
+        with mock.patch.object(Convention, "can_be_published", return_value=True):
+            self.assertTrue(
+                custom_filters.display_redirect_convention_en_publication(
+                    self.convention
+                )
+            )
+
+        with mock.patch.object(Convention, "can_be_published", return_value=False):
+            self.assertFalse(
+                custom_filters.display_redirect_convention_en_publication(
+                    self.convention
+                )
+            )
+
         for statut in [
             ConventionStatut.PROJET.label,
             ConventionStatut.INSTRUCTION.label,
@@ -227,60 +238,49 @@ class CustomFiltersTest(TestCase):
         ]:
             self.convention.statut = statut
 
-            self.assertFalse(
-                custom_filters.display_redirect_convention_en_publication(
-                    self.convention
-                )
-            )
-
-    def test_display_publication_button(self):
-        with mock.patch.object(
-            Programme, "is_not_spf", new_callable=mock.PropertyMock, return_value=False
-        ):
-            self.convention.statut = ConventionStatut.SIGNEE.label
-            self.assertTrue(custom_filters.display_publication_button(self.convention))
-
-            for statut in [
-                ConventionStatut.PROJET.label,
-                ConventionStatut.INSTRUCTION.label,
-                ConventionStatut.CORRECTION.label,
-                ConventionStatut.A_SIGNER.label,
-                ConventionStatut.SIGNEE.label,
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.RESILIEE.label,
-                ConventionStatut.DENONCEE.label,
-                ConventionStatut.ANNULEE.label,
-            ]:
-                self.convention.statut = statut
+            with mock.patch.object(Convention, "can_be_published", return_value=True):
                 self.assertFalse(
                     custom_filters.display_redirect_convention_en_publication(
                         self.convention
                     )
                 )
 
-        with mock.patch.object(
-            Programme, "is_not_spf", new_callable=mock.PropertyMock, return_value=True
-        ):
-            with mock.patch(
-                "bailleurs.models.Bailleur.is_type1and2", return_value=False
-            ):
-
-                for statut in [
-                    ConventionStatut.PROJET.label,
-                    ConventionStatut.INSTRUCTION.label,
-                    ConventionStatut.CORRECTION.label,
-                    ConventionStatut.A_SIGNER.label,
-                    ConventionStatut.SIGNEE.label,
-                    ConventionStatut.PUBLIE.label,
-                    ConventionStatut.PUBLICATION_EN_COURS.label,
-                    ConventionStatut.RESILIEE.label,
-                    ConventionStatut.DENONCEE.label,
-                    ConventionStatut.ANNULEE.label,
-                ]:
-                    self.convention.statut = statut
-                    self.assertFalse(
-                        custom_filters.display_publication_button(self.convention)
+            with mock.patch.object(Convention, "can_be_published", return_value=False):
+                self.assertFalse(
+                    custom_filters.display_redirect_convention_en_publication(
+                        self.convention
                     )
+                )
+
+    def test_display_publication_button(self):
+        self.convention.statut = ConventionStatut.SIGNEE.label
+        with mock.patch.object(Convention, "can_be_published", return_value=True):
+            self.assertTrue(custom_filters.display_publication_button(self.convention))
+
+        with mock.patch.object(Convention, "can_be_published", return_value=False):
+            self.assertFalse(custom_filters.display_publication_button(self.convention))
+
+        for statut in [
+            ConventionStatut.PROJET.label,
+            ConventionStatut.INSTRUCTION.label,
+            ConventionStatut.CORRECTION.label,
+            ConventionStatut.A_SIGNER.label,
+            ConventionStatut.PUBLIE.label,
+            ConventionStatut.RESILIEE.label,
+            ConventionStatut.DENONCEE.label,
+            ConventionStatut.ANNULEE.label,
+        ]:
+            self.convention.statut = statut
+
+            with mock.patch.object(Convention, "can_be_published", return_value=True):
+                self.assertFalse(
+                    custom_filters.display_publication_button(self.convention)
+                )
+
+            with mock.patch.object(Convention, "can_be_published", return_value=False):
+                self.assertFalse(
+                    custom_filters.display_publication_button(self.convention)
+                )
 
     def test_display_redirect_post_action(self):
         self.convention.statut = ConventionStatut.PROJET.label
