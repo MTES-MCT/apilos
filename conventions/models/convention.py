@@ -477,6 +477,23 @@ class Convention(models.Model):
             ConventionStatut.CORRECTION.label,
         )
 
+    def can_be_published(self) -> bool:
+        return (
+            self.programme.is_foyer
+            or self.programme.is_rhvs
+            or (
+                self.programme.is_not_spf
+                and (
+                    self.bailleur.is_type1and2()
+                    or self.statut
+                    in [
+                        ConventionStatut.PUBLICATION_EN_COURS.label,
+                        ConventionStatut.PUBLIE.label,
+                    ]
+                )
+            )
+        )
+
     def get_comments_dict(self):
         result = {}
         for comment in self.comment_set.all().order_by("cree_le"):
