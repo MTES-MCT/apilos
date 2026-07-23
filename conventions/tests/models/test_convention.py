@@ -162,6 +162,52 @@ class ConventionModelsTest(TestCase):
         convention.statut = ConventionStatut.RESILIEE.label
         self.assertEqual(convention.short_statut_for_instructeur(), "Résiliée")
 
+    def test_can_be_published(self):
+        convention = Convention.objects.get(numero="0001")
+
+        with mock.patch.object(
+            convention.programme.__class__,
+            "is_foyer",
+            new_callable=mock.PropertyMock,
+            return_value=True,
+        ):
+            self.assertTrue(convention.can_be_published())
+
+        with mock.patch.object(
+            convention.programme.__class__,
+            "is_rhvs",
+            new_callable=mock.PropertyMock,
+            return_value=True,
+        ):
+            self.assertTrue(convention.can_be_published())
+
+        with mock.patch.object(
+            convention.programme.__class__,
+            "is_not_spf",
+            new_callable=mock.PropertyMock,
+            return_value=True,
+        ):
+            with mock.patch(
+                "bailleurs.models.Bailleur.is_type1and2", return_value=True
+            ):
+                self.assertTrue(convention.can_be_published())
+
+        with mock.patch.object(
+            convention.programme.__class__,
+            "is_not_spf",
+            new_callable=mock.PropertyMock,
+            return_value=True,
+        ):
+            with mock.patch(
+                "bailleurs.models.Bailleur.is_type1and2", return_value=False
+            ):
+                convention.statut = ConventionStatut.PUBLIE.label
+                self.assertTrue(convention.can_be_published())
+                convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+                self.assertTrue(convention.can_be_published())
+                convention.statut = ConventionStatut.SIGNEE.label
+                self.assertFalse(convention.can_be_published())
+
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()
         for financement in [Financement.PLUS, Financement.PLUS_CD]:

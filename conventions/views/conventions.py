@@ -258,6 +258,11 @@ class ConventionSearchView(LoginRequiredMixin, ConventionSearchMixin, View):
         }
 
 
+class PublicationAuthorizationMixin:
+    def pouvoir_publier(self):
+        return self.convention.can_be_published()
+
+
 class LoyerSimulateurView(LoginRequiredMixin, View):
     def post(self, request: AuthenticatedHttpRequest):
         loyer_simulateur_form = LoyerSimulateurForm(request.POST)
@@ -567,24 +572,7 @@ def preview(request, convention_uuid, doc_type=0):
     )
 
 
-class ConventionPublicationView(BaseConventionView):
-    def pouvoir_publier(self):
-        return (
-            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
-        ) or (
-            self.convention.programme.is_not_spf
-            and (
-                self.convention.bailleur.is_type1and2()
-                or (
-                    self.convention.statut
-                    in [
-                        ConventionStatut.PUBLICATION_EN_COURS.label,
-                        ConventionStatut.PUBLIE.label,
-                    ]
-                )
-            )
-        )
-
+class ConventionPublicationView(PublicationAuthorizationMixin, BaseConventionView):
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         if self.pouvoir_publier():
@@ -685,7 +673,9 @@ class ConventionBaseUploadSignedView(BaseConventionView):
         )
 
 
-class ConventionBaseUploadPublicationView(BaseConventionView):
+class ConventionBaseUploadPublicationView(
+    PublicationAuthorizationMixin, BaseConventionView
+):
     step_number: int
     template_path: str
 
@@ -804,23 +794,9 @@ class ConventionCancelUploadPublicationView(BaseConventionView):
         )
 
 
-class ConventionSendForPublicationView(BaseConventionView):
-    def pouvoir_publier(self):
-        return (
-            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
-        ) or (
-            self.convention.programme.is_not_spf
-            and (
-                self.convention.bailleur.is_type1and2()
-                or (
-                    self.convention.statut
-                    in [
-                        ConventionStatut.PUBLICATION_EN_COURS.label,
-                        ConventionStatut.PUBLIE.label,
-                    ]
-                )
-            )
-        )
+class ConventionSendForPublicationView(
+    PublicationAuthorizationMixin, BaseConventionView
+):
 
     @currentrole_campaign_permission_required("convention.change_convention")
     def post(self, request, convention_uuid):
