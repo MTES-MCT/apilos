@@ -378,17 +378,10 @@ def display_redirect_convention_publie(convention):
 
 @register.filter
 def display_redirect_convention_en_publication(convention):
-    if (
-        convention.programme.is_not_spf
-        and not convention.programme.bailleur.is_type1and2()
-        and convention.statut
-        not in [
-            ConventionStatut.PUBLIE.label,
-            ConventionStatut.PUBLICATION_EN_COURS.label,
-        ]
-    ):
-        return False
-    return convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
+    return (
+        convention.can_be_published()
+        and convention.statut == ConventionStatut.PUBLICATION_EN_COURS.label
+    )
 
 
 @register.filter
@@ -456,18 +449,10 @@ def display_back_to_instruction(convention, request):
 
 @register.filter
 def display_publication_button(convention):
-    if (
-        convention.programme.is_not_spf
-        and convention.statut
-        not in [
-            ConventionStatut.PUBLIE.label,
-            ConventionStatut.PUBLICATION_EN_COURS.label,
-        ]
-        and not convention.programme.bailleur.is_type1and2()
-    ):
-
-        return False
-    return convention.statut == ConventionStatut.SIGNEE.label
+    return (
+        convention.can_be_published()
+        and convention.statut == ConventionStatut.SIGNEE.label
+    )
 
 
 @register.filter
