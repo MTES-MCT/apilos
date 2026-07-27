@@ -78,7 +78,7 @@
     {% endwith %}
 {% endblock content %}
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
     const companyDetails = document.getElementById('change-company');
     const companySummary = document.getElementById('change-company-summary');
 

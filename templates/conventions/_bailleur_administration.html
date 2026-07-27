@@ -49,7 +49,7 @@
     {% endwith %}
 {% endblock content %}
 
-<script>
+<script nonce="{{ request.csp_nonce }}">
 const details = document.getElementById('change-admin');
 const summary = document.getElementById('change-admin-summary');
 
