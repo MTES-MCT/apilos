@@ -11,7 +11,7 @@ from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import create_avenant
 from core.tests.factories import ConventionFactory
 from programmes.models import Programme
-from users.models import ExceptionPermissionConfig, Role, User
+from users.models import ExceptionPermissionConfig, GroupProfile, Role, User
 from users.tests.factories import GroupFactory, UserFactory
 from users.type_models import TypeRole
 
@@ -338,6 +338,25 @@ class UserQuerySetTest(TestCase):
         self.assertEqual(user_instructeur.user_list().count(), 2)
         user_bailleur = User.objects.get(username="raph")
         self.assertEqual(user_bailleur.user_list().count(), 2)
+
+    def test_partenaire_has_national_readonly_scope(self):
+        user = User.objects.create(
+            username="partenaire",
+            cerbere_login="partenaire",
+        )
+        user.siap_habilitation = {"currently": GroupProfile.SIAP_PARTENAIRES}
+
+        self.assertTrue(user.is_partenaire())
+        self.assertEqual(
+            set(user.programmes().values_list("uuid", flat=True)),
+            set(Programme.objects.all().values_list("uuid", flat=True)),
+        )
+        self.assertEqual(user.administration_filter(), {})
+        self.assertEqual(user.bailleur_filter(), {})
+        self.assertEqual(
+            set(user.conventions().values_list("uuid", flat=True)),
+            set(Convention.objects.all().values_list("uuid", flat=True)),
+        )
 
     # Test model Role
     def test_object_role_str(self):

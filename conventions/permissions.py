@@ -49,9 +49,10 @@ def currentrole_campaign_permission_required_view_function(permission):
 
 
 def _check_currentrole_permission(request, convention, permission):
+    session_role = request.session.get("role")
     role_id = (
-        request.session["role"]["id"]
-        if "role" in request.session and "id" in request.session["role"]
+        session_role["id"]
+        if isinstance(session_role, dict) and "id" in session_role
         else None
     )
     request.user.check_perm(permission, obj=convention, role_id=role_id)
