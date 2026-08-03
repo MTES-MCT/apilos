@@ -67,6 +67,12 @@ DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 CRON_ENABLED = get_env_variable("CRON_ENABLED", default=False, cast=bool)
 
+SECURE_HSTS_SECONDS = get_env_variable("SECURE_HSTS_SECONDS", default=0, cast=int)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = get_env_variable(
+    "SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True, cast=bool
+)
+SECURE_HSTS_PRELOAD = get_env_variable("SECURE_HSTS_PRELOAD", default=True, cast=bool)
+
 LOGLEVEL = get_env_variable("LOGLEVEL", default="error").upper()
 
 LOGGING = {
