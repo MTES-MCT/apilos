@@ -24,7 +24,7 @@ class TestConventionPreviewUploadSignedView:
         request = RequestFactory().get(url)
         user = UserFactory(is_superuser=True)
         request.user = user
-        request.session = "session"
+        request.session = {}
 
         response = ConventionPreviewUploadSignedView.as_view()(
             request, convention_uuid=convention.uuid
@@ -44,7 +44,7 @@ class TestConventionDateUploadSignedView:
         request = RequestFactory().get(url)
         user = UserFactory(is_superuser=True)
         request.user = user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 
@@ -65,7 +65,7 @@ class TestConventionDateUploadSignedView:
         )
         user = UserFactory(is_superuser=True)
         request.user = user
-        request.session = "session"
+        request.session = {}
         messages = FallbackStorage(request)
         request._messages = messages
 

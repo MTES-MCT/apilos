@@ -343,8 +343,8 @@ class UserQuerySetTest(TestCase):
         user = User.objects.create(
             username="partenaire",
             cerbere_login="partenaire",
-            siap_habilitation={"currently": GroupProfile.SIAP_PARTENAIRES},
         )
+        user.siap_habilitation = {"currently": GroupProfile.SIAP_PARTENAIRES}
 
         self.assertTrue(user.is_partenaire())
         self.assertEqual(
