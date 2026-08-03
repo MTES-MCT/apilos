@@ -32,6 +32,7 @@ class GroupProfile(models.TextChoices):
     SIAP_ASS_HLM = "ASS_HLM", "Association HLM"
     SIAP_MO_PERS_MORALE = "MO_PERS_MORALE", "Maitre d'ouvrage - personne morale"
     SIAP_MO_PERS_PHYS = "MO_PERS_PHYS", "Maitre d'ouvrage - personne physique"
+    SIAP_PARTENAIRES = "PARTENAIRES", "Partenaires"
 
     @classmethod
     def instructeur_profiles(cls):
@@ -198,6 +199,7 @@ class GroupProfileRole(models.TextChoices):
         "SERV_INSTR_DELGEG2_SIGNATAIRE",
         "appartient au groupe SER_GEST, périmètre LOC",
     )
+    PARTENAIRES = "PARTENAIRES", "appartient au groupe PARTENAIRES, périmètre NAT"
 
     @classmethod
     def readonly_group_profile_roles(cls):
@@ -216,6 +218,7 @@ class GroupProfileRole(models.TextChoices):
             cls.MO_MORAL_REG_LECTEUR,
             cls.DIR_REG_INSTRUCTEUR_CHORUS,
             cls.SERV_DEP_INSTRUCTEUR_CHORUS,
+            cls.PARTENAIRES,
         ]
 
 
@@ -375,6 +378,14 @@ class User(AbstractUser):
             ]
         return self._is_role(TypeRole.INSTRUCTEUR) or self.is_superuser
 
+    def is_partenaire(self):
+        if self.is_cerbere_user():
+            return (
+                "currently" in self.siap_habilitation
+                and self.siap_habilitation["currently"] == GroupProfile.SIAP_PARTENAIRES
+            )
+        return False
+
     def is_instructeur_departemental(self):
         if self.is_cerbere_user():
             return "currently" in self.siap_habilitation and self.siap_habilitation[
@@ -415,6 +426,9 @@ class User(AbstractUser):
                 )
             else:
                 return Programme.objects.none()
+
+        if self.is_partenaire():
+            return Programme.objects.all()
 
         if self.is_bailleur():
             programmes_result = Programme.objects.filter(
@@ -464,6 +478,9 @@ class User(AbstractUser):
                 return {}
             return {"id__in": []}
 
+        if self.is_partenaire():
+            return {}
+
         raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le "
             + "filtre sur les administrations"
@@ -511,6 +528,9 @@ class User(AbstractUser):
         if self.is_bailleur():
             return {"id__in": self._bailleur_ids()}
 
+        if self.is_partenaire():
+            return {}
+
         raise ExceptionPermissionConfig(
             "L'utilisateur courant n'a pas de role associé permettant le filtre sur les bailleurs"
         )
@@ -551,7 +571,11 @@ class User(AbstractUser):
         ).order_by(order_by)
 
     def _apply_geo_filters(self, conventions):
-        if self.is_cerbere_user() and "role" in self.siap_habilitation:
+        if (
+            self.is_cerbere_user()
+            and "role" in self.siap_habilitation
+            and self.siap_habilitation["role"] is not None
+        ):
             if self.siap_habilitation["role"]["perimetre_departement"]:
                 return conventions.filter(
                     programme__code_insee_departement=self.siap_habilitation["role"][
@@ -591,6 +615,7 @@ class User(AbstractUser):
         if (
             self.is_cerbere_user()
             and "role" in self.siap_habilitation
+            and self.siap_habilitation["role"] is not None
             and self.siap_habilitation["role"]["typologie"] == TypeRole.ADMINISTRATEUR
         ):
             return self._apply_geo_filters(convs)
@@ -599,6 +624,9 @@ class User(AbstractUser):
             convs = self._apply_geo_filters(convs)
             convs = self._apply_administration_ids_filters(convs)
             return convs
+
+        if self.is_partenaire():
+            return convs.all()
 
         if self.is_bailleur():
             convs = self._apply_geo_filters(convs)
