@@ -11,7 +11,14 @@ from conventions.models import Convention, ConventionStatut
 from conventions.services.avenants import create_avenant
 from core.tests.factories import ConventionFactory
 from programmes.models import Programme
-from users.models import ExceptionPermissionConfig, GroupProfile, Role, User
+from siap.custom_middleware import _find_or_create_entity
+from users.models import (
+    ExceptionPermissionConfig,
+    GroupProfile,
+    GroupProfileRole,
+    Role,
+    User,
+)
 from users.tests.factories import GroupFactory, UserFactory
 from users.type_models import TypeRole
 
@@ -357,6 +364,30 @@ class UserQuerySetTest(TestCase):
             set(user.conventions().values_list("uuid", flat=True)),
             set(Convention.objects.all().values_list("uuid", flat=True)),
         )
+
+    def test_partenaire_session_role_is_created_as_readonly_national_admin(self):
+        user = User.objects.create(
+            username="partenaire_session", cerbere_login="partenaire_session"
+        )
+        request = RequestFactory().get("/")
+        request.user = user
+        request.session = {}
+
+        _find_or_create_entity(
+            request,
+            "partenaire_session",
+            {
+                "groupe": {
+                    "profil": {"code": GroupProfile.SIAP_PARTENAIRES},
+                    "codeRole": GroupProfileRole.PARTENAIRES,
+                }
+            },
+        )
+
+        self.assertTrue(request.session["readonly"])
+        self.assertEqual(request.session["currently"], GroupProfile.SIAP_PARTENAIRES)
+        self.assertIsNotNone(request.session["role"])
+        self.assertEqual(request.session["role"]["typologie"], TypeRole.ADMINISTRATEUR)
 
     # Test model Role
     def test_object_role_str(self):
