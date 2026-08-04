@@ -188,6 +188,7 @@ def _find_or_create_entity(
         GroupProfile.SIAP_ASS_HLM,
         GroupProfile.SIAP_DIR_REG,
         GroupProfile.SIAP_SER_DEP,
+        GroupProfile.SIAP_PARTENAIRES,
     ]:
         group_name = (
             "readonly_administrateur"
