@@ -69,10 +69,9 @@ def set_habilitation_in_session(
         user_login=cerbere_login,
         habilitation_id=habilitation_id,
     )
-    """habilitations = list(
-        filter(lambda x: x["statut"] == "VALIDEE", response["habilitations"])
-    )"""
-    habilitations = list(filter(lambda x: x["valide"], response["habilitations"]))
+    habilitations = list(
+        filter(lambda x: x["valide"] is True, response["habilitations"])
+    )
     request.session["habilitations"] = habilitations
 
     if habilitation_id in map(lambda x: x["id"], habilitations):
