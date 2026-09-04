@@ -71,7 +71,11 @@ def set_habilitation_in_session(
     )
     # Changement d'une habilitations statut = VALIDEE vers statut valide (x["valide"] is True)
     habilitations = list(
-        filter(lambda x: x["valide"] is True, response["habilitations"])
+        filter(
+            lambda x: x["statut"]
+            in ("VALIDEE", "A_RENOUVELER", "RENVLMT_DEMANDE", "REVLMT_REFUSE"),
+            response["habilitations"],
+        )
     )
     request.session["habilitations"] = habilitations
 
