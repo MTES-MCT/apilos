@@ -69,6 +69,7 @@ def set_habilitation_in_session(
         user_login=cerbere_login,
         habilitation_id=habilitation_id,
     )
+    # Changement d'une habilitations statut = VALIDEE vers statut valide (x["valide"] is True)
     habilitations = list(
         filter(lambda x: x["valide"] is True, response["habilitations"])
     )
