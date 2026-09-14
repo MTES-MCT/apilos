@@ -39,3 +39,4 @@ unidecode
 whitenoise
 setuptools<70
 cryptography>=50.0.0
+sqlparse>=0.6.0
