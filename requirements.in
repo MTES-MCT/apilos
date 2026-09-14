@@ -38,3 +38,4 @@ typing-extensions
 unidecode
 whitenoise
 setuptools<70
+cryptography>=50.0.0
