@@ -16,6 +16,28 @@ class CerbereCASBackend(CASBackend):
     Auth backend for CERBERE
     """
 
+    def authenticate(self, request, ticket, service, **kwargs):
+        user = super().authenticate(request, ticket, service, **kwargs)
+        if user is None:
+            return None
+
+        if settings.ENABLE_LOGIN_WHITELIST:
+            allowed_logins_str = settings.ALLOWED_LOGINS
+            allowed_logins = [
+                login.strip()
+                for login in allowed_logins_str.split(",")
+                if login.strip()
+            ]
+
+            if user.cerbere_login not in allowed_logins:
+                from django.core.exceptions import PermissionDenied
+
+                raise PermissionDenied(
+                    "Votre compte n'est pas autorisé à accéder à cette application."
+                )
+
+        return user
+
     def user_can_authenticate(self, user):
         return True
 
