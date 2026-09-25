@@ -69,8 +69,13 @@ def set_habilitation_in_session(
         user_login=cerbere_login,
         habilitation_id=habilitation_id,
     )
+    # Changement d'une habilitations statut = VALIDEE vers statut valide (x["valide"] is True)
     habilitations = list(
-        filter(lambda x: x["statut"] == "VALIDEE", response["habilitations"])
+        filter(
+            lambda x: x["statut"]
+            in ("VALIDEE", "A_RENOUVELER", "RENVLMT_DEMANDE", "REVLMT_REFUSE"),
+            response["habilitations"],
+        )
     )
     request.session["habilitations"] = habilitations
 
