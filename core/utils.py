@@ -3,6 +3,8 @@ import unicodedata
 import uuid
 from typing import Any, SupportsRound
 
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
 from django.utils.crypto import get_random_string
 
 
@@ -57,3 +59,15 @@ def strip_accents(s: str) -> str:
     return "".join(
         c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn"
     )
+
+
+def check_user_whitelist(user):
+    if settings.ENABLE_LOGIN_WHITELIST:
+        allowed_logins_str = settings.ALLOWED_LOGINS
+        allowed_logins = [
+            login.strip() for login in allowed_logins_str.split(",") if login.strip()
+        ]
+        if user.cerbere_login not in allowed_logins:
+            raise PermissionDenied(
+                "Votre compte n'est pas autorisé à accéder à cette application."
+            )

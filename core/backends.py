@@ -8,6 +8,7 @@ from django.db.models import Q
 from django_cas_ng.backends import CASBackend
 
 from core import settings
+from core.utils import check_user_whitelist
 from users.models import GroupProfile, User
 
 
@@ -20,21 +21,7 @@ class CerbereCASBackend(CASBackend):
         user = super().authenticate(request, ticket, service, **kwargs)
         if user is None:
             return None
-
-        if settings.ENABLE_LOGIN_WHITELIST:
-            allowed_logins_str = settings.ALLOWED_LOGINS
-            allowed_logins = [
-                login.strip()
-                for login in allowed_logins_str.split(",")
-                if login.strip()
-            ]
-
-            if user.cerbere_login not in allowed_logins:
-                from django.core.exceptions import PermissionDenied
-
-                raise PermissionDenied(
-                    "Votre compte n'est pas autorisé à accéder à cette application."
-                )
+        check_user_whitelist(user)
 
         return user
 
