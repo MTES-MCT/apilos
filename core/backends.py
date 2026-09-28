@@ -8,6 +8,7 @@ from django.db.models import Q
 from django_cas_ng.backends import CASBackend
 
 from core import settings
+from core.utils import check_user_whitelist
 from users.models import GroupProfile, User
 
 
@@ -15,6 +16,14 @@ class CerbereCASBackend(CASBackend):
     """
     Auth backend for CERBERE
     """
+
+    def authenticate(self, request, ticket, service, **kwargs):
+        user = super().authenticate(request, ticket, service, **kwargs)
+        if user is None:
+            return None
+        check_user_whitelist(user)
+
+        return user
 
     def user_can_authenticate(self, user):
         return True

@@ -66,6 +66,10 @@ SECRET_KEY = get_env_variable("SECRET_KEY")
 DEBUG = get_env_variable("DEBUG", cast=bool)
 ENVIRONMENT = get_env_variable("ENVIRONMENT", default="development")
 CRON_ENABLED = get_env_variable("CRON_ENABLED", default=False, cast=bool)
+ENABLE_LOGIN_WHITELIST = get_env_variable(
+    "ENABLE_LOGIN_WHITELIST", default=False, cast=bool
+)
+ALLOWED_LOGINS = get_env_variable("ALLOWED_LOGINS", default="")
 
 SECURE_HSTS_SECONDS = get_env_variable("SECURE_HSTS_SECONDS", default=0, cast=int)
 SECURE_HSTS_INCLUDE_SUBDOMAINS = get_env_variable(
@@ -186,6 +190,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "core.middleware.LoginWhitelistMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "csp.middleware.CSPMiddleware",
