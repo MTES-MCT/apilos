@@ -7,7 +7,6 @@ django-browser-reload
 django-debug-toolbar
 django-extensions
 django-stubs
-djhtml
 factory-boy
 honcho
 pip-tools
