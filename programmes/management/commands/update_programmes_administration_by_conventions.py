@@ -3,9 +3,9 @@ import json
 from django.core.management.base import BaseCommand
 from django.db.models import Prefetch
 
+from conventions.models import Convention
 from instructeurs.models import Administration
 from programmes.models import Programme
-from conventions.models import Convention
 
 
 class Command(BaseCommand):
@@ -72,15 +72,15 @@ class Command(BaseCommand):
     def _get_programmes(self, numero_conventions, new_admin, old_admin):
         """Retourne le queryset des programmes à mettre à jour."""
         programme_ids = Convention.objects.filter(
-        numero__in=numero_conventions
-        )   .values_list("programme_id", flat=True)
+            numero__in=numero_conventions
+        ).values_list("programme_id", flat=True)
 
         filters = {"id__in": programme_ids}
         if old_admin:
             filters["administration"] = old_admin
         return Programme.objects.filter(**filters).exclude(
-        administration=new_admin,
-    )
+            administration=new_admin,
+        )
 
     def _report_missing(self, numero_conventions, programme_ids):
         """Signale les conventions fournies sans programme correspondant."""
@@ -130,7 +130,9 @@ class Command(BaseCommand):
         # Recherche des programmes correspondants, avec les conventions
         # matchées préchargées pour l'affichage.
         programmes = list(
-            self._get_programmes(numero_conventions, new_admin, old_admin).prefetch_related(
+            self._get_programmes(
+                numero_conventions, new_admin, old_admin
+            ).prefetch_related(
                 Prefetch(
                     "conventions",
                     queryset=Convention.objects.filter(
