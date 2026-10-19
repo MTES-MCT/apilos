@@ -1014,6 +1014,7 @@ def display_pdf(request, convention_uuid):
     return render(
         request,
         "conventions/no_convention_document.html",
+        {"is_ecolo": convention.ecolo_reference is not None},
     )
 
 
