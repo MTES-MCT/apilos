@@ -1,4 +1,5 @@
 import io
+from unittest.mock import patch
 from uuid import UUID
 
 import pytest
@@ -216,3 +217,117 @@ def test_display_pdf_no_file_ecolo(client, convention, logged_in_user):
     content = response.content.decode()
     assert "La convention n'existe pas dans Apilos" in content
     assert "en cours de génération" not in content
+
+
+@pytest.mark.django_db
+def test_preview_shows_regenerate_button_when_document_missing(
+    client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000004")
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    response = client.get(reverse("conventions:preview", args=[convention.uuid]))
+
+    assert response.status_code == 200
+    assert response.context["can_regenerate_document"] is True
+    assert "regenerate_document_button" in response.content.decode()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "statut",
+    [
+        ConventionStatut.INSTRUCTION.label,
+        ConventionStatut.CORRECTION.label,
+        ConventionStatut.SIGNEE.label,
+    ],
+)
+def test_preview_hides_regenerate_button_when_not_a_signer(
+    client, convention, logged_in_user, statut
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000005")
+    convention.statut = statut
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    response = client.get(reverse("conventions:preview", args=[convention.uuid]))
+
+    assert response.status_code == 200
+    assert response.context["can_regenerate_document"] is False
+    assert "regenerate_document_button" not in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_preview_hides_regenerate_button_when_document_exists(
+    client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000006")
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    pdf_path = (
+        "conventions/00000000-0000-0000-0000-000000000006/convention_docs/"
+        "00000000-0000-0000-0000-000000000006.pdf"
+    )
+    default_storage.save(pdf_path, io.BytesIO(b"Test PDF"))
+
+    response = client.get(reverse("conventions:preview", args=[convention.uuid]))
+
+    assert response.status_code == 200
+    assert response.context["can_regenerate_document"] is False
+
+    default_storage.delete(pdf_path)
+
+
+@pytest.mark.django_db
+@patch("conventions.views.conventions.task_generate_and_send.delay")
+def test_regenerate_document_triggers_task(
+    mock_delay, client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000007")
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    response = client.post(
+        reverse("conventions:regenerate_document", args=[convention.uuid])
+    )
+
+    assert response.status_code == 302
+    assert response.url == reverse("conventions:preview", args=[convention.uuid])
+    mock_delay.assert_called_once()
+    kwargs = mock_delay.call_args.kwargs
+    assert kwargs["convention_uuid"] == str(convention.uuid)
+    assert kwargs["convention_url"].endswith(
+        reverse("conventions:preview", args=[convention.uuid])
+    )
+    assert kwargs["convention_email_validator"] == logged_in_user.email
+
+
+@pytest.mark.django_db
+@patch("conventions.views.conventions.task_generate_and_send.delay")
+def test_regenerate_document_not_triggered_when_not_a_signer(
+    mock_delay, client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000008")
+    convention.statut = ConventionStatut.INSTRUCTION.label
+    convention.save()
+
+    response = client.post(
+        reverse("conventions:regenerate_document", args=[convention.uuid])
+    )
+
+    assert response.status_code == 302
+    mock_delay.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_regenerate_document_rejects_get(client, convention, logged_in_user):
+    response = client.get(
+        reverse("conventions:regenerate_document", args=[convention.uuid])
+    )
+
+    assert response.status_code == 405

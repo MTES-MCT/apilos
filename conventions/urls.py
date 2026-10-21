@@ -372,6 +372,11 @@ urlpatterns = [
         name="display_pdf",
     ),
     path(
+        "regenerate_document/<convention_uuid>",
+        views.regenerate_convention_document,
+        name="regenerate_document",
+    ),
+    path(
         "fiche_caf/<convention_uuid>",
         views.fiche_caf,
         name="fiche_caf",
