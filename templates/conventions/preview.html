@@ -51,7 +51,7 @@
                         .then(function (res) { return res.json(); })
                         .then(function (data) {
                             if (data && data.ready) {
-                                alertBox.className = 'fr-alert fr-alert--success fr-mb-3w';
+                                alertBox.className = 'fr-alert fr-alert--success';
                                 alertBox.innerHTML = '<h3 class="fr-alert__title">Le document a été généré avec succès</h3><p>Le document est désormais disponible ci-dessous.</p>';
                                 if (iframe) {
                                     const currentSrc = new URL(iframe.src);
@@ -122,22 +122,26 @@
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" %}
         {% include "common/nav_bar.html" with nav_bar_step="preview" %}
-        <div class="fr-container fr-my-6w h-80vh">
-            {% include "common/messages.html" %}
-            {% if can_regenerate_document %}
-                <div class="fr-alert fr-alert--warning fr-mb-3w" id="regenerate_alert">
-                    <h3 class="fr-alert__title">Le document de la convention n'est pas encore disponible</h3>
-                    <p>Si le document n'apparaît toujours pas après quelques minutes, vous pouvez relancer sa génération. Une fois généré, il sera de nouveau envoyé par email au bailleur.</p>
-                    <form method="post" action="{% url 'conventions:regenerate_document' convention_uuid=convention.uuid %}" class="fr-mt-2w" id="regenerate_form">
-                        {% csrf_token %}
-                        <button type="submit" class="fr-btn fr-btn--secondary" id="regenerate_document_button">Relancer la génération du document</button>
-                    </form>
-                    <div id="regenerate_spinner_container" class="fr-mt-2w" style="display: none; align-items: center; gap: 0.75rem;">
-                        <div class="apilos-spinner" aria-hidden="true"></div>
-                        <span class="fr-text--bold" role="status" aria-live="polite">Génération du document en cours, veuillez patienter...</span>
+        {% if messages or can_regenerate_document %}
+            <div class="fr-container fr-pt-4w">
+                {% include "common/messages.html" %}
+                {% if can_regenerate_document %}
+                    <div class="fr-alert fr-alert--warning" id="regenerate_alert">
+                        <h3 class="fr-alert__title">Le document de la convention n'est pas encore disponible</h3>
+                        <p id="regenerate_description">Si le document n'apparaît toujours pas après quelques minutes, vous pouvez relancer sa génération. Une fois généré, il sera de nouveau envoyé par email au bailleur.</p>
+                        <form method="post" action="{% url 'conventions:regenerate_document' convention_uuid=convention.uuid %}" class="fr-mt-2w" id="regenerate_form">
+                            {% csrf_token %}
+                            <button type="submit" class="fr-btn fr-btn--secondary" id="regenerate_document_button">Relancer la génération du document</button>
+                        </form>
+                        <div id="regenerate_spinner_container" class="fr-mt-2w" style="display: none; align-items: center; gap: 0.75rem;">
+                            <div class="apilos-spinner" aria-hidden="true"></div>
+                            <span class="fr-text--bold" role="status" aria-live="polite">Génération du document en cours, veuillez patienter...</span>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
+        {% endif %}
+        <div class="fr-container fr-my-6w h-80vh">
             <iframe id="convention_document_iframe" src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% if doc_type %}{% url 'conventions:display_convention_publie' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}{% endif %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
         </div>
         {% if convention.attached|get_files_from_textfiles %}
