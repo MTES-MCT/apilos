@@ -331,3 +331,78 @@ def test_regenerate_document_rejects_get(client, convention, logged_in_user):
     )
 
     assert response.status_code == 405
+
+
+@pytest.mark.django_db
+@patch("conventions.views.conventions.task_generate_and_send.delay")
+def test_regenerate_document_ajax_success(
+    mock_delay, client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000009")
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    response = client.post(
+        reverse("conventions:regenerate_document", args=[convention.uuid]),
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"success": True}
+    mock_delay.assert_called_once()
+
+
+@pytest.mark.django_db
+@patch("conventions.views.conventions.task_generate_and_send.delay")
+def test_regenerate_document_ajax_failure(
+    mock_delay, client, convention, logged_in_user
+):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000010")
+    convention.statut = ConventionStatut.INSTRUCTION.label
+    convention.save()
+
+    response = client.post(
+        reverse("conventions:regenerate_document", args=[convention.uuid]),
+        HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+    )
+
+    assert response.status_code == 400
+    assert response.json()["success"] is False
+    mock_delay.assert_not_called()
+
+
+@pytest.mark.django_db
+def test_convention_document_status(client, convention, logged_in_user):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000011")
+    convention.statut = ConventionStatut.A_SIGNER.label
+    convention.nom_fichier_signe = ""
+    convention.save()
+
+    url = reverse("conventions:document_status", args=[convention.uuid])
+
+    # Case 1: not ready
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json() == {"ready": False}
+
+    # Case 2: ready
+    pdf_path = (
+        "conventions/00000000-0000-0000-0000-000000000011/convention_docs/"
+        "00000000-0000-0000-0000-000000000011.pdf"
+    )
+    default_storage.save(pdf_path, io.BytesIO(b"PDF content"))
+
+    response = client.get(url)
+    assert response.status_code == 200
+    assert response.json() == {"ready": True}
+
+    default_storage.delete(pdf_path)
+
+
+@pytest.mark.django_db
+def test_convention_document_status_rejects_post(client, convention, logged_in_user):
+    response = client.post(
+        reverse("conventions:document_status", args=[convention.uuid])
+    )
+    assert response.status_code == 405

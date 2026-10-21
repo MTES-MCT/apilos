@@ -150,9 +150,24 @@ def get_or_generate_convention_doc(
 
         if len(files) > 0:
             file_dict = files[0]
-            uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
-            filepath = uploaded_file.filepath(str(convention.uuid))
-            return DocxTemplate(default_storage.open(filepath, "rb"))
+            try:
+                uploaded_file = UploadedFile.objects.get(uuid=file_dict["uuid"])
+                filepath = uploaded_file.filepath(str(convention.uuid))
+                if default_storage.exists(filepath):
+                    return DocxTemplate(default_storage.open(filepath, "rb"))
+                logger.warning(
+                    "Override cerfa file %s not found in storage for convention %s, "
+                    "falling back to standard generation",
+                    filepath,
+                    convention.uuid,
+                )
+            except (UploadedFile.DoesNotExist, OSError) as err:
+                logger.warning(
+                    "Cannot load override cerfa for convention %s: %s, "
+                    "falling back to standard generation",
+                    convention.uuid,
+                    err,
+                )
 
     return generate_convention_doc(convention=convention, save_data=save_data)
 
@@ -685,10 +700,15 @@ def _build_files_for_docx(doc, convention_uuid, file_list):
     files = UploadedFile.objects.filter(uuid__in=file_list)
     for object_file in files:
         if "image" in object_file.content_type:
-            with default_storage.open(
-                object_file.filepath(convention_uuid),
-                "rb",
-            ) as file:
+            filepath = object_file.filepath(convention_uuid)
+            if not default_storage.exists(filepath):
+                logger.warning(
+                    "Image file %s not found in storage for convention %s, skipping image",
+                    filepath,
+                    convention_uuid,
+                )
+                continue
+            with default_storage.open(filepath, "rb") as file:
                 local_path = (
                     settings.MEDIA_ROOT / f"{object_file.uuid}_{object_file.filename}"
                 )
@@ -711,8 +731,16 @@ def get_files_attached(convention):
 
     files = UploadedFile.objects.filter(uuid__in=attached_files)
     for object_file in files:
+        filepath = object_file.filepath(convention.uuid)
+        if not default_storage.exists(filepath):
+            logger.warning(
+                "Attached file %s not found in storage for convention %s, skipping",
+                filepath,
+                convention.uuid,
+            )
+            continue
         file = default_storage.open(
-            name=object_file.filepath(convention.uuid),
+            name=filepath,
             mode="rb",
         )
         local_path = (

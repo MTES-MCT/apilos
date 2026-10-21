@@ -21,6 +21,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
@@ -615,9 +616,21 @@ def regenerate_convention_document(request, convention_uuid):
     convention = get_object_or_404(Convention, uuid=convention_uuid)
     request.user.check_perm("convention.view_convention", convention)
 
+    is_ajax = request.headers.get(
+        "x-requested-with"
+    ) == "XMLHttpRequest" or "application/json" in request.headers.get("accept", "")
+
     preview_url = reverse("conventions:preview", args=[convention.uuid])
 
     if not _can_regenerate_convention_document(convention):
+        if is_ajax:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "La génération du document ne peut pas être relancée pour cette convention.",
+                },
+                status=400,
+            )
         messages.warning(
             request,
             "La génération du document ne peut pas être relancée pour cette convention.",
@@ -636,12 +649,25 @@ def regenerate_convention_document(request, convention_uuid):
         siap_credentials=siap_credentials,
     )
 
+    if is_ajax:
+        return JsonResponse({"success": True})
+
     messages.success(
         request,
         "La génération du document a été relancée. "
         "Veuillez recharger cette page dans quelques instants.",
     )
     return HttpResponseRedirect(preview_url)
+
+
+@require_GET
+@login_required
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
+def convention_document_status(request, convention_uuid):
+    convention = get_object_or_404(Convention, uuid=convention_uuid)
+    request.user.check_perm("convention.view_convention", convention)
+    ready = _get_convention_document_filename(convention) is not None
+    return JsonResponse({"ready": ready})
 
 
 class ConventionPublicationView(PublicationAuthorizationMixin, BaseConventionView):
