@@ -2,7 +2,7 @@
     <div class="block--row-strech-1 fr-mr-6w">
         <h2 class="fr-text--lg">Résilier la convention</h2>
         {% if convention.is_avenant and convention.parent|display_create_avenant or not convention.is_avenant and convention|display_create_avenant %}
-            <p>Ici, vous pouvez résilier votre convention</p>
+            <p>Ici, vous pouvez résilier votre convention.</p>
         {% else %}
             <p>Un avenant est en cours. Annulez-le ou validez-le pour pouvoir procéder à la résiliation de votre convention.</p>
         {% endif %}
