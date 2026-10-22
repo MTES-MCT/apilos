@@ -205,6 +205,7 @@ def generate_convention_doc(convention: Convention, save_data=False) -> DocxTemp
         "bailleur": convention.programme.bailleur,
         "outre_mer": convention.programme.is_outre_mer,
         "programme": convention.programme,
+        "can_be_published": convention.can_be_published(),
         "lots": lots,
         "administration": convention.programme.administration,
         "logement_edds": logement_edds,
