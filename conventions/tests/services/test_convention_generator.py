@@ -75,6 +75,7 @@ def convention_context_keys():
         "bailleur_siret",
         "bailleur_ville",
         "bailleur",
+        "can_be_published",
         "code_postal",
         "convention",
         "edd_classique_images",
