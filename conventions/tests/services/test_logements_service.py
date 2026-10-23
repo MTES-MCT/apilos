@@ -131,17 +131,18 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(logement_b1.lot.loyer_associations_foncieres, 30.00)
         self.assertEqual(logement_b1.lot.lgts_mixite_sociale_negocies, 2)
 
-    def test_save_fails_on_loyer(self):
+    def test_save_succeeds_on_different_loyer_for_same_typologie(self):
         self.service.request.POST = {
             "nb_logements": "2",
             "uuid": str(self.service.convention.lot.uuid),
             **logement_success_payload,
-            "avec_loyer-1-loyer": "750.00",
+            "avec_loyer-0-typologie": "T2",
+            "avec_loyer-0-loyer": "750.00",
+            "avec_loyer-1-typologie": "T2",
+            "avec_loyer-1-loyer": "760.00",
         }
         self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
-        self.assertFalse(self.service.formset.forms[0].has_error("loyer"))
-        self.assertTrue(self.service.formset.forms[1].has_error("loyer"))
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
