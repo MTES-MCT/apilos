@@ -9,6 +9,7 @@ from pytest_django.asserts import assertTemplateUsed
 
 from conventions.models.choices import ConventionStatut
 from core.tests.factories import ConventionFactory
+from ecoloweb.models import EcoloReference
 from users.tests.factories import GroupFactory, RoleFactory, UserFactory
 from users.type_models import TypeRole
 
@@ -193,3 +194,25 @@ def test_display_pdf_no_file(client, convention, logged_in_user, statut):
 
     assert response.status_code == 200
     assertTemplateUsed(response, "conventions/no_convention_document.html")
+    assert "en cours de génération" in response.content.decode()
+
+
+@pytest.mark.django_db
+def test_display_pdf_no_file_ecolo(client, convention, logged_in_user):
+    convention.uuid = UUID("00000000-0000-0000-0000-000000000003")
+    convention.nom_fichier_signe = ""
+    convention.save()
+    EcoloReference.objects.create(
+        apilos_model="conventions.Convention",
+        apilos_id=convention.id,
+        ecolo_id="123",
+        departement="13",
+    )
+
+    url = reverse("conventions:display_pdf", args=[convention.uuid])
+    response = client.get(url)
+
+    assert response.status_code == 200
+    content = response.content.decode()
+    assert "La convention n'existe pas dans Apilos" in content
+    assert "en cours de génération" not in content
