@@ -10,14 +10,12 @@ services:
       - ./.docker/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
     shm_size: 1g
     ports:
-      - 5433:5432
+      - "5433:5432"
   redis:
     image: redis:7.0
     restart: unless-stopped
-    expose:
-      - 6379
     ports:
-      - 6379:6379
+      - "6379:6379"
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
       - ./.docker/redis/data:/data:delegated
