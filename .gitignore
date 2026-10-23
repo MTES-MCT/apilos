@@ -4,6 +4,9 @@
 .venv
 /venv/
 
+# Local env
+*compose.override.y*ml
+
 #Cache
 __pycache__
 .DS_Store
