@@ -622,8 +622,6 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
         return super().is_valid() and len(self.optional_errors) == 0
 
     def clean(self):
-        self.loan_should_be_consistent()
-
         if self.ignore_optional_errors:
             return
         self.optional_errors = []
@@ -640,25 +638,6 @@ class BaseFoyerResidenceLogementFormSet(BaseFormSet):
                 + f"ne correspond pas au nombre de logements déclaré ({self.total_form_count()})"
             )
             self.optional_errors.append(error)
-
-    def loan_should_be_consistent(self):
-        """
-        Validation: les loyers doivent-être identiques pour les logements de typologie identique
-        """
-        loan_by_type = {}
-        loan_errors = {}
-        for form in self.forms:
-            typologie = form.cleaned_data.get("typologie", "")
-            if typologie not in loan_by_type:
-                loan_by_type[typologie] = form.cleaned_data.get("loyer")
-            else:
-                if loan_by_type[typologie] != form.cleaned_data.get("loyer"):
-                    loan_errors[typologie] = ValidationError(
-                        "Les loyers doivent-être identiques pour les logements de"
-                        + f" typologie identique : {form.cleaned_data.get('typologie')}"
-                    )
-        for _, loan_error in loan_errors.items():
-            self._non_form_errors.append(loan_error)
 
 
 FoyerResidenceLogementFormSet = formset_factory(
