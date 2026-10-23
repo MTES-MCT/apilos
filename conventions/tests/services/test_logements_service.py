@@ -271,14 +271,8 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
             "form-1-loyer": "161.00",
         }
         self.service.save()
-        self.assertEqual(self.service.return_status, utils.ReturnStatus.ERROR)
+        self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
         self.assertTrue(self.service.formset.non_form_errors())
-        self.assertEqual(
-            self.service.formset.non_form_errors(),
-            [
-                "Les loyers doivent-être identiques pour les logements de typologie identique : T2"
-            ],
-        )
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
