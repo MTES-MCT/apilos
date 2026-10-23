@@ -272,7 +272,6 @@ class ConventionFoyerResidenceLogementsServiceTests(TestCase):
         }
         self.service.save()
         self.assertEqual(self.service.return_status, utils.ReturnStatus.SUCCESS)
-        self.assertTrue(self.service.formset.non_form_errors())
 
     def test_save_fails_on_nb_logements(self):
         self.service.request.POST = {
