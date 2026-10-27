@@ -38,9 +38,9 @@ class LotLgtsOptionForm(forms.Form):
             + " n'excèdent pas le plafond"
         ),
         help_text="""
-            Plafond fixé au I de l'article D. 331-12. Ce nombre de logements doit-être
-            négocié avec les services instructeurs. Il sera
-            reporté sur l'article de mixité sociale correspondant su le document de convention.
+            Plafond fixé au I de l'article D. 331-12.
+            Ce nombre de logements doit être négocié avec les services instructeurs.
+            Il sera reporté sur l'article de mixité sociale correspondant sur le document de convention.
         """,
     )
     loyer_derogatoire = forms.DecimalField(
