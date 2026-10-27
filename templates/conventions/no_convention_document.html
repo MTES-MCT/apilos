@@ -12,8 +12,12 @@
 
 {% block content %}
     <div class="fr-m-3w">
-        <p>Votre document est en cours de génération et sera bientôt disponible sur cette page.</p>
-        <p>Merci pour votre compréhension</p>
+        {% if is_ecolo %}
+            <p>La convention n'existe pas dans Apilos, nous vous prions de l'importer depuis Ecoloweb.</p>
+        {% else %}
+            <p>Votre document est en cours de génération et sera bientôt disponible sur cette page.</p>
+            <p>Merci pour votre compréhension</p>
+        {% endif %}
         <p>L'équipe APiLos</p>
     </div>
 {% endblock content %}
