@@ -6,14 +6,143 @@
 
 {% block javascript_extras %}
     <script src="{% static "js/header-size.js" %}" nonce="{{ request.csp_nonce }}"></script>
+    {% if can_regenerate_document %}
+        <style nonce="{{ request.csp_nonce }}">
+            .apilos-spinner {
+                width: 24px;
+                height: 24px;
+                border: 3px solid #e5e5f4;
+                border-top-color: #000091;
+                border-radius: 50%;
+                animation: apilos-spin 0.8s linear infinite;
+                flex-shrink: 0;
+            }
+            @keyframes apilos-spin {
+                to { transform: rotate(360deg); }
+            }
+            @media (prefers-reduced-motion: reduce) {
+                .apilos-spinner {
+                    animation-duration: 2.5s;
+                }
+            }
+        </style>
+        <script nonce="{{ request.csp_nonce }}">
+            (function () {
+                function initRegeneration() {
+                    const form = document.getElementById('regenerate_form');
+                    const spinnerContainer = document.getElementById('regenerate_spinner_container');
+                    const alertBox = document.getElementById('regenerate_alert');
+                    const iframe = document.getElementById('convention_document_iframe');
+                    if (!form || !spinnerContainer || !alertBox) return;
+
+                    const statusUrl = "{% url 'conventions:document_status' convention_uuid=convention.uuid %}";
+                    let attempts = 0;
+                    const maxAttempts = 20; // 20 * 3s = 60s
+                    const pollIntervalMs = 3000;
+
+                    function pollDocumentStatus() {
+                        attempts++;
+                        fetch(statusUrl, {
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        })
+                        .then(function (res) { return res.json(); })
+                        .then(function (data) {
+                            if (data && data.ready) {
+                                alertBox.className = 'fr-alert fr-alert--success';
+                                alertBox.innerHTML = '<h3 class="fr-alert__title">Le document a été généré avec succès</h3><p>Le document est désormais disponible ci-dessous.</p>';
+                                if (iframe) {
+                                    const currentSrc = new URL(iframe.src);
+                                    currentSrc.searchParams.set('t', Date.now());
+                                    iframe.src = currentSrc.toString();
+                                }
+                            } else if (attempts < maxAttempts) {
+                                setTimeout(pollDocumentStatus, pollIntervalMs);
+                            } else {
+                                form.style.display = 'block';
+                                spinnerContainer.style.display = 'none';
+                                const desc = document.getElementById('regenerate_description');
+                                if (desc) {
+                                    desc.textContent = "La génération prend plus de temps que prévu. Vous pouvez recharger la page ou relancer.";
+                                }
+                            }
+                        })
+                        .catch(function () {
+                            if (attempts < maxAttempts) {
+                                setTimeout(pollDocumentStatus, pollIntervalMs);
+                            }
+                        });
+                    }
+
+                    form.addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        form.style.display = 'none';
+                        spinnerContainer.style.display = 'flex';
+
+                        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(function (res) {
+                            if (!res.ok) {
+                                throw new Error('Erreur lors du déclenchement de la génération');
+                            }
+                            return res.json();
+                        })
+                        .then(function () {
+                            pollDocumentStatus();
+                        })
+                        .catch(function () {
+                            form.style.display = 'block';
+                            spinnerContainer.style.display = 'none';
+                            alert('Une erreur est survenue lors du lancement de la génération. Veuillez réessayer.');
+                        });
+                    });
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initRegeneration);
+                } else {
+                    initRegeneration();
+                }
+            })();
+        </script>
+    {% endif %}
 {% endblock javascript_extras %}
 
 {% block content %}
     <div class="fr-container-fluid ds_banner">
         {% include "conventions/common/form_header.html" %}
         {% include "common/nav_bar.html" with nav_bar_step="preview" %}
+        {% if messages or can_regenerate_document %}
+            <div class="fr-container fr-pt-4w">
+                {% include "common/messages.html" %}
+                {% if can_regenerate_document %}
+                    <div class="fr-alert fr-alert--warning" id="regenerate_alert">
+                        <h3 class="fr-alert__title">Le document de la convention n'est pas encore disponible</h3>
+                        <p id="regenerate_description">Si le document n'apparaît toujours pas après quelques minutes, vous pouvez relancer sa génération. Une fois généré, il sera de nouveau envoyé par email au bailleur.</p>
+                        <form method="post" action="{% url 'conventions:regenerate_document' convention_uuid=convention.uuid %}" class="fr-mt-2w" id="regenerate_form">
+                            {% csrf_token %}
+                            <button type="submit" class="fr-btn fr-btn--secondary" id="regenerate_document_button">Relancer la génération du document</button>
+                        </form>
+                        <div id="regenerate_spinner_container" class="fr-mt-2w" style="display: none; align-items: center; gap: 0.75rem;">
+                            <div class="apilos-spinner" aria-hidden="true"></div>
+                            <span class="fr-text--bold" role="status" aria-live="polite">Génération du document en cours, veuillez patienter...</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="fr-container fr-my-6w h-80vh">
-            <iframe src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% if doc_type %}{% url 'conventions:display_convention_publie' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}{% endif %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
+            <iframe id="convention_document_iframe" src="{% if request.is_secure %}https://{% else %}http://{% endif %}{{ request.get_host }}{% if doc_type %}{% url 'conventions:display_convention_publie' convention_uuid=convention.uuid %}{% else %}{% url 'conventions:display_pdf' convention_uuid=convention.uuid %}{% endif %}" width="100%" height="1000px" nonce="{{ request.csp_nonce }}"></iframe>
         </div>
         {% if convention.attached|get_files_from_textfiles %}
             <div class="fr-container fr-my-6w">
