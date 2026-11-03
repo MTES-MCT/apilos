@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+LO_VERSION="7.3.1.3"
+LO_BASE_URL="https://downloadarchive.documentfoundation.org/libreoffice/old/${LO_VERSION}/deb/x86_64"
+LO_DEB_ARCHIVE="LibreOffice_${LO_VERSION}_Linux_x86-64_deb.tar.gz"
+LO_DEB_SHA256="f2898f9a6f5f37c92cb83603d560cd05ec93f7fd5ec2bb4b07c3b786f4cf1b0e"
+LO_LANG_ARCHIVE="LibreOffice_${LO_VERSION}_Linux_x86-64_deb_langpack_fr.tar.gz"
+LO_LANG_SHA256="61b6a3f68e21d0680bf916370e4460592a3ff7ef059ddcadf5bbe7a9e54e6e43"
+
+BUILD_DIR="${BUILD_DIR:-$(pwd)}"
+CACHE_DIR="${CACHE_DIR:-/tmp/cache}"
+INSTALL_DIR="${BUILD_DIR}/vendor/libreoffice"
+LO_CACHE_DIR="${CACHE_DIR}/libreoffice-${LO_VERSION}"
+
+mkdir -p "${INSTALL_DIR}" "${CACHE_DIR}"
+
+if [ ! -d "${LO_CACHE_DIR}/opt/libreoffice7.3" ]; then
+    echo "Downloading LibreOffice ${LO_VERSION} from Document Foundation archive"
+    TMP_DIR=$(mktemp -d)
+    curl -fsSL "${LO_BASE_URL}/${LO_DEB_ARCHIVE}" -o "${TMP_DIR}/${LO_DEB_ARCHIVE}"
+    curl -fsSL "${LO_BASE_URL}/${LO_LANG_ARCHIVE}" -o "${TMP_DIR}/${LO_LANG_ARCHIVE}"
+
+    echo "Verifying SHA-256 checksums"
+    echo "${LO_DEB_SHA256}  ${TMP_DIR}/${LO_DEB_ARCHIVE}" | sha256sum --check --status
+    echo "${LO_LANG_SHA256}  ${TMP_DIR}/${LO_LANG_ARCHIVE}" | sha256sum --check --status
+
+    echo "Extracting LibreOffice ${LO_VERSION} packages"
+    tar -xzf "${TMP_DIR}/${LO_DEB_ARCHIVE}" -C "${TMP_DIR}"
+    tar -xzf "${TMP_DIR}/${LO_LANG_ARCHIVE}" -C "${TMP_DIR}"
+
+    rm -rf "${LO_CACHE_DIR}"
+    mkdir -p "${LO_CACHE_DIR}"
+
+    find "${TMP_DIR}" -name "*.deb" -exec dpkg -x {} "${LO_CACHE_DIR}" \;
+
+    rm -rf "${TMP_DIR}"
+else
+    echo "Using cached LibreOffice ${LO_VERSION}"
+fi
+
+echo "Installing LibreOffice ${LO_VERSION} into vendor/libreoffice"
+cp -R "${LO_CACHE_DIR}/usr" "${INSTALL_DIR}/"
+cp -R "${LO_CACHE_DIR}/opt" "${INSTALL_DIR}/"
+
+PROFILE_PATH="${BUILD_DIR}/.profile.d/libreoffice.sh"
+mkdir -p "$(dirname "${PROFILE_PATH}")"
+echo 'export PATH="$HOME/vendor/libreoffice/opt/libreoffice7.3/program:$PATH"' >> "${PROFILE_PATH}"
+echo 'export OFFICE_PATH="$HOME/vendor/libreoffice/opt/libreoffice7.3"' >> "${PROFILE_PATH}"
