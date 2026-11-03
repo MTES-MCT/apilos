@@ -377,6 +377,11 @@ urlpatterns = [
         name="regenerate_document",
     ),
     path(
+        "document_status/<convention_uuid>",
+        views.convention_document_status,
+        name="document_status",
+    ),
+    path(
         "fiche_caf/<convention_uuid>",
         views.fiche_caf,
         name="fiche_caf",

@@ -1,0 +1,17 @@
+.apilos-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid #e5e5f4;
+    border-top-color: #000091;
+    border-radius: 50%;
+    animation: apilos-spin 0.8s linear infinite;
+    flex-shrink: 0;
+}
+@keyframes apilos-spin {
+    to { transform: rotate(360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .apilos-spinner {
+        animation-duration: 2.5s;
+    }
+}
