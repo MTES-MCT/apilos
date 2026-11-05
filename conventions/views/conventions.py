@@ -979,6 +979,9 @@ def resiliation_start(request, convention_uuid):
 def display_pdf(request, convention_uuid):
     # récupérer le doc PDF
     convention = Convention.objects.get(uuid=convention_uuid)
+    if convention.statut == ConventionStatut.PUBLIE.label:
+        return display_convention_publie(request, convention_uuid)
+
     convention_path = f"conventions/{convention.uuid}/convention_docs"
 
     filename = None
@@ -986,9 +989,8 @@ def display_pdf(request, convention_uuid):
         convention.statut
         in [
             ConventionStatut.A_SIGNER.label,
-            ConventionStatut.SIGNEE.label,
             ConventionStatut.PUBLICATION_EN_COURS.label,
-            ConventionStatut.PUBLIE.label,
+            ConventionStatut.SIGNEE.label,
             ConventionStatut.RESILIEE.label,
             ConventionStatut.DENONCEE.label,
             ConventionStatut.ANNULEE.label,
