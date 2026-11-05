@@ -32,7 +32,7 @@
             })
             .then(function (res) { return res.json(); })
             .then(function (data) {
-                if (data && data.ready) {
+                if (data?.ready) {
                     alertBox.className = 'fr-alert fr-alert--success';
                     alertBox.innerHTML = '<h3 class="fr-alert__title">Le document a été généré avec succès</h3><p>Le document est désormais disponible ci-dessous.</p>';
                     if (iframe) {
