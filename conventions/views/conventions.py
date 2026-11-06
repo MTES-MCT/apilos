@@ -21,6 +21,7 @@ from django.http import (
     HttpResponseForbidden,
     HttpResponseNotFound,
     HttpResponseRedirect,
+    JsonResponse,
 )
 from django.shortcuts import get_object_or_404, render
 from django.urls import resolve, reverse
@@ -62,6 +63,7 @@ from conventions.services.utils import (
     base_convention_response_error,
     create_convention_export_excel,
 )
+from conventions.tasks import task_generate_and_send
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.request import AuthenticatedHttpRequest
 from core.storage import client
@@ -568,8 +570,79 @@ def preview(request, convention_uuid, doc_type=0):
         {
             "convention": convention,
             "doc_type": doc_type,
+            "can_regenerate_document": not doc_type
+            and _can_regenerate_convention_document(convention),
         },
     )
+
+
+def _can_regenerate_convention_document(convention: Convention) -> bool:
+    return (
+        convention.statut == ConventionStatut.A_SIGNER.label
+        and convention.ecolo_reference is None
+        and _get_convention_document_filename(convention) is None
+    )
+
+
+@require_POST
+@login_required
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
+def regenerate_convention_document(request, convention_uuid):
+    convention = get_object_or_404(Convention, uuid=convention_uuid)
+    request.user.check_perm("convention.view_convention", convention)
+
+    is_ajax = request.headers.get(
+        "x-requested-with"
+    ) == "XMLHttpRequest" or "application/json" in request.headers.get("accept", "")
+
+    preview_url = reverse("conventions:preview", args=[convention.uuid])
+
+    if not _can_regenerate_convention_document(convention):
+        if is_ajax:
+            return JsonResponse(
+                {
+                    "success": False,
+                    "message": "La génération du document ne peut pas être relancée pour cette convention.",
+                },
+                status=400,
+            )
+        messages.warning(
+            request,
+            "La génération du document ne peut pas être relancée pour cette convention.",
+        )
+        return HttpResponseRedirect(preview_url)
+
+    try:
+        siap_credentials = get_siap_credentials_from_request(request)
+    except ValueError:
+        siap_credentials = {}
+
+    task_generate_and_send.delay(
+        convention_uuid=str(convention.uuid),
+        convention_url=request.build_absolute_uri(preview_url),
+        convention_email_validator=request.user.email,
+        siap_credentials=siap_credentials,
+    )
+
+    if is_ajax:
+        return JsonResponse({"success": True})
+
+    messages.success(
+        request,
+        "La génération du document a été relancée. "
+        "Veuillez recharger cette page dans quelques instants.",
+    )
+    return HttpResponseRedirect(preview_url)
+
+
+@require_GET
+@login_required
+@currentrole_campaign_permission_required_view_function("convention.view_convention")
+def convention_document_status(request, convention_uuid):
+    convention = get_object_or_404(Convention, uuid=convention_uuid)
+    request.user.check_perm("convention.view_convention", convention)
+    ready = _get_convention_document_filename(convention) is not None
+    return JsonResponse({"ready": ready})
 
 
 class ConventionPublicationView(PublicationAuthorizationMixin, BaseConventionView):
@@ -984,6 +1057,27 @@ def display_pdf(request, convention_uuid):
 
     convention_path = f"conventions/{convention.uuid}/convention_docs"
 
+    filename = _get_convention_document_filename(convention)
+
+    if filename:
+        return FileResponse(
+            default_storage.open(
+                name=f"{convention_path}/{filename}",
+                mode="rb",
+            ),
+            filename=filename,
+        )
+
+    return render(
+        request,
+        "conventions/no_convention_document.html",
+        {"is_ecolo": convention.ecolo_reference is not None},
+    )
+
+
+def _get_convention_document_filename(convention: Convention) -> str | None:
+    convention_path = f"conventions/{convention.uuid}/convention_docs"
+
     filename = None
     if (
         convention.statut
@@ -1004,20 +1098,7 @@ def display_pdf(request, convention_uuid):
     elif default_storage.exists(f"{convention_path}/{convention.uuid}.docx"):
         filename = f"{convention.uuid}.docx"
 
-    if filename:
-        return FileResponse(
-            default_storage.open(
-                name=f"{convention_path}/{filename}",
-                mode="rb",
-            ),
-            filename=filename,
-        )
-
-    return render(
-        request,
-        "conventions/no_convention_document.html",
-        {"is_ecolo": convention.ecolo_reference is not None},
-    )
+    return filename
 
 
 @login_required
