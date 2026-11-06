@@ -110,6 +110,12 @@ commentaires_step = ConventionFormStep(
     classname="ConventionCommentairesView",
 )
 
+projet_social_step = ConventionFormStep(
+    pathname="conventions:projet_social",
+    label="Projet social",
+    classname="ProjetSocialView",
+)
+
 avenant_bailleur_step = ConventionFormStep(
     pathname="conventions:avenant_bailleur",
     label="Bailleur",
@@ -223,6 +229,12 @@ avenant_resiliation_acte_step = ConventionFormStep(
     classname="ResiliationActeView",
 )
 
+avenant_projet_social_step = ConventionFormStep(
+    pathname="conventions:avenant_projet_social",
+    label="Projet social",
+    classname="AvenantProjetSocialView",
+)
+
 hlm_sem_type_steps = [
     bailleur_step,
     programme_step,
@@ -320,11 +332,21 @@ class ConventionFormSteps:
             ConventionStatut.PUBLIE.label,
             ConventionStatut.PUBLICATION_EN_COURS.label,
         ]:
+            if convention.programme.nature_logement == NatureLogement.RESISDENCESOCIALE:
+                return residence_steps_sans_spf[:-1] + [
+                    projet_social_step,
+                    residence_steps_sans_spf[-1],
+                ]
             return residence_steps_sans_spf
         if convention.programme.is_residence and convention.statut in [
             ConventionStatut.PUBLIE.label,
             ConventionStatut.PUBLICATION_EN_COURS.label,
         ]:
+            if convention.programme.nature_logement == NatureLogement.RESISDENCESOCIALE:
+                return residence_steps_avec_spf[:-1] + [
+                    projet_social_step,
+                    residence_steps_avec_spf[-1],
+                ]
             return residence_steps_avec_spf
         if (
             convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES

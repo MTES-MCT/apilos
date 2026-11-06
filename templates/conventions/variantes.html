@@ -2,7 +2,7 @@
 
 {% load custom_filters static %}
 
-{% block page_title %}Variantes - APiLos{% endblock %}
+{% block page_title %}Étape {{ form_step.number }} - Variantes - APiLos{% endblock %}
 
 {% block javascript_extras %}
     <script src="{% static "js/comment-factory.js" %}" nonce="{{ request.csp_nonce }}"></script>

@@ -1,5 +1,6 @@
 {% load l10n %}
-<div class="fr-input-group{% if form_input.errors %} fr-select-group--error{% endif %}" id="{{ form_input.id_for_label }}_group">
+<div class="fr-input-group{% if form_input.errors %} fr-select-group--error{% endif %}"
+     id="{{ form_input.id_for_label }}_group">
     <div {% if display_inline %} class="apilos-input-group--inline"{% endif %}>
         {% if form_input.label %}
             <label class="fr-label" for="{{ form_input.id_for_label }}">
@@ -24,13 +25,16 @@
                 name="{{ form_input.html_name }}"
                 {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
                 {% include "common/form/disable_form_input.html" %}>
-
-            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-                document.addEventListener('DOMContentLoaded', function () {
-                    document.getElementById('{{ form_input.id_for_label }}')
-                        .addEventListener('click', function(){ {{ onchange }} });
-                });
-            </script>
+            {% if onchange %}
+                <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.getElementById('{{ form_input.id_for_label }}')
+                            .addEventListener('click', function () {
+                                {{ onchange }}
+                            });
+                    });
+                </script>
+            {% endif %}
             {% include "common/utils/comments_field.html" %}
         </div>
     </div>

@@ -28,8 +28,11 @@ class OngoingAvenantError(Exception):
 
 def create_avenant(request: HttpRequest, convention_uuid: UUID) -> dict[str, Any]:
     parent_convention = (
-        Convention.objects.prefetch_related("programme")
+        Convention
+        .objects
+        .prefetch_related("programme")
         .prefetch_related("avenants")
+        .prefetch_related("projet_social")
         .get(uuid=convention_uuid)
     )
     if parent_convention.is_avenant():

@@ -434,8 +434,18 @@ urlpatterns = [
         name="avenant_champ_libre",
     ),
     path(
+        "avenant_projet_social/<convention_uuid>",
+        views.AvenantProjetSocialView.as_view(),
+        name="avenant_projet_social",
+    ),
+    path(
         "expert_mode/<convention_uuid>",
         views.expert_mode,
         name="expert_mode",
+    ),
+    path(
+        "projet_social/<convention_uuid>",
+        views.ProjetSocialView.as_view(),
+        name="projet_social",
     ),
 ]

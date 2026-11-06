@@ -1,0 +1,34 @@
+{% extends "layout/base.html" %}
+
+{% block page_title %}
+    {% if convention.is_avenant %}
+        Avenant - Projet Social - APiLos
+    {% else %}
+        Étape {{ form_step.number }} - Projet Social - APiLos
+    {% endif %}
+{% endblock page_title %}
+
+{% load static %}
+
+{% block content %}
+    <div class="fr-container-fluid ds_banner fr-pb-1w">
+        {% include "conventions/common/form_header.html" %}
+        {% include "common/step_progressbar.html" %}
+        <div class="fr-container">
+            <form method="post">
+                {% csrf_token %}
+                {% include "common/form/input_textarea.html" with form_input=form.publics_accueillis %}
+                {% include "common/form/input_textarea.html" with form_input=form.actions_relogement_social %}
+                {% include "common/form/input_textarea.html" with form_input=form.conditions_specifiques_accueil %}
+                {% include "common/form/input_textarea.html" with form_input=form.conditions_admission %}
+                {% include "common/form/input_number.html" with form_input=form.duree_maximale_accueil_mois %}
+                {% include "common/form/input_textarea.html" with form_input=form.conditions_renouvellement_accueil %}
+                {% include "common/form/input_textarea.html" with form_input=form.modalites_attribution %}
+                {% include "common/form/input_textarea.html" with form_input=form.actions_caractere_social %}
+                {% include "common/form/input_textarea.html" with form_input=form.action_insertion_par_logement %}
+                {% include "common/form/input_textarea.html" with form_input=form.projet_relogement %}
+                {% include "conventions/common/form_footer_button.html" %}
+            </form>
+        </div>
+    </div>
+{% endblock content %}

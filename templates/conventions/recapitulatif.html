@@ -102,7 +102,6 @@
                         {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered checked=False %}
                         {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered checked=False %}
                     {% endif %}
-
                     {% if 'duree' in avenant_list %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:avenant_financement' checked=True %}
                     {% else %}
@@ -133,17 +132,17 @@
                     {% else %}
                         {% include "conventions/recapitulatif/champ_libre.html" with target_url='conventions:avenant_champ_libre' checked=False %}
                     {% endif %}
+                    {% if convention.programme.nature_logement == 'RESISDENCESOCIALE' %}
+                        {% if 'projet_social' in avenant_list %}
+                            {% include "conventions/recapitulatif/projet_social.html" with target_url='conventions:avenant_projet_social' checked=True %}
+                        {% else %}
+                            {% include "conventions/recapitulatif/projet_social.html" with target_url='conventions:avenant_projet_social' checked=False %}
+                        {% endif %}
+                    {% endif %}
                     {% if 'commentaires' in avenant_list %}
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' checked=True %}
                     {% else %}
                         {% include "conventions/recapitulatif/commentaires.html" with target_url='conventions:avenant_commentaires' checked=False %}
-                    {% endif %}
-                    {% if not convention.is_avenant and convention|display_convention_form_progressbar %}
-                        {% if 'commentaires' not in avenant_list %}
-                            <hr class="fr-mt-3w">
-                            {% include "conventions/avenant/commentaires_update_start.html" with avenant_uuid=convention.uuid %}
-                            <hr>
-                        {% endif %}
                     {% endif %}
                 {% else %}
                     {% include "conventions/recapitulatif/bailleur.html" with target_url='conventions:bailleur' bailleur=convention.bailleur %}
