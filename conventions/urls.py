@@ -428,4 +428,9 @@ urlpatterns = [
         views.expert_mode,
         name="expert_mode",
     ),
+    path(
+        "projet_social/<convention_uuid>",
+        views.ProjetSocialView.as_view(),
+        name="projet_social",
+    ),
 ]
