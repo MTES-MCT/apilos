@@ -285,7 +285,7 @@ L'ensemble des routes mises à disposition par l'API du SIAP sont disponible dan
 
 Les API pour dialoguer avec le SIAP sont disponibles sur le endpoint `api-siap/v0`
 
-Une interface swagger est disponible sur la route `/api-siap/v0/schema-ui/` et le contrat d'interface OpenAPI 3 sur la route `/api-siap/v0/schema/`.
+Lorsque `DEBUG=True` (environnement de développement uniquement), une interface Swagger est disponible sur la route `/api-siap/v0/schema-ui/`, une interface Redoc sur `/api-siap/v0/schema-redoc/` et le contrat d'interface OpenAPI 3 sur la route `/api-siap/v0/schema/`. Pour des raisons de sécurité, ces routes de documentation et de débogage (`/api-siap/v0/schema/`, `/api-siap/v0/schema-ui/`, `/api-siap/v0/schema-redoc/`, `/api-siap/v0/dummy/` et `/api-siap/v0/api-auth/`) sont désactivées (HTTP 404) lorsque `DEBUG=False` (production / staging).
 
 Récupérer l'email de l'utilisteur utilisé pour les tests : généralement votre propre email utilisé pour se connecter à CERBERE
 Récupérer l'ID de l'habilitation utilisé pour les tests : les ID sont accéssibles en inspectant les liens du menu permettant de changer d'habilitation en haut à droite de l'écran
@@ -297,7 +297,7 @@ from siap.siap_client.client import build_jwt
 build_jwt(user_login="my.name@beta.gouv.fr", habilitation_id=31)
 ```
 
-Accéder à l'interface de test : <HOST>/api-siap/v0/schema-ui/#/statistics/convention_kpi_list
+Accéder à l'interface de test (uniquement en environnement avec `DEBUG=True`) : <HOST>/api-siap/v0/schema-ui/#/statistics/convention_kpi_list
 
 Cliquez sur le bouton `Authorize` à droite de d'écran et copier le JWT token
 
