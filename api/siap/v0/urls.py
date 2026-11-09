@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.urls import include, path
 from drf_spectacular.views import (
     SpectacularAPIView,
@@ -14,8 +15,6 @@ from programmes.api.operation_api_views import (
 )
 
 urlpatterns = [
-    # API authentication
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
     # Main configuration route
     path("config/", ApilosConfiguration.as_view()),
     # Main configuration route
@@ -26,17 +25,23 @@ urlpatterns = [
     path("close_operation/<str:numero_operation>/", OperationClosed.as_view()),
     # Opération cancel route
     path("cancel_operation/<str:numero_operation>/", OperationCanceled.as_view()),
-    path("dummy/", DummyView.as_view()),
-    # DRF spectacular
-    path("schema/", SpectacularAPIView.as_view(), name="schema"),
-    path(
-        "schema-ui/",
-        SpectacularSwaggerSplitView.as_view(url_name="api-siap:schema"),
-        name="schema-ui",
-    ),
-    path(
-        "schema-redoc/",
-        SpectacularRedocView.as_view(url_name="api-siap:schema"),
-        name="schema-redoc",
-    ),
 ]
+
+if settings.DEBUG:
+    urlpatterns += [
+        # API authentication
+        path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+        path("dummy/", DummyView.as_view()),
+        # DRF spectacular
+        path("schema/", SpectacularAPIView.as_view(), name="schema"),
+        path(
+            "schema-ui/",
+            SpectacularSwaggerSplitView.as_view(url_name="api-siap:schema"),
+            name="schema-ui",
+        ),
+        path(
+            "schema-redoc/",
+            SpectacularRedocView.as_view(url_name="api-siap:schema"),
+            name="schema-redoc",
+        ),
+    ]

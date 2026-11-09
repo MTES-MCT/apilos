@@ -395,50 +395,73 @@ SESSION_COOKIE_SAMESITE = "Lax"
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
+
 # https://django-csp.readthedocs.io/en/latest/configuration.html
-CONTENT_SECURITY_POLICY = {
-    "DIRECTIVES": {
-        "connect-src": (SELF, "https://stats.data.gouv.fr/piwik.php"),
-        "default-src": "'none'",
-        "font-src": (SELF, "data:"),
-        "frame-src": (
-            SELF,
-            "https://www.dailymotion.com/embed/video/x8fkp4y",
-            "https://www.dailymotion.com/embed/video/x8frr91",
-            "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
-        ),
-        "img-src": (
-            SELF,
-            "data:",
-            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
-        ),
-        "manifest-src": SELF,
-        "object-src": "'none'",
-        "script-src": (
-            "https://stats.data.gouv.fr/piwik.js",
-            SELF,
-            NONCE,
-            "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
-            "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
-            "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
-            # Convention > récapitilatif > manage type I and type II options
-            "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
-            "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",
-            # Convention > Récapitulatif > Comment type1and2
-            "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
-            # Swagger UI
-            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
-            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
-        ),
-        "style-src": (
-            SELF,
-            "https://code.highcharts.com/css/highcharts.css",
-            "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
-            "'unsafe-inline'",
-        ),
-    },
-    "EXCLUDE_URL_PREFIXES": ("/explorer",),
-}
+def get_content_security_policy(debug: bool) -> dict:
+    return {
+        "DIRECTIVES": {
+            "connect-src": (SELF, "https://stats.data.gouv.fr/piwik.php"),
+            "default-src": "'none'",
+            "font-src": (SELF, "data:"),
+            "frame-src": (
+                SELF,
+                "https://www.dailymotion.com/embed/video/x8fkp4y",
+                "https://www.dailymotion.com/embed/video/x8frr91",
+                "https://metabase.apilos.beta.gouv.fr/public/dashboard/b91cd727-95e2-44c7-b8ae-0cf4a235abfb",
+            ),
+            "img-src": (
+                SELF,
+                "data:",
+                *(
+                    (
+                        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/favicon-32x32.png",
+                    )
+                    if debug
+                    else ()
+                ),
+            ),
+            "manifest-src": SELF,
+            "object-src": "'none'",
+            "script-src": (
+                "https://stats.data.gouv.fr/piwik.js",
+                SELF,
+                NONCE,
+                "'sha256-zaYxlJmjbzgo2YczX5XHFlvamZUNy264d7XlOOUwMME='",
+                "'sha256-928U3JmFf9xytJJBtEU5V1FVGcqsTfwaVnI2vmHmamA='",
+                "'sha256-lkrKw/baCFdnI+tB9T+0yFMewpXSk9yct2ZbWEGPDhY='",
+                # Convention > récapitilatif > manage type I and type II options
+                "'sha256-J71e5kr85q2XGRl+qwOA/tpMsXmKDjeTnvlzBhBsz/0='",
+                "'sha256-h7boyH6dI/JQnsm6Iw1sAtEbdb/+638kREPj4sfWmMs='",
+                # Convention > Récapitulatif > Comment type1and2
+                "'sha256-7uHmVaAHWxl0RElSoWED7kK+9kRSQ+E6SQ3aBK1prkU='",
+                *(
+                    (
+                        # Swagger UI
+                        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-bundle.js",
+                        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui-standalone-preset.js",
+                    )
+                    if debug
+                    else ()
+                ),
+            ),
+            "style-src": (
+                SELF,
+                "https://code.highcharts.com/css/highcharts.css",
+                *(
+                    (
+                        "https://cdn.jsdelivr.net/npm/swagger-ui-dist@latest/swagger-ui.css",
+                    )
+                    if debug
+                    else ()
+                ),
+                "'unsafe-inline'",
+            ),
+        },
+        "EXCLUDE_URL_PREFIXES": ("/explorer",),
+    }
+
+
+CONTENT_SECURITY_POLICY = get_content_security_policy(DEBUG)
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
