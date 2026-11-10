@@ -13,7 +13,18 @@
 {% block content %}
     <div class="fr-m-3w">
         {% if is_ecolo %}
-            <p>La convention n'existe pas dans Apilos, nous vous prions de l'importer depuis Ecoloweb.</p>
+            <div class="convention-import-notice">
+                <p>La convention n'existe pas dans Apilos. Veuillez suivre la procédure selon la date actuelle :</p>
+                <div style="margin-bottom: 15px; padding: 10px; border-left: 4px solid #28a745; background-color: #f9f9f9;">
+                    <strong>Avant le 30 septembre :</strong>
+                    L'import doit être réalisé directement depuis <strong>Ecoloweb</strong>.
+                </div>
+
+                <div style="padding: 10px; border-left: 4px solid #ffc107; background-color: #f9f9f9;">
+                    <strong>Après le 30 septembre :</strong>
+                    Ecoloweb étant fermé, veuillez appliquer le nouveau mode opératoire.
+                </div>
+            </div>
         {% else %}
             <p>Votre document est en cours de génération et sera bientôt disponible sur cette page.</p>
             <p>Merci pour votre compréhension</p>
