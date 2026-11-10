@@ -106,7 +106,7 @@ class LogementEDDForm(forms.Form):
     financement = forms.TypedChoiceField(
         required=True,
         label="",
-        choices=FinancementEDD.choices,
+        choices=FinancementEDD.choices_for_edd(),
         error_messages={
             "required": "Le financement est obligatoire",
         },
