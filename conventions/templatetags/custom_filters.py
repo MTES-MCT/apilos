@@ -2,7 +2,7 @@ import json
 from re import compile as rcompile
 from re import escape as rescape
 from typing import Any
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 
 from django.conf import settings
 from django.http.request import HttpRequest
@@ -126,6 +126,13 @@ def is_conventionnement_menu_url(menu_url: str) -> str:
 
 @register.filter
 def get_change_habilitation_url(request: HttpRequest, habilitation_id: int) -> str:
+    # For development env to facilitate habilitation change
+    current_url = urlsplit(request.build_absolute_uri())
+    if current_url.hostname == "local.beta.gouv.fr" and settings.DEBUG:
+        params = request.GET.copy()
+        params["habilitation_id"] = habilitation_id
+        return current_url._replace(query=params.urlencode()).geturl()
+
     client = SIAPClient.get_instance()
     if settings.CERBERE_AUTH:
         return (
