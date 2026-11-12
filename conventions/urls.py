@@ -33,6 +33,11 @@ urlpatterns = [
         name="recapitulatif",
     ),
     path(
+        "recapitulatif/<convention_uuid>/commentaires",
+        views.RecapitulatifCommentairesView.as_view(),
+        name="recapitulatif_commentaires",
+    ),
+    path(
         "post_action/<convention_uuid>",
         views.ActionsPostValidation.as_view(),
         name="post_action",

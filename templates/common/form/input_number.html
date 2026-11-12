@@ -25,12 +25,12 @@
                 {% if form_input.value is not None %}value="{{ form_input.value|unlocalize }}"{% endif %}
                 {% include "common/form/disable_form_input.html" %}>
 
-            <script type="text/javascript" nonce="{{ request.csp_nonce }}">
+            {% if onchange %}<script type="text/javascript" nonce="{{ request.csp_nonce }}">
                 document.addEventListener('DOMContentLoaded', function () {
                     document.getElementById('{{ form_input.id_for_label }}')
                         .addEventListener('click', function(){ {{ onchange }} });
                 });
-            </script>
+            </script>{% endif %}
             {% include "common/utils/comments_field.html" %}
         </div>
     </div>

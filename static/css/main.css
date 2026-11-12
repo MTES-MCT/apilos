@@ -176,6 +176,7 @@ details > summary::-webkit-details-marker {
 }
 
 .fr-table.table--limited-height .fr-table__content{
+  position: relative;
   max-height: 400px;
   overflow-y: auto;
 }

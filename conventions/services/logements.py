@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
+from django.db.models import Prefetch
 
 from conventions.forms import (
     FoyerResidenceLogementFormSet,
@@ -48,7 +49,9 @@ class ConventionLogementsService(ConventionService):
         initial_corrigee = []
         initial_corrigee_sans_loyer = []
         initial_convention_mixte = []
-        lots = self.convention.lots.prefetch_related("logements").all()
+        lots = self.convention.lots.prefetch_related(
+            Prefetch("logements", queryset=Logement.objects.order_by("import_order"))
+        ).all()
         for lot in lots:
             initial_convention_mixte.append(
                 {
@@ -64,7 +67,7 @@ class ConventionLogementsService(ConventionService):
                 }
             )
 
-            logements = lot.logements.order_by("import_order")
+            logements = lot.logements.all()
             for logement in logements:
                 common_params = {
                     "uuid": logement.uuid,
@@ -260,62 +263,67 @@ class ConventionLogementsService(ConventionService):
         uuid_value = form_logement["uuid"].value()
         logement = self._logements_cache.get(uuid_value) if uuid_value else None
 
-        initformset = {
-            **initformset,
-            f"{prefix}-{idx}-designation": self._get_form_value(
-                form_logement, "designation", logement
-            ),
-            f"{prefix}-{idx}-financement": self._get_form_value(
-                form_logement, "financement", logement
-            ),
-            f"{prefix}-{idx}-typologie": self._get_form_value(
-                form_logement, "typologie", logement
-            ),
-            f"{prefix}-{idx}-surface_habitable": self._get_form_value(
-                form_logement, "surface_habitable", logement
-            ),
-            f"{prefix}-{idx}-import_order": self._get_form_value(
-                form_logement, "import_order", logement
-            ),
-        }
+        initformset.update(
+            {
+                f"{prefix}-{idx}-designation": self._get_form_value(
+                    form_logement, "designation", logement
+                ),
+                f"{prefix}-{idx}-financement": self._get_form_value(
+                    form_logement, "financement", logement
+                ),
+                f"{prefix}-{idx}-typologie": self._get_form_value(
+                    form_logement, "typologie", logement
+                ),
+                f"{prefix}-{idx}-surface_habitable": self._get_form_value(
+                    form_logement, "surface_habitable", logement
+                ),
+                f"{prefix}-{idx}-import_order": self._get_form_value(
+                    form_logement, "import_order", logement
+                ),
+            }
+        )
         if uuid_value:
-            initformset = {
-                **initformset,
-                f"{prefix}-{idx}-uuid": logement.uuid if logement else uuid_value,
-            }
+            initformset.update(
+                {
+                    f"{prefix}-{idx}-uuid": logement.uuid if logement else uuid_value,
+                }
+            )
         if "sans_loyer" not in prefix:
-            initformset = {
-                **initformset,
-                f"{prefix}-{idx}-loyer_par_metre_carre": self._get_form_value(
-                    form_logement, "loyer_par_metre_carre", logement
-                ),
-                f"{prefix}-{idx}-coeficient": self._get_form_value(
-                    form_logement, "coeficient", logement
-                ),
-                f"{prefix}-{idx}-loyer": self._get_form_value(
-                    form_logement, "loyer", logement
-                ),
-            }
+            initformset.update(
+                {
+                    f"{prefix}-{idx}-loyer_par_metre_carre": self._get_form_value(
+                        form_logement, "loyer_par_metre_carre", logement
+                    ),
+                    f"{prefix}-{idx}-coeficient": self._get_form_value(
+                        form_logement, "coeficient", logement
+                    ),
+                    f"{prefix}-{idx}-loyer": self._get_form_value(
+                        form_logement, "loyer", logement
+                    ),
+                }
+            )
         if "corrigee" in prefix:
-            initformset = {
-                **initformset,
-                f"{prefix}-{idx}-surface_corrigee": self._get_form_value(
-                    form_logement, "surface_corrigee", logement
-                ),
-            }
+            initformset.update(
+                {
+                    f"{prefix}-{idx}-surface_corrigee": self._get_form_value(
+                        form_logement, "surface_corrigee", logement
+                    ),
+                }
+            )
         else:
-            initformset = {
-                **initformset,
-                f"{prefix}-{idx}-surface_annexes": self._get_form_value(
-                    form_logement, "surface_annexes", logement
-                ),
-                f"{prefix}-{idx}-surface_annexes_retenue": self._get_form_value(
-                    form_logement, "surface_annexes_retenue", logement
-                ),
-                f"{prefix}-{idx}-surface_utile": self._get_form_value(
-                    form_logement, "surface_utile", logement
-                ),
-            }
+            initformset.update(
+                {
+                    f"{prefix}-{idx}-surface_annexes": self._get_form_value(
+                        form_logement, "surface_annexes", logement
+                    ),
+                    f"{prefix}-{idx}-surface_annexes_retenue": self._get_form_value(
+                        form_logement, "surface_annexes_retenue", logement
+                    ),
+                    f"{prefix}-{idx}-surface_utile": self._get_form_value(
+                        form_logement, "surface_utile", logement
+                    ),
+                }
+            )
         nb_logement = nb_logement + 1
         return initformset, nb_logement
 
