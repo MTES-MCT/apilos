@@ -57,6 +57,7 @@ class ConventionManager(models.Manager):
         return all_conventions[0], all_conventions[1:]
 
     def group_conventions(self, uuids_conventions):
+        """Group conventions, keeping the one with the lowest primary key."""
         if not switch_is_active(settings.SWITCH_CONVENTION_MIXTE_ON):
             return
 
@@ -65,7 +66,9 @@ class ConventionManager(models.Manager):
                 "Nous ne pouvons pas créer une convention mixte, une liste de conventions doit être fournie"
             )
 
-        related_conventions = self.model.objects.filter(uuid__in=uuids_conventions)
+        related_conventions = self.model.objects.filter(
+            uuid__in=uuids_conventions
+        ).order_by("pk")
 
         programme_ids = {conv.programme_id for conv in related_conventions}
         if len(programme_ids) > 1:

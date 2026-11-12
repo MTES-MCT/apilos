@@ -207,7 +207,7 @@ class ConventionMixViewTests(TestCase):
         self.assertEqual(self.convention_plus.lots.count(), 1)
 
         data = {
-            "uuids": [str(self.convention_plai.uuid), str(self.convention_plus.uuid)],
+            "uuids": [str(self.convention_plus.uuid), str(self.convention_plai.uuid)],
             "action": "create",
         }
 
@@ -232,6 +232,9 @@ class ConventionMixViewTests(TestCase):
         self.convention_plai.refresh_from_db()
 
         self.assertEqual(self.convention_plai.lots.count(), 2)
+        self.assertFalse(
+            Convention.objects.filter(uuid=self.convention_plus.uuid).exists()
+        )
 
     @mock.patch("conventions.views.conventions_mix.switch_is_active")
     @mock.patch("conventions.models.convention.switch_is_active")
@@ -329,7 +332,7 @@ class ConventionMixViewTests(TestCase):
         data = {
             "uuids": [
                 str(self.convention_plai.uuid),
-                str(self.convention_pls_programme_2.uuid),
+                str(self.mixed_convention.uuid),
             ],
             "action": "create",
         }

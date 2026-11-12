@@ -401,7 +401,7 @@
                     {% endif %}
 
                     {% if convention.is_avenant and checked %}
-                        {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=convention.lot.annexes.all lot=convention.lot %}
+                        {% include "conventions/recapitulatif/annexes_inner_content.html" with target_url='conventions:avenant_annexes' annexes=recap_lot_annexes lot=convention.lot %}
                     {% endif %}
                 </div>
             </div>
