@@ -360,7 +360,7 @@ class LogementEDD(models.Model):
     )
     financement = models.CharField(
         max_length=25,
-        choices=FinancementEDD.choices,
+        choices=FinancementEDD.choices_for_edd(),
         default=FinancementEDD.PLUS,
     )
     numero_lot = models.CharField(max_length=255, blank=True)
