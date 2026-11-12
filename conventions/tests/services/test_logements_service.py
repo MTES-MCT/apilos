@@ -160,6 +160,71 @@ class ConventionLogementsServiceTests(TestCase):
         ]
         assert self.service_avenant.formset.non_form_errors() == []
 
+    def test_save_avenant_deletes_disabled_formset_logements(self):
+        self.service_avenant.request.POST = {
+            "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
+            **logement_success_payload,
+        }
+        self.service_avenant.save()
+        self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(self.service_avenant.convention.lot.logements.count(), 2)
+
+        self.service_avenant.request.POST = {
+            "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
+            **logement_success_payload,
+            "formset_disabled": "true",
+            "ignore_optional_errors": "1",
+        }
+        self.service_avenant.save()
+        self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(self.service_avenant.convention.lot.logements.count(), 0)
+
+    def test_save_avenant_moves_logements_from_avec_loyer_to_sans_loyer(self):
+        self.service_avenant.request.POST = {
+            "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
+            **logement_success_payload,
+        }
+        self.service_avenant.save()
+        self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
+        lgt_b1 = self.service_avenant.convention.lot.logements.get(designation="B1")
+        lgt_b2 = self.service_avenant.convention.lot.logements.get(designation="B2")
+
+        self.service_avenant.request.POST = {
+            "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
+            **logement_success_payload,
+            "formset_disabled": "true",
+            "formset_sans_loyer_disabled": "false",
+            "sans_loyer-TOTAL_FORMS": "2",
+            "sans_loyer-INITIAL_FORMS": "2",
+            "sans_loyer-0-uuid": str(lgt_b1.uuid),
+            "sans_loyer-0-designation": "B1",
+            "sans_loyer-0-financement": "PLUS",
+            "sans_loyer-0-typologie": "T1",
+            "sans_loyer-0-surface_habitable": "12.12",
+            "sans_loyer-0-surface_annexes": "45.57",
+            "sans_loyer-0-surface_annexes_retenue": "0.00",
+            "sans_loyer-0-surface_utile": "30.00",
+            "sans_loyer-0-import_order": "0",
+            "sans_loyer-1-uuid": str(lgt_b2.uuid),
+            "sans_loyer-1-designation": "B2",
+            "sans_loyer-1-financement": "PLUS",
+            "sans_loyer-1-typologie": "T1",
+            "sans_loyer-1-surface_habitable": "30.00",
+            "sans_loyer-1-surface_annexes": "0.00",
+            "sans_loyer-1-surface_annexes_retenue": "0.00",
+            "sans_loyer-1-surface_utile": "30.00",
+            "sans_loyer-1-import_order": "1",
+            "ignore_optional_errors": "1",
+        }
+        self.service_avenant.save()
+        self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
+        self.assertEqual(
+            len(self.service_avenant.convention.logements_import_ordered), 0
+        )
+        self.assertEqual(
+            len(self.service_avenant.convention.logements_sans_loyer_import_ordered), 2
+        )
+
 
 class ConventionFoyerResidenceLogementsServiceTests(TestCase):
     fixtures = [
