@@ -603,24 +603,14 @@ class ConventionLogementsService(ConventionService):
 
     def _save_logements_sans_loyer(self, form_item):
         active_uuids = self._get_active_logement_uuids(form_item)
-        if form_item.cleaned_data["formset_sans_loyer_disabled"]:
-            # Clear all logements sans loyer
-            self._delete_logements_for_all_lots(
-                exclude_uuids=active_uuids,
-                surface_corrigee__isnull=True,
-                loyer__isnull=True,
-            )
-            return
-
-        lgt_uuids1 = list(
-            map(lambda x: x.cleaned_data["uuid"], self.formset_sans_loyer)
-        )
-        lgt_uuids = list(filter(None, lgt_uuids1))
         self._delete_logements_for_all_lots(
-            exclude_uuids=list(set(lgt_uuids) | set(active_uuids)),
+            exclude_uuids=active_uuids,
             surface_corrigee__isnull=True,
             loyer__isnull=True,
         )
+        if form_item.cleaned_data["formset_sans_loyer_disabled"]:
+            return
+
         for form_logement in self.formset_sans_loyer:
             if form_logement.cleaned_data["uuid"]:
                 logement = self._get_cached_logement(form_logement.cleaned_data["uuid"])
@@ -659,22 +649,14 @@ class ConventionLogementsService(ConventionService):
 
     def _save_logements(self, form_item):
         active_uuids = self._get_active_logement_uuids(form_item)
-        if form_item.cleaned_data["formset_disabled"]:
-            # Clear all logements avec loyer
-            self._delete_logements_for_all_lots(
-                exclude_uuids=active_uuids,
-                surface_corrigee__isnull=True,
-                loyer__gt=0,
-            )
-            return
-
-        lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset))
-        lgt_uuids = list(filter(None, lgt_uuids1))
         self._delete_logements_for_all_lots(
-            exclude_uuids=list(set(lgt_uuids) | set(active_uuids)),
+            exclude_uuids=active_uuids,
             surface_corrigee__isnull=True,
             loyer__gt=0,
         )
+        if form_item.cleaned_data["formset_disabled"]:
+            return
+
         for form_logement in self.formset:
             if form_logement.cleaned_data["uuid"]:
                 logement = self._get_cached_logement(form_logement.cleaned_data["uuid"])
@@ -720,22 +702,14 @@ class ConventionLogementsService(ConventionService):
 
     def _save_logements_corrigee(self, form_item):
         active_uuids = self._get_active_logement_uuids(form_item)
-        if form_item.cleaned_data["formset_corrigee_disabled"]:
-            # Clear all logements with surface corrigée and loyer
-            self._delete_logements_for_all_lots(
-                exclude_uuids=active_uuids,
-                surface_corrigee__isnull=False,
-                loyer__gt=0,
-            )
-            return
-
-        lgt_uuids1 = list(map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee))
-        lgt_uuids = list(filter(None, lgt_uuids1))
         self._delete_logements_for_all_lots(
-            exclude_uuids=list(set(lgt_uuids) | set(active_uuids)),
+            exclude_uuids=active_uuids,
             surface_corrigee__isnull=False,
             loyer__gt=0,
         )
+        if form_item.cleaned_data["formset_corrigee_disabled"]:
+            return
+
         for form_logement in self.formset_corrigee:
             if form_logement.cleaned_data["uuid"]:
                 logement = self._get_cached_logement(form_logement.cleaned_data["uuid"])
@@ -778,24 +752,14 @@ class ConventionLogementsService(ConventionService):
 
     def _save_logements_corrigee_sans_loyer(self, form_item):
         active_uuids = self._get_active_logement_uuids(form_item)
-        if form_item.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
-            # Clear all logements with surface corrigée and loyer
-            self._delete_logements_for_all_lots(
-                exclude_uuids=active_uuids,
-                surface_corrigee__isnull=False,
-                loyer__isnull=True,
-            )
-            return
-
-        lgt_uuids1 = list(
-            map(lambda x: x.cleaned_data["uuid"], self.formset_corrigee_sans_loyer)
-        )
-        lgt_uuids = list(filter(None, lgt_uuids1))
         self._delete_logements_for_all_lots(
-            exclude_uuids=list(set(lgt_uuids) | set(active_uuids)),
+            exclude_uuids=active_uuids,
             surface_corrigee__isnull=False,
             loyer__isnull=True,
         )
+        if form_item.cleaned_data["formset_corrigee_sans_loyer_disabled"]:
+            return
+
         for form_logement in self.formset_corrigee_sans_loyer:
             if form_logement.cleaned_data["uuid"]:
                 logement = self._get_cached_logement(form_logement.cleaned_data["uuid"])
