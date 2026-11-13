@@ -19,7 +19,14 @@ from programmes.models import (
 from programmes.models.choices import Financement
 
 
-class LotLgtsOptionForm(forms.Form):
+class LogementSectionsForm(forms.Form):
+    formset_sans_loyer_disabled = forms.BooleanField(required=False)
+    formset_disabled = forms.BooleanField(required=False)
+    formset_corrigee_disabled = forms.BooleanField(required=False)
+    formset_corrigee_sans_loyer_disabled = forms.BooleanField(required=False)
+
+
+class LotLgtsOptionForm(LogementSectionsForm):
     """
     Options liées à la déclaration des logements des conventions HLM, SEM, Type I & 2
     """
@@ -95,18 +102,6 @@ class LotLgtsOptionForm(forms.Form):
         error_messages={
             "max_digits": "La surface habitable doit-être inférieur à 100000 m²",
         },
-    )
-    formset_sans_loyer_disabled = forms.BooleanField(
-        required=False,
-    )
-    formset_disabled = forms.BooleanField(
-        required=False,
-    )
-    formset_corrigee_disabled = forms.BooleanField(
-        required=False,
-    )
-    formset_corrigee_sans_loyer_disabled = forms.BooleanField(
-        required=False,
     )
 
 

@@ -14,7 +14,7 @@
 
         {% if convention.is_avenant %}
             <div class="fr-toggle fr-mb-2w">
-                <input type="checkbox" {% if formset.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-utile-messages" id="toggle-utile">
+                <input type="checkbox" {% if not form.formset_disabled.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-utile-messages" id="toggle-utile">
                 <label class="fr-toggle__label" for="toggle-utile">Surface utile avec loyers</label>
                 <div class="fr-messages-group" id="toggle-utile-messages" aria-live="polite">
                 </div>
@@ -26,7 +26,7 @@
                     </p>
                 {% endif %}
                 <input type="hidden" id="{{ form.formset_disabled.id_for_label }}" name="{{ form.formset_disabled.html_name }}"
-                    value="">
+                    value="{% if form.formset_disabled.value %}1{% endif %}">
             </div>
         {% endif %}
         <div class="table-utile">
@@ -48,7 +48,10 @@
             {% endfor %}
 
             {{ formset.management_form }}
-            <div class="fr-table">
+            <div class="fr-table{% if formset.total_error_count %} apilos-table--error{% endif %}">
+                {% if formset.total_error_count %}
+                    <p class="fr-error-text">Ce tableau contient des erreurs. Veuillez corriger les champs concernés.</p>
+                {% endif %}
                 <div class="fr-table__wrapper">
                     <div class="fr-table__container">
                         <div class="fr-table__content">
@@ -187,7 +190,6 @@
             </div>
         </div>
         {% if convention.is_avenant %}
-            <!-- C'est dommage d'ignorer les optional errors ici, mais sinon ça pose problème lorsqu'on décoche une section avec des logements et qu'on trigger une optionnal error : il faudrait garder l'info que la case est décochée (gestion de l'état) -->
             <input type="hidden" id="id_ignore_optional_errors" name="ignore_optional_errors" value="1"/>
 
             {% include "conventions/common/formset_logements.html" with formset=formset_sans_loyer js_name="utile-sans-loyer" disabled_field=form.formset_sans_loyer_disabled file_type="logements_sans_loyer" file_field_label='file_sans_loyer' js_total_code='sl' formset_title='Surface utile sans loyers' use_surface_corrigee=False use_loyer=False %}
@@ -302,11 +304,11 @@
         if (input_checkbox.checked) {
             table_div.classList.remove("hidden");
             error_div.classList.add("hidden");
-            if (input_hidden) input_hidden.value = "false";
+            if (input_hidden) input_hidden.value = "";
         } else {
             table_div.classList.add("hidden");
             error_div.classList.remove("hidden");
-            if (input_hidden) input_hidden.value = "true";
+            if (input_hidden) input_hidden.value = "1";
         }
 
         // Listen to change on checkbox
@@ -314,7 +316,7 @@
             table_div.classList.toggle("hidden");
             error_div.classList.toggle("hidden");
             if (input_hidden) {
-                input_hidden.value = input_checkbox.checked ? "false" : "true";
+                input_hidden.value = input_checkbox.checked ? "" : "1";
             }
         }
     }

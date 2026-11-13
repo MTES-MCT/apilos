@@ -51,6 +51,11 @@
   display: inline;
 }
 
+.apilos-table--error {
+  border-left: 0.125rem solid var(--border-plain-error);
+  padding-left: 0.75rem;
+}
+
 .apilos-d-block {
   display: block;
 }
