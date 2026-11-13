@@ -203,8 +203,28 @@ class ConventionLogementsService(ConventionService):
                 import_order=True,
             )
             if result["success"] != utils.ReturnStatus.ERROR:
+                section_filters = {
+                    "avec_loyer": {
+                        "surface_corrigee__isnull": True,
+                        "loyer__gt": 0,
+                    },
+                    "sans_loyer": {
+                        "surface_corrigee__isnull": True,
+                        "loyer__isnull": True,
+                    },
+                    "corrigee_avec_loyer": {
+                        "surface_corrigee__isnull": False,
+                        "loyer__gt": 0,
+                    },
+                    "corrigee_sans_loyer": {
+                        "surface_corrigee__isnull": False,
+                        "loyer__isnull": True,
+                    },
+                }.get(prefix, {})
                 lgts_by_designation = {}
-                for lgt in Logement.objects.filter(lot__in=self.convention.lots.all()):
+                for lgt in Logement.objects.filter(
+                    lot__in=self.convention.lots.all(), **section_filters
+                ):
                     lgts_by_designation[lgt.designation] = lgt.uuid
                 for obj in result["objects"]:
                     if (

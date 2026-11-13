@@ -179,7 +179,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(self.service_avenant.convention.lot.logements.count(), 0)
 
-    def test_save_avenant_moves_logements_from_avec_loyer_to_sans_loyer(self):
+    def test_save_avenant_keeps_both_avec_loyer_and_sans_loyer_when_both_enabled(self):
         self.service_avenant.request.POST = {
             "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
             **logement_success_payload,
@@ -192,11 +192,13 @@ class ConventionLogementsServiceTests(TestCase):
         self.service_avenant.request.POST = {
             "lots-0-uuid": str(self.service_avenant.convention.lot.uuid),
             **logement_success_payload,
-            "formset_disabled": "true",
+            "avec_loyer-0-uuid": str(lgt_b1.uuid),
+            "avec_loyer-1-uuid": str(lgt_b2.uuid),
+            "formset_disabled": "false",
             "formset_sans_loyer_disabled": "false",
             "sans_loyer-TOTAL_FORMS": "2",
             "sans_loyer-INITIAL_FORMS": "2",
-            "sans_loyer-0-uuid": str(lgt_b1.uuid),
+            "sans_loyer-0-uuid": "",
             "sans_loyer-0-designation": "B1",
             "sans_loyer-0-financement": "PLUS",
             "sans_loyer-0-typologie": "T1",
@@ -205,7 +207,7 @@ class ConventionLogementsServiceTests(TestCase):
             "sans_loyer-0-surface_annexes_retenue": "0.00",
             "sans_loyer-0-surface_utile": "30.00",
             "sans_loyer-0-import_order": "0",
-            "sans_loyer-1-uuid": str(lgt_b2.uuid),
+            "sans_loyer-1-uuid": "",
             "sans_loyer-1-designation": "B2",
             "sans_loyer-1-financement": "PLUS",
             "sans_loyer-1-typologie": "T1",
@@ -219,7 +221,7 @@ class ConventionLogementsServiceTests(TestCase):
         self.service_avenant.save()
         self.assertEqual(self.service_avenant.return_status, utils.ReturnStatus.SUCCESS)
         self.assertEqual(
-            len(self.service_avenant.convention.logements_import_ordered), 0
+            len(self.service_avenant.convention.logements_import_ordered), 2
         )
         self.assertEqual(
             len(self.service_avenant.convention.logements_sans_loyer_import_ordered), 2
