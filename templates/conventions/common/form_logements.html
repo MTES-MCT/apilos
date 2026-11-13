@@ -14,7 +14,7 @@
 
         {% if convention.is_avenant %}
             <div class="fr-toggle fr-mb-2w">
-                <input type="checkbox" {% if formset.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-utile-messages" id="toggle-utile">
+                <input type="checkbox" {% if formset.total_form_count > 0 and not form.formset_disabled.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-utile-messages" id="toggle-utile">
                 <label class="fr-toggle__label" for="toggle-utile">Surface utile avec loyers</label>
                 <div class="fr-messages-group" id="toggle-utile-messages" aria-live="polite">
                 </div>

@@ -1,5 +1,5 @@
 <div class="fr-toggle fr-mb-2w">
-    <input type="checkbox" {% if formset.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-4633-messages" id="toggle-{{ js_name }}">
+    <input type="checkbox" {% if formset.total_form_count > 0 and not disabled_field.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-4633-messages" id="toggle-{{ js_name }}">
     <label class="fr-toggle__label" for="toggle-{{ js_name }}">{{ formset_title }}</label>
     <div class="fr-messages-group" id="toggle-{{ js_name }}-messages" aria-live="polite">
     </div>
