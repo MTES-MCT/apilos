@@ -1,5 +1,5 @@
 <div class="fr-toggle fr-mb-2w">
-    <input type="checkbox" {% if formset.total_form_count > 0 %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-4633-messages" id="toggle-{{ js_name }}">
+    <input type="checkbox" {% if not disabled_field.value %}checked="checked"{% endif %} class="fr-toggle__input" aria-describedby="toggle-4633-messages" id="toggle-{{ js_name }}">
     <label class="fr-toggle__label" for="toggle-{{ js_name }}">{{ formset_title }}</label>
     <div class="fr-messages-group" id="toggle-{{ js_name }}-messages" aria-live="polite">
     </div>
@@ -12,7 +12,7 @@
         </p>
     {% endif %}
     <input type="hidden" id="{{ disabled_field.id_for_label }}" name="{{ disabled_field.html_name }}"
-           value="">
+           value="{% if disabled_field.value %}1{% endif %}">
 </div>
 
 <div class="table-{{ js_name }}">
@@ -34,7 +34,10 @@
     {% endfor %}
 
     {{ formset.management_form }}
-    <div class="fr-table">
+    <div class="fr-table{% if formset.total_error_count %} apilos-table--error{% endif %}">
+        {% if formset.total_error_count %}
+            <p class="fr-error-text">Ce tableau contient des erreurs. Veuillez corriger les champs concernés.</p>
+        {% endif %}
         <div class="fr-table__wrapper">
             <div class="fr-table__container">
                 <div class="fr-table__content">
