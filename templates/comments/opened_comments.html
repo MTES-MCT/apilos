@@ -58,18 +58,4 @@
             <span class="fr-sr-only"> la page</span>
         </button>
     {% endif %}
-    <script type="text/javascript" nonce="{{ request.csp_nonce }}">
-        document.addEventListener('DOMContentLoaded', function() {
-        const btnMain = document.getElementById('refresh_opened_comments_main');
-        const btnEmpty = document.getElementById('refresh_opened_comments_empty');
-
-        [btnMain, btnEmpty].forEach(function(btn){
-            if (btn) {
-                btn.addEventListener('click', function() {
-                    globalThis.location.reload(true);
-                });
-            }
-        });
-    });
-    </script>
 {% endif %}
