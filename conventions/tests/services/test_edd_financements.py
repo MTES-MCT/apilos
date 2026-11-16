@@ -19,13 +19,7 @@ from conventions.tests.fixtures import logement_success_payload
 from programmes.models import Financement, LogementEDD
 from users.models import User
 
-PALULOS_FINANCEMENTS = [
-    Financement.PALULOS,
-    Financement.PALU_AV_21,
-    Financement.PALUCOM,
-    Financement.PALU_COM,
-    Financement.PALU_RE,
-]
+PALULOS_FINANCEMENTS = [Financement.PALULOS]
 
 
 class EDDFinancementTests(ParametrizedTestCase, TestCase):

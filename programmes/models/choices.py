@@ -59,10 +59,6 @@ class FinancementEDD(models.TextChoices):
     def choices_for_edd(cls):
         return cls.choices + [
             (Financement.PALULOS.value, Financement.PALULOS.label),
-            (Financement.PALU_AV_21.value, Financement.PALU_AV_21.label),
-            (Financement.PALUCOM.value, f"{Financement.PALUCOM.label} (PALUCOM)"),
-            (Financement.PALU_COM.value, f"{Financement.PALU_COM.label} (PALU_COM)"),
-            (Financement.PALU_RE.value, Financement.PALU_RE.label),
         ]
 
 
