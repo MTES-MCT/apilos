@@ -4,6 +4,7 @@ import mimetypes
 import os
 import time
 from datetime import date, datetime
+from itertools import chain
 from typing import Any
 
 from django.conf import settings
@@ -13,7 +14,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.core.files import File
 from django.core.files.storage import default_storage
-from django.db.models import QuerySet
+from django.db.models import Prefetch, QuerySet, prefetch_related_objects
 from django.http import (
     FileResponse,
     HttpRequest,
@@ -31,6 +32,7 @@ from unidecode import unidecode
 from waffle import switch_is_active
 from zipfile import ZipFile
 
+from comments.models import Comment, CommentStatut
 from conventions.forms.convention_form_simulateur_loyer import LoyerSimulateurForm
 from conventions.forms.evenement import EvenementForm
 from conventions.models import Convention, ConventionStatut, Evenement, PieceJointe
@@ -67,13 +69,57 @@ from conventions.tasks import task_generate_and_send
 from conventions.views.convention_form import BaseConventionView, ConventionFormSteps
 from core.request import AuthenticatedHttpRequest
 from core.storage import client
-from programmes.models import Financement, NatureLogement
+from programmes.models import Annexe, Financement, Logement, NatureLogement
 from programmes.services import LoyerRedevanceUpdateComputer
 from siap.siap_client.client import get_siap_credentials_from_request
 from upload.models import UploadedFile
 
 template_sent = "conventions/sent.html"
 template_post = "conventions/post.html"
+
+
+def recapitulatif_logements_context(convention):
+    prefetch_related_objects(
+        [convention],
+        Prefetch(
+            "lots__logements",
+            queryset=Logement.objects.select_related("lot").order_by("import_order"),
+            to_attr="recap_logements",
+        ),
+    )
+    logements = {
+        "recap_logements": [],
+        "recap_logements_sans_loyer": [],
+        "recap_logements_corrigee": [],
+        "recap_logements_corrigee_sans_loyer": [],
+    }
+    lots = convention.lots.all()
+    for lot in lots:
+        for logement in lot.recap_logements:
+            if logement.surface_corrigee is None:
+                key = (
+                    "recap_logements"
+                    if logement.loyer is not None
+                    else "recap_logements_sans_loyer"
+                )
+            else:
+                key = (
+                    "recap_logements_corrigee"
+                    if logement.loyer is not None
+                    else "recap_logements_corrigee_sans_loyer"
+                )
+            logements[key].append(logement)
+
+    return {
+        **logements,
+        "recap_annexes": chain.from_iterable(
+            Annexe.objects.filter(logement__lot=lot).select_related("logement__lot")
+            for lot in lots
+        ),
+        "recap_lot_annexes": Annexe.objects.filter(
+            logement__lot=convention.lot
+        ).select_related("logement__lot"),
+    }
 
 
 class RecapitulatifView(BaseConventionView):
@@ -86,7 +132,13 @@ class RecapitulatifView(BaseConventionView):
                 "programme__logementedds",
                 "lots",
                 "lots__type_stationnements",
-                "lots__logements",
+                Prefetch(
+                    "lots__logements",
+                    queryset=Logement.objects.select_related("lot").order_by(
+                        "import_order"
+                    ),
+                    to_attr="recap_logements",
+                ),
                 "programme__administration",
             ),
             uuid=convention_uuid,
@@ -110,6 +162,7 @@ class RecapitulatifView(BaseConventionView):
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **recapitulatif_logements_context(self.convention),
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention, request=request
                 ),
@@ -147,12 +200,28 @@ class RecapitulatifView(BaseConventionView):
             {
                 **base_convention_response_error(request, self.convention),
                 **result,
+                **recapitulatif_logements_context(self.convention),
                 "convention_form_steps": ConventionFormSteps(
                     convention=self.convention, request=request
                 ),
                 "switch_seconde_vie_on": switch_is_active(
                     settings.SWITCH_SECONDE_VIE_ON
                 ),
+            },
+        )
+
+
+class RecapitulatifCommentairesView(BaseConventionView):
+    @currentrole_campaign_permission_required("convention.view_convention")
+    def get(self, request: HttpRequest, **kwargs):
+        return render(
+            request,
+            "comments/opened_comments_frame.html",
+            {
+                "convention": self.convention,
+                "opened_comments": Comment.objects.filter(
+                    convention=self.convention, statut=CommentStatut.OUVERT
+                ).order_by("cree_le"),
             },
         )
 
@@ -395,6 +464,7 @@ def validate_convention(request, convention_uuid):
         "conventions/recapitulatif.html",
         {
             **result,
+            **recapitulatif_logements_context(convention),
             "convention_form_steps": ConventionFormSteps(
                 convention=convention, request=request
             ),

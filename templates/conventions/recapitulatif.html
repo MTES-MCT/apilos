@@ -40,9 +40,24 @@
                     {% include "conventions/recapitulatif/seconde_vie_parents.html" with parents_2nd_vie=convention.parents_2nd_vie.all %}
                 {% endif %}
                 {% if convention|display_comments %}
-                    <turbo-frame id="opened_comments_block" data-turbo="true">
-                        {% include "comments/opened_comments.html" %}
-                    </turbo-frame>
+                    {% include "comments/opened_comments_frame.html" %}
+                    <button type="button" id="refresh_opened_comments" hidden></button>
+                    <script nonce="{{ request.csp_nonce }}">
+                        document.getElementById("refresh_opened_comments").addEventListener("click", function () {
+                            const frame = document.getElementById("opened_comments_block");
+                            const url = "{% url 'conventions:recapitulatif_commentaires' convention_uuid=convention.uuid %}";
+                            if (frame.getAttribute("src") === url) {
+                                frame.reload();
+                            } else {
+                                frame.setAttribute("src", url);
+                            }
+                        });
+                        document.addEventListener("click", function (event) {
+                            if (event.target.closest("#refresh_opened_comments_main, #refresh_opened_comments_empty")) {
+                                globalThis.location.reload(true);
+                            }
+                        });
+                    </script>
                 {% endif %}
                 {% if request|can_use_expert_mode:convention %}
                     <div class="fr-grid-row fr-grid-row--right">
@@ -96,11 +111,11 @@
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:avenant_edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all checked=False %}
                     {% endif %}
                     {% if 'logements' in avenant_list %}
-                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered checked=True %}
-                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered checked=True %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=recap_logements checked=True %}
+                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=recap_logements logements_sans_loyer=recap_logements_sans_loyer logements_corrigee=recap_logements_corrigee logements_corrigee_sans_loyer=recap_logements_corrigee_sans_loyer checked=True %}
                     {% else %}
-                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered checked=False %}
-                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered checked=False %}
+                        {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:avenant_foyer_residence_logements' lot=convention.lot logements=recap_logements checked=False %}
+                        {% include "conventions/recapitulatif/logements.html" with target_url='conventions:avenant_logements' lot=convention.lot logements=recap_logements logements_sans_loyer=recap_logements_sans_loyer logements_corrigee=recap_logements_corrigee logements_corrigee_sans_loyer=recap_logements_corrigee_sans_loyer checked=False %}
                     {% endif %}
 
                     {% if 'duree' in avenant_list %}
@@ -153,11 +168,11 @@
                         {% include "conventions/recapitulatif/edd.html" with target_url='conventions:edd' programme=convention.programme lot=convention.lot logement_edds=convention.programme.logementedds.all %}
                         {% include "conventions/recapitulatif/financement.html" with target_url='conventions:financement' %}
                     {% endif %}
-                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=convention.logements_import_ordered logements_sans_loyer=convention.logements_sans_loyer_import_ordered logements_corrigee=convention.logements_corrigee_import_ordered logements_corrigee_sans_loyer=convention.logements_corrigee_sans_loyer_import_ordered %}
-                    {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=convention.logements_import_ordered %}
+                    {% include "conventions/recapitulatif/logements.html" with target_url='conventions:logements' lot=convention.lot logements=recap_logements logements_sans_loyer=recap_logements_sans_loyer logements_corrigee=recap_logements_corrigee logements_corrigee_sans_loyer=recap_logements_corrigee_sans_loyer %}
+                    {% include "conventions/recapitulatif/foyer_residence_logements.html" with target_url='conventions:foyer_residence_logements' lot=convention.lot logements=recap_logements %}
                     {% include "conventions/recapitulatif/collectif.html" with target_url='conventions:collectif' lot=convention.lot locaux_collectifs=convention.locaux_collectifs %}
                     {% if not ecolo_ref %}
-                        {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' annexes=convention.annexes lot=convention.lot %}
+                        {% include "conventions/recapitulatif/annexes.html" with target_url='conventions:annexes' annexes=recap_annexes lot=convention.lot %}
                     {% else %}
                         {% include "conventions/recapitulatif/pieces_jointes.html" %}
                     {% endif %}

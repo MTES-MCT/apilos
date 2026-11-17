@@ -462,30 +462,32 @@ class BaseLogementFormSet(BaseFormSet):
           convention doivent être déclarés dans la convention
         """
         if self.lot_id:
-            lot = Lot.objects.get(id=self.lot_id)
-            lgts_edd = LogementEDD.objects.filter(programme_id=self.programme_id)
+            lot = Lot.objects.select_related("convention").get(id=self.lot_id)
+            lgts_edd = {}
+            for designation, financement in LogementEDD.objects.filter(
+                programme_id=self.programme_id
+            ).values_list("designation", "financement"):
+                lgts_edd.setdefault(designation, []).append(financement)
 
-            if lgts_edd.count() != 0:
+            if lgts_edd:
+                financements = lot.convention.get_financements
                 for form in self.forms:
-                    try:
-                        lgt_edd = lgts_edd.get(
-                            designation=form.cleaned_data.get("designation")
-                        )
-                        if lgt_edd.financement not in lot.convention.get_financements:
-                            form.add_error(
-                                "designation",
-                                "Ce logement est déclaré comme "
-                                + f"{lgt_edd.financement} dans l'EDD simplifié "
-                                + "alors que la convention ne comporte aucun financement de ce type ",
-                            )
-                    except LogementEDD.DoesNotExist:
+                    matches = lgts_edd.get(form.cleaned_data.get("designation"), [])
+                    if not matches:
                         form.add_error(
                             "designation", "Ce logement n'est pas dans l'EDD simplifié"
                         )
-                    except LogementEDD.MultipleObjectsReturned:
+                    elif len(matches) > 1:
                         form.add_error(
                             "designation",
                             "Ce logement est présent plusieurs fois dans l'EDD simplifié",
+                        )
+                    elif matches[0] not in financements:
+                        form.add_error(
+                            "designation",
+                            "Ce logement est déclaré comme "
+                            + f"{matches[0]} dans l'EDD simplifié "
+                            + "alors que la convention ne comporte aucun financement de ce type ",
                         )
 
     def manage_nb_logement_consistency(self):

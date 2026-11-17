@@ -67,7 +67,7 @@ class CommentFactory {
     child_sr_only_p.innerText = "Commentaire pour " + this.dialog_title
     icon_div.appendChild(child_sr_only_p);
 
-    if (document.getElementById(this.comment_dialog_id) === null) {
+    if (document.getElementById(this.comment_dialog_id + "-dialog") === null) {
       //create dialog: Can be improved
       const dialog_modal = document.createElement("dialog");
       dialog_modal.classList.add("fr-modal");
@@ -169,6 +169,7 @@ class CommentFactory {
 
   display_modal_comments() {
     document.getElementById("loading").hidden = false;
+    this.reset_new_comment();
     this.update_global_modal_title();
     this.remove_previous_comments();
 
@@ -186,6 +187,23 @@ class CommentFactory {
       };
       document.getElementById("loading").hidden = true;
     });
+  }
+
+  reset_new_comment() {
+    const textarea = document.getElementById("textarea_" + this.comment_dialog_id);
+    textarea.value = "";
+    textarea.setAttribute("rows", 1);
+  }
+
+  refresh_comments_summary() {
+    if (this.callback_click) {
+      const callback = document.getElementById(this.callback_click);
+      if (callback) {
+        callback.click();
+      } else if (this.callback_click !== "refresh_opened_comments") {
+        console.warn("Comment callback not found:", this.callback_click);
+      }
+    }
   }
 
   finish_display_modal_comments(res) {
@@ -602,6 +620,7 @@ class CommentFactory {
   // Create a new comment
   create_comment() {
     let comment = document.getElementById("textarea_" + this.comment_dialog_id);
+    const submittedComment = comment.value;
     let csrf_token = document.getElementsByName("csrfmiddlewaretoken")[0].value;
 
     let headers = {
@@ -610,11 +629,11 @@ class CommentFactory {
       "Content-Type": "application/json",
     };
 
-    fetch("/comments/", {
+    return fetch("/comments/", {
       method: "post",
       headers: headers,
       body: JSON.stringify({
-        comment: comment.value,
+        comment: submittedComment,
         object_name: this.object_name,
         object_field: this.object_field,
         object_uuid: this.object_uuid,
@@ -629,16 +648,16 @@ class CommentFactory {
       })
       .then((res) => {
         if (res.success) {
+          if (comment.value === submittedComment) {
+            this.reset_new_comment();
+          }
           this.create_global_comment_input(
             res.comment,
             res.user.is_instructeur
           );
           this.display_comment_icon();
-          if (this.callback_click) {
-            document.getElementById(this.callback_click).click();
-          }
+          this.refresh_comments_summary();
         }
-        comment.value = "";
       });
   }
 
@@ -710,9 +729,7 @@ class CommentFactory {
             ).innerText =
               "le " + this.format_french_date(res.comment.mis_a_jour_le);
           }, 5000);
-          if (this.callback_click) {
-            document.getElementById(this.callback_click).click();
-          }
+          this.refresh_comments_summary();
         }
       });
   }
