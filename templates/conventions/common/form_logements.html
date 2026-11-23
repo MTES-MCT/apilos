@@ -48,7 +48,10 @@
             {% endfor %}
 
             {{ formset.management_form }}
-            <div class="fr-table">
+            <div class="fr-table{% if formset.total_error_count %} apilos-table--error{% endif %}">
+                {% if formset.total_error_count %}
+                    <p class="fr-error-text">Ce tableau contient des erreurs. Veuillez corriger les champs concernés.</p>
+                {% endif %}
                 <div class="fr-table__wrapper">
                     <div class="fr-table__container">
                         <div class="fr-table__content">
@@ -302,11 +305,11 @@
         if (input_checkbox.checked) {
             table_div.classList.remove("hidden");
             error_div.classList.add("hidden");
-            if (input_hidden) input_hidden.value = "false";
+            if (input_hidden) input_hidden.value = "";
         } else {
             table_div.classList.add("hidden");
             error_div.classList.remove("hidden");
-            if (input_hidden) input_hidden.value = "true";
+            if (input_hidden) input_hidden.value = "1";
         }
 
         // Listen to change on checkbox
@@ -314,7 +317,7 @@
             table_div.classList.toggle("hidden");
             error_div.classList.toggle("hidden");
             if (input_hidden) {
-                input_hidden.value = input_checkbox.checked ? "false" : "true";
+                input_hidden.value = input_checkbox.checked ? "" : "1";
             }
         }
     }
