@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import View
 
-from conventions.models import Convention, ConventionStatut
+from conventions.models import Convention
 from conventions.permissions import currentrole_campaign_permission_required
 from conventions.services.conventions import ConventionService
 from conventions.services.utils import (
@@ -16,7 +16,6 @@ from conventions.services.utils import (
     editable_convention,
 )
 from core.views import SetupLoginRequiredMixin
-from programmes.models import NatureLogement
 
 
 @dataclass
@@ -259,6 +258,18 @@ foyer_steps = [
     commentaires_step,
 ]
 
+foyer_steps_sans_spf = [
+    bailleur_step,
+    programme_step,
+    cadastre_step,
+    financement_step,
+    foyer_residence_logements_step,
+    collectif_step,
+    foyer_attribution_step,
+    foyer_variante_step,
+    commentaires_step,
+]
+
 residence_steps_sans_spf = [
     bailleur_step,
     programme_step,
@@ -314,30 +325,13 @@ class ConventionFormSteps:
 
         if convention.is_avenant():
             return self._resolve_step_avenant(convention)
+        can_publish = convention.can_be_published()
         if convention.programme.is_foyer:
-            return foyer_steps
-        if convention.programme.is_residence and convention.statut not in [
-            ConventionStatut.PUBLIE.label,
-            ConventionStatut.PUBLICATION_EN_COURS.label,
-        ]:
-            return residence_steps_sans_spf
-        if convention.programme.is_residence and convention.statut in [
-            ConventionStatut.PUBLIE.label,
-            ConventionStatut.PUBLICATION_EN_COURS.label,
-        ]:
-            return residence_steps_avec_spf
-        if (
-            convention.programme.nature_logement == NatureLogement.LOGEMENTSORDINAIRES
-            and convention.statut
-            not in [
-                ConventionStatut.PUBLIE.label,
-                ConventionStatut.PUBLICATION_EN_COURS.label,
-            ]
-            and not convention.programme.bailleur.is_type1and2()
-        ):
-            return hlm_sem_log_ordi_type_steps
+            return foyer_steps if can_publish else foyer_steps_sans_spf
+        if convention.programme.is_residence:
+            return residence_steps_avec_spf if can_publish else residence_steps_sans_spf
 
-        return hlm_sem_type_steps
+        return hlm_sem_type_steps if can_publish else hlm_sem_log_ordi_type_steps
 
     def _resolve_step_avenant(self, convention):
 
@@ -360,11 +354,13 @@ class ConventionFormSteps:
                 avenant_stationnement_step,
             ]
 
+        edd_steps = [avenant_edd_step] if convention.can_be_published() else []
+
         return [
             avenant_bailleur_step,
             avenant_programme_step,
             avenant_cadastre_step,
-            avenant_edd_step,
+            *edd_steps,
             avenant_financement_step,
             *varying_steps,
             avenant_champ_libre_step,

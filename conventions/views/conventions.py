@@ -822,23 +822,6 @@ class ConventionBaseUploadPublicationView(
     step_number: int
     template_path: str
 
-    def pouvoir_publier(self):
-        return (
-            self.convention.programme.is_foyer or self.convention.programme.is_rhvs
-        ) or (
-            self.convention.programme.is_not_spf
-            and (
-                self.convention.bailleur.is_type1and2()
-                or (
-                    self.convention.statut
-                    in [
-                        ConventionStatut.PUBLICATION_EN_COURS.label,
-                        ConventionStatut.PUBLIE.label,
-                    ]
-                )
-            )
-        )
-
     @currentrole_campaign_permission_required("convention.view_convention")
     def get(self, request, convention_uuid):
         if self.pouvoir_publier():

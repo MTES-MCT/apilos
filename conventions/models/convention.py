@@ -481,21 +481,25 @@ class Convention(models.Model):
         )
 
     def can_be_published(self) -> bool:
-        return (
-            self.programme.is_foyer
-            or self.programme.is_rhvs
-            or (
-                self.programme.is_not_spf
-                and (
-                    self.bailleur.is_type1and2()
-                    or self.statut
-                    in [
-                        ConventionStatut.PUBLICATION_EN_COURS.label,
-                        ConventionStatut.PUBLIE.label,
-                    ]
-                )
+        if self.statut in [
+            ConventionStatut.PUBLICATION_EN_COURS.label,
+            ConventionStatut.PUBLIE.label,
+        ]:
+            return True
+
+        if self.is_avenant():
+            return (
+                self.parent.statut == ConventionStatut.PUBLIE.label
+                or self.parent.date_publication_spf is not None
             )
-        )
+
+        if self.valide_le and self.valide_le < datetime.date(2026, 8, 1):
+            return True
+
+        return (
+            self.programme.is_logements_ordinaires
+            or self.programme.is_residence_universitaire
+        ) and self.bailleur.is_type1and2()
 
     def get_comments_dict(self):
         result = {}
