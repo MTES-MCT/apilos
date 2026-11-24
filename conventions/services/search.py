@@ -2,10 +2,12 @@ from collections import defaultdict
 from datetime import date
 
 from django.conf import settings
+from django.contrib.postgres.lookups import Unaccent
 from django.contrib.postgres.search import SearchQuery, SearchRank, TrigramSimilarity
 from django.core.paginator import Paginator
 from django.db.models import Case, F, Q, QuerySet, Value, When
-from django.db.models.functions import Coalesce, Round
+from django.db.models.functions import Coalesce, Lower, Round
+from unidecode import unidecode
 
 from conventions.models import Convention, ConventionStatut
 from programmes.models import Programme
@@ -278,7 +280,8 @@ class ConventionSearchService(ConventionSearchServiceBase):
         if self.search_lieu:
             queryset = queryset.annotate(
                 programme_ville_similarity=TrigramSimilarity(
-                    "programme__ville", self.search_lieu
+                    Lower(Unaccent("programme__ville")),
+                    unidecode(self.search_lieu).lower(),
                 )
             ).annotate(
                 programme_code_postal_similarity=TrigramSimilarity(
