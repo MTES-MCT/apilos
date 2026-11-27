@@ -266,7 +266,28 @@ class ConventionFormStepsTests(TestCase):
         form_steps = ConventionFormSteps(
             convention=self.convention, request=self.request
         )
+        # la convention elle est pas encore validé donc pas d'edd
+        self.assertEqual(
+            form_steps.steps,
+            [
+                bailleur_step,
+                programme_step,
+                cadastre_step,
+                financement_step,
+                foyer_residence_logements_step,
+                collectif_step,
+                foyer_attribution_step,
+                foyer_variante_step,
+                commentaires_step,
+            ],
+        )
 
+        # l'étape EDD sur un Foyer est accessible si la convention est déjà en cours de publication
+        # (PUBLICATION_EN_COURS / PUBLIE) ou si elle a été validée avant le 01/08/2026
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+        form_steps = ConventionFormSteps(
+            convention=self.convention, request=self.request
+        )
         self.assertEqual(
             form_steps.steps,
             [
