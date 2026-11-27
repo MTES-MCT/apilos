@@ -7,7 +7,7 @@ from django.test import TestCase
 
 from conventions.models import Convention, ConventionHistory, ConventionStatut
 from core.tests.factories import ConventionFactory
-from programmes.models import Financement
+from programmes.models import Financement, NatureLogement
 from users.models import User
 from users.type_models import EmailPreferences, TypeRole
 
@@ -165,48 +165,85 @@ class ConventionModelsTest(TestCase):
     def test_can_be_published(self):
         convention = Convention.objects.get(numero="0001")
 
-        with mock.patch.object(
-            convention.programme.__class__,
-            "is_foyer",
-            new_callable=mock.PropertyMock,
-            return_value=True,
-        ):
-            self.assertTrue(convention.can_be_published())
-
-        with mock.patch.object(
-            convention.programme.__class__,
-            "is_rhvs",
-            new_callable=mock.PropertyMock,
-            return_value=True,
-        ):
-            self.assertTrue(convention.can_be_published())
-
-        with mock.patch.object(
-            convention.programme.__class__,
-            "is_not_spf",
-            new_callable=mock.PropertyMock,
-            return_value=True,
-        ):
-            with mock.patch(
-                "bailleurs.models.Bailleur.is_type1and2", return_value=True
-            ):
-                self.assertTrue(convention.can_be_published())
-
-        with mock.patch.object(
-            convention.programme.__class__,
-            "is_not_spf",
-            new_callable=mock.PropertyMock,
-            return_value=True,
-        ):
+        # statut PUBLICATION_EN_COURS ou PUBLIE: peu importe nature, bailleur ou date
+        convention.valide_le = datetime.date(2026, 8, 15)
+        for nature_logement, _ in NatureLogement.choices:
+            convention.programme.nature_logement = nature_logement
             with mock.patch(
                 "bailleurs.models.Bailleur.is_type1and2", return_value=False
             ):
-                convention.statut = ConventionStatut.PUBLIE.label
-                self.assertTrue(convention.can_be_published())
                 convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
                 self.assertTrue(convention.can_be_published())
-                convention.statut = ConventionStatut.SIGNEE.label
-                self.assertFalse(convention.can_be_published())
+                convention.statut = ConventionStatut.PUBLIE.label
+                self.assertTrue(convention.can_be_published())
+
+        # convention validee avant le 01/08/2026: toutes natures et tous bailleurs
+        convention.statut = ConventionStatut.SIGNEE.label
+        convention.valide_le = datetime.date(2026, 7, 31)
+        for nature_logement, _ in NatureLogement.choices:
+            convention.programme.nature_logement = nature_logement
+            for is_type1and2 in [True, False]:
+                with mock.patch(
+                    "bailleurs.models.Bailleur.is_type1and2", return_value=is_type1and2
+                ):
+                    self.assertTrue(convention.can_be_published())
+
+        # convention validee a partir du 01/08/2026 (ou non encore validee)
+        for valide_le in [None, datetime.date(2026, 8, 1), datetime.date(2026, 9, 1)]:
+            convention.valide_le = valide_le
+            for nature_logement in [
+                NatureLogement.AUTRE,
+                NatureLogement.HEBERGEMENT,
+                NatureLogement.RESISDENCESOCIALE,
+                NatureLogement.PENSIONSDEFAMILLE,
+                NatureLogement.RESIDENCEDACCUEIL,
+                NatureLogement.RHVS,
+            ]:
+                convention.programme.nature_logement = nature_logement
+                for is_type1and2 in [True, False]:
+                    with mock.patch(
+                        "bailleurs.models.Bailleur.is_type1and2",
+                        return_value=is_type1and2,
+                    ):
+                        self.assertFalse(convention.can_be_published())
+
+            # logements ordinaires et Residences universitaires -> True si Type 1/2, False si HLM/SEM
+            for nature_logement in [
+                NatureLogement.LOGEMENTSORDINAIRES,
+                NatureLogement.RESIDENCEUNIVERSITAIRE,
+            ]:
+                convention.programme.nature_logement = nature_logement
+                with mock.patch(
+                    "bailleurs.models.Bailleur.is_type1and2", return_value=True
+                ):
+                    self.assertTrue(convention.can_be_published())
+                with mock.patch(
+                    "bailleurs.models.Bailleur.is_type1and2", return_value=False
+                ):
+                    self.assertFalse(convention.can_be_published())
+
+        # les avenants depend uniquement de la publication de la convention parente
+        user = User.objects.get(username="nicolas")
+        avenant = convention.clone(user, convention_origin=convention)
+        avenant.statut = ConventionStatut.SIGNEE.label
+
+        convention.statut = ConventionStatut.SIGNEE.label
+        convention.date_publication_spf = None
+        convention.save()
+        avenant.refresh_from_db()
+        self.assertFalse(avenant.can_be_published())
+
+        convention.statut = ConventionStatut.PUBLIE.label
+        convention.save()
+        avenant.refresh_from_db()
+        self.assertTrue(avenant.can_be_published())
+
+        # parent avec date_publication_spf renseignee (meme si statut different)
+        convention.statut = ConventionStatut.SIGNEE.label
+        convention.date_publication_spf = datetime.date(2025, 1, 15)
+        convention.save()
+        avenant.refresh_from_db()
+        self.assertTrue(avenant.can_be_published())
 
     def test_mixity_option(self):
         convention = Convention.objects.order_by("uuid").first()

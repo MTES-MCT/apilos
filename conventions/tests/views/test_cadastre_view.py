@@ -24,8 +24,10 @@ class ConventionCadastreViewTests(AbstractEditViewTestCase, TestCase):
         self.target_path = reverse(
             "conventions:cadastre", args=[self.convention_75.uuid]
         )
-        # Default: use AUTRE (foyer) so next step is EDD
-        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        # Default: LOGEMENTSORDINAIRES with bailleur Type 1/2 so next step is EDD
+        self.convention_75.programme.nature_logement = (
+            NatureLogement.LOGEMENTSORDINAIRES
+        )
         self.convention_75.programme.save()
         self.next_target_path = reverse(
             "conventions:edd", args=[self.convention_75.uuid]
@@ -147,12 +149,28 @@ class ConventionCadastreViewTests(AbstractEditViewTestCase, TestCase):
         expected = reverse("conventions:edd", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
 
-    def test_next_step_is_edd_for_rhvs(self):
+    def test_next_step_is_financement_for_rhvs(self):
         response = self._set_properties_and_post(nature_logement=NatureLogement.RHVS)
-        expected = reverse("conventions:edd", args=[self.convention_75.uuid])
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)
 
-    def test_next_step_is_edd_for_autre(self):
+    def test_next_step_is_financement_for_autre(self):
         response = self._set_properties_and_post(nature_logement=NatureLogement.AUTRE)
-        expected = reverse("conventions:edd", args=[self.convention_75.uuid])
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_residence_universitaire_bailleur_is_hlm(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,
+            type_bailleur=NatureBailleur.HLM,
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
+        self.assertRedirects(response, expected)
+
+    def test_next_step_is_financement_for_residence_universitaire_bailleur_is_sem(self):
+        response = self._set_properties_and_post(
+            nature_logement=NatureLogement.RESIDENCEUNIVERSITAIRE,
+            type_bailleur=NatureBailleur.SEM,
+        )
+        expected = reverse("conventions:financement", args=[self.convention_75.uuid])
         self.assertRedirects(response, expected)

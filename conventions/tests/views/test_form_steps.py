@@ -2,7 +2,7 @@ from django.http.request import HttpRequest
 from django.test import TestCase
 
 from bailleurs.models import NatureBailleur
-from conventions.models import Convention
+from conventions.models import Convention, ConventionStatut
 from conventions.views.convention_form import (
     ConventionFormSteps,
     annexes_step,
@@ -95,6 +95,27 @@ class ConventionFormStepsTests(TestCase):
         self.avenant.programme.save()
         self.assertTrue(self.avenant.programme.is_foyer)
 
+        # convention de base non publie: pas d'etape EDD sur l'avenant
+        form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
+        self.assertEqual(
+            form_steps.steps,
+            [
+                avenant_bailleur_step,
+                avenant_programme_step,
+                avenant_cadastre_step,
+                avenant_financement_step,
+                avenant_foyer_residence_logements_step,
+                avenant_collectif_step,
+                avenant_foyer_attribution_step,
+                avenant_variantes_step,
+                avenant_champ_libre_step,
+                avenant_commentaires_step,
+            ],
+        )
+
+        # convention de base publie: etape EDD presente sur l'avenant
+        self.avenant.parent.statut = ConventionStatut.PUBLIE.label
+        self.avenant.parent.save()
         form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
         self.assertEqual(
             form_steps.steps,
@@ -118,6 +139,27 @@ class ConventionFormStepsTests(TestCase):
         self.avenant.programme.save()
         self.assertTrue(self.avenant.programme.is_residence)
 
+        # convention de base non publie: pas d'etape EDD sur l'avenant
+        form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
+        self.assertEqual(
+            form_steps.steps,
+            [
+                avenant_bailleur_step,
+                avenant_programme_step,
+                avenant_cadastre_step,
+                avenant_financement_step,
+                avenant_foyer_residence_logements_step,
+                avenant_collectif_step,
+                avenant_residence_attribution_step,
+                avenant_variantes_step,
+                avenant_champ_libre_step,
+                avenant_commentaires_step,
+            ],
+        )
+
+        # convention de base publie: etape EDD presente sur l'avenant
+        self.avenant.parent.statut = ConventionStatut.PUBLIE.label
+        self.avenant.parent.save()
         form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
         self.assertEqual(
             form_steps.steps,
@@ -143,6 +185,26 @@ class ConventionFormStepsTests(TestCase):
         self.assertFalse(self.avenant.programme.is_foyer)
         self.assertFalse(self.avenant.programme.is_residence)
 
+        # conevention de base non publie: pas d'etape EDD sur l'avenant
+        form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
+        self.assertEqual(
+            form_steps.steps,
+            [
+                avenant_bailleur_step,
+                avenant_programme_step,
+                avenant_cadastre_step,
+                avenant_financement_step,
+                avenant_logements_step,
+                avenant_annexes_step,
+                avenant_stationnement_step,
+                avenant_champ_libre_step,
+                avenant_commentaires_step,
+            ],
+        )
+
+        # conevnetion de base publie: etape EDD presente sur l'avenant
+        self.avenant.parent.statut = ConventionStatut.PUBLIE.label
+        self.avenant.parent.save()
         form_steps = ConventionFormSteps(convention=self.avenant, request=self.request)
         self.assertEqual(
             form_steps.steps,
@@ -204,7 +266,28 @@ class ConventionFormStepsTests(TestCase):
         form_steps = ConventionFormSteps(
             convention=self.convention, request=self.request
         )
+        # la convention elle est pas encore validé donc pas d'edd
+        self.assertEqual(
+            form_steps.steps,
+            [
+                bailleur_step,
+                programme_step,
+                cadastre_step,
+                financement_step,
+                foyer_residence_logements_step,
+                collectif_step,
+                foyer_attribution_step,
+                foyer_variante_step,
+                commentaires_step,
+            ],
+        )
 
+        # l'étape EDD sur un Foyer est accessible si la convention est déjà en cours de publication
+        # (PUBLICATION_EN_COURS / PUBLIE) ou si elle a été validée avant le 01/08/2026
+        self.convention.statut = ConventionStatut.PUBLICATION_EN_COURS.label
+        form_steps = ConventionFormSteps(
+            convention=self.convention, request=self.request
+        )
         self.assertEqual(
             form_steps.steps,
             [
