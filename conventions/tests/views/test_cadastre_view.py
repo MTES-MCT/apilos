@@ -24,8 +24,10 @@ class ConventionCadastreViewTests(AbstractEditViewTestCase, TestCase):
         self.target_path = reverse(
             "conventions:cadastre", args=[self.convention_75.uuid]
         )
-        # Default: use AUTRE (foyer) so next step is EDD
-        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        # Default: LOGEMENTSORDINAIRES with bailleur Type 1/2 so next step is EDD
+        self.convention_75.programme.nature_logement = (
+            NatureLogement.LOGEMENTSORDINAIRES
+        )
         self.convention_75.programme.save()
         self.next_target_path = reverse(
             "conventions:edd", args=[self.convention_75.uuid]

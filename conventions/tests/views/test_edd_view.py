@@ -21,8 +21,10 @@ class ConventionEDDViewTests(AbstractEditViewTestCase, TestCase):
 
     def setUp(self):
         super().setUp()
-        # L'étape EDD est spécifique à la nature de logement "Autre" et "RHVS"
-        self.convention_75.programme.nature_logement = NatureLogement.AUTRE
+        # L'étape EDD est activée pour les logements ordinaires avec bailleur de type 1/2
+        self.convention_75.programme.nature_logement = (
+            NatureLogement.LOGEMENTSORDINAIRES
+        )
         self.convention_75.programme.save()
 
         self.target_path = reverse("conventions:edd", args=[self.convention_75.uuid])
